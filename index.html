@@ -1,0 +1,3092 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Fábrica | Eventos de Alto Impacto para Marketing Digital</title>
+  <meta name="description"
+    content="Transforme seu evento digital em um sucesso de vendas. Produção profissional de eventos para o mercado digital com foco em alto ROI. +R$12 milhões gerados para clientes.">
+  <meta property="og:title" content="A Fábrica | Eventos de Alto Impacto para Marketing Digital">
+  <meta property="og:description"
+    content="Transforme seu evento digital em um sucesso de vendas. Produção profissional de eventos com foco em alto ROI.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://afabrica.com.br">
+  <link rel="canonical" href="https://afabrica.com.br">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <style>
+    :root {
+      --primary: #010d36;
+      /* Azul escuro do manual */
+      --secondary: #010d36;
+      /* Mantendo consistência */
+      --light: #fef9ef;
+      /* Branco off-white do manual */
+      --dark: #010d36;
+      /* Azul escuro do manual */
+      --accent: #dfd7c0;
+      /* Bege do manual */
+      --accent-light: #eae4d5;
+      /* Versão mais clara do bege */
+      --gray: #f5f5f5;
+      --success: #36b37e;
+      --gradient-primary: linear-gradient(135deg, #010d36 0%, #152166 100%);
+      --gradient-accent: linear-gradient(135deg, #dfd7c0 0%, #eae4d5 100%);
+      --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 20px 25px rgba(0, 0, 0, 0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Neue Montreal', 'Montserrat', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    header {
+      background-color: transparent;
+      color: var(--light);
+      position: absolute;
+      width: 100%;
+      z-index: 100;
+      padding: 1.5rem 0;
+      transition: var(--transition);
+    }
+
+    header.scrolled {
+      background-color: var(--primary);
+      box-shadow: var(--shadow-sm);
+      position: fixed;
+      top: 0;
+      padding: 1rem 0;
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      max-width: 160px;
+      transition: var(--transition);
+    }
+
+    header.scrolled .logo {
+      max-width: 140px;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+
+    nav ul li {
+      margin-left: 2rem;
+    }
+
+    nav ul li a {
+      color: var(--light);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      position: relative;
+      padding: 0.5rem 0;
+    }
+
+    nav ul li a:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      left: 0;
+      bottom: 0;
+      transition: var(--transition);
+    }
+
+    nav ul li a:hover:after {
+      width: 100%;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: transparent;
+      border: none;
+      color: var(--light);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: 'Source Serif Pro', serif;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.2rem;
+      position: relative;
+    }
+
+    h2.section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    h2.section-title:after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 4px;
+      background: var(--accent);
+      margin: 1rem auto 0;
+    }
+
+    h3 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      position: relative;
+    }
+
+    .container-sm {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .section {
+      padding: 100px 0;
+      position: relative;
+    }
+
+    .section-dark {
+      background-color: var(--primary);
+      color: var(--light);
+    }
+
+    .section-light {
+      background-color: var(--light);
+    }
+
+    .section-accent {
+      background-color: var(--accent-light);
+    }
+
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      background: var(--gradient-primary);
+      overflow: hidden;
+    }
+
+    .hero:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDAgMTAwIDAgMTAwIDEwMCAwIDEwMHoiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+');
+      opacity: 0.1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 650px;
+    }
+
+    .hero-heading {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
+    }
+
+    .hero-subheading {
+      font-size: clamp(1.2rem, 2vw, 1.4rem);
+      margin-bottom: 2.5rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 2.5rem 0;
+      gap: 2rem;
+    }
+
+    .hero-stat {
+      flex: 1;
+      min-width: 180px;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      text-align: center;
+    }
+
+    .hero-stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--accent);
+      font-family: 'Source Serif Pro', serif;
+    }
+
+    .hero-stat-text {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .hero-image {
+      position: absolute;
+      right: -5%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 45%;
+      max-width: 650px;
+      opacity: 0.7;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--accent);
+      color: var(--dark);
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: var(--transition);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: none;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn:hover {
+      background-color: var(--accent-light);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      border: 2px solid var(--light);
+      color: var(--light);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--light);
+      color: var(--primary);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--light);
+    }
+
+    .btn-primary:hover {
+      background-color: #152166;
+    }
+
+    .btn-large {
+      padding: 1.2rem 2.8rem;
+      font-size: 1.2rem;
+    }
+
+    .btn-icon {
+      margin-left: 0.8rem;
+      font-size: 1.2rem;
+    }
+
+    .services {
+      position: relative;
+    }
+
+    .services-intro {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 4rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2.5rem;
+    }
+
+    .feature-card {
+      background-color: var(--light);
+      padding: 3rem 2rem;
+      border-radius: var(--radius-md);
+      text-align: center;
+      transition: var(--transition);
+      position: relative;
+      border: 1px solid rgba(223, 215, 192, 0.3);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent);
+    }
+
+    .feature-card:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: var(--gradient-accent);
+      transition: var(--transition);
+      transform: scaleX(0);
+      transform-origin: right;
+    }
+
+    .feature-card:hover:before {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    .feature-icon {
+      width: 85px;
+      height: 85px;
+      background: var(--accent-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin-bottom: 2rem;
+      font-size: 2.2rem;
+      color: var(--primary);
+      transition: var(--transition);
+    }
+
+    .feature-card:hover .feature-icon {
+      background: var(--accent);
+      transform: rotateY(360deg);
+      transition: transform 0.8s, background 0.3s;
+    }
+
+    .feature-title {
+      margin-bottom: 1rem;
+      font-size: 1.6rem;
+    }
+
+    .feature-desc {
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      margin-top: auto;
+      transition: var(--transition);
+    }
+
+    .feature-link i {
+      margin-left: 0.3rem;
+      transition: var(--transition);
+    }
+
+    .feature-link:hover {
+      color: #152166;
+    }
+
+    .feature-link:hover i {
+      transform: translateX(5px);
+    }
+
+    .objectives {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .objectives:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDAgMTAwIDAgMTAwIDEwMCAwIDEwMHoiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgxLDEzLDU0LDAuMDUpIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=');
+      opacity: 0.5;
+    }
+
+    .objectives-intro {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 4rem;
+      position: relative;
+    }
+
+    .objectives-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2.5rem;
+      position: relative;
+    }
+
+    .objective-card {
+      background-color: var(--light);
+      padding: 3rem 2rem 2rem;
+      border-radius: var(--radius-md);
+      text-align: center;
+      transition: var(--transition);
+      position: relative;
+      border: 1px solid rgba(223, 215, 192, 0.3);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 280px;
+    }
+
+    .objective-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent);
+    }
+
+    .objective-number {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--primary);
+      color: var(--light);
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-weight: bold;
+      font-size: 1.3rem;
+      box-shadow: var(--shadow-md);
+      z-index: 1;
+      border: 3px solid var(--light);
+      font-family: 'Source Serif Pro', serif;
+    }
+
+    .objective-title {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .objective-desc {
+      color: #555;
+    }
+
+    .about {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-intro {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 4rem;
+    }
+
+    .differentials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2.5rem;
+    }
+
+    .differential-card {
+      background-color: var(--primary);
+      color: var(--light);
+      padding: 3rem 2rem;
+      border-radius: var(--radius-md);
+      text-align: center;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .differential-card:hover {
+      transform: translateY(-10px);
+    }
+
+    .differential-card:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .differential-card:hover:before {
+      opacity: 1;
+    }
+
+    .differential-icon {
+      width: 85px;
+      height: 85px;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin-bottom: 2rem;
+      font-size: 2.2rem;
+      color: var(--accent);
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .differential-card:hover .differential-icon {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+
+    .differential-title {
+      margin-bottom: 1rem;
+      font-size: 1.6rem;
+      position: relative;
+    }
+
+    .differential-desc {
+      color: rgba(255, 255, 255, 0.8);
+      position: relative;
+    }
+
+    .pricing {
+      background-color: var(--light);
+      position: relative;
+    }
+
+    .pricing-intro {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 4rem;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 3rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .pricing-card {
+      background-color: var(--light);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      border: 1px solid rgba(223, 215, 192, 0.5);
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent);
+    }
+
+    .pricing-card.popular {
+      transform: scale(1.05);
+      box-shadow: var(--shadow-lg);
+      border: 2px solid var(--accent);
+      position: relative;
+    }
+
+    .pricing-card.popular:hover {
+      transform: scale(1.05) translateY(-10px);
+    }
+
+    .popular-tag {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: var(--accent);
+      color: var(--primary);
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      z-index: 1;
+    }
+
+    .pricing-header {
+      background-color: var(--primary);
+      color: var(--light);
+      padding: 3rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pricing-header:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDAgMTAwIDAgMTAwIDEwMCAwIDEwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==');
+      opacity: 0.3;
+    }
+
+    .pricing-title {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .pricing-content {
+      padding: 2.5rem;
+    }
+
+    .pricing-price {
+      font-size: 2.8rem;
+      font-weight: 700;
+      margin: 1.5rem 0;
+      text-align: center;
+      font-family: 'Source Serif Pro', serif;
+      color: var(--primary);
+    }
+
+    .pricing-details {
+      font-size: 1rem;
+      text-align: center;
+      color: #666;
+      margin-bottom: 1.5rem;
+    }
+
+    .pricing-features {
+      list-style: none;
+      margin: 2rem 0;
+    }
+
+    .pricing-features li {
+      margin-bottom: 1rem;
+      position: relative;
+      padding-left: 2rem;
+      color: #444;
+    }
+
+    .pricing-features li:before {
+      content: '✓';
+      color: var(--success);
+      position: absolute;
+      left: 0;
+      font-weight: bold;
+    }
+
+    .testimonials {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .testimonials:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDAgMTAwIDAgMTAwIDEwMCAwIDEwMHoiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgxLDEzLDU0LDAuMDUpIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=');
+      opacity: 0.5;
+    }
+
+    .testimonials-intro {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 4rem;
+      position: relative;
+    }
+
+    .testimonial-slider {
+      max-width: 1000px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .testimonial-slide {
+      padding: 0 1.5rem;
+    }
+
+    .testimonial-card {
+      background-color: var(--light);
+      padding: 3rem;
+      border-radius: var(--radius-md);
+      position: relative;
+      box-shadow: var(--shadow-md);
+      text-align: left;
+    }
+
+    .testimonial-card:before {
+      content: '"';
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
+      font-size: 6rem;
+      color: rgba(223, 215, 192, 0.5);
+      font-family: 'Source Serif Pro', serif;
+      line-height: 0;
+    }
+
+    .testimonial-content {
+      position: relative;
+      z-index: 1;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+      color: #444;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+    }
+
+    .testimonial-avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 1.5rem;
+      border: 3px solid var(--accent);
+    }
+
+    .testimonial-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .testimonial-info h4 {
+      font-size: 1.2rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .testimonial-info p {
+      font-size: 0.9rem;
+      color: #666;
+      margin: 0;
+    }
+
+    .slider-controls {
+      display: flex;
+      justify-content: center;
+      margin-top: 3rem;
+    }
+
+    .slider-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: rgba(1, 13, 54, 0.2);
+      margin: 0 5px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .slider-dot.active {
+      background-color: var(--primary);
+      transform: scale(1.3);
+    }
+
+    .cta {
+      background: var(--gradient-primary);
+      color: var(--light);
+      text-align: center;
+      padding: 5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBoMTAwdjEwMEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDAgMTAwIDAgMTAwIDEwMCAwIDEwMHoiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+');
+      opacity: 0.1;
+    }
+
+    .cta-container {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .cta-title {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-subtitle {
+      font-size: 1.3rem;
+      margin-bottom: 3rem;
+      opacity: 0.9;
+    }
+
+    .contact {
+      position: relative;
+    }
+
+    .contact-intro {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 4rem;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 3rem;
+    }
+
+    .contact-form {
+      background-color: var(--light);
+      padding: 3rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(223, 215, 192, 0.3);
+    }
+
+    .contact-form-header {
+      margin-bottom: 2rem;
+    }
+
+    .contact-form-header h3 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .contact-form-header p {
+      color: #666;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.8rem;
+      font-weight: 500;
+      color: #444;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      transition: var(--transition);
+      background-color: #f9f9f9;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(223, 215, 192, 0.3);
+      background-color: var(--light);
+    }
+
+    .form-group textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .form-submit {
+      margin-top: 2rem;
+    }
+
+    .contact-info {
+      padding: 3rem;
+      background-color: var(--primary);
+      color: var(--light);
+      border-radius: var(--radius-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-info:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDAgMTAwIDAgMTAwIDEwMCAwIDEwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==');
+      opacity: 0.3;
+    }
+
+    .contact-info-header {
+      position: relative;
+      margin-bottom: 2.5rem;
+    }
+
+    .contact-info-header h3 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .contact-info-header p {
+      opacity: 0.9;
+    }
+
+    .contact-info-item {
+      display: flex;
+      margin-bottom: 2rem;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    .contact-icon {
+      width: 50px;
+      height: 50px;
+      background-color: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin-right: 1.5rem;
+      color: var(--accent);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .contact-info-content {
+      flex-grow: 1;
+    }
+
+    .contact-info-content h4 {
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    .contact-info-content p,
+    .contact-info-content a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .contact-info-content a:hover {
+      color: var(--accent);
+    }
+
+    .social-links {
+      display: flex;
+      margin-top: 3rem;
+      position: relative;
+    }
+
+    .social-link {
+      width: 45px;
+      height: 45px;
+      background-color: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin-right: 1rem;
+      color: var(--light);
+      font-size: 1.2rem;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .social-link:hover {
+      background-color: var(--accent);
+      color: var(--primary);
+      transform: translateY(-5px);
+    }
+
+    footer {
+      background-color: var(--primary);
+      color: var(--light);
+      padding: 5rem 0 2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+      margin-bottom: 4rem;
+      text-align: left;
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .footer-logo {
+      max-width: 160px;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-text {
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-column h4 {
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .footer-column h4:after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 50px;
+      height: 3px;
+      background-color: var(--accent);
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 1rem;
+    }
+
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+      transform: translateX(5px);
+    }
+
+    .footer-links a i {
+      margin-right: 10px;
+      font-size: 0.8rem;
+    }
+
+    .footer-contact li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .footer-contact i {
+      margin-right: 10px;
+      color: var(--accent);
+    }
+
+    .footer-contact a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .footer-contact a:hover {
+      color: var(--accent);
+    }
+
+    .footer-newsletter p {
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 1.5rem;
+    }
+
+    .newsletter-form {
+      display: flex;
+    }
+
+    .newsletter-form input {
+      flex-grow: 1;
+      padding: 1rem;
+      border: none;
+      border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+      font-size: 0.9rem;
+    }
+
+    .newsletter-form button {
+      background-color: var(--accent);
+      color: var(--primary);
+      border: none;
+      padding: 0 1.5rem;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .newsletter-form button:hover {
+      background-color: var(--accent-light);
+    }
+
+    .footer-divider {
+      height: 1px;
+      background-color: rgba(255, 255, 255, 0.1);
+      margin: 2rem 0;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .footer-copyright {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9rem;
+    }
+
+    .footer-social {
+      display: flex;
+    }
+
+    .footer-social a {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--light);
+      margin-left: 1rem;
+      transition: var(--transition);
+    }
+
+    .footer-social a:hover {
+      background-color: var(--accent);
+      color: var(--primary);
+      transform: translateY(-5px);
+    }
+
+    .floating-cta {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 100;
+      animation: pulse 2s infinite;
+      display: none;
+    }
+
+    .floating-cta-btn {
+      background-color: var(--accent);
+      color: var(--primary);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: var(--shadow-lg);
+      font-size: 1.5rem;
+      transition: var(--transition);
+    }
+
+    .floating-cta-btn:hover {
+      transform: scale(1.1);
+      background-color: var(--accent-light);
+    }
+
+    .back-to-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background-color: var(--primary);
+      color: var(--light);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+      z-index: 100;
+      box-shadow: var(--shadow-md);
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .back-to-top:hover {
+      background-color: var(--accent);
+      color: var(--primary);
+      transform: translateY(-5px);
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(223, 215, 192, 0.7);
+      }
+
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 15px rgba(223, 215, 192, 0);
+      }
+
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(223, 215, 192, 0);
+      }
+    }
+
+    /* Hero blob animation */
+    .blob {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 43% 57% 70% 30% / 30% 43% 57% 70%;
+      transform: translate(-50%, -50%);
+      animation: morph 15s linear infinite alternate;
+    }
+
+    .blob-1 {
+      top: 20%;
+      left: 80%;
+    }
+
+    .blob-2 {
+      top: 70%;
+      left: 20%;
+      animation-delay: 5s;
+    }
+
+    @keyframes morph {
+      0% {
+        border-radius: 43% 57% 70% 30% / 30% 43% 57% 70%;
+      }
+
+      25% {
+        border-radius: 70% 30% 30% 70% / 70% 30% 70% 30%;
+      }
+
+      50% {
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      }
+
+      75% {
+        border-radius: 70% 30% 50% 50% / 50% 50% 70% 30%;
+      }
+
+      100% {
+        border-radius: 43% 57% 70% 30% / 30% 43% 57% 70%;
+      }
+    }
+
+    /* Counter animation */
+    .count-up {
+      animation: countUp 2.5s ease-out forwards;
+    }
+
+    @keyframes countUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* FAQ Styles */
+    .faq {
+      background-color: var(--light);
+      position: relative;
+    }
+
+    .faq-intro {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 4rem;
+    }
+
+    .faq-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(223, 215, 192, 0.3);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .faq-question {
+      padding: 1.5rem;
+      background-color: var(--light);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--primary);
+      transition: var(--transition);
+    }
+
+    .faq-question:hover {
+      background-color: rgba(223, 215, 192, 0.1);
+    }
+
+    .faq-question i {
+      transform: rotate(0);
+      transition: var(--transition);
+    }
+
+    .faq-item.active .faq-question i {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      padding: 0 1.5rem;
+      max-height: 0;
+      overflow: hidden;
+      background-color: var(--light);
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+
+    .faq-item.active .faq-answer {
+      padding: 0 1.5rem 1.5rem;
+      max-height: 1000px;
+    }
+
+    /* Results section */
+    .results {
+      background-color: var(--accent-light);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .results:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDohMTAwdjEwMEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDAgMTAwIDAgMTAwIDEwMCAwIDEwMHoiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgxLDEzLDU0LDAuMDUpIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=');
+      opacity: 0.2;
+    }
+
+    .results-intro {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 5rem;
+      position: relative;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      position: relative;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .stat-card {
+      background-color: var(--light);
+      padding: 3rem 2rem;
+      border-radius: var(--radius-md);
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-10px);
+    }
+
+    .stat-card:before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: var(--gradient-accent);
+      transition: var(--transition);
+    }
+
+    .stat-icon {
+      width: 70px;
+      height: 70px;
+      background: var(--accent-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin: 0 auto 1.5rem;
+      font-size: 2rem;
+    }
+
+    .stat-number {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--primary);
+      font-family: 'Source Serif Pro', serif;
+      line-height: 1;
+    }
+
+    .stat-title {
+      font-size: 1.2rem;
+      color: #444;
+    }
+
+    .process {
+      position: relative;
+      background-color: var(--light);
+    }
+
+    .process-intro {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 5rem;
+    }
+
+    .process-steps {
+      max-width: 1000px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .process-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 2px;
+      background-color: var(--accent);
+      transform: translateX(-50%);
+    }
+
+    .process-step {
+      display: flex;
+      margin-bottom: 5rem;
+      position: relative;
+    }
+
+    .process-step:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+
+    .process-content {
+      flex: 0 0 calc(50% - 2.5rem);
+      background-color: var(--light);
+      padding: 2.5rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      position: relative;
+      z-index: 1;
+      transition: var(--transition);
+      border: 1px solid rgba(223, 215, 192, 0.3);
+    }
+
+    .process-step:hover .process-content {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent);
+    }
+
+    .process-number {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      background-color: var(--primary);
+      color: var(--light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      z-index: 2;
+      border: 5px solid var(--light);
+      font-family: 'Source Serif Pro', serif;
+    }
+
+    .process-title {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    .process-description {
+      color: #555;
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+
+    .clients {
+      background-color: var(--primary);
+      color: var(--light);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .clients:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDAgMTAwIDAgMTAwIDEwMCAwIDEwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==');
+      opacity: 0.1;
+    }
+
+    .clients-intro {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 4rem;
+      position: relative;
+    }
+
+    .clients-logo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 3rem;
+      align-items: center;
+      justify-items: center;
+      position: relative;
+    }
+
+    .client-logo {
+      width: 150px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      padding: 1.5rem;
+      transition: var(--transition);
+    }
+
+    .client-logo:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+
+    .client-logo img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+      opacity: 0.8;
+      transition: var(--transition);
+    }
+
+    .client-logo:hover img {
+      opacity: 1;
+    }
+
+    .guarantee-section {
+      background-color: var(--light);
+      position: relative;
+    }
+
+    .guarantee-card {
+      background-color: var(--light);
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 4rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      border: 2px solid var(--accent);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .guarantee-card:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 150px;
+      height: 150px;
+      background-color: var(--accent);
+      transform: rotate(45deg) translate(-70%, -70%);
+      z-index: 0;
+    }
+
+    .guarantee-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .guarantee-icon {
+      width: 100px;
+      height: 100px;
+      background-color: var(--primary);
+      color: var(--light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      margin: 0 auto 2rem;
+      border: 5px solid var(--accent);
+    }
+
+    .guarantee-title {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+    }
+
+    .guarantee-description {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      color: #444;
+      line-height: 1.8;
+    }
+
+    /* Responsividade */
+    @media (max-width: 1200px) {
+      .hero-image {
+        width: 40%;
+        opacity: 0.6;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .header-container {
+        padding: 0 2rem;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+      }
+
+      h2 {
+        font-size: 2.2rem;
+      }
+
+      .hero-content {
+        max-width: 600px;
+        text-align: center;
+        margin: 0 auto;
+      }
+
+      .hero-stats {
+        justify-content: center;
+      }
+
+      .hero-image {
+        position: absolute;
+        width: 90%;
+        max-width: none;
+        opacity: 0.2;
+        right: auto;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .process-line {
+        left: 30px;
+      }
+
+      .process-step,
+      .process-step:nth-child(even) {
+        flex-direction: row;
+        margin-left: 30px;
+      }
+
+      .process-content {
+        flex: 0 0 calc(100% - 60px);
+        margin-left: 30px;
+      }
+
+      .process-number {
+        left: 30px;
+      }
+
+      .guarantee-card {
+        padding: 3rem 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 1rem 0;
+      }
+
+      .nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        height: 100vh;
+        background-color: var(--primary);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 5rem 2rem 2rem;
+        transition: var(--transition);
+        z-index: 9;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .nav-menu.show {
+        right: 0;
+      }
+
+      .nav-menu li {
+        margin: 1rem 0;
+        width: 100%;
+      }
+
+      .nav-menu li a {
+        display: block;
+        padding: 0.5rem 0;
+        font-size: 1.2rem;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+        z-index: 10;
+      }
+
+      .mobile-menu-btn.active i:before {
+        content: "\f00d";
+      }
+
+      .hero {
+        padding: 100px 0 50px;
+      }
+
+      .hero-heading {
+        font-size: 2.5rem;
+      }
+
+      .hero-stats {
+        flex-direction: column;
+      }
+
+      .hero-stat {
+        margin-bottom: 1rem;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      .section {
+        padding: 80px 0;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-form,
+      .contact-info {
+        padding: 2rem;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+      }
+
+      .footer-brand,
+      .footer-column h4:after {
+        margin: 0 auto;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .footer-social {
+        justify-content: center;
+      }
+
+      .footer-social a {
+        margin: 0 0.5rem;
+      }
+
+      .pricing-card.popular {
+        transform: none;
+        margin: 2rem 0;
+      }
+
+      .pricing-card.popular:hover {
+        transform: translateY(-10px);
+      }
+    }
+
+    @media (max-width: 576px) {
+
+      .container,
+      .container-sm {
+        padding: 0 1.5rem;
+      }
+
+      .section {
+        padding: 60px 0;
+      }
+
+      .hero-heading {
+        font-size: 2.2rem;
+      }
+
+      .hero-stat {
+        min-width: auto;
+        width: 100%;
+      }
+
+      .btn-large {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+      }
+
+      .guarantee-card {
+        padding: 2rem 1.5rem;
+      }
+
+      .guarantee-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .guarantee-title {
+        font-size: 2rem;
+      }
+    }
+
+    /* Animações */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fadeInRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .animate {
+      opacity: 0;
+    }
+
+    .animate.fade-in {
+      animation: fadeIn 1s ease forwards;
+    }
+
+    .animate.fade-in-left {
+      animation: fadeInLeft 1s ease forwards;
+    }
+
+    .animate.fade-in-right {
+      animation: fadeInRight 1s ease forwards;
+    }
+
+    .delay-1 {
+      animation-delay: 0.2s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.4s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.6s;
+    }
+
+    .delay-4 {
+      animation-delay: 0.8s;
+    }
+
+    .delay-5 {
+      animation-delay: 1s;
+    }
+
+    /* Adicional para a fonte Source Serif Pro */
+    @font-face {
+      font-family: 'Source Serif Pro';
+      src: url('https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap');
+    }
+
+    @font-face {
+      font-family: 'Neue Montreal';
+      src: local('Neue Montreal'), local('NeueMontrealRegular');
+      /* Como a Neue Montreal não está disponível gratuitamente, vamos usar uma alternativa similar */
+      font-family: 'Montserrat', sans-serif;
+    }
+  </style>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Source+Serif+Pro:wght@400;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+  <header id="header">
+    <div class="container header-container">
+      <div class="logo-wrapper">
+        <svg width="160" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo">
+          <path d="M400 40L65 700H735L400 40Z" fill="#fef9ef" />
+          <path d="M400 150L200 550H600L400 150Z" fill="#010d36" />
+          <path d="M400 290L300 490H500L400 290Z" fill="#fef9ef" />
+          <path d="M147 725L237 725L243 698L153 698L147 725Z" fill="#fef9ef" />
+          <path d="M62 922V782H106L155 878L204 782H248V922H208V838L167 922H143L102 838V922H62Z"
+            transform="translate(100, 0)" fill="#fef9ef" />
+          <path d="M299 922L249 782H291L326 883L362 782H398L331 922H299Z" transform="translate(100, 0)"
+            fill="#fef9ef" />
+          <path d="M463 782V815H525V841H463V890H535V922H424V782H463Z" transform="translate(100, 0)" fill="#fef9ef" />
+          <path d="M581 782V922H541V782H581Z" transform="translate(100, 0)" fill="#fef9ef" />
+          <path
+            d="M650 888C662 888 671 882 675 873L710 886C700 911 677 924 648 924C605 924 576 895 576 852C576 809 605 780 648 780C677 780 700 793 710 818L675 831C671 822 662 816 650 816C627 816 611 831 611 852C611 873 627 888 650 888Z"
+            transform="translate(100, 0)" fill="#fef9ef" />
+          <path
+            d="M792 922L741 864H725V922H686V782H747C784 782 807 804 807 834C807 856 794 872 774 879L833 922H792ZM745 835H725V831H745C755 831 763 825 763 816C763 807 755 801 745 801H725V835H745Z"
+            transform="translate(100, 0)" fill="#fef9ef" />
+        </svg>
+      </div>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="#services">Serviços</a></li>
+          <li><a href="#objectives">Objetivos</a></li>
+          <li><a href="#about">Diferenciais</a></li>
+          <li><a href="#results">Resultados</a></li>
+          <li><a href="#testimonials">Depoimentos</a></li>
+          <li><a href="#pricing">Investimento</a></li>
+          <li><a href="#contact">Contato</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" id="home">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="container">
+      <div class="hero-content animate fade-in">
+
+        <p class="hero-subheading animate fade-in delay-1">Através do nosso Método: Produção de Alto Impacto, produzimos
+          eventos presenciais que geram conexão, autoridade, experiência e, principalmente, resultados expressivos para
+          seu negócio.</p>
+
+        <div class="hero-stats">
+          <div class="hero-stat animate fade-in delay-2">
+            <div class="hero-stat-number count-up" data-count="12">35</div>
+            <div class="hero-stat-text">Milhões gerados para clientes</div>
+          </div>
+          <div class="hero-stat animate fade-in delay-3">
+            <div class="hero-stat-number count-up" data-count="10">9,73</div>
+            <div class="hero-stat-text">NPS médio</div>
+          </div>
+          <div class="hero-stat animate fade-in delay-4">
+            <div class="hero-stat-number count-up" data-count="150">28</div>
+            <div class="hero-stat-text">Eventos produzidos</div>
+          </div>
+        </div>
+
+        <center>
+          <a href="#contact" class="btn btn-large animate fade-in delay-5">Solicitar Proposta <i
+              class="fas fa-arrow-right btn-icon"></i></a>
+        </center>
+      </div>
+    </div>
+  </section>
+
+  <section class="services section" id="services">
+    <div class="container">
+      <div class="services-intro">
+        <h2 class="section-title animate fade-in">Serviços Estratégicos</h2>
+        <p class="animate fade-in delay-1">Oferecemos soluções completas em produção de eventos para o mercado digital,
+          com foco em maximizar seu ROI e potencializar seus resultados.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card animate fade-in">
+          <div class="feature-icon">
+            <i class="fas fa-theater-masks"></i>
+          </div>
+          <h3 class="feature-title">Produção de Eventos de Alto Impacto</h3>
+          <p class="feature-desc">Concepção, planejamento e execução de eventos memoráveis que geram autoridade e
+            conversões expressivas para o seu negócio.</p>
+          <a href="#contact" class="feature-link">Saiba mais <i class="fas fa-chevron-right"></i></a>
+        </div>
+
+        <div class="feature-card animate fade-in delay-1">
+          <div class="feature-icon">
+            <i class="fas fa-ticket-alt"></i>
+          </div>
+          <h3 class="feature-title">Estratégia de Ingressos</h3>
+          <p class="feature-desc">Desenvolvemos a arquitetura ideal de categorias e preços de ingressos, maximizando a
+            receita e o preenchimento do seu evento.</p>
+          <a href="#contact" class="feature-link">Saiba mais <i class="fas fa-chevron-right"></i></a>
+        </div>
+
+        <div class="feature-card animate fade-in delay-2">
+          <div class="feature-icon">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+          <h3 class="feature-title">Marketing para Venda de Ingressos</h3>
+          <p class="feature-desc">Estratégias e campanhas de marketing digital focadas em converter leads qualificados
+            em participantes pagantes.</p>
+          <a href="#contact" class="feature-link">Saiba mais <i class="fas fa-chevron-right"></i></a>
+        </div>
+
+        <div class="feature-card animate fade-in">
+          <div class="feature-icon">
+            <i class="fas fa-gem"></i>
+          </div>
+          <h3 class="feature-title">Consultoria de Vendas High Ticket</h3>
+          <p class="feature-desc">Metodologias comprovadas para vender produtos e serviços premium durante seu evento,
+            multiplicando seu faturamento.</p>
+          <a href="#contact" class="feature-link">Saiba mais <i class="fas fa-chevron-right"></i></a>
+        </div>
+
+        <div class="feature-card animate fade-in delay-1">
+          <div class="feature-icon">
+            <i class="fas fa-crown"></i>
+          </div>
+          <h3 class="feature-title">Design de Experiência Premium</h3>
+          <p class="feature-desc">Criamos jornadas excepcionais para seus participantes, elevando a percepção de valor
+            da sua marca e aumentando conversões.</p>
+          <a href="#contact" class="feature-link">Saiba mais <i class="fas fa-chevron-right"></i></a>
+        </div>
+
+        <div class="feature-card animate fade-in delay-2">
+          <div class="feature-icon">
+            <i class="fas fa-file-invoice-dollar"></i>
+          </div>
+          <h3 class="feature-title">Gestão Completa de Fornecedores</h3>
+          <p class="feature-desc">Cuidamos de toda a contratação, negociação e supervisão de fornecedores, garantindo
+            excelência e economia.</p>
+          <a href="#contact" class="feature-link">Saiba mais <i class="fas fa-chevron-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="results section section-accent" id="results">
+    <div class="container">
+      <div class="results-intro">
+        <h2 class="section-title animate fade-in">Resultados Comprovados</h2>
+        <p class="animate fade-in delay-1">Nossos números falam por si. Veja o impacto que geramos para nossos clientes
+          ao longo dos anos.</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card animate fade-in">
+          <div class="stat-icon">
+            <i class="fas fa-dollar-sign"></i>
+          </div>
+          <div class="stat-number" data-count="12">12M+</div>
+          <div class="stat-title">Em vendas geradas para clientes</div>
+        </div>
+
+        <div class="stat-card animate fade-in delay-1">
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-number" data-count="15000">15.000+</div>
+          <div class="stat-title">Participantes em eventos</div>
+        </div>
+
+        <div class="stat-card animate fade-in delay-2">
+          <div class="stat-icon">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <div class="stat-number" data-count="150">150+</div>
+          <div class="stat-title">Eventos produzidos</div>
+        </div>
+
+        <div class="stat-card animate fade-in delay-3">
+          <div class="stat-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="stat-number" data-count="380">380%</div>
+          <div class="stat-title">ROI médio para clientes</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="objectives section" id="objectives">
+    <div class="container">
+      <div class="objectives-intro">
+        <h2 class="section-title animate fade-in">Objetivos Estratégicos</h2>
+        <p class="animate fade-in delay-1">Cada evento que produzimos é cuidadosamente planejado para atingir objetivos
+          específicos que impactam diretamente nos resultados do seu negócio.</p>
+      </div>
+
+      <div class="objectives-grid">
+        <div class="objective-card animate fade-in">
+          <div class="objective-number">01</div>
+          <h3 class="objective-title">Conexão e Engajamento</h3>
+          <p class="objective-desc">Fortalecemos o vínculo emocional entre sua marca e seu público-alvo através de
+            experiências memoráveis e interativas.</p>
+        </div>
+
+        <div class="objective-card animate fade-in delay-1">
+          <div class="objective-number">02</div>
+          <h3 class="objective-title">Educação Estratégica</h3>
+          <p class="objective-desc">Estruturamos o conteúdo para educar seu público e demonstrar o valor real das suas
+            soluções, preparando-os para a decisão de compra.</p>
+        </div>
+
+        <div class="objective-card animate fade-in delay-2">
+          <div class="objective-number">03</div>
+          <h3 class="objective-title">Posicionamento Premium</h3>
+          <p class="objective-desc">Elevamos a percepção de valor da sua marca, estabelecendo-a como autoridade
+            incontestável em seu segmento.</p>
+        </div>
+
+        <div class="objective-card animate fade-in">
+          <div class="objective-number">04</div>
+          <h3 class="objective-title">Conversão de Alta Performance</h3>
+          <p class="objective-desc">Implementamos estratégias testadas e aprovadas para maximizar a conversão de
+            participantes em clientes de alto valor.</p>
+        </div>
+
+        <div class="objective-card animate fade-in delay-1">
+          <div class="objective-number">05</div>
+          <h3 class="objective-title">Relacionamento Estratégico</h3>
+          <p class="objective-desc">Criamos momentos de interação que aprofundam o relacionamento com potenciais
+            clientes, facilitando o processo de vendas.</p>
+        </div>
+
+        <div class="objective-card animate fade-in delay-2">
+          <div class="objective-number">06</div>
+          <h3 class="objective-title">ROI Expressivo</h3>
+          <p class="objective-desc">Garantimos retorno significativo sobre o investimento através de estratégias focadas
+            em resultados mensuráveis.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="process section section-dark" id="process">
+    <div class="container">
+      <div class="process-intro animate fade-in">
+        <h2 class="section-title">Nossa Metodologia</h2>
+        <p>Nosso processo foi refinado ao longo de anos de experiência para garantir eventos de sucesso e alto retorno.
+        </p>
+      </div>
+
+      <div class="process-steps">
+        <div class="process-line"></div>
+
+        <div class="process-step">
+          <div class="process-content animate fade-in-left">
+            <h3 class="process-title">Diagnóstico Estratégico</h3>
+            <p class="process-description">Analisamos profundamente seu negócio, público-alvo e objetivos para
+              desenvolver uma estratégia personalizada que maximiza seus resultados.</p>
+          </div>
+          <div class="process-number">1</div>
+        </div>
+
+        <div class="process-step">
+          <div class="process-content animate fade-in-right">
+            <h3 class="process-title">Planejamento Detalhado</h3>
+            <p class="process-description">Desenvolvemos um plano abrangente cobrindo todos os aspectos do evento:
+              logística, experiência, conteúdo e estratégia de vendas.</p>
+          </div>
+          <div class="process-number">2</div>
+        </div>
+
+        <div class="process-step">
+          <div class="process-content animate fade-in-left">
+            <h3 class="process-title">Pré-Produção Estratégica</h3>
+            <p class="process-description">Selecionamos e gerenciamos fornecedores, desenvolvemos materiais, e
+              implementamos campanhas de marketing para venda de ingressos.</p>
+          </div>
+          <div class="process-number">3</div>
+        </div>
+
+        <div class="process-step">
+          <div class="process-content animate fade-in-right">
+            <h3 class="process-title">Execução Impecável</h3>
+            <p class="process-description">Coordenamos meticulosamente todos os aspectos do evento, garantindo uma
+              experiência perfeita para você e seus participantes.</p>
+          </div>
+          <div class="process-number">4</div>
+        </div>
+
+        <div class="process-step">
+          <div class="process-content animate fade-in-left">
+            <h3 class="process-title">Estratégia de Conversão</h3>
+            <p class="process-description">Implementamos técnicas avançadas de vendas durante o evento para maximizar a
+              conversão de participantes em clientes.</p>
+          </div>
+          <div class="process-number">5</div>
+        </div>
+
+        <div class="process-step">
+          <div class="process-content animate fade-in-right">
+            <h3 class="process-title">Análise e Otimização</h3>
+            <p class="process-description">Avaliamos todos os resultados e métricas para identificar oportunidades de
+              melhoria e planejar as próximas ações estratégicas.</p>
+          </div>
+          <div class="process-number">6</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about section" id="about">
+    <div class="container">
+      <div class="about-intro">
+        <h2 class="section-title animate fade-in">Nossos Diferenciais</h2>
+        <p class="animate fade-in delay-1">O que torna A Fábrica a escolha ideal para produzir seu evento de alto
+          impacto no mercado digital.</p>
+      </div>
+
+      <div class="differentials-grid">
+        <div class="differential-card animate fade-in">
+          <div class="differential-icon">
+            <i class="fas fa-users-cog"></i>
+          </div>
+          <h3 class="differential-title">Gestão Integral de Equipes</h3>
+          <p class="differential-desc">Coordenamos todas as equipes envolvidas no seu evento, garantindo sincronia
+            perfeita e alinhamento com os objetivos estratégicos.</p>
+        </div>
+
+        <div class="differential-card animate fade-in delay-1">
+          <div class="differential-icon">
+            <i class="fas fa-file-contract"></i>
+          </div>
+          <h3 class="differential-title">Assessoria Jurídica Completa</h3>
+          <p class="differential-desc">Avaliamos e negociamos todos os contratos com fornecedores, garantindo segurança
+            jurídica e condições favoráveis para seu evento.</p>
+        </div>
+
+        <div class="differential-card animate fade-in delay-2">
+          <div class="differential-icon">
+            <i class="fas fa-magic"></i>
+          </div>
+          <h3 class="differential-title">Design de Experiências Exclusivas</h3>
+          <p class="differential-desc">Criamos jornadas memoráveis e imersivas que geram impacto emocional e fortalecem
+            o vínculo com sua marca.</p>
+        </div>
+
+        <div class="differential-card animate fade-in">
+          <div class="differential-icon">
+            <i class="fas fa-plane"></i>
+          </div>
+          <h3 class="differential-title">Logística Full Service</h3>
+          <p class="differential-desc">Gerenciamos toda a logística de transporte, hospedagem e deslocamento para
+            palestrantes e equipe, garantindo conforto e pontualidade.</p>
+        </div>
+
+        <div class="differential-card animate fade-in delay-1">
+          <div class="differential-icon">
+            <i class="fas fa-microphone"></i>
+          </div>
+          <h3 class="differential-title">Mentoria para Palestrantes</h3>
+          <p class="differential-desc">Preparamos e orientamos palestrantes para garantir apresentações de alto impacto,
+            alinhadas com a estratégia de conversão do evento.</p>
+        </div>
+
+        <div class="differential-card animate fade-in delay-2">
+          <div class="differential-icon">
+            <i class="fas fa-handshake"></i>
+          </div>
+          <h3 class="differential-title">Garantia de Resultados</h3>
+          <p class="differential-desc">Trabalhamos com foco total no ROI do seu evento, com métricas claras de sucesso e
+            acompanhamento constante dos resultados.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials section section-accent" id="testimonials">
+    <div class="container">
+      <div class="testimonials-intro">
+        <h2 class="section-title animate fade-in">O Que Nossos Clientes Dizem</h2>
+        <p class="animate fade-in delay-1">Conheça os resultados reais que entregamos para empresários e experts do
+          mercado digital.</p>
+      </div>
+
+      <div class="testimonial-slider">
+        <div class="testimonial-slide animate fade-in delay-2">
+          <div class="testimonial-card">
+            <div class="testimonial-content">
+              "A produção da A Fábrica para meu evento jurídico foi absolutamente impecável. Desde o planejamento
+              estratégico até a execução no dia, cada detalhe foi meticulosamente pensado. O resultado? Sala lotada,
+              participantes encantados e, o mais importante, um ROI de mais de 400% nas vendas de alto ticket. Já
+              estamos planejando a próxima edição!"
+            </div>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">
+                <div
+                  style="background-color: #dfd7c0; height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #010d36;">
+                  C1</div>
+              </div>
+              <div class="testimonial-info">
+                <h4>Advogado e Mentor</h4>
+                <p>Especialista em Marketing Jurídico</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-slide animate fade-in delay-3" style="display: none;">
+          <div class="testimonial-card">
+            <div class="testimonial-content">
+              "Contratar a A Fábrica foi a decisão mais estratégica que tomei para meu negócio em 2024. A equipe não
+              apenas produziu um evento visualmente deslumbrante, mas desenvolveu toda a estratégia de vendas que
+              resultou em mais de R$ 1,2 milhão em faturamento em apenas dois dias. A expertise deles em conversão de
+              alto ticket é simplesmente inigualável."
+            </div>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">
+                <div
+                  style="background-color: #dfd7c0; height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #010d36;">
+                  C2</div>
+              </div>
+              <div class="testimonial-info">
+                <h4>Infoprodutor</h4>
+                <p>Especialista em Finanças Pessoais</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-slide animate fade-in delay-4" style="display: none;">
+          <div class="testimonial-card">
+            <div class="testimonial-content">
+              "A experiência proporcionada pela A Fábrica superou todas as minhas expectativas. A equipe cuidou de
+              absolutamente tudo, desde a negociação com fornecedores até a estratégia de venda dos meus mentorias. O
+              resultado foi um evento que não apenas consolidou minha autoridade no mercado, mas também gerou um
+              faturamento recorde de mais de R$ 800 mil em vendas."
+            </div>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">
+                <div
+                  style="background-color: #dfd7c0; height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #010d36;">
+                  C3</div>
+              </div>
+              <div class="testimonial-info">
+                <h4>Empresário Digital</h4>
+                <p>CEO de Agência de Marketing</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slider-controls">
+        <div class="slider-dot active"></div>
+        <div class="slider-dot"></div>
+        <div class="slider-dot"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing section" id="pricing">
+    <div class="container">
+      <div class="pricing-intro">
+        <h2 class="section-title animate fade-in">Investimento</h2>
+        <p class="animate fade-in delay-1">Escolha o modelo de parceria que melhor se adapta às necessidades do seu
+          evento e objetivos de negócio.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <div class="pricing-card animate fade-in delay-2">
+          <div class="pricing-header">
+            <h3 class="pricing-title">Opção 1</h3>
+          </div>
+          <div class="pricing-content">
+            <div class="pricing-price">R$ 25.000</div>
+            <div class="pricing-details">+ 2% do faturamento do produto vendido no evento</div>
+
+            <ul class="pricing-features">
+              <li>Produção completa do evento</li>
+              <li>Consultoria estratégica</li>
+              <li>Gestão de todas as equipes</li>
+              <li>Design de experiências exclusivas</li>
+              <li>Avaliação e negociação de contratos</li>
+              <li>Gestão integral de fornecedores</li>
+              <li>Consultoria em vendas High Ticket</li>
+              <li>Mentoria para palestrantes</li>
+              <li>Análise pós-evento e insights estratégicos</li>
+            </ul>
+
+            <a href="#contact" class="btn" style="width: 100%;">Solicitar Proposta</a>
+          </div>
+        </div>
+
+        <div class="pricing-card popular animate fade-in delay-3">
+          <div class="popular-tag">Mais Popular</div>
+          <div class="pricing-header">
+            <h3 class="pricing-title">Opção 2</h3>
+          </div>
+          <div class="pricing-content">
+            <div class="pricing-price">R$ 20.000</div>
+            <div class="pricing-details">+ 5% do faturamento do produto vendido no evento</div>
+
+            <ul class="pricing-features">
+              <li>Produção completa do evento</li>
+              <li>Consultoria estratégica</li>
+              <li>Gestão de todas as equipes</li>
+              <li>Design de experiências exclusivas</li>
+              <li>Avaliação e negociação de contratos</li>
+              <li>Gestão integral de fornecedores</li>
+              <li>Consultoria em vendas High Ticket</li>
+              <li>Mentoria para palestrantes</li>
+              <li>Análise pós-evento e insights estratégicos</li>
+            </ul>
+
+            <a href="#contact" class="btn" style="width: 100%;">Solicitar Proposta</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 3rem;" class="animate fade-in delay-4">
+        <h3>Forma de Pagamento</h3>
+        <p style="max-width: 700px; margin: 1rem auto;">Valor fixo pago até a data do evento - à vista ou parcelado no
+          cartão (c/ juros da operadora de cartão)</p>
+        <p style="max-width: 700px; margin: 1rem auto;">Valor variável - a combinar em contrato de prestação do serviço
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq section section-accent" id="faq">
+    <div class="container">
+      <div class="faq-intro">
+        <h2 class="section-title animate fade-in">Perguntas Frequentes</h2>
+        <p class="animate fade-in delay-1">Tire suas principais dúvidas sobre nossos serviços de produção de eventos.
+        </p>
+      </div>
+
+      <div class="faq-container">
+        <div class="faq-item animate fade-in delay-2">
+          <div class="faq-question">
+            Qual o tempo mínimo para organizar um evento de sucesso?
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>Recomendamos um período mínimo de 60 a 90 dias para planejamento e execução adequados. Eventos com menos
+              tempo de preparo são possíveis, mas podem limitar algumas estratégias de divulgação e venda antecipada.
+              Quanto mais tempo tivermos para planejar, melhores serão os resultados.</p>
+          </div>
+        </div>
+
+        <div class="faq-item animate fade-in delay-2">
+          <div class="faq-question">
+            Como funciona a estratégia de vendas high ticket durante o evento?
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>Desenvolvemos uma estratégia personalizada baseada em seu produto/serviço e público-alvo. Isso inclui a
+              estruturação da oferta, definição do momento ideal de apresentação, preparação do pitch, e implementação
+              de gatilhos de escassez e urgência. Também orientamos sobre a formação e treinamento da equipe de vendas,
+              se necessário.</p>
+          </div>
+        </div>
+
+        <div class="faq-item animate fade-in delay-3">
+          <div class="faq-question">
+            Vocês trabalham com eventos híbridos (presencial + online)?
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>Sim, temos expertise em eventos híbridos que combinam a experiência presencial com transmissão online.
+              Essa modalidade permite ampliar significativamente o alcance do seu evento, mantendo a experiência
+              imersiva para os participantes presenciais e garantindo uma experiência de alta qualidade para a audiência
+              online.</p>
+          </div>
+        </div>
+
+        <div class="faq-item animate fade-in delay-3">
+          <div class="faq-question">
+            Qual a capacidade máxima de público que vocês já atenderam?
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>Já produzimos eventos para públicos de até 3.000 pessoas em formato presencial. Nossa estrutura permite
+              escalar conforme a necessidade, mantendo o padrão de qualidade e a experiência personalizada que são
+              marcas registradas dos nossos eventos.</p>
+          </div>
+        </div>
+
+        <div class="faq-item animate fade-in delay-4">
+          <div class="faq-question">
+            Como vocês garantem o ROI positivo para meu evento?
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>Trabalhamos com uma metodologia focada em resultados que inclui: definição clara de objetivos
+              financeiros, planejamento de preços e estratégia de ingressos, otimização da estrutura de custos,
+              implementação de estratégias comprovadas de vendas high ticket durante o evento, e criação de uma
+              experiência que facilita a conversão. Além disso, nossa remuneração variável está diretamente ligada ao
+              sucesso do seu evento, alinhando nossos interesses.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="guarantee-section section" id="guarantee">
+    <div class="container">
+      <div class="guarantee-card animate fade-in">
+        <div class="guarantee-content">
+          <div class="guarantee-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h3 class="guarantee-title">Compromisso com Resultados</h3>
+          <p class="guarantee-description">Na A Fábrica, acreditamos tanto no valor que entregamos que nosso modelo de
+            negócios está diretamente vinculado ao seu sucesso. Nossa remuneração variável só existe quando geramos
+            resultados reais para o seu evento.</p>
+          <p class="guarantee-description">Nossa metodologia foi testada e refinada nos maiores lançamentos do mercado
+            digital brasileiro, e estamos confiantes de que podemos superar suas expectativas e metas estabelecidas.</p>
+          <a href="#contact" class="btn btn-large">Garantir Minha Proposta Personalizada</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="cta">
+    <div class="cta-container">
+      <h2 class="cta-title animate fade-in">Pronto para Transformar seu Próximo Evento?</h2>
+      <p class="cta-subtitle animate fade-in delay-1">A Fábrica está pronta para ajudar seu negócio digital a alcançar
+        novos patamares através de um evento estratégico com execução impecável.</p>
+      <a href="#contact" class="btn btn-large btn-secondary animate fade-in delay-2">Solicitar Proposta Personalizada <i
+          class="fas fa-arrow-right btn-icon"></i></a>
+    </div>
+  </section>
+
+  <section class="contact section" id="contact">
+    <div class="container">
+      <div class="contact-intro">
+        <h2 class="section-title animate fade-in">Fale Conosco</h2>
+        <p class="animate fade-in delay-1">Entre em contato para discutirmos seu próximo evento e como podemos ajudar a
+          maximizar seus resultados.</p>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-form animate fade-in delay-2">
+          <div class="contact-form-header">
+            <h3>Solicite uma Proposta</h3>
+            <p>Preencha o formulário abaixo e nossa equipe entrará em contato em até 24 horas úteis.</p>
+          </div>
+
+          <form id="contactForm">
+            <div class="form-group">
+              <label for="name">Nome Completo*</label>
+              <input type="text" id="name" name="name" required placeholder="Seu nome completo">
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Profissional*</label>
+              <input type="email" id="email" name="email" required placeholder="seu@email.com">
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Telefone / WhatsApp*</label>
+              <input type="tel" id="phone" name="phone" required placeholder="(DDD) 00000-0000">
+            </div>
+
+            <div class="form-group">
+              <label for="company">Empresa / Marca</label>
+              <input type="text" id="company" name="company" placeholder="Nome da sua empresa ou marca">
+            </div>
+
+            <div class="form-group">
+              <label for="event">Tipo de Evento*</label>
+              <select id="event" name="event" required>
+                <option value="" selected disabled>Selecione o tipo de evento</option>
+                <option value="lançamento">Lançamento de Produto/Serviço</option>
+                <option value="imersão">Imersão/Workshop</option>
+                <option value="congresso">Congresso/Conferência</option>
+                <option value="certificação">Certificação/Formação</option>
+                <option value="outro">Outro (especificar na mensagem)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Detalhes do Projeto*</label>
+              <textarea id="message" name="message" required
+                placeholder="Conte-nos mais sobre seu evento, objetivo, data prevista e expectativa de público"></textarea>
+            </div>
+
+            <div class="form-submit">
+              <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar Solicitação</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="contact-info animate fade-in delay-3">
+          <div class="contact-info-header">
+            <h3>Informações de Contato</h3>
+            <p>Prefere falar diretamente conosco? Utilize um dos canais abaixo:</p>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <div class="contact-info-content">
+              <h4>Email</h4>
+              <a href="mailto:contato@afabrica.com.br">contato@afabrica.com.br</a>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="contact-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <div class="contact-info-content">
+              <h4>Telefone</h4>
+              <a href="tel:+5500000000000">(XX) XXXX-XXXX</a>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="contact-icon">
+              <i class="fab fa-whatsapp"></i>
+            </div>
+            <div class="contact-info-content">
+              <h4>WhatsApp</h4>
+              <a href="https://wa.me/5500000000000" target="_blank">(XX) XXXX-XXXX</a>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="contact-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="contact-info-content">
+              <h4>Endereço</h4>
+              <p>São Paulo, SP - Brasil</p>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="contact-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="contact-info-content">
+              <h4>Horário de Atendimento</h4>
+              <p>Segunda a Sexta: 9h às 18h</p>
+            </div>
+          </div>
+
+          <div class="social-links">
+            <a href="https://instagram.com/afabrica__" target="_blank" class="social-link">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" target="_blank" class="social-link">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" target="_blank" class="social-link">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" target="_blank" class="social-link">
+              <i class="fab fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <svg width="160" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg" class="footer-logo">
+            <path d="M400 40L65 700H735L400 40Z" fill="#fef9ef" />
+            <path d="M400 150L200 550H600L400 150Z" fill="#010d36" />
+            <path d="M400 290L300 490H500L400 290Z" fill="#fef9ef" />
+            <path d="M147 725L237 725L243 698L153 698L147 725Z" fill="#fef9ef" />
+          </svg>
+          <p class="footer-text">Construímos eventos de alto impacto que geram resultados expressivos para negócios
+            digitais. Mais de R$12 milhões gerados para nossos clientes.</p>
+          <div class="social-links">
+            <a href="https://instagram.com/afabrica__" target="_blank" class="social-link">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" target="_blank" class="social-link">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" target="_blank" class="social-link">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" target="_blank" class="social-link">
+              <i class="fab fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h4>Navegação</h4>
+          <ul class="footer-links">
+            <li><a href="#home"><i class="fas fa-chevron-right"></i> Início</a></li>
+            <li><a href="#services"><i class="fas fa-chevron-right"></i> Serviços</a></li>
+            <li><a href="#results"><i class="fas fa-chevron-right"></i> Resultados</a></li>
+            <li><a href="#objectives"><i class="fas fa-chevron-right"></i> Objetivos</a></li>
+            <li><a href="#about"><i class="fas fa-chevron-right"></i> Diferenciais</a></li>
+            <li><a href="#pricing"><i class="fas fa-chevron-right"></i> Investimento</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h4>Nossos Serviços</h4>
+          <ul class="footer-links">
+            <li><a href="#services"><i class="fas fa-chevron-right"></i> Produção de Eventos</a></li>
+            <li><a href="#services"><i class="fas fa-chevron-right"></i> Estratégia de Ingressos</a></li>
+            <li><a href="#services"><i class="fas fa-chevron-right"></i> Venda de Ingressos</a></li>
+            <li><a href="#services"><i class="fas fa-chevron-right"></i> Consultoria High Ticket</a></li>
+            <li><a href="#services"><i class="fas fa-chevron-right"></i> Design de Experiência</a></li>
+            <li><a href="#services"><i class="fas fa-chevron-right"></i> Gestão de Fornecedores</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h4>Contato</h4>
+          <ul class="footer-contact">
+            <li><i class="fas fa-envelope"></i> contato@afabrica.com.br</li>
+            <li><i class="fas fa-phone"></i> (XX) XXXX-XXXX</li>
+            <li><i class="fab fa-whatsapp"></i> (XX) XXXX-XXXX</li>
+            <li><i class="fas fa-map-marker-alt"></i> São Paulo, SP - Brasil</li>
+          </ul>
+          <div class="footer-newsletter">
+            <h4>Newsletter</h4>
+            <p>Receba dicas e novidades sobre eventos de alto impacto</p>
+            <form class="newsletter-form">
+              <input type="email" placeholder="Seu melhor email" required>
+              <button type="submit"><i class="fas fa-paper-plane"></i></button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-bottom">
+        <p class="footer-copyright">&copy; 2025 A Fábrica Marketing e Eventos. Todos os direitos reservados.</p>
+        <div class="footer-social">
+          <a href="https://instagram.com/afabrica__" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <a href="#home" class="back-to-top" id="backToTop">
+    <i class="fas fa-arrow-up"></i>
+  </a>
+
+  <div class="floating-cta" id="floatingCta">
+    <a href="#contact" class="floating-cta-btn">
+      <i class="fas fa-comment-dots"></i>
+    </a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Menu mobile toggle
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const navMenu = document.getElementById('navMenu');
+
+      if (mobileMenuBtn && navMenu) {
+        mobileMenuBtn.addEventListener('click', function () {
+          navMenu.classList.toggle('show');
+          mobileMenuBtn.classList.toggle('active');
+        });
+      }
+
+      // Header scroll effect
+      const header = document.getElementById('header');
+
+      window.addEventListener('scroll', function () {
+        if (window.scrollY > 100) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+      });
+
+      // Back to top button
+      const backToTop = document.getElementById('backToTop');
+
+      window.addEventListener('scroll', function () {
+        if (window.scrollY > 700) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      });
+
+      // Floating CTA
+      const floatingCta = document.getElementById('floatingCta');
+
+      window.addEventListener('scroll', function () {
+        if (window.scrollY > 800) {
+          floatingCta.style.display = 'block';
+        } else {
+          floatingCta.style.display = 'none';
+        }
+      });
+
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+
+          // Close mobile menu if open
+          if (navMenu.classList.contains('show')) {
+            navMenu.classList.remove('show');
+            mobileMenuBtn.classList.remove('active');
+          }
+
+          const targetId = this.getAttribute('href');
+          const targetElement = document.querySelector(targetId);
+
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 80,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+
+      // FAQ accordion
+      const faqItems = document.querySelectorAll('.faq-item');
+
+      faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+
+        question.addEventListener('click', () => {
+          item.classList.toggle('active');
+        });
+      });
+
+      // Testimonial slider
+      const sliderDots = document.querySelectorAll('.slider-dot');
+      const testimonialSlides = document.querySelectorAll('.testimonial-slide');
+
+      sliderDots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          // Remove active class from all dots and hide all slides
+          sliderDots.forEach(d => d.classList.remove('active'));
+          testimonialSlides.forEach(slide => slide.style.display = 'none');
+
+          // Add active class to clicked dot and show corresponding slide
+          dot.classList.add('active');
+          testimonialSlides[index].style.display = 'block';
+        });
+      });
+
+      // Auto-rotate testimonials
+      let currentSlide = 0;
+      const testimonialInterval = setInterval(() => {
+        currentSlide = (currentSlide + 1) % testimonialSlides.length;
+
+        sliderDots.forEach(d => d.classList.remove('active'));
+        testimonialSlides.forEach(slide => slide.style.display = 'none');
+
+        sliderDots[currentSlide].classList.add('active');
+        testimonialSlides[currentSlide].style.display = 'block';
+      }, 5000);
+
+      // Animation on scroll
+      const animateElements = document.querySelectorAll('.animate');
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = 1;
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      animateElements.forEach(element => {
+        element.style.opacity = 0;
+        observer.observe(element);
+      });
+
+      // Contact form
+      const contactForm = document.getElementById('contactForm');
+
+      if (contactForm) {
+        contactForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById('name').value;
+          const email = document.getElementById('email').value;
+          const phone = document.getElementById('phone').value;
+          const message = document.getElementById('message').value;
+
+          // Normally you would send this data to your server or a form handling service
+          // For now, we'll just show a success message
+
+          alert(`Obrigado por entrar em contato, ${name}! Sua solicitação foi recebida com sucesso. Nossa equipe entrará em contato em até 24 horas úteis com sua proposta personalizada.`);
+          contactForm.reset();
+        });
+      }
+
+      // Newsletter form
+      const newsletterForm = document.querySelector('.newsletter-form');
+
+      if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          const email = this.querySelector('input[type="email"]').value;
+
+          // Normally you would send this to your newsletter service
+          alert(`Obrigado por se inscrever em nossa newsletter! Você receberá nossas dicas e novidades no email: ${email}`);
+          this.reset();
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>
