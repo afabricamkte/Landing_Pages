@@ -3054,10 +3054,29 @@
           // Substitua 'YOUR_PHONE_NUMBER' pelo seu número de WhatsApp no formato internacional, sem o '+'
           const whatsappLink = `https://wa.me/556191258571?text=${whatsappMessage}`;
 
-          // Redirecione o usuário para o link do WhatsApp
-          window.location.href = whatsappLink;
+          // Enviar dados para o Google Sheets
+          fetch('https://script.google.com/a/macros/afabricamkte.com.br/s/AKfycbxVf0KcQfO_K4mhw2c_MEbHcJ5ULB3Jx-PXmk8sBYJoWBt0VQDNemsY8mHc01qJq3xJ-g/exec', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, email, phone, message })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.result === 'success') {
+              alert(`Obrigado por entrar em contato, ${name}! Sua solicitação foi recebida com sucesso. Nossa equipe entrará em contato em até 24 horas úteis com sua proposta personalizada.`);
+              contactForm.reset();
+            } else {
+              alert('Ocorreu um erro ao enviar sua solicitação. Por favor, tente novamente.');
+            }
+          })
+          .catch(error => {
+            alert('Ocorreu um erro ao enviar sua solicitação. Por favor, tente novamente.');
+          });
 
-
+        // Abrir o link do WhatsApp em uma nova página
+        window.open(whatsappLink, '_blank');
           alert(`Obrigado por entrar em contato, ${name}! Sua solicitação foi recebida com sucesso. Nossa equipe entrará em contato em até 24 horas úteis com sua proposta personalizada.`);
           contactForm.reset();
         });
