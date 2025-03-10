@@ -3048,8 +3048,15 @@
           const phone = document.getElementById('phone').value;
           const message = document.getElementById('message').value;
 
-          // Normally you would send this data to your server or a form handling service
-          // For now, we'll just show a success message
+          // Crie a mensagem para enviar via WhatsApp
+          const whatsappMessage = `Nome: ${name}%0AEmail: ${email}%0ATelefone: ${phone}%0AMensagem: ${message}`;
+
+          // Substitua 'YOUR_PHONE_NUMBER' pelo seu número de WhatsApp no formato internacional, sem o '+'
+          const whatsappLink = `https://wa.me/556191258571?text=${whatsappMessage}`;
+
+          // Redirecione o usuário para o link do WhatsApp
+          window.location.href = whatsappLink;
+
 
           alert(`Obrigado por entrar em contato, ${name}! Sua solicitação foi recebida com sucesso. Nossa equipe entrará em contato em até 24 horas úteis com sua proposta personalizada.`);
           contactForm.reset();
