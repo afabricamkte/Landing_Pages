@@ -1,4 +1,4 @@
-<!-- index.html - Página pública do quiz -->
+<!-- quiz.html - Página pública do quiz -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -539,8 +539,8 @@
                                 <div class="question-container">
                                     <div class="question">${question.question}</div>
                                     <div class="options-container">
-                                        ${question.options.map((option, index) => `
-                                            <div class="option" data-index="${index}">
+                                        ${question.options.map((option, quiz) => `
+                                            <div class="option" data-quiz="${quiz}">
                                                 ${option.emoji ? `<div class="option-emoji">${option.emoji}</div>` : ''}
                                                 <div class="option-text">${option.text}</div>
                                             </div>
@@ -555,11 +555,11 @@
                                 <div class="question-container">
                                     <div class="question">${question.question}</div>
                                     <div class="thumbs-container">
-                                        <div class="thumbs-option" data-index="0">
+                                        <div class="thumbs-option" data-quiz="0">
                                             <div class="thumbs-icon">👍</div>
                                             <div class="thumbs-text">${question.options[0].text || 'Concordo'}</div>
                                         </div>
-                                        <div class="thumbs-option" data-index="1">
+                                        <div class="thumbs-option" data-quiz="1">
                                             <div class="thumbs-icon">👎</div>
                                             <div class="thumbs-text">${question.options[1].text || 'Discordo'}</div>
                                         </div>
@@ -579,8 +579,8 @@
                                         }
                                     </div>
                                     <div class="options-container">
-                                        ${question.options.map((option, index) => `
-                                            <div class="option" data-index="${index}">
+                                        ${question.options.map((option, quiz) => `
+                                            <div class="option" data-quiz="${quiz}">
                                                 ${option.emoji ? `<div class="option-emoji">${option.emoji}</div>` : ''}
                                                 <div class="option-text">${option.text}</div>
                                             </div>
@@ -598,8 +598,8 @@
                                         <img src="${question.mediaUrl}" alt="Quiz Image">
                                     </div>
                                     <div class="options-container">
-                                        ${question.options.map((option, index) => `
-                                            <div class="option" data-index="${index}">
+                                        ${question.options.map((option, quiz) => `
+                                            <div class="option" data-quiz="${quiz}">
                                                 ${option.emoji ? `<div class="option-emoji">${option.emoji}</div>` : ''}
                                                 <div class="option-text">${option.text}</div>
                                             </div>
@@ -616,7 +616,7 @@
                     if (question.type === 'thumbs') {
                         document.querySelectorAll('.thumbs-option').forEach(option => {
                             option.addEventListener('click', function() {
-                                const index = this.getAttribute('data-index');
+                                const quiz = this.getAttribute('data-quiz');
                                 
                                 // Remove seleção de todas as opções
                                 document.querySelectorAll('.thumbs-option').forEach(opt => {
@@ -627,7 +627,7 @@
                                 this.classList.add('selected');
                                 
                                 // Armazena a resposta
-                                answers[currentQuestion] = index;
+                                answers[currentQuestion] = quiz;
                                 
                                 // Mostra o botão de próximo
                                 document.getElementById('quiz-content').innerHTML += `
@@ -640,7 +640,7 @@
                     } else {
                         document.querySelectorAll('.option').forEach(option => {
                             option.addEventListener('click', function() {
-                                const index = this.getAttribute('data-index');
+                                const quiz = this.getAttribute('data-quiz');
                                 
                                 // Remove seleção de todas as opções
                                 document.querySelectorAll('.option').forEach(opt => {
@@ -651,7 +651,7 @@
                                 this.classList.add('selected');
                                 
                                 // Armazena a resposta
-                                answers[currentQuestion] = index;
+                                answers[currentQuestion] = quiz;
                                 
                                 // Mostra o botão de próximo
                                 document.getElementById('quiz-content').innerHTML += `
