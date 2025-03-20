@@ -1,4 +1,3 @@
-<!-- index.html - Página pública do quiz -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -448,6 +447,13 @@
                 font-size: 16px;
             }
         }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
     </style>
 </head>
 <body>
@@ -472,9 +478,18 @@
             let answers = [];
             let userName = "";
 
-            // Função para carregar os dados do quiz de um arquivo JSON
+            // Função para carregar os dados do quiz de um arquivo JSON ou do localStorage
             async function loadQuizData() {
                 try {
+                    // Primeiro tenta carregar do localStorage (útil para visualização de preview)
+                    const savedData = localStorage.getItem('quizData');
+                    if (savedData) {
+                        quizData = JSON.parse(savedData);
+                        initQuiz();
+                        return;
+                    }
+                    
+                    // Se não encontrou no localStorage, tenta carregar do arquivo JSON
                     const response = await fetch('quiz-data.json');
                     
                     if (!response.ok) {
