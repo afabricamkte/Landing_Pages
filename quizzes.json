@@ -1,0 +1,350 @@
+[
+    {
+      "id": "quiz1",
+      "title": "Que tipo de investidor você é?",
+      "description": "Descubra qual é o seu perfil de investidor e quais produtos financeiros combinam mais com você.",
+      "logo": "https://via.placeholder.com/200x100?text=InvestQuiz",
+      "thumbnail": "https://via.placeholder.com/400x300?text=Perfil+de+Investidor",
+      "questions": [
+        {
+          "text": "Qual é o seu objetivo principal ao investir?",
+          "mediaType": "image",
+          "media": "https://via.placeholder.com/600x300?text=Objetivos+Financeiros",
+          "options": [
+            {
+              "text": "Preservar meu patrimônio, mesmo com retorno baixo",
+              "resultKey": "conservador"
+            },
+            {
+              "text": "Crescimento moderado com riscos limitados",
+              "resultKey": "moderado"
+            },
+            {
+              "text": "Maximizar retornos, mesmo com riscos maiores",
+              "resultKey": "arrojado"
+            },
+            {
+              "text": "Não tenho certeza, estou começando agora",
+              "resultKey": "iniciante"
+            }
+          ]
+        },
+        {
+          "text": "Como você reage quando suas aplicações caem 10% em uma semana?",
+          "mediaType": null,
+          "media": null,
+          "options": [
+            {
+              "text": "Fico muito preocupado e penso em resgatar tudo",
+              "resultKey": "conservador"
+            },
+            {
+              "text": "Fico um pouco ansioso, mas espero recuperar",
+              "resultKey": "moderado"
+            },
+            {
+              "text": "Vejo como oportunidade para investir mais",
+              "resultKey": "arrojado"
+            },
+            {
+              "text": "Entro em pânico e não sei o que fazer",
+              "resultKey": "iniciante"
+            }
+          ]
+        },
+        {
+          "text": "Por quanto tempo você pretende manter seus investimentos?",
+          "mediaType": "video",
+          "media": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "options": [
+            {
+              "text": "Menos de 1 ano",
+              "resultKey": "conservador"
+            },
+            {
+              "text": "Entre 1 e 3 anos",
+              "resultKey": "moderado"
+            },
+            {
+              "text": "Mais de 5 anos",
+              "resultKey": "arrojado"
+            },
+            {
+              "text": "Não sei ainda",
+              "resultKey": "iniciante"
+            }
+          ]
+        },
+        {
+          "text": "Qual a porcentagem da sua renda você consegue investir mensalmente?",
+          "mediaType": null,
+          "media": null,
+          "options": [
+            {
+              "text": "Menos de 10%",
+              "resultKey": "iniciante"
+            },
+            {
+              "text": "Entre 10% e 20%",
+              "resultKey": "moderado"
+            },
+            {
+              "text": "Entre 20% e 30%",
+              "resultKey": "arrojado"
+            },
+            {
+              "text": "Mais de 30%",
+              "resultKey": "arrojado"
+            }
+          ]
+        },
+        {
+          "text": "Com quais destes investimentos você tem experiência?",
+          "mediaType": "image",
+          "media": "https://via.placeholder.com/600x300?text=Tipos+de+Investimentos",
+          "options": [
+            {
+              "text": "Apenas poupança e/ou CDBs",
+              "resultKey": "conservador"
+            },
+            {
+              "text": "Fundos de investimento e títulos públicos",
+              "resultKey": "moderado"
+            },
+            {
+              "text": "Ações, FIIs e outros ativos de renda variável",
+              "resultKey": "arrojado"
+            },
+            {
+              "text": "Nenhum, estou começando agora",
+              "resultKey": "iniciante"
+            }
+          ]
+        }
+      ],
+      "results": {
+        "conservador": {
+          "title": "Perfil Conservador",
+          "description": "Você prioriza a segurança dos seus investimentos e prefere opções com baixo risco, mesmo que o retorno seja menor. Ideal para quem busca preservar o patrimônio.",
+          "image": "https://via.placeholder.com/600x400?text=Perfil+Conservador",
+          "product": {
+            "name": "Consultoria Financeira para Investidores Conservadores",
+            "description": "Nosso serviço de consultoria personalizada ajuda você a construir uma carteira segura e alinhada com seu perfil conservador, maximizando retornos dentro da sua zona de conforto.",
+            "price": 197.00,
+            "image": "https://via.placeholder.com/300x200?text=Consultoria+Conservadora",
+            "url": "https://example.com/produtos/consultoria-conservadora"
+          }
+        },
+        "moderado": {
+          "title": "Perfil Moderado",
+          "description": "Você busca um equilíbrio entre segurança e retorno, aceitando alguns riscos calculados para melhorar seus rendimentos. Ideal para investimentos de médio prazo.",
+          "image": "https://via.placeholder.com/600x400?text=Perfil+Moderado",
+          "product": {
+            "name": "Curso de Diversificação de Investimentos",
+            "description": "Aprenda a construir uma carteira diversificada com o equilíbrio perfeito entre segurança e rentabilidade, ideal para o seu perfil moderado.",
+            "price": 247.00,
+            "image": "https://via.placeholder.com/300x200?text=Curso+Diversificação",
+            "url": "https://example.com/produtos/curso-diversificacao"
+          }
+        },
+        "arrojado": {
+          "title": "Perfil Arrojado",
+          "description": "Você tem alta tolerância a riscos e busca maximizar seus retornos no longo prazo. Está disposto a enfrentar volatilidade em busca de ganhos expressivos.",
+          "image": "https://via.placeholder.com/600x400?text=Perfil+Arrojado",
+          "product": {
+            "name": "Mentoria para Investidores Avançados",
+            "description": "Mentoria exclusiva com especialistas em renda variável para maximizar os retornos da sua carteira e aproveitar as melhores oportunidades do mercado.",
+            "price": 397.00,
+            "image": "https://via.placeholder.com/300x200?text=Mentoria+Avançada",
+            "url": "https://example.com/produtos/mentoria-avancada"
+          }
+        },
+        "iniciante": {
+          "title": "Perfil Iniciante",
+          "description": "Você está começando sua jornada no mundo dos investimentos e precisa de conhecimento básico antes de tomar decisões mais complexas.",
+          "image": "https://via.placeholder.com/600x400?text=Perfil+Iniciante",
+          "product": {
+            "name": "Curso Primeiros Passos em Investimentos",
+            "description": "Aprenda do zero como construir seu patrimônio com segurança. Curso completo com suporte para iniciantes que desejam entender o mercado financeiro.",
+            "price": 147.00,
+            "image": "https://via.placeholder.com/300x200?text=Curso+Iniciante",
+            "url": "https://example.com/produtos/curso-iniciante"
+          }
+        }
+      }
+    },
+    {
+      "id": "quiz2",
+      "title": "Descubra seu perfil financeiro",
+      "description": "Entenda seu comportamento financeiro e conheça estratégias personalizadas para atingir seus objetivos.",
+      "logo": "https://via.placeholder.com/200x100?text=FinQuiz",
+      "thumbnail": "https://via.placeholder.com/400x300?text=Perfil+Financeiro",
+      "questions": [
+        {
+          "text": "Como você descreveria sua relação com dinheiro?",
+          "mediaType": null,
+          "media": null,
+          "options": [
+            {
+              "text": "Gasto tudo que ganho e às vezes até mais",
+              "resultKey": "gastador"
+            },
+            {
+              "text": "Economizo apenas o que sobra no fim do mês",
+              "resultKey": "equilibrado"
+            },
+            {
+              "text": "Tenho um orçamento rigoroso e sempre economizo primeiro",
+              "resultKey": "poupador"
+            },
+            {
+              "text": "Estou sempre endividado e luto para equilibrar as contas",
+              "resultKey": "endividado"
+            }
+          ]
+        },
+        {
+          "text": "Qual é o seu maior objetivo financeiro atualmente?",
+          "mediaType": "image",
+          "media": "https://via.placeholder.com/600x300?text=Objetivos+Financeiros",
+          "options": [
+            {
+              "text": "Sair das dívidas",
+              "resultKey": "endividado"
+            },
+            {
+              "text": "Construir uma reserva de emergência",
+              "resultKey": "equilibrado"
+            },
+            {
+              "text": "Investir para aposentadoria",
+              "resultKey": "poupador"
+            },
+            {
+              "text": "Conseguir bancar meu estilo de vida atual",
+              "resultKey": "gastador"
+            }
+          ]
+        },
+        {
+          "text": "Como você reagiria a um imprevisto financeiro de R$ 5.000?",
+          "mediaType": null,
+          "media": null,
+          "options": [
+            {
+              "text": "Tenho reserva para cobrir tranquilamente",
+              "resultKey": "poupador"
+            },
+            {
+              "text": "Conseguiria pagar, mas ficaria apertado",
+              "resultKey": "equilibrado"
+            },
+            {
+              "text": "Teria que recorrer a crédito ou empréstimos",
+              "resultKey": "gastador"
+            },
+            {
+              "text": "Seria impossível pagar, já estou endividado",
+              "resultKey": "endividado"
+            }
+          ]
+        },
+        {
+          "text": "Você costuma acompanhar seus gastos mensais?",
+          "mediaType": "video",
+          "media": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "options": [
+            {
+              "text": "Sim, tenho planilha ou app e faço controle rigoroso",
+              "resultKey": "poupador"
+            },
+            {
+              "text": "Acompanho de forma mais geral, sem muito detalhe",
+              "resultKey": "equilibrado"
+            },
+            {
+              "text": "Só olho o saldo da conta e fatura do cartão no final",
+              "resultKey": "gastador"
+            },
+            {
+              "text": "Evito olhar as contas, me causa ansiedade",
+              "resultKey": "endividado"
+            }
+          ]
+        },
+        {
+          "text": "Qual porcentagem da sua renda você destina para investimentos?",
+          "mediaType": null,
+          "media": null,
+          "options": [
+            {
+              "text": "Mais de 20%",
+              "resultKey": "poupador"
+            },
+            {
+              "text": "Entre 10% e 20%",
+              "resultKey": "equilibrado"
+            },
+            {
+              "text": "Menos de 10%",
+              "resultKey": "gastador"
+            },
+            {
+              "text": "Nada, não sobra dinheiro para investir",
+              "resultKey": "endividado"
+            }
+          ]
+        }
+      ],
+      "results": {
+        "poupador": {
+          "title": "Perfil Poupador",
+          "description": "Você tem excelente disciplina financeira e prioriza a segurança e o futuro. Talvez precise encontrar um equilíbrio para também aproveitar o presente.",
+          "image": "https://via.placeholder.com/600x400?text=Perfil+Poupador",
+          "product": {
+            "name": "Curso Avançado de Investimentos",
+            "description": "Leve seus investimentos para o próximo nível. Aprenda estratégias avançadas para maximizar seus rendimentos com segurança.",
+            "price": 297.00,
+            "image": "https://via.placeholder.com/300x200?text=Curso+Avançado",
+            "url": "https://example.com/produtos/curso-avancado"
+          }
+        },
+        "equilibrado": {
+          "title": "Perfil Equilibrado",
+          "description": "Você mantém um bom equilíbrio entre aproveitar o presente e planejar o futuro. Com alguns ajustes, pode otimizar ainda mais sua vida financeira.",
+          "image": "https://via.placeholder.com/600x400?text=Perfil+Equilibrado",
+          "product": {
+            "name": "Consultoria de Planejamento Financeiro",
+            "description": "Otimize sua vida financeira com um planejamento personalizado que equilibra seus objetivos de curto, médio e longo prazo.",
+            "price": 247.00,
+            "image": "https://via.placeholder.com/300x200?text=Consultoria+Financeira",
+            "url": "https://example.com/produtos/consultoria-financeira"
+          }
+        },
+        "gastador": {
+          "title": "Perfil Gastador",
+          "description": "Você prioriza aproveitar o presente, mas isso pode comprometer seu futuro financeiro. Com pequenos ajustes, pode encontrar mais equilíbrio.",
+          "image": "https://via.placeholder.com/600x400?text=Perfil+Gastador",
+          "product": {
+            "name": "Programa de Controle Financeiro",
+            "description": "Aprenda a controlar seus gastos sem abrir mão da qualidade de vida. Método prático para reorganizar suas finanças em 60 dias.",
+            "price": 197.00,
+            "image": "https://via.placeholder.com/300x200?text=Programa+Controle",
+            "url": "https://example.com/produtos/controle-financeiro"
+          }
+        },
+        "endividado": {
+          "title": "Perfil Endividado",
+          "description": "Você está enfrentando desafios financeiros que precisam ser resolvidos. Com as estratégias certas, é possível recuperar o controle das suas finanças.",
+          "image": "https://via.placeholder.com/600x400?text=Perfil+Endividado",
+          "product": {
+            "name": "Programa Saindo das Dívidas",
+            "description": "Método comprovado para sair das dívidas em menos tempo, reorganizar suas finanças e construir uma base sólida para seu futuro.",
+            "price": 147.00,
+            "image": "https://via.placeholder.com/300x200?text=Programa+Dívidas",
+            "url": "https://example.com/produtos/saindo-das-dividas"
+          }
+        }
+      }
+    }
+  ]

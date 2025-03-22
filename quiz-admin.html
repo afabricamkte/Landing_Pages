@@ -3,1927 +3,1482 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administração do Quiz</title>
+    <title>Painel Administrativo de Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #1e293b;
-            --secondary-color: #0f172a;
-            --accent-color: #3b82f6;
-            --text-color: #ffffff;
-            --text-secondary: #94a3b8;
-            --success-color: #22c55e;
-            --warning-color: #ef4444;
-            --card-bg: #1e293b;
-            --input-bg: #334155;
-            --border-color: #475569;
+            --primary-color: #4f2d7f;
+            --secondary-color: #f0ad4e;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        
         body {
-            background-color: var(--secondary-color);
-            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
-
-        #app {
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 20px;
-            flex-grow: 1;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .header h1 {
-            font-size: 24px;
-            color: var(--text-color);
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--accent-color);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .logout-btn {
-            background-color: transparent;
-            color: var(--text-secondary);
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            color: var(--text-color);
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .container {
-            display: flex;
-            gap: 20px;
-        }
-
+        
         .sidebar {
-            width: 250px;
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            padding: 20px;
-            height: fit-content;
-        }
-
-        .main-content {
-            flex-grow: 1;
-        }
-
-        .navigation {
-            list-style: none;
-        }
-
-        .nav-item {
-            margin-bottom: 10px;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            border-radius: 6px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--text-color);
-        }
-
-        .nav-link.active {
-            background-color: var(--accent-color);
+            background-color: var(--dark-bg);
             color: white;
-        }
-
-        .nav-icon {
-            font-size: 18px;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .card-header {
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            font-size: 16px;
-        }
-
-        .form-input[type="color"] {
-            height: 45px;
-            padding: 5px;
-        }
-
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 20px;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-        }
-
-        .btn-primary {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #2563eb;
-        }
-
-        .btn-secondary {
-            background-color: transparent;
-            border: 1px solid var(--accent-color);
-            color: var(--accent-color);
-        }
-
-        .btn-secondary:hover {
-            background-color: rgba(59, 130, 246, 0.1);
-        }
-
-        .btn-danger {
-            background-color: var(--warning-color);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background-color: #dc2626;
-        }
-
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 14px;
-        }
-
-        .btn-icon {
-            padding: 8px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table th, .table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .table th {
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .table-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .badge-success {
-            background-color: rgba(34, 197, 94, 0.2);
-            color: var(--success-color);
-        }
-
-        .badge-warning {
-            background-color: rgba(234, 88, 12, 0.2);
-            color: #f97316;
-        }
-
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 30px;
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .login-logo {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 28px;
-            color: var(--accent-color);
-            font-weight: bold;
-        }
-
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-        }
-
-        .alert-danger {
-            background-color: rgba(239, 68, 68, 0.2);
-            color: var(--warning-color);
-        }
-
-        .alert-success {
-            background-color: rgba(34, 197, 94, 0.2);
-            color: var(--success-color);
-        }
-
-        .option-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-
-        .option-emoji {
-            width: 60px;
-        }
-
-        .option-text {
-            flex-grow: 1;
-        }
-
-        .remove-btn {
-            background-color: transparent;
-            color: var(--warning-color);
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        .add-option-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background-color: transparent;
-            border: 1px dashed var(--border-color);
-            color: var(--text-secondary);
-            padding: 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .add-option-btn:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: var(--text-color);
-        }
-
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 20px;
-        }
-
-        .tab {
-            padding: 12px 20px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .tab:hover {
-            color: var(--text-color);
-        }
-
-        .tab.active {
-            color: var(--accent-color);
-            border-bottom: 2px solid var(--accent-color);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .preview-container {
-            width: 100%;
-            height: 500px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .preview-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .device-selector {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            gap: 10px;
-        }
-
-        .device-btn {
-            padding: 8px 15px;
-            border-radius: 6px;
-            background-color: transparent;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .device-btn:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: var(--text-color);
-        }
-
-        .device-btn.active {
-            background-color: var(--accent-color);
-            color: white;
-            border-color: var(--accent-color);
-        }
-
-        /* Estilos para a visualização mobile */
-        .preview-mobile {
-            max-width: 375px;
-            margin: 0 auto;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
+            min-height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 100;
+            width: 250px;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 20px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-header h3 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        
+        .sidebar-menu {
+            padding: 0;
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .sidebar-menu li a {
+            display: block;
+            padding: 15px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-menu li a:hover, .sidebar-menu li a.active {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: var(--primary-color);
+        }
+        
+        .sidebar-menu li a i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .main-content.expanded {
+            margin-left: 0;
+        }
+        
+        .toggle-sidebar {
+            display: none;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            font-weight: 600;
+            padding: 15px 20px;
+            border-top-left-radius: 10px !important;
+            border-top-right-radius: 10px !important;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #3d2162;
+            border-color: #3d2162;
+        }
+        
+        .btn-warning {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .modal-content {
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            padding: 20px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .modal-title {
-            font-size: 18px;
+            background-color: var(--primary-color);
+            color: white;
             font-weight: 600;
         }
-
-        .modal-close {
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 24px;
-            cursor: pointer;
+        
+        .table-responsive {
+            overflow-x: auto;
         }
-
-        .modal-close:hover {
-            color: var(--warning-color);
+        
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
         }
-
-        /* Estilos para o toggle */
-        .toggle-container {
-            display: flex;
-            align-items: center;
+        
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
-
-        .toggle-label {
-            margin-right: 10px;
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
         }
-
-        .toggle {
+        
+        .login-logo img {
+            max-width: 150px;
+        }
+        
+        .login-card {
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .custom-control-input:checked ~ .custom-control-label::before {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        /* Estilos para editor de quiz */
+        .question-card {
+            margin-bottom: 30px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
             position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
         }
-
-        .toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
+        
+        .question-handle {
+            cursor: move;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+            margin-bottom: 10px;
         }
-
-        .toggle-slider {
+        
+        .option-row {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        .remove-question, .remove-option {
             position: absolute;
+            top: 10px;
+            right: 10px;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--input-bg);
-            transition: .4s;
-            border-radius: 24px;
+            color: var(--danger-color);
         }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
+        
+        .result-card {
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
         }
-
-        input:checked + .toggle-slider {
-            background-color: var(--accent-color);
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(26px);
-        }
-
-        /* Responsivo */
-        @media (max-width: 992px) {
-            .container {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-            }
-        }
-
+        
+        /* Responsividade */
         @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
+            .sidebar {
+                margin-left: -250px;
             }
             
-            .user-info {
-                margin-left: auto;
+            .sidebar.active {
+                margin-left: 0;
             }
             
-            .form-group {
-                margin-bottom: 15px;
+            .main-content {
+                margin-left: 0;
             }
             
-            .card-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
+            .toggle-sidebar {
+                display: block;
             }
         }
     </style>
 </head>
 <body>
-    <div id="app">
-        <!-- Login Container (exibido inicialmente) -->
-        <div id="login-container" class="login-container">
-            <div class="login-logo">Quiz Admin</div>
-            <div id="login-alert" class="alert alert-danger" style="display: none;">
-                Usuário ou senha incorretos.
+    <!-- Tela de Login -->
+    <div id="login-screen" class="container">
+        <div class="login-container">
+            <div class="login-logo">
+                <h2>Admin do Quiz</h2>
+                <p>Painel de Gerenciamento</p>
             </div>
-            <form id="login-form" class="login-form">
-                <div class="form-group">
-                    <label for="username" class="form-label">Usuário</label>
-                    <input type="text" id="username" class="form-input" placeholder="Digite seu usuário">
+            
+            <div class="card login-card">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-4">Login</h4>
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Senha</label>
+                            <input type="password" class="form-control" id="password" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember-me">
+                            <label class="form-check-label" for="remember-me">Lembrar-me</label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Entrar</button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <span id="login-error" class="text-danger" style="display: none;">Credenciais inválidas. Tente novamente.</span>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label for="password" class="form-label">Senha</label>
-                    <input type="password" id="password" class="form-input" placeholder="Digite sua senha">
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
-            </form>
+            </div>
         </div>
-
-        <!-- Admin Dashboard (inicialmente oculto) -->
-        <div id="admin-dashboard" style="display: none;">
-            <div class="header">
-                <div class="logo">Quiz Admin</div>
-                <div class="user-info">
-                    <div class="user-avatar" id="user-avatar">A</div>
-                    <div class="user-name" id="user-name">Admin</div>
-                    <button id="logout-btn" class="logout-btn">Sair</button>
-                </div>
+    </div>
+    
+    <!-- Painel Admin (Inicialmente escondido) -->
+    <div id="admin-panel" style="display: none;">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>Painel Admin</h3>
             </div>
-
-            <div class="container">
-                <div class="sidebar">
-                    <ul class="navigation">
-                        <li class="nav-item">
-                            <a href="#dashboard" class="nav-link active" data-section="dashboard">
-                                <span class="nav-icon">📊</span>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#quiz" class="nav-link" data-section="quiz">
-                                <span class="nav-icon">📝</span>
-                                <span>Configurações do Quiz</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#questions" class="nav-link" data-section="questions">
-                                <span class="nav-icon">❓</span>
-                                <span>Perguntas</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#results" class="nav-link" data-section="results">
-                                <span class="nav-icon">🎯</span>
-                                <span>Resultados</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#preview" class="nav-link" data-section="preview">
-                                <span class="nav-icon">👁️</span>
-                                <span>Visualizar</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#export" class="nav-link" data-section="export">
-                                <span class="nav-icon">💾</span>
-                                <span>Exportar/Importar</span>
-                            </a>
-                        </li>
-                    </ul>
+            
+            <ul class="sidebar-menu">
+                <li><a href="#dashboard" class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#quizzes" data-section="quizzes"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                <li><a href="#users" data-section="users"><i class="fas fa-users"></i> Usuários</a></li>
+                <li><a href="#settings" data-section="settings"><i class="fas fa-cog"></i> Configurações</a></li>
+                <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+            </ul>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <button class="btn btn-primary toggle-sidebar mb-3">
+                <i class="fas fa-bars"></i> Menu
+            </button>
+            
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="mb-4">Dashboard</h2>
+                    </div>
                 </div>
-
-                <div class="main-content">
-                    <!-- Seção do Dashboard -->
-                    <div id="dashboard-section" class="section-content">
+                
+                <div class="row">
+                    <div class="col-md-3 mb-4">
                         <div class="card">
-                            <div class="card-header">
-                                <h2 class="card-title">Dashboard</h2>
-                            </div>
-                            <p>Bem-vindo ao painel de administração do Quiz. Use a navegação à esquerda para gerenciar seu quiz.</p>
-                            
-                            <div style="margin-top: 20px;">
-                                <h3 style="margin-bottom: 10px;">Resumo</h3>
-                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
-                                    <div style="background-color: rgba(59, 130, 246, 0.2); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; align-items: center;">
-                                        <span style="font-size: 36px; font-weight: bold;" id="questions-count">0</span>
-                                        <span>Perguntas</span>
-                                    </div>
-                                    <div style="background-color: rgba(34, 197, 94, 0.2); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; align-items: center;">
-                                        <span style="font-size: 36px; font-weight: bold;" id="completions-count">0</span>
-                                        <span>Conclusões</span>
-                                    </div>
-                                    <div style="background-color: rgba(234, 88, 12, 0.2); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; align-items: center;">
-                                        <span style="font-size: 36px; font-weight: bold;" id="conversion-rate">0%</span>
-                                        <span>Taxa de Conversão</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div style="margin-top: 30px;">
-                                <h3 style="margin-bottom: 10px;">Ações Rápidas</h3>
-                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
-                                    <button class="btn btn-primary" onclick="document.querySelector('[data-section=\'questions\']').click()">Gerenciar Perguntas</button>
-                                    <button class="btn btn-secondary" onclick="document.querySelector('[data-section=\'preview\']').click()">Visualizar Quiz</button>
-                                    <button class="btn btn-secondary" onclick="document.querySelector('[data-section=\'export\']').click()">Exportar Quiz</button>
-                                </div>
+                            <div class="card-body text-center">
+                                <h1 class="display-4" id="total-quizzes">0</h1>
+                                <p class="text-muted">Total de Quizzes</p>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Seção de Configurações do Quiz -->
-                    <div id="quiz-section" class="section-content" style="display: none;">
+                    
+                    <div class="col-md-3 mb-4">
                         <div class="card">
-                            <div class="card-header">
-                                <h2 class="card-title">Configurações do Quiz</h2>
+                            <div class="card-body text-center">
+                                <h1 class="display-4" id="total-users">0</h1>
+                                <p class="text-muted">Usuários Cadastrados</p>
                             </div>
-                            <form id="quiz-form">
-                                <div class="form-group">
-                                    <label for="quiz-title" class="form-label">Título do Quiz</label>
-                                    <input type="text" id="quiz-title" class="form-input" placeholder="Digite o título do quiz">
-                                </div>
-                                <div class="form-group">
-                                    <label for="quiz-subtitle" class="form-label">Subtítulo do Quiz</label>
-                                    <input type="text" id="quiz-subtitle" class="form-input" placeholder="Digite o subtítulo do quiz">
-                                </div>
-                                <div class="form-group">
-                                    <label for="primary-color" class="form-label">Cor Principal</label>
-                                    <input type="color" id="primary-color" class="form-input" value="#3b82f6">
-                                </div>
-                                <div class="form-group">
-                                    <label for="secondary-color" class="form-label">Cor Secundária</label>
-                                    <input type="color" id="secondary-color" class="form-input" value="#22c55e">
-                                </div>
-                                <button type="submit" class="btn btn-primary">Salvar Configurações</button>
-                            </form>
                         </div>
                     </div>
-
-                    <!-- Seção de Perguntas -->
-                    <div id="questions-section" class="section-content" style="display: none;">
+                    
+                    <div class="col-md-3 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h1 class="display-4" id="total-completions">0</h1>
+                                <p class="text-muted">Quizzes Completos</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h1 class="display-4" id="conversion-rate">0%</h1>
+                                <p class="text-muted">Taxa de Conversão</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8 mb-4">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>Estatísticas de Uso</span>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        Últimos 7 dias
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">Hoje</a></li>
+                                        <li><a class="dropdown-item" href="#">Últimos 7 dias</a></li>
+                                        <li><a class="dropdown-item" href="#">Últimos 30 dias</a></li>
+                                        <li><a class="dropdown-item" href="#">Este mês</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="usage-chart" height="250"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
                         <div class="card">
                             <div class="card-header">
-                                <h2 class="card-title">Gerenciar Perguntas</h2>
-                                <button class="btn btn-primary" id="add-question-btn">Adicionar Pergunta</button>
+                                <span>Quizzes Populares</span>
                             </div>
-                            
-                            <table class="table">
+                            <div class="card-body p-0">
+                                <ul class="list-group list-group-flush" id="popular-quizzes">
+                                    <li class="list-group-item text-center">
+                                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                            <span class="visually-hidden">Carregando...</span>
+                                        </div>
+                                        <span>Carregando...</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Quizzes Section -->
+            <section id="quizzes-section" class="content-section" style="display: none;">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h2>Gerenciar Quizzes</h2>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button id="add-quiz-btn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Novo Quiz
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th width="5%">#</th>
-                                        <th width="45%">Pergunta</th>
-                                        <th width="15%">Tipo</th>
-                                        <th width="15%">Opções</th>
-                                        <th width="20%">Ações</th>
+                                        <th>ID</th>
+                                        <th>Nome</th>
+                                        <th>Perguntas</th>
+                                        <th>Status</th>
+                                        <th>Criado em</th>
+                                        <th>Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody id="questions-table">
-                                    <!-- As perguntas serão carregadas dinamicamente aqui -->
+                                <tbody id="quizzes-table-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                                <span class="visually-hidden">Carregando...</span>
+                                            </div>
+                                            <span>Carregando quizzes...</span>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-
-                    <!-- Seção de Resultados -->
-                    <div id="results-section" class="section-content" style="display: none;">
-                        <div class="card">
-                            <div class="card-header">
-                                <h2 class="card-title">Configuração de Resultados</h2>
-                            </div>
-                            <div class="tabs">
-                                <div class="tab active" data-tab="content">Conteúdo</div>
-                                <div class="tab" data-tab="benefits">Benefícios</div>
-                                <div class="tab" data-tab="pricing">Preços e CTA</div>
-                                <div class="tab" data-tab="audience">Público-alvo</div>
-                            </div>
-                            <div class="tab-content active" id="content-tab">
-                                <div class="form-group">
-                                    <label for="result-title" class="form-label">Título do Resultado</label>
-                                    <input type="text" id="result-title" class="form-input" placeholder="Digite o título do resultado">
-                                    <small style="color: var(--text-secondary);">Dica: Use {nome} para inserir o nome do usuário.</small>
-                                </div>
-                                <div class="form-group">
-                                    <label for="result-description" class="form-label">Descrição do Resultado</label>
-                                    <textarea id="result-description" class="form-textarea" placeholder="Digite a descrição do resultado"></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <div class="toggle-container">
-                                        <span class="toggle-label">Mostrar Gráfico</span>
-                                        <label class="toggle">
-                                            <input type="checkbox" id="chart-enabled">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="toggle-container">
-                                        <span class="toggle-label">Mostrar Benefícios Padrão</span>
-                                        <label class="toggle">
-                                            <input type="checkbox" id="default-benefits">
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                    </div>
-                                </div>
-                                <button id="save-content-btn" class="btn btn-primary">Salvar Conteúdo</button>
-                            </div>
-                            <div class="tab-content" id="benefits-tab">
-                                <div class="form-group">
-                                    <label class="form-label">Benefícios</label>
-                                    <div id="benefits-container">
-                                        <!-- Os benefícios serão adicionados aqui dinamicamente -->
-                                        <div class="option-container">
-                                            <input type="text" class="form-input benefit-input" placeholder="Digite um benefício">
-                                            <button type="button" class="remove-btn">×</button>
-                                        </div>
-                                    </div>
-                                    <button type="button" class="add-option-btn" id="add-benefit-btn">
-                                        <span>+</span> Adicionar Benefício
-                                    </button>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Bônus</label>
-                                    <div id="bonuses-container">
-                                        <!-- Os bônus serão adicionados aqui dinamicamente -->
-                                        <div class="option-container">
-                                            <input type="text" class="form-input bonus-input" placeholder="Digite um bônus">
-                                            <button type="button" class="remove-btn">×</button>
-                                        </div>
-                                    </div>
-                                    <button type="button" class="add-option-btn" id="add-bonus-btn">
-                                        <span>+</span> Adicionar Bônus
-                                    </button>
-                                </div>
-                                <button id="save-benefits-btn" class="btn btn-primary">Salvar Benefícios</button>
-                            </div>
-                            <div class="tab-content" id="pricing-tab">
-                                <div class="form-group">
-                                    <label for="price-original" class="form-label">Preço Original</label>
-                                    <input type="text" id="price-original" class="form-input" placeholder="Ex: R$497,00">
-                                </div>
-                                <div class="form-group">
-                                    <label for="price-discount" class="form-label">Preço com Desconto</label>
-                                    <input type="text" id="price-discount" class="form-input" placeholder="Ex: R$97,00">
-                                </div>
-                                <div class="form-group">
-                                    <label for="cta-text" class="form-label">Texto do Botão CTA</label>
-                                    <input type="text" id="cta-text" class="form-input" placeholder="Ex: Quero começar agora">
-                                </div>
-                                <div class="form-group">
-                                    <label for="cta-link" class="form-label">Link do Botão CTA</label>
-                                    <input type="text" id="cta-link" class="form-input" placeholder="Ex: https://seusite.com/oferta">
-                                </div>
-                                <button id="save-pricing-btn" class="btn btn-primary">Salvar Preços e CTA</button>
-                            </div>
-                            <div class="tab-content" id="audience-tab">
-                                <div class="form-group">
-                                    <label class="form-label">Para quem é o produto?</label>
-                                    <div id="audience-container">
-                                        <!-- O público-alvo será adicionado aqui dinamicamente -->
-                                        <div class="option-container">
-                                            <input type="text" class="form-input audience-input" placeholder="Descreva um tipo de público-alvo">
-                                            <button type="button" class="remove-btn">×</button>
-                                        </div>
-                                    </div>
-                                    <button type="button" class="add-option-btn" id="add-audience-btn">
-                                        <span>+</span> Adicionar Público
-                                    </button>
-                                </div>
-                                <button id="save-audience-btn" class="btn btn-primary">Salvar Público-alvo</button>
-                            </div>
+                </div>
+            </section>
+            
+            <!-- Users Section -->
+            <section id="users-section" class="content-section" style="display: none;">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h2>Gerenciar Usuários</h2>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button id="add-user-btn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Novo Usuário
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>Perfil</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                                <span class="visually-hidden">Carregando...</span>
+                                            </div>
+                                            <span>Carregando usuários...</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-
-                    <!-- Seção de Visualização -->
-                    <div id="preview-section" class="section-content" style="display: none;">
-                        <div class="card">
-                            <div class="card-header">
-                                <h2 class="card-title">Visualizar Quiz</h2>
-                            </div>
-                            <div class="device-selector">
-                                <button class="device-btn active" data-device="desktop">Desktop</button>
-                                <button class="device-btn" data-device="mobile">Mobile</button>
-                            </div>
-                            <div class="preview-container" id="preview-container">
-                                <iframe id="preview-frame" src=""></iframe>
-                            </div>
-                        </div>
+                </div>
+            </section>
+            
+            <!-- Settings Section -->
+            <section id="settings-section" class="content-section" style="display: none;">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="mb-4">Configurações</h2>
                     </div>
-
-                    <!-- Seção de Exportar/Importar -->
-                    <div id="export-section" class="section-content" style="display: none;">
-                        <div class="card">
-                            <div class="card-header">
-                                <h2 class="card-title">Exportar/Importar Quiz</h2>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <span>Configurações Gerais</span>
+                    </div>
+                    <div class="card-body">
+                        <form id="settings-form">
+                            <div class="mb-3">
+                                <label for="site-title" class="form-label">Título do Site</label>
+                                <input type="text" class="form-control" id="site-title" value="Plataforma de Quiz">
                             </div>
-                            <div class="form-group">
-                                <label class="form-label">Exportar Quiz</label>
-                                <p style="margin-bottom: 15px; color: var(--text-secondary);">Exporte seu quiz para compartilhar ou fazer backup.</p>
-                                <button id="export-btn" class="btn btn-primary">Exportar Quiz</button>
+                            <div class="mb-3">
+                                <label for="site-logo" class="form-label">Logo do Site</label>
+                                <input type="file" class="form-control" id="site-logo">
+                                <div id="logo-preview" class="mt-2"></div>
                             </div>
-                            <div class="form-group" style="margin-top: 30px;">
-                                <label class="form-label">Importar Quiz</label>
-                                <p style="margin-bottom: 15px; color: var(--text-secondary);">Importe um quiz a partir de um arquivo JSON.</p>
-                                <textarea id="import-data" class="form-textarea" placeholder="Cole o conteúdo JSON do quiz aqui"></textarea>
-                                <button id="import-btn" class="btn btn-primary" style="margin-top: 15px;">Importar Quiz</button>
+                            <div class="mb-3">
+                                <label for="primary-color" class="form-label">Cor Primária</label>
+                                <input type="color" class="form-control form-control-color" id="primary-color" value="#4f2d7f">
                             </div>
-                            <div class="form-group" style="margin-top: 30px;">
-                                <label class="form-label">Resetar Quiz</label>
-                                <p style="margin-bottom: 15px; color: var(--text-secondary);">Cuidado! Esta ação vai resetar completamente seu quiz.</p>
-                                <button id="reset-btn" class="btn btn-danger">Resetar Quiz</button>
+                            <div class="mb-3">
+                                <label for="secondary-color" class="form-label">Cor Secundária</label>
+                                <input type="color" class="form-control form-control-color" id="secondary-color" value="#f0ad4e">
+                            </div>
+                            <div class="d-grid d-md-flex justify-content-md-end">
+                                <button type="submit" class="btn btn-primary">Salvar Configurações</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <span>Exportar/Importar Dados</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <h5>Exportar Dados</h5>
+                                <p>Faça o backup de todos os seus quizzes e configurações.</p>
+                                <button id="export-data-btn" class="btn btn-outline-primary">
+                                    <i class="fas fa-download"></i> Exportar Dados
+                                </button>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h5>Importar Dados</h5>
+                                <p>Restaure quizzes e configurações a partir de um backup.</p>
+                                <input type="file" class="form-control mb-2" id="import-file">
+                                <button id="import-data-btn" class="btn btn-outline-primary">
+                                    <i class="fas fa-upload"></i> Importar Dados
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
     </div>
-
+    
     <!-- Modais -->
-    <div id="question-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="question-modal-title">Adicionar Pergunta</h3>
-                <button class="modal-close" id="question-modal-close">×</button>
+    
+    <!-- Modal Novo/Editar Quiz -->
+    <div class="modal fade" id="quiz-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="quiz-modal-title">Novo Quiz</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="quiz-form">
+                        <ul class="nav nav-tabs mb-3" id="quiz-tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general-tab-pane" type="button" role="tab" aria-controls="general-tab-pane" aria-selected="true">Geral</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="questions-tab" data-bs-toggle="tab" data-bs-target="#questions-tab-pane" type="button" role="tab" aria-controls="questions-tab-pane" aria-selected="false">Perguntas</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="results-tab" data-bs-toggle="tab" data-bs-target="#results-tab-pane" type="button" role="tab" aria-controls="results-tab-pane" aria-selected="false">Resultados</button>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content" id="quiz-tab-content">
+                            <!-- Aba Geral -->
+                            <div class="tab-pane fade show active" id="general-tab-pane" role="tabpanel" aria-labelledby="general-tab" tabindex="0">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="quiz-title" class="form-label">Título do Quiz</label>
+                                            <input type="text" class="form-control" id="quiz-title" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="quiz-description" class="form-label">Descrição</label>
+                                            <textarea class="form-control" id="quiz-description" rows="3"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="quiz-status" class="form-label">Status</label>
+                                            <select class="form-select" id="quiz-status">
+                                                <option value="draft">Rascunho</option>
+                                                <option value="published">Publicado</option>
+                                                <option value="archived">Arquivado</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="quiz-logo" class="form-label">Logo do Quiz</label>
+                                            <input type="file" class="form-control" id="quiz-logo">
+                                            <div id="quiz-logo-preview" class="mt-2"></div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="quiz-thumbnail" class="form-label">Imagem de Thumbnail</label>
+                                            <input type="file" class="form-control" id="quiz-thumbnail">
+                                            <div id="quiz-thumbnail-preview" class="mt-2"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Aba Perguntas -->
+                            <div class="tab-pane fade" id="questions-tab-pane" role="tabpanel" aria-labelledby="questions-tab" tabindex="0">
+                                <div id="questions-container">
+                                    <!-- As perguntas serão adicionadas aqui -->
+                                </div>
+                                <button type="button" id="add-question-btn" class="btn btn-success">
+                                    <i class="fas fa-plus"></i> Adicionar Pergunta
+                                </button>
+                            </div>
+                            
+                            <!-- Aba Resultados -->
+                            <div class="tab-pane fade" id="results-tab-pane" role="tabpanel" aria-labelledby="results-tab" tabindex="0">
+                                <div id="results-container">
+                                    <!-- Os resultados serão adicionados aqui -->
+                                </div>
+                                <button type="button" id="add-result-btn" class="btn btn-success">
+                                    <i class="fas fa-plus"></i> Adicionar Resultado
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="save-quiz-btn" class="btn btn-primary">Salvar</button>
+                </div>
             </div>
-            <form id="question-form">
-                <input type="hidden" id="question-id">
-                <div class="form-group">
-                    <label for="question-type" class="form-label">Tipo de Pergunta</label>
-                    <select id="question-type" class="form-select">
-                        <option value="text">Texto com Opções</option>
-                        <option value="thumbs">Concordo/Discordo</option>
-                        <option value="video">Vídeo com Opções</option>
-                        <option value="image">Imagem com Opções</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="question-text" class="form-label">Texto da Pergunta</label>
-                    <input type="text" id="question-text" class="form-input" placeholder="Digite a pergunta">
-                </div>
-                <div class="form-group" id="media-url-container" style="display: none;">
-                    <label for="media-url" class="form-label">URL da Mídia</label>
-                    <input type="text" id="media-url" class="form-input" placeholder="URL do vídeo ou imagem">
-                    <small style="color: var(--text-secondary);">Para vídeos do YouTube, use o formato de URL incorporada.</small>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Opções</label>
-                    <div id="options-container">
-                        <!-- As opções serão adicionadas aqui dinamicamente -->
-                    </div>
-                    <button type="button" class="add-option-btn" id="add-option-btn">
-                        <span>+</span> Adicionar Opção
-                    </button>
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button type="submit" class="btn btn-primary">Salvar Pergunta</button>
-                    <button type="button" class="btn btn-secondary" id="cancel-question-btn">Cancelar</button>
-                </div>
-            </form>
         </div>
     </div>
-
+    
+    <!-- Modal Novo/Editar Usuário -->
+    <div class="modal fade" id="user-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="user-modal-title">Novo Usuário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="user-form">
+                        <div class="mb-3">
+                            <label for="user-name" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="user-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user-email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="user-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user-password" class="form-label">Senha</label>
+                            <input type="password" class="form-control" id="user-password">
+                            <div class="form-text" id="password-help">Deixe em branco para manter a senha atual (ao editar).</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user-role" class="form-label">Perfil</label>
+                            <select class="form-select" id="user-role">
+                                <option value="admin">Administrador</option>
+                                <option value="editor">Editor</option>
+                                <option value="viewer">Visualizador</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user-status" class="form-label">Status</label>
+                            <select class="form-select" id="user-status">
+                                <option value="active">Ativo</option>
+                                <option value="inactive">Inativo</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="save-user-btn" class="btn btn-primary">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // Variáveis globais
+        let currentUser = null;
+        let quizzes = [];
+        let users = [];
+        let currentQuizId = null;
+        
+        // Função de inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            // Configurações iniciais
-            const defaultUser = { username: 'admin', password: 'admin123', name: 'Administrador' };
-            let quizData = {
-                title: "Máquina de Vender PDFs",
-                subtitle: "O método definitivo para vender todos os dias e escalar seus resultados.",
-                primaryColor: "#3b82f6",
-                secondaryColor: "#22c55e",
-                questions: [
-                    {
-                        id: 1,
-                        type: "text",
-                        question: "Você já realiza vendas no mercado digital?",
-                        options: [
-                            { emoji: "😩", text: "Já tentei de tudo e não consigo" },
-                            { emoji: "😐", text: "Já realizo vendas, mas bem pouco" },
-                            { emoji: "😏", text: "Nunca tentei" },
-                            { emoji: "🥇", text: "Vivo 100% do Digital" }
-                        ]
-                    }
-                ],
-                results: {
-                    title: "Obrigado por completar o quiz, {nome}!",
-                    description: "Confira os benefícios especiais que preparamos para você.",
-                    chartEnabled: true,
-                    defaultBenefits: true,
-                    benefits: [
-                        "Aprenda do ZERO ao AVANÇADO como fazer suas primeiras vendas no digital",
-                        "4 Produtos (PDFs) PRONTOS e VALIDADOS com toda a estrutura montada"
-                    ],
-                    bonuses: [
-                        "BÔNUS 1 - Venda com TIKTOK sem gastar nem R$1 (NADA)."
-                    ],
-                    priceOriginal: "R$497,00",
-                    priceDiscount: "R$97,00",
-                    ctaText: "Quero começar agora",
-                    ctaLink: "#",
-                    audience: [
-                        "Para todos aqueles que querem realizar sua PRIMEIRA VENDA EM 24 HORAS"
-                    ]
-                }
-            };
+            // Event listeners para login
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
             
-            // Elementos do DOM para login
-            const loginForm = document.getElementById('login-form');
-            const loginContainer = document.getElementById('login-container');
-            const adminDashboard = document.getElementById('admin-dashboard');
-            const loginAlert = document.getElementById('login-alert');
-            const logoutBtn = document.getElementById('logout-btn');
-            
-            // Login e Logout
-            loginForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                
-                if (username === defaultUser.username && password === defaultUser.password) {
-                    loginContainer.style.display = 'none';
-                    adminDashboard.style.display = 'block';
-                    document.getElementById('user-name').textContent = defaultUser.name;
-                    document.getElementById('user-avatar').textContent = defaultUser.name.charAt(0);
-                    
-                    // Salva o estado de login
-                    sessionStorage.setItem('loggedIn', 'true');
-                    
-                    // Inicializa o dashboard
-                    initDashboard();
-                } else {
-                    loginAlert.style.display = 'block';
-                    setTimeout(() => {
-                        loginAlert.style.display = 'none';
-                    }, 3000);
-                }
-            });
-            
-            logoutBtn.addEventListener('click', function() {
-                adminDashboard.style.display = 'none';
-                loginContainer.style.display = 'block';
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-                
-                // Remove o estado de login
-                sessionStorage.removeItem('loggedIn');
-            });
-            
-            // Verifica se o usuário já está logado
-            if (sessionStorage.getItem('loggedIn') === 'true') {
-                loginContainer.style.display = 'none';
-                adminDashboard.style.display = 'block';
-                document.getElementById('user-name').textContent = defaultUser.name;
-                document.getElementById('user-avatar').textContent = defaultUser.name.charAt(0);
-                
-                // Inicializa o dashboard
-                initDashboard();
-            }
-            
-            // Navegação entre seções
-            const navLinks = document.querySelectorAll('.nav-link');
-            const sections = document.querySelectorAll('.section-content');
-            
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
+            // Event listeners para navegação
+            document.querySelectorAll('.sidebar-menu a[data-section]').forEach(item => {
+                item.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
-                    // Remove a classe active de todos os links
-                    navLinks.forEach(link => link.classList.remove('active'));
-                    
-                    // Adiciona a classe active ao link clicado
-                    this.classList.add('active');
-                    
-                    // Obtém a seção a ser exibida
-                    const sectionId = this.getAttribute('data-section');
-                    
-                    // Oculta todas as seções
-                    sections.forEach(section => section.style.display = 'none');
-                    
-                    // Exibe a seção selecionada
-                    document.getElementById(`${sectionId}-section`).style.display = 'block';
-                    
-                    // Atualiza a seção atual se for a de visualização
-                    if (sectionId === 'preview') {
-                        updatePreview();
-                    }
+                    const section = this.getAttribute('data-section');
+                    showSection(section);
                 });
             });
             
-            // Navegação entre tabs
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
             
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // Remove a classe active de todas as tabs
-                    tabs.forEach(tab => tab.classList.remove('active'));
-                    
-                    // Adiciona a classe active à tab clicada
-                    this.classList.add('active');
-                    
-                    // Obtém o conteúdo a ser exibido
-                    const tabId = this.getAttribute('data-tab');
-                    
-                    // Oculta todos os conteúdos
-                    tabContents.forEach(content => content.classList.remove('active'));
-                    
-                    // Exibe o conteúdo selecionado
-                    document.getElementById(`${tabId}-tab`).classList.add('active');
-                });
+            // Toggle sidebar em dispositivos móveis
+            document.querySelector('.toggle-sidebar').addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('active');
+                document.querySelector('.main-content').classList.toggle('expanded');
             });
             
-            // Seleção de dispositivo para visualização
-            const deviceBtns = document.querySelectorAll('.device-btn');
-            const previewContainer = document.getElementById('preview-container');
+            // Event listeners para modais
+            document.getElementById('add-quiz-btn').addEventListener('click', showNewQuizModal);
+            document.getElementById('add-user-btn').addEventListener('click', showNewUserModal);
+            document.getElementById('save-quiz-btn').addEventListener('click', saveQuiz);
+            document.getElementById('save-user-btn').addEventListener('click', saveUser);
+            document.getElementById('add-question-btn').addEventListener('click', addQuestionTemplate);
+            document.getElementById('add-result-btn').addEventListener('click', addResultTemplate);
             
-            deviceBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // Remove a classe active de todos os botões
-                    deviceBtns.forEach(btn => btn.classList.remove('active'));
-                    
-                    // Adiciona a classe active ao botão clicado
-                    this.classList.add('active');
-                    
-                    // Obtém o dispositivo selecionado
-                    const device = this.getAttribute('data-device');
-                    
-                    // Atualiza a classe do container de visualização
-                    if (device === 'mobile') {
-                        previewContainer.classList.add('preview-mobile');
-                    } else {
-                        previewContainer.classList.remove('preview-mobile');
-                    }
-                });
-            });
-            
-            // Modal de pergunta
-            const questionModal = document.getElementById('question-modal');
-            const questionModalClose = document.getElementById('question-modal-close');
-            const questionForm = document.getElementById('question-form');
-            const addQuestionBtn = document.getElementById('add-question-btn');
-            const cancelQuestionBtn = document.getElementById('cancel-question-btn');
-            
-            questionModalClose.addEventListener('click', function() {
-                questionModal.style.display = 'none';
-            });
-            
-            cancelQuestionBtn.addEventListener('click', function() {
-                questionModal.style.display = 'none';
-            });
-            
-            addQuestionBtn.addEventListener('click', function() {
-                // Limpa o formulário
-                questionForm.reset();
-                document.getElementById('question-id').value = '';
-                document.getElementById('question-modal-title').textContent = 'Adicionar Pergunta';
-                
-                // Configura as opções padrão para pergunta de texto
-                updateQuestionType('text');
-                
-                // Exibe o modal
-                questionModal.style.display = 'flex';
-            });
-            
-            // Quando clicar fora do modal, fecha
-            window.addEventListener('click', function(e) {
-                if (e.target === questionModal) {
-                    questionModal.style.display = 'none';
+            // Restaurar sessão se existir
+            restoreSession();
+        });
+        
+        // Função para verificar e restaurar sessão
+        function restoreSession() {
+            const savedUser = localStorage.getItem('quizAdminUser');
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    showAdminPanel();
+                    loadDashboardData();
+                } catch (error) {
+                    console.error('Erro ao restaurar sessão:', error);
+                    showLoginScreen();
                 }
-            });
+            }
+        }
+        
+        // Função para lidar com o login
+        function handleLogin(e) {
+            e.preventDefault();
             
-            // Formulário de pergunta
-            const questionType = document.getElementById('question-type');
-            const mediaUrlContainer = document.getElementById('media-url-container');
-            const addOptionBtn = document.getElementById('add-option-btn');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password');
             
-            questionType.addEventListener('change', function() {
-                updateQuestionType(this.value);
-            });
-            
-            addOptionBtn.addEventListener('click', function() {
-                addOption();
-            });
-            
-            questionForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Obtém os dados do formulário
-                const questionId = document.getElementById('question-id').value;
-                const type = document.getElementById('question-type').value;
-                const questionText = document.getElementById('question-text').value;
-                let mediaUrl = '';
-                
-                if (type === 'video' || type === 'image') {
-                    mediaUrl = document.getElementById('media-url').value;
-                    if (!mediaUrl) {
-                        alert('Por favor, insira a URL da mídia.');
-                        return;
-                    }
-                }
-                
-                // Obtém as opções
-                const options = [];
-                const optionContainers = document.querySelectorAll('#options-container .option-container');
-                
-                for (let container of optionContainers) {
-                    const emoji = container.querySelector('.option-emoji')?.value || '';
-                    const text = container.querySelector('.option-text')?.value || '';
-                    
-                    if (text) {
-                        const option = { text };
-                        if (emoji) {
-                            option.emoji = emoji;
-                        }
-                        options.push(option);
-                    }
-                }
-                
-                if (options.length < 2) {
-                    alert('Por favor, adicione pelo menos duas opções.');
-                    return;
-                }
-                
-                // Cria ou atualiza a pergunta
-                const question = {
-                    id: questionId ? parseInt(questionId) : Date.now(),
-                    type,
-                    question: questionText,
-                    options
+            // Verificação básica (em um ambiente real, isso deveria ser verificado no servidor)
+            // Credenciais iniciais para primeiro acesso
+            if (email === 'admin@example.com' && password.value === 'admin123') {
+                currentUser = {
+                    id: 1,
+                    name: 'Administrador',
+                    email: email,
+                    role: 'admin'
                 };
                 
-                if (mediaUrl) {
-                    question.mediaUrl = mediaUrl;
+                // Salvar sessão se "lembrar-me" estiver marcado
+                if (document.getElementById('remember-me').checked) {
+                    localStorage.setItem('quizAdminUser', JSON.stringify(currentUser));
                 }
                 
-                if (questionId) {
-                    // Atualiza a pergunta existente
-                    const index = quizData.questions.findIndex(q => q.id === parseInt(questionId));
-                    if (index !== -1) {
-                        quizData.questions[index] = question;
-                    }
-                } else {
-                    // Adiciona nova pergunta
-                    quizData.questions.push(question);
-                }
-                
-                // Atualiza a tabela de perguntas
-                updateQuestionsTable();
-                
-                // Fecha o modal
-                questionModal.style.display = 'none';
-                
-                // Salva os dados
-                saveQuizData();
+                showAdminPanel();
+                loadDashboardData();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+        
+        // Função para lidar com o logout
+        function handleLogout(e) {
+            e.preventDefault();
+            
+            currentUser = null;
+            localStorage.removeItem('quizAdminUser');
+            showLoginScreen();
+        }
+        
+        // Função para mostrar tela de login
+        function showLoginScreen() {
+            document.getElementById('login-screen').style.display = 'block';
+            document.getElementById('admin-panel').style.display = 'none';
+            
+            // Limpar campos
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('login-error').style.display = 'none';
+        }
+        
+        // Função para mostrar painel admin
+        function showAdminPanel() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+            
+            // Mostrar a seção dashboard por padrão
+            showSection('dashboard');
+        }
+        
+        // Função para mostrar uma seção específica
+        function showSection(sectionId) {
+            // Esconder todas as seções
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
             });
             
-            // Formulário de configurações do quiz
-            const quizForm = document.getElementById('quiz-form');
-            
-            quizForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Obtém os dados do formulário
-                const title = document.getElementById('quiz-title').value;
-                const subtitle = document.getElementById('quiz-subtitle').value;
-                const primaryColor = document.getElementById('primary-color').value;
-                const secondaryColor = document.getElementById('secondary-color').value;
-                
-                // Atualiza os dados do quiz
-                quizData.title = title;
-                quizData.subtitle = subtitle;
-                quizData.primaryColor = primaryColor;
-                quizData.secondaryColor = secondaryColor;
-                
-                // Salva os dados
-                saveQuizData();
-                
-                // Notifica o usuário
-                alert('Configurações salvas com sucesso!');
+            // Remover classe 'active' de todos os links
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
             });
             
-            // Salvar Conteúdo dos Resultados
-            document.getElementById('save-content-btn').addEventListener('click', function() {
-                // Obtém os dados do formulário
-                const title = document.getElementById('result-title').value;
-                const description = document.getElementById('result-description').value;
-                const chartEnabled = document.getElementById('chart-enabled').checked;
-                const defaultBenefits = document.getElementById('default-benefits').checked;
-                
-                // Atualiza os dados do quiz
-                quizData.results.title = title;
-                quizData.results.description = description;
-                quizData.results.chartEnabled = chartEnabled;
-                quizData.results.defaultBenefits = defaultBenefits;
-                
-                // Salva os dados
-                saveQuizData();
-                
-                // Notifica o usuário
-                alert('Conteúdo dos resultados salvo com sucesso!');
-            });
+            // Mostrar a seção requisitada
+            document.getElementById(`${sectionId}-section`).style.display = 'block';
             
-            // Adicionar Benefício
-            document.getElementById('add-benefit-btn').addEventListener('click', function() {
-                const benefitsContainer = document.getElementById('benefits-container');
-                const newBenefit = document.createElement('div');
-                newBenefit.className = 'option-container';
-                newBenefit.innerHTML = `
-                    <input type="text" class="form-input benefit-input" placeholder="Digite um benefício">
-                    <button type="button" class="remove-btn">×</button>
+            // Adicionar classe 'active' ao link correspondente
+            document.querySelector(`.sidebar-menu a[data-section="${sectionId}"]`).classList.add('active');
+            
+            // Carregar dados da seção
+            if (sectionId === 'dashboard') {
+                loadDashboardData();
+            } else if (sectionId === 'quizzes') {
+                loadQuizzes();
+            } else if (sectionId === 'users') {
+                loadUsers();
+            } else if (sectionId === 'settings') {
+                loadSettings();
+            }
+        }
+        
+        // Função para carregar dados do dashboard
+        function loadDashboardData() {
+            // Em um ambiente real, esses dados viriam de uma API
+            // Aqui usamos dados simulados para demonstração
+            
+            // Atualizar estatísticas
+            document.getElementById('total-quizzes').textContent = '5';
+            document.getElementById('total-users').textContent = '120';
+            document.getElementById('total-completions').textContent = '428';
+            document.getElementById('conversion-rate').textContent = '32%';
+            
+            // Carregar quizzes populares
+            const popularQuizzesData = [
+                { id: 'quiz1', title: 'Que tipo de investidor você é?', completions: 126 },
+                { id: 'quiz2', title: 'Descubra seu perfil financeiro', completions: 98 },
+                { id: 'quiz3', title: 'Teste seu conhecimento em finanças', completions: 87 },
+                { id: 'quiz4', title: 'Qual produto é ideal para você?', completions: 72 },
+                { id: 'quiz5', title: 'Avalie seu perfil de risco', completions: 45 }
+            ];
+            
+            let popularQuizzesHTML = '';
+            popularQuizzesData.forEach(quiz => {
+                popularQuizzesHTML += `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="text-truncate" style="max-width: 70%;">${quiz.title}</span>
+                        <span class="badge bg-primary rounded-pill">${quiz.completions}</span>
+                    </li>
                 `;
-                benefitsContainer.appendChild(newBenefit);
-                
-                // Adiciona o event listener para remover
-                newBenefit.querySelector('.remove-btn').addEventListener('click', function() {
-                    benefitsContainer.removeChild(newBenefit);
-                });
             });
             
-            // Adicionar Bônus
-            document.getElementById('add-bonus-btn').addEventListener('click', function() {
-                const bonusesContainer = document.getElementById('bonuses-container');
-                const newBonus = document.createElement('div');
-                newBonus.className = 'option-container';
-                newBonus.innerHTML = `
-                    <input type="text" class="form-input bonus-input" placeholder="Digite um bônus">
-                    <button type="button" class="remove-btn">×</button>
-                `;
-                bonusesContainer.appendChild(newBonus);
-                
-                // Adiciona o event listener para remover
-                newBonus.querySelector('.remove-btn').addEventListener('click', function() {
-                    bonusesContainer.removeChild(newBonus);
-                });
-            });
+            document.getElementById('popular-quizzes').innerHTML = popularQuizzesHTML;
             
-            // Adicionar Público-alvo
-            document.getElementById('add-audience-btn').addEventListener('click', function() {
-                const audienceContainer = document.getElementById('audience-container');
-                const newAudience = document.createElement('div');
-                newAudience.className = 'option-container';
-                newAudience.innerHTML = `
-                    <input type="text" class="form-input audience-input" placeholder="Descreva um tipo de público-alvo">
-                    <button type="button" class="remove-btn">×</button>
-                `;
-                audienceContainer.appendChild(newAudience);
-                
-                // Adiciona o event listener para remover
-                newAudience.querySelector('.remove-btn').addEventListener('click', function() {
-                    audienceContainer.removeChild(newAudience);
-                });
-            });
+            // Criar gráfico de uso
+            const ctx = document.getElementById('usage-chart').getContext('2d');
             
-            // Salvar Benefícios
-            document.getElementById('save-benefits-btn').addEventListener('click', function() {
-                // Obtém os benefícios
-                const benefits = [];
-                const benefitInputs = document.querySelectorAll('.benefit-input');
-                
-                benefitInputs.forEach(input => {
-                    if (input.value.trim() !== '') {
-                        benefits.push(input.value.trim());
-                    }
-                });
-                
-                // Obtém os bônus
-                const bonuses = [];
-                const bonusInputs = document.querySelectorAll('.bonus-input');
-                
-                bonusInputs.forEach(input => {
-                    if (input.value.trim() !== '') {
-                        bonuses.push(input.value.trim());
-                    }
-                });
-                
-                // Atualiza os dados do quiz
-                quizData.results.benefits = benefits;
-                quizData.results.bonuses = bonuses;
-                
-                // Salva os dados
-                saveQuizData();
-                
-                // Notifica o usuário
-                alert('Benefícios salvos com sucesso!');
-            });
+            // Destruir gráfico existente se houver
+            if (window.usageChart) {
+                window.usageChart.destroy();
+            }
             
-            // Salvar Preços e CTA
-            document.getElementById('save-pricing-btn').addEventListener('click', function() {
-                // Obtém os dados do formulário
-                const priceOriginal = document.getElementById('price-original').value;
-                const priceDiscount = document.getElementById('price-discount').value;
-                const ctaText = document.getElementById('cta-text').value;
-                const ctaLink = document.getElementById('cta-link').value;
-                
-                // Atualiza os dados do quiz
-                quizData.results.priceOriginal = priceOriginal;
-                quizData.results.priceDiscount = priceDiscount;
-                quizData.results.ctaText = ctaText;
-                quizData.results.ctaLink = ctaLink;
-                
-                // Salva os dados
-                saveQuizData();
-                
-                // Notifica o usuário
-                alert('Preços e CTA salvos com sucesso!');
-            });
-            
-            // Salvar Público-alvo
-            document.getElementById('save-audience-btn').addEventListener('click', function() {
-                // Obtém o público-alvo
-                const audience = [];
-                const audienceInputs = document.querySelectorAll('.audience-input');
-                
-                audienceInputs.forEach(input => {
-                    if (input.value.trim() !== '') {
-                        audience.push(input.value.trim());
-                    }
-                });
-                
-                // Atualiza os dados do quiz
-                quizData.results.audience = audience;
-                
-                // Salva os dados
-                saveQuizData();
-                
-                // Notifica o usuário
-                alert('Público-alvo salvo com sucesso!');
-            });
-            
-            // Exportar Quiz
-            document.getElementById('export-btn').addEventListener('click', function() {
-                const dataStr = JSON.stringify(quizData, null, 2);
-                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-                
-                const exportFileDefaultName = 'quiz-data.json';
-                
-                const linkElement = document.createElement('a');
-                linkElement.setAttribute('href', dataUri);
-                linkElement.setAttribute('download', exportFileDefaultName);
-                linkElement.click();
-            });
-            
-            // Importar Quiz
-            document.getElementById('import-btn').addEventListener('click', function() {
-                const importData = document.getElementById('import-data').value;
-                
-                if (!importData) {
-                    alert('Por favor, cole os dados do quiz.');
-                    return;
-                }
-                
-                try {
-                    const newQuizData = JSON.parse(importData);
-                    
-                    // Valida os dados
-                    if (!newQuizData.title || !newQuizData.questions || !Array.isArray(newQuizData.questions)) {
-                        throw new Error('Dados inválidos: formato incorreto.');
-                    }
-                    
-                    // Atualiza os dados do quiz
-                    quizData = newQuizData;
-                    
-                    // Atualiza a interface
-                    updateQuizForm();
-                    updateQuestionsTable();
-                    updateResultsForm();
-                    
-                    // Salva os dados
-                    saveQuizData();
-                    
-                    // Notifica o usuário
-                    alert('Quiz importado com sucesso!');
-                    
-                    // Limpa o campo de importação
-                    document.getElementById('import-data').value = '';
-                } catch (error) {
-                    alert('Erro ao importar quiz: ' + error.message);
-                }
-            });
-            
-            // Resetar Quiz
-            document.getElementById('reset-btn').addEventListener('click', function() {
-                if (confirm('Tem certeza que deseja resetar o quiz? Todos os dados serão perdidos.')) {
-                    // Reseta os dados do quiz
-                    quizData = {
-                        title: "Novo Quiz",
-                        subtitle: "Descrição do Quiz",
-                        primaryColor: "#3b82f6",
-                        secondaryColor: "#22c55e",
-                        questions: [],
-                        results: {
-                            title: "Obrigado por completar o quiz!",
-                            description: "Aqui está o resultado.",
-                            chartEnabled: true,
-                            defaultBenefits: true,
-                            benefits: [],
-                            bonuses: [],
-                            priceOriginal: "",
-                            priceDiscount: "",
-                            ctaText: "Começar agora",
-                            ctaLink: "#",
-                            audience: []
+            window.usageChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                    datasets: [
+                        {
+                            label: 'Visualizações',
+                            data: [24, 36, 42, 38, 46, 55, 70],
+                            borderColor: '#4f2d7f',
+                            backgroundColor: 'rgba(79, 45, 127, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Completados',
+                            data: [12, 18, 20, 22, 28, 32, 38],
+                            borderColor: '#f0ad4e',
+                            backgroundColor: 'rgba(240, 173, 78, 0.1)',
+                            tension: 0.3,
+                            fill: true
                         }
-                    };
-                    
-                    // Atualiza a interface
-                    updateQuizForm();
-                    updateQuestionsTable();
-                    updateResultsForm();
-                    
-                    // Salva os dados
-                    saveQuizData();
-                    
-                    // Notifica o usuário
-                    alert('Quiz resetado com sucesso!');
-                }
-            });
-            
-            // Funções auxiliares
-            function initDashboard() {
-                // Carrega os dados do quiz do localStorage
-                const savedData = localStorage.getItem('quizData');
-                if (savedData) {
-                    try {
-                        quizData = JSON.parse(savedData);
-                    } catch (error) {
-                        console.error('Erro ao carregar dados do quiz:', error);
-                    }
-                }
-                
-                // Atualiza a interface
-                updateQuizForm();
-                updateQuestionsTable();
-                updateResultsForm();
-                updateDashboardStats();
-                
-                // Adiciona os event listeners para remover opções existentes
-                document.querySelectorAll('.remove-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        this.parentNode.remove();
-                    });
-                });
-            }
-            
-            function updateDashboardStats() {
-                document.getElementById('questions-count').textContent = quizData.questions.length;
-                
-                // Aqui você poderia carregar estatísticas reais de um servidor
-                document.getElementById('completions-count').textContent = "42";
-                document.getElementById('conversion-rate').textContent = "28%";
-            }
-            
-            function updateQuizForm() {
-                document.getElementById('quiz-title').value = quizData.title || '';
-                document.getElementById('quiz-subtitle').value = quizData.subtitle || '';
-                document.getElementById('primary-color').value = quizData.primaryColor || '#3b82f6';
-                document.getElementById('secondary-color').value = quizData.secondaryColor || '#22c55e';
-            }
-            
-            function updateResultsForm() {
-                // Tab de Conteúdo
-                document.getElementById('result-title').value = quizData.results?.title || '';
-                document.getElementById('result-description').value = quizData.results?.description || '';
-                document.getElementById('chart-enabled').checked = quizData.results?.chartEnabled || false;
-                document.getElementById('default-benefits').checked = quizData.results?.defaultBenefits || false;
-                
-                // Tab de Benefícios
-                const benefitsContainer = document.getElementById('benefits-container');
-                benefitsContainer.innerHTML = '';
-                
-                const benefits = quizData.results?.benefits || [];
-                
-                if (benefits.length === 0) {
-                    const defaultBenefit = document.createElement('div');
-                    defaultBenefit.className = 'option-container';
-                    defaultBenefit.innerHTML = `
-                        <input type="text" class="form-input benefit-input" placeholder="Digite um benefício">
-                        <button type="button" class="remove-btn">×</button>
-                    `;
-                    benefitsContainer.appendChild(defaultBenefit);
-                    defaultBenefit.querySelector('.remove-btn').addEventListener('click', function() {
-                        if (benefitsContainer.children.length > 1) {
-                            benefitsContainer.removeChild(defaultBenefit);
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
                         }
-                    });
-                } else {
-                    benefits.forEach(benefit => {
-                        const benefitEl = document.createElement('div');
-                        benefitEl.className = 'option-container';
-                        benefitEl.innerHTML = `
-                            <input type="text" class="form-input benefit-input" value="${benefit}" placeholder="Digite um benefício">
-                            <button type="button" class="remove-btn">×</button>
-                        `;
-                        benefitsContainer.appendChild(benefitEl);
-                        benefitEl.querySelector('.remove-btn').addEventListener('click', function() {
-                            if (benefitsContainer.children.length > 1) {
-                                benefitsContainer.removeChild(benefitEl);
-                            }
-                        });
-                    });
-                }
-                
-                // Bônus
-                const bonusesContainer = document.getElementById('bonuses-container');
-                bonusesContainer.innerHTML = '';
-                
-                const bonuses = quizData.results?.bonuses || [];
-                
-                if (bonuses.length === 0) {
-                    const defaultBonus = document.createElement('div');
-                    defaultBonus.className = 'option-container';
-                    defaultBonus.innerHTML = `
-                        <input type="text" class="form-input bonus-input" placeholder="Digite um bônus">
-                        <button type="button" class="remove-btn">×</button>
-                    `;
-                    bonusesContainer.appendChild(defaultBonus);
-                    defaultBonus.querySelector('.remove-btn').addEventListener('click', function() {
-                        if (bonusesContainer.children.length > 1) {
-                            bonusesContainer.removeChild(defaultBonus);
-                        }
-                    });
-                } else {
-                    bonuses.forEach(bonus => {
-                        const bonusEl = document.createElement('div');
-                        bonusEl.className = 'option-container';
-                        bonusEl.innerHTML = `
-                            <input type="text" class="form-input bonus-input" value="${bonus}" placeholder="Digite um bônus">
-                            <button type="button" class="remove-btn">×</button>
-                        `;
-                        bonusesContainer.appendChild(bonusEl);
-                        bonusEl.querySelector('.remove-btn').addEventListener('click', function() {
-                            if (bonusesContainer.children.length > 1) {
-                                bonusesContainer.removeChild(bonusEl);
-                            }
-                        });
-                    });
-                }
-                
-                // Tab de Preços e CTA
-                document.getElementById('price-original').value = quizData.results?.priceOriginal || '';
-                document.getElementById('price-discount').value = quizData.results?.priceDiscount || '';
-                document.getElementById('cta-text').value = quizData.results?.ctaText || 'Começar agora';
-                document.getElementById('cta-link').value = quizData.results?.ctaLink || '#';
-                
-                // Tab de Público-alvo
-                const audienceContainer = document.getElementById('audience-container');
-                audienceContainer.innerHTML = '';
-                
-                const audience = quizData.results?.audience || [];
-                
-                if (audience.length === 0) {
-                    const defaultAudience = document.createElement('div');
-                    defaultAudience.className = 'option-container';
-                    defaultAudience.innerHTML = `
-                        <input type="text" class="form-input audience-input" placeholder="Descreva um tipo de público-alvo">
-                        <button type="button" class="remove-btn">×</button>
-                    `;
-                    audienceContainer.appendChild(defaultAudience);
-                    defaultAudience.querySelector('.remove-btn').addEventListener('click', function() {
-                        if (audienceContainer.children.length > 1) {
-                            audienceContainer.removeChild(defaultAudience);
-                        }
-                    });
-                } else {
-                    audience.forEach(item => {
-                        const audienceEl = document.createElement('div');
-                        audienceEl.className = 'option-container';
-                        audienceEl.innerHTML = `
-                            <input type="text" class="form-input audience-input" value="${item}" placeholder="Descreva um tipo de público-alvo">
-                            <button type="button" class="remove-btn">×</button>
-                        `;
-                        audienceContainer.appendChild(audienceEl);
-                        audienceEl.querySelector('.remove-btn').addEventListener('click', function() {
-                            if (audienceContainer.children.length > 1) {
-                                audienceContainer.removeChild(audienceEl);
-                            }
-                        });
-                    });
-                }
-            }
-            
-            function updateQuestionsTable() {
-                const questionsTable = document.getElementById('questions-table');
-                questionsTable.innerHTML = '';
-                
-                if (quizData.questions.length === 0) {
-                    questionsTable.innerHTML = `
-                        <tr>
-                            <td colspan="5" style="text-align: center; padding: 20px;">
-                                Nenhuma pergunta encontrada. Clique em "Adicionar Pergunta" para começar.
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                quizData.questions.forEach((question, index) => {
-                    const row = document.createElement('tr');
-                    
-                    // Formata o tipo para exibição
-                    let typeDisplay = '';
-                    switch (question.type) {
-                        case 'text':
-                            typeDisplay = 'Texto';
-                            break;
-                        case 'thumbs':
-                            typeDisplay = 'Concordar/Discordar';
-                            break;
-                        case 'video':
-                            typeDisplay = 'Vídeo';
-                            break;
-                        case 'image':
-                            typeDisplay = 'Imagem';
-                            break;
-                    }
-                    
-                    row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${question.question}</td>
-                        <td>${typeDisplay}</td>
-                        <td>${question.options.length}</td>
-                        <td>
-                            <div class="table-actions">
-                                <button class="btn btn-small btn-secondary edit-question" data-id="${question.id}">Editar</button>
-                                <button class="btn btn-small btn-danger delete-question" data-id="${question.id}">Excluir</button>
-                            </div>
-                        </td>
-                    `;
-                    
-                    questionsTable.appendChild(row);
-                });
-                
-                // Adiciona os event listeners para editar e excluir
-                document.querySelectorAll('.edit-question').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const questionId = parseInt(this.getAttribute('data-id'));
-                        editQuestion(questionId);
-                    });
-                });
-                
-                document.querySelectorAll('.delete-question').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const questionId = parseInt(this.getAttribute('data-id'));
-                        deleteQuestion(questionId);
-                    });
-                });
-            }
-            
-            function editQuestion(questionId) {
-                const question = quizData.questions.find(q => q.id === questionId);
-                
-                if (!question) return;
-                
-                // Preenche o formulário
-                document.getElementById('question-id').value = question.id;
-                document.getElementById('question-type').value = question.type;
-                document.getElementById('question-text').value = question.question;
-                
-                if (question.mediaUrl) {
-                    document.getElementById('media-url').value = question.mediaUrl;
-                }
-                
-                // Atualiza o tipo de pergunta
-                updateQuestionType(question.type);
-                
-                // Preenche as opções
-                const optionsContainer = document.getElementById('options-container');
-                optionsContainer.innerHTML = '';
-                
-                question.options.forEach(option => {
-                    if (question.type === 'thumbs') {
-                        const optionEl = document.createElement('div');
-                        optionEl.className = 'option-container';
-                        optionEl.innerHTML = `
-                            <input type="text" class="form-input option-text" value="${option.text}" placeholder="Texto da opção">
-                            <button type="button" class="remove-btn" style="visibility: hidden;">×</button>
-                        `;
-                        optionsContainer.appendChild(optionEl);
-                    } else {
-                        const optionEl = document.createElement('div');
-                        optionEl.className = 'option-container';
-                        optionEl.innerHTML = `
-                            <input type="text" class="form-input option-emoji" value="${option.emoji || ''}" placeholder="Emoji">
-                            <input type="text" class="form-input option-text" value="${option.text}" placeholder="Texto da opção">
-                            <button type="button" class="remove-btn">×</button>
-                        `;
-                        optionsContainer.appendChild(optionEl);
-                        
-                        // Adiciona o event listener para remover
-                        optionEl.querySelector('.remove-btn').addEventListener('click', function() {
-                            if (optionsContainer.children.length > 2) {
-                                optionsContainer.removeChild(optionEl);
-                            }
-                        });
-                    }
-                });
-                
-                // Atualiza o título do modal
-                document.getElementById('question-modal-title').textContent = 'Editar Pergunta';
-                
-                // Exibe o modal
-                questionModal.style.display = 'flex';
-            }
-            
-            function deleteQuestion(questionId) {
-                if (confirm('Tem certeza que deseja excluir esta pergunta?')) {
-                    // Remove a pergunta
-                    quizData.questions = quizData.questions.filter(q => q.id !== questionId);
-                    
-                    // Atualiza a tabela
-                    updateQuestionsTable();
-                    
-                    // Salva os dados
-                    saveQuizData();
-                }
-            }
-            
-            function updateQuestionType(type) {
-                const mediaUrlContainer = document.getElementById('media-url-container');
-                const optionsContainer = document.getElementById('options-container');
-                const addOptionBtn = document.getElementById('add-option-btn');
-                
-                // Limpa o container de opções
-                optionsContainer.innerHTML = '';
-                
-                if (type === 'video' || type === 'image') {
-                    mediaUrlContainer.style.display = 'block';
-                } else {
-                    mediaUrlContainer.style.display = 'none';
-                    document.getElementById('media-url').value = '';
-                }
-                
-                if (type === 'thumbs') {
-                    // Para thumbs, apenas duas opções fixas
-                    const option1 = document.createElement('div');
-                    option1.className = 'option-container';
-                    option1.innerHTML = `
-                        <input type="text" class="form-input option-text" value="Concordo" placeholder="Texto da opção positiva">
-                        <button type="button" class="remove-btn" style="visibility: hidden;">×</button>
-                    `;
-                    optionsContainer.appendChild(option1);
-                    
-                    const option2 = document.createElement('div');
-                    option2.className = 'option-container';
-                    option2.innerHTML = `
-                        <input type="text" class="form-input option-text" value="Discordo" placeholder="Texto da opção negativa">
-                        <button type="button" class="remove-btn" style="visibility: hidden;">×</button>
-                    `;
-                    optionsContainer.appendChild(option2);
-                    
-                    // Oculta o botão de adicionar opção
-                    addOptionBtn.style.display = 'none';
-                } else {
-                    // Para outros tipos, opções dinâmicas
-                    for (let i = 0; i < 2; i++) {
-                        addOption();
-                    }
-                    
-                    // Exibe o botão de adicionar opção
-                    addOptionBtn.style.display = 'block';
-                }
-            }
-            
-            function addOption() {
-                const optionsContainer = document.getElementById('options-container');
-                const type = document.getElementById('question-type').value;
-                
-                if (type === 'thumbs') return; // Não adiciona opções para thumbs
-                
-                const option = document.createElement('div');
-                option.className = 'option-container';
-                option.innerHTML = `
-                    <input type="text" class="form-input option-emoji" placeholder="Emoji">
-                    <input type="text" class="form-input option-text" placeholder="Texto da opção">
-                    <button type="button" class="remove-btn">×</button>
-                `;
-                optionsContainer.appendChild(option);
-                
-                // Adiciona o event listener para remover
-                option.querySelector('.remove-btn').addEventListener('click', function() {
-                    if (optionsContainer.children.length > 2) {
-                        optionsContainer.removeChild(option);
-                    }
-                });
-            }
-            
-            function updatePreview() {
-                // Salva os dados atuais no localStorage
-                saveQuizData();
-                
-                // Atualiza o frame de visualização
-                const previewFrame = document.getElementById('preview-frame');
-                previewFrame.src = 'quiz.html'; // Atualizado de index.html para quiz.html
-            }
-            
-            function saveQuizData() {
-                // Salva os dados no localStorage
-                localStorage.setItem('quizData', JSON.stringify(quizData));
-                
-                // Também salva em um arquivo chamado quiz-data.json (em um servidor real)
-                // Aqui estamos simulando, mas em um ambiente real você enviaria para o servidor
-                saveQuizFile(quizData);
-            }
-            
-            function saveQuizFile(data) {
-                // Em um ambiente real, você enviaria os dados para o servidor
-                // Aqui estamos apenas logando os dados por demonstração
-                console.log('Quiz Data Saved:', data);
-                
-                // Exemplo de como seria com fetch (comentado)
-                /*
-                fetch('/api/save-quiz', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(data)
-                })
-                .then(response => response.json())
-                .then(result => {
-                    console.log('Salvo com sucesso!', result);
-                })
-                .catch(error => {
-                    console.error('Erro ao salvar:', error);
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Função para carregar lista de quizzes
+        function loadQuizzes() {
+            // Em um ambiente real, esses dados viriam de uma API
+            // Aqui usamos dados simulados para demonstração
+            quizzes = [
+                { id: 'quiz1', title: 'Que tipo de investidor você é?', questionCount: 8, status: 'published', createdAt: '2023-05-10' },
+                { id: 'quiz2', title: 'Descubra seu perfil financeiro', questionCount: 10, status: 'published', createdAt: '2023-05-15' },
+                { id: 'quiz3', title: 'Teste seu conhecimento em finanças', questionCount: 12, status: 'published', createdAt: '2023-06-01' },
+                { id: 'quiz4', title: 'Qual produto é ideal para você?', questionCount: 6, status: 'draft', createdAt: '2023-06-10' },
+                { id: 'quiz5', title: 'Avalie seu perfil de risco', questionCount: 5, status: 'archived', createdAt: '2023-04-20' }
+            ];
+            
+            renderQuizzesTable();
+        }
+        
+        // Função para renderizar tabela de quizzes
+        function renderQuizzesTable() {
+            let quizzesHTML = '';
+            
+            quizzes.forEach(quiz => {
+                let statusBadge = '';
+                
+                if (quiz.status === 'published') {
+                    statusBadge = '<span class="badge bg-success">Publicado</span>';
+                } else if (quiz.status === 'draft') {
+                    statusBadge = '<span class="badge bg-warning">Rascunho</span>';
+                } else if (quiz.status === 'archived') {
+                    statusBadge = '<span class="badge bg-secondary">Arquivado</span>';
+                }
+                
+                quizzesHTML += `
+                    <tr>
+                        <td>${quiz.id}</td>
+                        <td>${quiz.title}</td>
+                        <td>${quiz.questionCount}</td>
+                        <td>${statusBadge}</td>
+                        <td>${quiz.createdAt}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary action-btn edit-quiz-btn" data-id="${quiz.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger action-btn delete-quiz-btn" data-id="${quiz.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="btn btn-sm btn-info action-btn view-stats-btn" data-id="${quiz.id}">
+                                <i class="fas fa-chart-bar"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('quizzes-table-body').innerHTML = quizzesHTML;
+            
+            // Adicionar event listeners para os botões de ação
+            document.querySelectorAll('.edit-quiz-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const quizId = this.getAttribute('data-id');
+                    editQuiz(quizId);
                 });
-                */
+            });
+            
+            document.querySelectorAll('.delete-quiz-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const quizId = this.getAttribute('data-id');
+                    deleteQuiz(quizId);
+                });
+            });
+        }
+        
+        // Função para carregar lista de usuários
+        function loadUsers() {
+            // Em um ambiente real, esses dados viriam de uma API
+            // Aqui usamos dados simulados para demonstração
+            users = [
+                { id: 1, name: 'Administrador', email: 'admin@example.com', role: 'admin', status: 'active' },
+                { id: 2, name: 'João Silva', email: 'joao@example.com', role: 'editor', status: 'active' },
+                { id: 3, name: 'Maria Santos', email: 'maria@example.com', role: 'viewer', status: 'active' },
+                { id: 4, name: 'Carlos Oliveira', email: 'carlos@example.com', role: 'editor', status: 'inactive' }
+            ];
+            
+            renderUsersTable();
+        }
+        
+        // Função para renderizar tabela de usuários
+        function renderUsersTable() {
+            let usersHTML = '';
+            
+            users.forEach(user => {
+                let roleBadge = '';
+                let statusBadge = '';
+                
+                if (user.role === 'admin') {
+                    roleBadge = '<span class="badge bg-primary">Administrador</span>';
+                } else if (user.role === 'editor') {
+                    roleBadge = '<span class="badge bg-info">Editor</span>';
+                } else if (user.role === 'viewer') {
+                    roleBadge = '<span class="badge bg-secondary">Visualizador</span>';
+                }
+                
+                if (user.status === 'active') {
+                    statusBadge = '<span class="badge bg-success">Ativo</span>';
+                } else {
+                    statusBadge = '<span class="badge bg-danger">Inativo</span>';
+                }
+                
+                usersHTML += `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${roleBadge}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary action-btn edit-user-btn" data-id="${user.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger action-btn delete-user-btn" data-id="${user.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('users-table-body').innerHTML = usersHTML;
+            
+            // Adicionar event listeners para os botões de ação
+            document.querySelectorAll('.edit-user-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-id');
+                    editUser(userId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-user-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-id');
+                    deleteUser(userId);
+                });
+            });
+        }
+        
+        // Função para carregar configurações
+        function loadSettings() {
+            // Em um ambiente real, esses dados viriam de uma API
+            // Aqui usamos dados simulados para demonstração
+            const settings = {
+                siteTitle: 'Plataforma de Quiz',
+                primaryColor: '#4f2d7f',
+                secondaryColor: '#f0ad4e'
+            };
+            
+            document.getElementById('site-title').value = settings.siteTitle;
+            document.getElementById('primary-color').value = settings.primaryColor;
+            document.getElementById('secondary-color').value = settings.secondaryColor;
+        }
+        
+        // Função para mostrar modal de novo quiz
+        function showNewQuizModal() {
+            currentQuizId = null;
+            
+            document.getElementById('quiz-modal-title').textContent = 'Novo Quiz';
+            document.getElementById('quiz-form').reset();
+            document.getElementById('questions-container').innerHTML = '';
+            document.getElementById('results-container').innerHTML = '';
+            
+            // Adicionar template inicial para uma pergunta e um resultado
+            addQuestionTemplate();
+            addResultTemplate();
+            
+            const quizModal = new bootstrap.Modal(document.getElementById('quiz-modal'));
+            quizModal.show();
+        }
+        
+        // Função para editar quiz existente
+        function editQuiz(quizId) {
+            currentQuizId = quizId;
+            
+            // Buscar dados do quiz (em um ambiente real, isso viria de uma API)
+            const quiz = quizzes.find(q => q.id === quizId);
+            
+            if (!quiz) {
+                alert('Quiz não encontrado.');
+                return;
             }
-        });
+            
+            document.getElementById('quiz-modal-title').textContent = 'Editar Quiz';
+            document.getElementById('quiz-title').value = quiz.title;
+            document.getElementById('quiz-status').value = quiz.status;
+            
+            // Em um ambiente real, carregaríamos as perguntas e resultados do quiz
+            // Para este exemplo, vamos apenas adicionar templates vazios
+            document.getElementById('questions-container').innerHTML = '';
+            document.getElementById('results-container').innerHTML = '';
+            
+            // Adicionar templates para perguntas e resultados
+            for (let i = 0; i < quiz.questionCount; i++) {
+                addQuestionTemplate();
+            }
+            
+            // Adicionar templates para resultados (vamos supor 3 resultados)
+            for (let i = 0; i < 3; i++) {
+                addResultTemplate();
+            }
+            
+            const quizModal = new bootstrap.Modal(document.getElementById('quiz-modal'));
+            quizModal.show();
+        }
+        
+        // Função para excluir quiz
+        function deleteQuiz(quizId) {
+            if (confirm('Tem certeza que deseja excluir este quiz?')) {
+                // Em um ambiente real, enviaríamos uma requisição para deletar o quiz
+                quizzes = quizzes.filter(quiz => quiz.id !== quizId);
+                renderQuizzesTable();
+                alert('Quiz excluído com sucesso!');
+            }
+        }
+        
+        // Função para adicionar template de pergunta
+        function addQuestionTemplate() {
+            const questionIndex = document.querySelectorAll('.question-card').length;
+            
+            const questionTemplate = `
+                <div class="question-card">
+                    <div class="question-handle">
+                        <i class="fas fa-grip-lines"></i> Pergunta ${questionIndex + 1}
+                    </div>
+                    <span class="remove-question"><i class="fas fa-times"></i></span>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Texto da Pergunta</label>
+                        <input type="text" class="form-control question-text" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Mídia (opcional)</label>
+                        <div class="input-group mb-2">
+                            <select class="form-select media-type" style="max-width: 150px;">
+                                <option value="">Sem mídia</option>
+                                <option value="image">Imagem</option>
+                                <option value="video">Vídeo</option>
+                            </select>
+                            <input type="text" class="form-control media-url" placeholder="URL da mídia">
+                        </div>
+                    </div>
+                    
+                    <div class="options-container">
+                        <label class="form-label">Opções de Resposta</label>
+                        <div class="option-row">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control option-text" placeholder="Texto da opção" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select option-result-key">
+                                        <option value="">Selecione um resultado</option>
+                                        <option value="result1">Resultado 1</option>
+                                        <option value="result2">Resultado 2</option>
+                                        <option value="result3">Resultado 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <span class="remove-option"><i class="fas fa-times"></i></span>
+                        </div>
+                        <div class="option-row">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control option-text" placeholder="Texto da opção" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select option-result-key">
+                                        <option value="">Selecione um resultado</option>
+                                        <option value="result1">Resultado 1</option>
+                                        <option value="result2">Resultado 2</option>
+                                        <option value="result3">Resultado 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <span class="remove-option"><i class="fas fa-times"></i></span>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-sm btn-primary add-option-btn mt-2">
+                        <i class="fas fa-plus"></i> Adicionar Opção
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('questions-container').insertAdjacentHTML('beforeend', questionTemplate);
+            
+            // Adicionar event listeners para os botões de adicionar/remover
+            const questionCards = document.querySelectorAll('.question-card');
+            const lastCard = questionCards[questionCards.length - 1];
+            
+            lastCard.querySelector('.add-option-btn').addEventListener('click', function() {
+                addOptionTemplate(this.parentElement.querySelector('.options-container'));
+            });
+            
+            lastCard.querySelector('.remove-question').addEventListener('click', function() {
+                if (document.querySelectorAll('.question-card').length > 1) {
+                    this.parentElement.remove();
+                    updateQuestionNumbers();
+                } else {
+                    alert('O quiz deve ter pelo menos uma pergunta.');
+                }
+            });
+            
+            lastCard.querySelectorAll('.remove-option').forEach(button => {
+                button.addEventListener('click', function() {
+                    const optionsContainer = this.closest('.options-container');
+                    if (optionsContainer.querySelectorAll('.option-row').length > 2) {
+                        this.closest('.option-row').remove();
+                    } else {
+                        alert('Cada pergunta deve ter pelo menos duas opções.');
+                    }
+                });
+            });
+        }
+        
+        // Função para adicionar template de opção
+        function addOptionTemplate(optionsContainer) {
+            const optionTemplate = `
+                <div class="option-row">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <input type="text" class="form-control option-text" placeholder="Texto da opção" required>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select option-result-key">
+                                <option value="">Selecione um resultado</option>
+                                <option value="result1">Resultado 1</option>
+                                <option value="result2">Resultado 2</option>
+                                <option value="result3">Resultado 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <span class="remove-option"><i class="fas fa-times"></i></span>
+                </div>
+            `;
+            
+            optionsContainer.insertAdjacentHTML('beforeend', optionTemplate);
+            
+            // Adicionar event listener para o botão de remover
+            const optionRows = optionsContainer.querySelectorAll('.option-row');
+            const lastRow = optionRows[optionRows.length - 1];
+            
+            lastRow.querySelector('.remove-option').addEventListener('click', function() {
+                if (optionsContainer.querySelectorAll('.option-row').length > 2) {
+                    this.closest('.option-row').remove();
+                } else {
+                    alert('Cada pergunta deve ter pelo menos duas opções.');
+                }
+            });
+        }
+        
+        // Função para adicionar template de resultado
+        function addResultTemplate() {
+            const resultIndex = document.querySelectorAll('.result-card').length;
+            
+            const resultTemplate = `
+                <div class="result-card">
+                    <h5>Resultado ${resultIndex + 1}</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Chave do Resultado</label>
+                        <input type="text" class="form-control result-key" value="result${resultIndex + 1}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Título do Resultado</label>
+                        <input type="text" class="form-control result-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control result-description" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Imagem do Resultado</label>
+                        <input type="text" class="form-control result-image" placeholder="URL da imagem">
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <span>Produto Recomendado</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Nome do Produto</label>
+                                <input type="text" class="form-control product-name">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descrição do Produto</label>
+                                <textarea class="form-control product-description" rows="2"></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Preço (R$)</label>
+                                        <input type="number" class="form-control product-price" step="0.01">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">URL do Produto</label>
+                                        <input type="text" class="form-control product-url">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Imagem do Produto</label>
+                                <input type="text" class="form-control product-image" placeholder="URL da imagem">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-sm btn-danger remove-result-btn">
+                        <i class="fas fa-trash"></i> Remover Resultado
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('results-container').insertAdjacentHTML('beforeend', resultTemplate);
+            
+            // Adicionar event listener para o botão de remover
+            const resultCards = document.querySelectorAll('.result-card');
+            const lastCard = resultCards[resultCards.length - 1];
+            
+            lastCard.querySelector('.remove-result-btn').addEventListener('click', function() {
+                if (document.querySelectorAll('.result-card').length > 1) {
+                    this.parentElement.remove();
+                } else {
+                    alert('O quiz deve ter pelo menos um resultado.');
+                }
+            });
+        }
+        
+        // Função para atualizar a numeração das perguntas
+        function updateQuestionNumbers() {
+            document.querySelectorAll('.question-card').forEach((card, index) => {
+                card.querySelector('.question-handle').innerHTML = `<i class="fas fa-grip-lines"></i> Pergunta ${index + 1}`;
+            });
+        }
+        
+        // Função para salvar quiz
+        function saveQuiz() {
+            // Validar campos obrigatórios
+            const title = document.getElementById('quiz-title').value;
+            if (!title) {
+                alert('Por favor, preencha o título do quiz.');
+                return;
+            }
+            
+            // Em um ambiente real, coletaríamos todos os dados do formulário
+            // e enviaríamos para uma API para salvar
+            
+            // Aqui, apenas simulamos o salvamento
+            if (currentQuizId) {
+                // Atualizar quiz existente
+                const quizIndex = quizzes.findIndex(q => q.id === currentQuizId);
+                if (quizIndex !== -1) {
+                    quizzes[quizIndex].title = title;
+                    quizzes[quizIndex].status = document.getElementById('quiz-status').value;
+                    quizzes[quizIndex].questionCount = document.querySelectorAll('.question-card').length;
+                }
+                
+                alert('Quiz atualizado com sucesso!');
+            } else {
+                // Criar novo quiz
+                const newQuiz = {
+                    id: `quiz${quizzes.length + 1}`,
+                    title: title,
+                    questionCount: document.querySelectorAll('.question-card').length,
+                    status: document.getElementById('quiz-status').value,
+                    createdAt: new Date().toISOString().split('T')[0]
+                };
+                
+                quizzes.push(newQuiz);
+                alert('Quiz criado com sucesso!');
+            }
+            
+            // Fechar o modal e atualizar a tabela
+            bootstrap.Modal.getInstance(document.getElementById('quiz-modal')).hide();
+            renderQuizzesTable();
+        }
+        
+        // Função para mostrar modal de novo usuário
+        function showNewUserModal() {
+            document.getElementById('user-modal-title').textContent = 'Novo Usuário';
+            document.getElementById('user-form').reset();
+            document.getElementById('password-help').textContent = 'A senha é obrigatória para novos usuários.';
+            
+            const userModal = new bootstrap.Modal(document.getElementById('user-modal'));
+            userModal.show();
+        }
+        
+        // Função para editar usuário existente
+        function editUser(userId) {
+            const user = users.find(u => u.id === parseInt(userId));
+            
+            if (!user) {
+                alert('Usuário não encontrado.');
+                return;
+            }
+            
+            document.getElementById('user-modal-title').textContent = 'Editar Usuário';
+            document.getElementById('user-name').value = user.name;
+            document.getElementById('user-email').value = user.email;
+            document.getElementById('user-password').value = '';
+            document.getElementById('user-role').value = user.role;
+            document.getElementById('user-status').value = user.status;
+            document.getElementById('password-help').textContent = 'Deixe em branco para manter a senha atual.';
+            
+            // Armazenar ID do usuário em um atributo data do botão salvar
+            document.getElementById('save-user-btn').setAttribute('data-user-id', userId);
+            
+            const userModal = new bootstrap.Modal(document.getElementById('user-modal'));
+            userModal.show();
+        }
+        
+        // Função para excluir usuário
+        function deleteUser(userId) {
+            if (confirm('Tem certeza que deseja excluir este usuário?')) {
+                // Em um ambiente real, enviaríamos uma requisição para deletar o usuário
+                users = users.filter(user => user.id !== parseInt(userId));
+                renderUsersTable();
+                alert('Usuário excluído com sucesso!');
+            }
+        }
+        
+        // Função para salvar usuário
+        function saveUser() {
+            // Validar campos obrigatórios
+            const name = document.getElementById('user-name').value;
+            const email = document.getElementById('user-email').value;
+            const password = document.getElementById('user-password').value;
+            const role = document.getElementById('user-role').value;
+            const status = document.getElementById('user-status').value;
+            
+            if (!name || !email) {
+                alert('Por favor, preencha os campos obrigatórios.');
+                return;
+            }
+            
+            const userId = document.getElementById('save-user-btn').getAttribute('data-user-id');
+            
+            if (userId) {
+                // Atualizar usuário existente
+                const userIndex = users.findIndex(u => u.id === parseInt(userId));
+                if (userIndex !== -1) {
+                    users[userIndex].name = name;
+                    users[userIndex].email = email;
+                    users[userIndex].role = role;
+                    users[userIndex].status = status;
+                }
+                
+                alert('Usuário atualizado com sucesso!');
+            } else {
+                // Criar novo usuário
+                if (!password) {
+                    alert('Por favor, defina uma senha para o novo usuário.');
+                    return;
+                }
+                
+                const newUser = {
+                    id: users.length + 1,
+                    name: name,
+                    email: email,
+                    role: role,
+                    status: status
+                };
+                
+                users.push(newUser);
+                alert('Usuário criado com sucesso!');
+            }
+            
+            // Fechar o modal e atualizar a tabela
+            bootstrap.Modal.getInstance(document.getElementById('user-modal')).hide();
+            renderUsersTable();
+        }
     </script>
 </body>
 </html>
