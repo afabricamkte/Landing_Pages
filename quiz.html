@@ -6,17 +6,19 @@
     <title>Quiz Interativo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
+    <style id="customStyles">
+        /* Estilos base que serão customizados dinamicamente */
         :root {
-            --primary-color: #4f2d7f;
-            --secondary-color: #00c853;
-            --dark-bg: #1a1a1a;
+            --primary-color: #010d36;
+            --secondary-color: #dfd7c0;
+            --accent-color: #fef9ef;
+            --dark-bg: #010d36;
             --card-bg: #212529;
             --text-color: #ffffff;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Neue Montreal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--dark-bg);
             color: var(--text-color);
             min-height: 100vh;
@@ -47,13 +49,13 @@
         
         .progress {
             height: 8px;
-            background-color: #2a2a2a;
+            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 30px;
             overflow: hidden;
         }
         
         .progress-bar {
-            background-color: #0d6efd;
+            background-color: var(--secondary-color);
             border-radius: 30px;
         }
         
@@ -108,7 +110,7 @@
             width: 100%;
             padding: 20px 15px;
             background-color: var(--card-bg);
-            border: 2px solid #30363d;
+            border: 2px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             text-align: center;
             transition: all 0.3s;
@@ -120,12 +122,12 @@
         
         .option-btn:hover {
             border-color: var(--secondary-color);
-            background-color: #252a2e;
+            background-color: rgba(255, 255, 255, 0.05);
         }
         
         .option-btn.selected {
             border-color: var(--secondary-color);
-            background-color: #252a2e;
+            background-color: rgba(255, 255, 255, 0.05);
         }
         
         .option-emoji {
@@ -161,8 +163,8 @@
         }
         
         .btn-primary:hover, .btn-next:hover {
-            background-color: #00b34a;
-            border-color: #00b34a;
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
             color: #000;
         }
         
@@ -205,7 +207,7 @@
             padding: 20px;
             border-radius: 10px;
             background-color: var(--card-bg);
-            border: 1px solid #30363d;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-color);
         }
         
@@ -230,7 +232,7 @@
             padding: 20px;
             margin-bottom: 20px;
             text-align: left;
-            border: 1px solid #30363d;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .testimonial-header {
@@ -282,7 +284,7 @@
         
         .progress-step {
             width: 100%;
-            background-color: #30363d;
+            background-color: rgba(255, 255, 255, 0.1);
             height: 8px;
             border-radius: 4px;
             margin-bottom: 10px;
@@ -320,7 +322,7 @@
         
         .input-field {
             background-color: var(--card-bg);
-            border: 1px solid #30363d;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
             padding: 15px;
             border-radius: 8px;
@@ -343,30 +345,106 @@
                 height: 240px;
             }
         }
+
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        /* Efeito de shake para formulários com erro */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Estilos para o loader */
+        .loader-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+        }
+
+        .loader {
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 5px solid var(--secondary-color);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Estilos para mensagens de erro */
+        .error-message {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        /* Estilos para mensagens de sucesso */
+        .success-message {
+            background-color: rgba(25, 135, 84, 0.2);
+            color: #75b798;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid rgba(25, 135, 84, 0.3);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="quiz-selection" class="quiz-container my-5">
             <div class="quiz-header">
-                <h1>MÁQUINA DE VENDER PDFs</h1>
-                <p>O método definitivo para vender todos os dias e escalar seus resultados</p>
+                <img id="brand-logo" src="https://via.placeholder.com/200x100?text=Logo" alt="Logo do Quiz">
+                <h1 id="brand-title">Quiz Interativo</h1>
+                <p id="brand-description">Descubra os resultados perfeitos para você</p>
             </div>
             <div id="quiz-list" class="row">
                 <!-- Os quizzes disponíveis serão carregados aqui -->
                 <div class="text-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Carregando...</span>
+                    <div class="loader-container">
+                        <div class="loader"></div>
                     </div>
-                    <p>Carregando...</p>
+                    <p>Carregando quizzes disponíveis...</p>
                 </div>
             </div>
         </div>
         
-        <div id="quiz-interface" class="quiz-container my-5" style="display: none;">
+        <div id="quiz-interface" class="quiz-container my-5 fade-in" style="display: none;">
             <div class="quiz-header">
                 <img id="quiz-logo" src="" alt="Logo do Quiz">
-                <h1 id="quiz-title">MÁQUINA DE VENDER PDFs</h1>
+                <h1 id="quiz-title">Quiz Interativo</h1>
+                <p id="quiz-description"></p>
             </div>
             
             <div class="progress-container">
@@ -375,7 +453,7 @@
                 </div>
             </div>
             
-            <div id="question-container" class="question-container">
+            <div id="question-container" class="question-container slide-in">
                 <div class="question-text" id="question-text">
                     Carregando pergunta...
                 </div>
@@ -394,9 +472,10 @@
             </div>
         </div>
         
-        <div id="info-collection" class="quiz-container" style="display: none;">
+        <div id="info-collection" class="quiz-container fade-in" style="display: none;">
             <div class="quiz-header">
-                <h1>MÁQUINA DE VENDER PDFs</h1>
+                <img id="info-logo" src="" alt="Logo">
+                <h1 id="info-title">Quiz Interativo</h1>
             </div>
             
             <div class="progress-container">
@@ -405,28 +484,42 @@
                 </div>
             </div>
             
-            <div class="question-text">
-                Me fala seu nome aqui abaixo...
+            <div class="question-text slide-in">
+                Estamos quase lá! Preencha os dados abaixo para receber seu resultado personalizado.
             </div>
             
-            <input type="text" id="user-name" class="input-field" placeholder="Digite o seu primeiro nome">
+            <div id="error-container" class="error-message" style="display: none;">
+                Por favor, preencha todos os campos obrigatórios para continuar.
+            </div>
+            
+            <input type="text" id="user-name" class="input-field" placeholder="Digite o seu nome completo" required>
+            <input type="email" id="user-email" class="input-field" placeholder="Digite seu melhor email" required>
+            <input type="tel" id="user-phone" class="input-field" placeholder="Digite seu telefone (opcional)">
+            
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="terms-check" required>
+                <label class="form-check-label" for="terms-check">
+                    Concordo em receber comunicações e aceito os termos de uso
+                </label>
+            </div>
             
             <div class="navigation-buttons">
-                <button id="continue-btn" class="btn btn-next">Continuar</button>
+                <button id="continue-btn" class="btn btn-next">Ver Meu Resultado</button>
             </div>
         </div>
         
-        <div id="result-container" class="quiz-container result-container" style="display: none;">
+        <div id="result-container" class="quiz-container result-container fade-in" style="display: none;">
             <div class="quiz-header">
-                <h1>MÁQUINA DE VENDER PDFs</h1>
+                <img id="result-logo" src="" alt="Logo">
+                <h1 id="result-title">Quiz Interativo</h1>
             </div>
             
-            <div id="user-greeting" class="question-text">
-                <span id="name-placeholder">Olá</span>, você está pronto para começar a vender seus PDFs hoje mesmo?
+            <div id="user-greeting" class="question-text slide-in">
+                <span id="name-placeholder">Olá</span>, confira seu resultado!
             </div>
-            <p>Só depende de você...</p>
+            <p id="result-description">Baseado nas suas respostas, preparamos algo especial para você...</p>
             
-            <div class="options-grid mb-4">
+            <div class="options-grid mb-4" id="cta-buttons">
                 <button class="option-btn" id="ready-btn">
                     <div class="option-emoji">👍</div>
                     <div class="option-text">100% pronto</div>
@@ -437,30 +530,19 @@
                 </button>
             </div>
             
-            <h3 class="mt-4 mb-3">O que você pode esperar...</h3>
+            <h3 class="mt-4 mb-3" id="expectations-title">O que você pode esperar...</h3>
             
-            <div class="testimonial-card">
+            <div class="testimonial-card" id="progress-card">
                 <div class="testimonial-header">
                     <div>
-                        <div class="testimonial-name">Primeira venda em 24 horas!</div>
+                        <div class="testimonial-name" id="progress-title">Resultados rápidos!</div>
                     </div>
                 </div>
-                <ul class="benefits-list list-unstyled">
-                    <li>
-                        <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                        <span>Colha seus <span class="highlight">PRIMEIROS RESULTADOS</span> e receba 100% DAS COMISSÕES.</span>
-                    </li>
-                    <li>
-                        <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                        <span>Você <span class="highlight">NÃO SERÁ AFILIADO</span>, os produtos serão 100% SEUS.</span>
-                    </li>
-                    <li>
-                        <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                        <span>O conteúdo estará <span class="highlight">100% LIBERADO</span> em sua área de membros, aplique TUDO HOJE!</span>
-                    </li>
+                <ul class="benefits-list list-unstyled" id="progress-benefits">
+                    <!-- Benefícios do progresso serão inseridos aqui -->
                 </ul>
                 
-                <div class="text-center mt-4">
+                <div class="text-center mt-4" id="progress-timeline">
                     <div class="d-flex justify-content-between mb-1">
                         <div>Hoje</div>
                         <div>24hs</div>
@@ -485,111 +567,41 @@
                 </div>
             </div>
             
-            <h3 class="mt-4 mb-3">Depoimentos</h3>
+            <h3 class="mt-4 mb-3" id="testimonials-title">Depoimentos</h3>
             
-            <div class="testimonial-card">
-                <div class="testimonial-header">
-                    <div>
-                        <div class="testimonial-name">Junior</div>
-                        <div class="testimonial-result">Fez mais de 2 salários mínimos em 7 dias</div>
-                    </div>
-                </div>
-                <div class="testimonial-video">
-                    <img src="https://via.placeholder.com/600x400?text=Depoimento+Junior" alt="Depoimento">
-                    <div class="play-button">
-                        <i class="fas fa-play text-white"></i>
-                    </div>
-                </div>
+            <div id="testimonials-container">
+                <!-- Depoimentos serão inseridos aqui -->
             </div>
             
-            <div class="testimonial-card">
-                <div class="testimonial-header">
-                    <div>
-                        <div class="testimonial-name">Aline</div>
-                        <div class="testimonial-result">Primeira venda em menos de 24 horas e mais de R$ 4.000 em poucos dias</div>
-                    </div>
-                </div>
-                <div class="testimonial-video">
-                    <img src="https://via.placeholder.com/600x400?text=Depoimento+Aline" alt="Depoimento">
-                    <div class="play-button">
-                        <i class="fas fa-play text-white"></i>
-                    </div>
-                </div>
-            </div>
+            <h3 class="mt-4 mb-3" id="benefits-title">Benefícios que você vai ter:</h3>
             
-            <h3 class="mt-4 mb-3">Benefícios que você vai ter:</h3>
-            
-            <ul class="benefits-list list-unstyled">
-                <li>
-                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                    <span>Aprenda do <span class="highlight">ZERO</span> ao <span class="highlight">AVANÇADO</span> como fazer suas primeiras vendas no digital.</span>
-                </li>
-                <li>
-                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                    <span><span class="highlight">4 Produtos (PDFs) PRONTOS</span> e VALIDADOS com toda a estrutura montada, basta você replicar rapidamente.</span>
-                </li>
-                <li>
-                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                    <span>Todos os <span class="highlight">criativos e anúncios prontos</span>.</span>
-                </li>
-                <li>
-                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                    <span>O <span class="highlight">QUIZZ COMPLETO</span> (Funil de Venda).</span>
-                </li>
-                <li>
-                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                    <span>Contato <span class="highlight">DIRETO</span> comigo no WhatsApp.</span>
-                </li>
-                <li>
-                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                    <span><span class="highlight">FACEBOOK ADS</span> - Do BÁSICO até sua ESCALA (10k mês).</span>
-                </li>
-                <li>
-                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                    <span>+ de <span class="highlight">25 VIDEO AULAS</span> te ensinando tudo como desenvolver novos PDFs para o futuro.</span>
-                </li>
-                <li>
-                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                    <span>Total de <span class="highlight">47 aulas gravadas</span> para que você possa assistir quantas vezes for necessário.</span>
-                </li>
-                <li>
-                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                    <span><span class="highlight">Acompanhamento da sua evolução</span> durante 1 ANO.</span>
-                </li>
+            <ul class="benefits-list list-unstyled" id="benefits-container">
+                <!-- Benefícios serão inseridos aqui -->
             </ul>
             
-            <h3 class="mt-4 mb-3">Bônus adicionais</h3>
+            <h3 class="mt-4 mb-3" id="bonus-title">Bônus adicionais</h3>
             
-            <ul class="benefits-list list-unstyled">
-                <li>
-                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                    <span><span class="highlight">BÔNUS 02</span> - Recuperação de Vendas Automáticas (Aumente seu faturamento em 20%).</span>
-                </li>
+            <ul class="benefits-list list-unstyled" id="bonus-container">
+                <!-- Bônus serão inseridos aqui -->
             </ul>
             
-            <div class="price-card text-center my-4 p-4" style="border: 2px solid #1e4e8c; border-radius: 10px; background-color: #0d2240;">
-                <h4 class="mb-3">ÚLTIMAS VAGAS</h4>
-                <p class="mb-1">DE: <span style="text-decoration: line-through;">R$497,00</span></p>
-                <h2 class="my-3">POR APENAS R$97,00</h2>
+            <div class="price-card text-center my-4 p-4" style="border: 2px solid var(--secondary-color); border-radius: 10px; background-color: var(--dark-bg);">
+                <h4 class="mb-3" id="offer-title">ÚLTIMAS VAGAS</h4>
+                <p class="mb-1" id="original-price">DE: <span style="text-decoration: line-through;">R$497,00</span></p>
+                <h2 class="my-3" id="current-price">POR APENAS R$97,00</h2>
                 <a href="#" id="cta-button" class="btn btn-next btn-lg d-block mb-3">Quero começar agora</a>
                 
                 <div class="text-start mt-4">
-                    <h4 class="mb-3">Para quem é o MVP?</h4>
-                    <ul class="benefits-list list-unstyled">
-                        <li>
-                            <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                            <span>Para todos aqueles que querem realizar sua PRIMEIRA VENDA EM 24 HORAS.</span>
-                        </li>
-                        <li>
-                            <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                            <span>Para quem precisa escalar suas vendas para 10K OU MAIS mensalmente.</span>
-                        </li>
-                        <li>
-                            <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                            <span>Para todos aqueles que já se sentiram frustrados por não conseguirem realizar vendas no digital com outro método.</span>
-                        </li>
+                    <h4 class="mb-3" id="audience-title">Para quem é esse produto?</h4>
+                    <ul class="benefits-list list-unstyled" id="audience-container">
+                        <!-- Público-alvo será inserido aqui -->
                     </ul>
                 </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <img src="https://via.placeholder.com/300x50?text=Meios+de+Pagamento" alt="Meios de Pagamento" class="img-fluid">
+                <p class="mt-2 small text-muted">Pagamento 100% seguro | Satisfação garantida ou seu dinheiro de volta</p>
             </div>
         </div>
     </div>
@@ -602,219 +614,212 @@
         let currentQuestionIndex = 0;
         let userAnswers = [];
         let userName = "";
+        let userEmail = "";
+        let userPhone = "";
+        let quizSlug = "";
+        let tenantId = "";
+        let utmParams = {};
         
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            loadQuizzes();
+            // Capturar parâmetros UTM
+            captureUtmParams();
+            
+            // Obter o slug do quiz da URL
+            const urlParams = new URLSearchParams(window.location.search);
+            quizSlug = urlParams.get('quiz') || '';
+            tenantId = urlParams.get('tenant') || '';
+            
+            if (quizSlug) {
+                // Se há um quiz específico na URL, carregá-lo diretamente
+                loadSpecificQuiz(quizSlug, tenantId);
+            } else {
+                // Caso contrário, mostrar a lista de quizzes disponíveis
+                loadQuizzes(tenantId);
+            }
             
             // Event listeners
             document.getElementById('next-btn').addEventListener('click', nextQuestion);
-            document.getElementById('continue-btn').addEventListener('click', function() {
-                userName = document.getElementById('user-name').value.trim();
-                if (userName) {
-                    showResults();
-                } else {
-                    alert('Por favor, digite seu nome para continuar.');
+            document.getElementById('continue-btn').addEventListener('click', validateAndContinue);
+            
+            // Event listener para checkbox de termos
+            document.getElementById('terms-check').addEventListener('change', function() {
+                if (this.checked) {
+                    document.getElementById('error-container').style.display = 'none';
                 }
-            });
-            
-            document.getElementById('ready-btn').addEventListener('click', function() {
-                window.location.href = "https://pay.hotmart.com/XXXXXXX"; // URL de compra
-            });
-            
-            document.getElementById('not-ready-btn').addEventListener('click', function() {
-                window.location.href = "https://pay.hotmart.com/XXXXXXX"; // URL de compra alternativa
-            });
-            
-            document.getElementById('cta-button').addEventListener('click', function() {
-                window.location.href = "https://pay.hotmart.com/XXXXXXX"; // URL de compra principal
             });
         });
         
-        // Carregar quizzes disponíveis
-        async function loadQuizzes() {
+        // Função para capturar os parâmetros UTM
+        function captureUtmParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const utmSources = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+            
+            utmSources.forEach(param => {
+                const value = urlParams.get(param);
+                if (value) {
+                    utmParams[param] = value;
+                }
+            });
+        }
+        
+        // Função para validar campos e continuar para os resultados
+        function validateAndContinue() {
+            userName = document.getElementById('user-name').value.trim();
+            userEmail = document.getElementById('user-email').value.trim();
+            userPhone = document.getElementById('user-phone').value.trim();
+            const termsChecked = document.getElementById('terms-check').checked;
+            
+            if (userName && userEmail && termsChecked) {
+                // Ocultar mensagem de erro se estiver visível
+                document.getElementById('error-container').style.display = 'none';
+                
+                // Salvar dados do usuário
+                saveUserData();
+                
+                // Mostrar resultados
+                showResults();
+            } else {
+                // Mostrar mensagem de erro
+                document.getElementById('error-container').style.display = 'block';
+                
+                // Destacar campos vazios
+                if (!userName) {
+                    document.getElementById('user-name').classList.add('is-invalid');
+                } else {
+                    document.getElementById('user-name').classList.remove('is-invalid');
+                }
+                
+                if (!userEmail) {
+                    document.getElementById('user-email').classList.add('is-invalid');
+                } else {
+                    document.getElementById('user-email').classList.remove('is-invalid');
+                }
+                
+                if (!termsChecked) {
+                    document.getElementById('terms-check').classList.add('is-invalid');
+                } else {
+                    document.getElementById('terms-check').classList.remove('is-invalid');
+                }
+            }
+        }
+        
+        // Salvar dados do usuário
+        function saveUserData() {
+            // Preparar os dados a serem enviados
+            const userData = {
+                name: userName,
+                email: userEmail,
+                phone: userPhone,
+                quizId: currentQuiz.id,
+                quizTitle: currentQuiz.title,
+                tenantId: currentQuiz.tenantId,
+                answers: userAnswers.map((answerIndex, questionIndex) => {
+                    const question = currentQuiz.questions[questionIndex];
+                    const answer = question.options[answerIndex];
+                    
+                    return {
+                        question: question.text,
+                        answer: answer.text,
+                        resultKey: answer.resultKey
+                    };
+                }),
+                resultKey: calculateResultKey(),
+                utmParams: utmParams,
+                userAgent: navigator.userAgent,
+                completedAt: new Date().toISOString(),
+                completed: true
+            };
+            
+            // Enviar dados para o servidor (ou API)
+            fetch('/api/leads', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Falha ao salvar dados');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Dados salvos com sucesso:', data);
+            })
+            .catch(error => {
+                console.error('Erro ao salvar dados:', error);
+                // Mesmo com erro, continuamos para mostrar o resultado ao usuário
+            });
+        }
+        
+        // Carregar quizzes disponíveis para um tenant específico
+        async function loadQuizzes(tenantId) {
             try {
-                const response = await fetch('quizzes.json');
+                // Construir a URL da API com o parâmetro tenant, se fornecido
+                const url = tenantId ? `/api/quizzes?tenant=${tenantId}` : '/api/quizzes';
+                
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar quizzes');
+                }
+                
                 quizzes = await response.json();
-                startQuiz('quiz1'); // Inicia automaticamente o primeiro quiz
+                
+                if (quizzes.length === 1) {
+                    // Se há apenas um quiz, iniciá-lo automaticamente
+                    startQuiz(quizzes[0].id);
+                } else {
+                    // Mostrar lista de quizzes disponíveis
+                    displayQuizList();
+                }
             } catch (error) {
                 console.error('Erro ao carregar quizzes:', error);
                 document.getElementById('quiz-list').innerHTML = `
-                    <div class="col-12 text-center">
-                        <p class="text-danger">Não foi possível carregar os quizzes. Tente novamente mais tarde.</p>
+                    <div class="col-12">
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Não foi possível carregar os quizzes. Tente novamente mais tarde.
+                        </div>
                     </div>
                 `;
             }
         }
         
-        // Iniciar um quiz específico
-        function startQuiz(quizId) {
-            currentQuiz = quizzes.find(quiz => quiz.id === quizId);
-            
-            if (!currentQuiz) {
-                alert('Quiz não encontrado.');
-                return;
-            }
-            
-            // Resetar o estado
-            currentQuestionIndex = 0;
-            userAnswers = Array(currentQuiz.questions.length).fill(null);
-            
-            // Mostrar a interface do quiz e esconder a seleção
-            document.getElementById('quiz-selection').style.display = 'none';
-            document.getElementById('quiz-interface').style.display = 'block';
-            document.getElementById('info-collection').style.display = 'none';
-            document.getElementById('result-container').style.display = 'none';
-            
-            // Carregar a primeira pergunta
-            displayQuestion();
-        }
-        
-        // Exibir a pergunta atual
-        function displayQuestion() {
-            const question = currentQuiz.questions[currentQuestionIndex];
-            const questionTextElement = document.getElementById('question-text');
-            const mediaContainerElement = document.getElementById('media-container');
-            const optionsContainerElement = document.getElementById('options-container');
-            
-            // Atualizar progresso
-            const progressPercentage = ((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100;
-            document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
-            
-            // Atualizar texto da pergunta
-            questionTextElement.textContent = question.text;
-            
-            // Atualizar mídia (se houver)
-            if (question.media) {
-                if (question.mediaType === 'image') {
-                    mediaContainerElement.innerHTML = `<img src="${question.media}" alt="Imagem da pergunta">`;
-                } else if (question.mediaType === 'video') {
-                    mediaContainerElement.innerHTML = `<iframe src="${question.media}" allowfullscreen></iframe>`;
-                }
-                mediaContainerElement.style.display = 'block';
-            } else {
-                mediaContainerElement.style.display = 'none';
-            }
-            
-            // Atualizar opções
-            let optionsHTML = '';
-            
-            question.options.forEach((option, index) => {
-                const isSelected = userAnswers[currentQuestionIndex] === index;
-                const emojiElement = option.emoji ? `<div class="option-emoji">${option.emoji}</div>` : '';
-                
-                // Processar texto para destacar palavras específicas
-                let processedText = option.text;
-                if (option.highlight) {
-                    option.highlight.forEach(word => {
-                        processedText = processedText.replace(word, `<span class="option-highlight">${word}</span>`);
-                    });
-                }
-                
-                optionsHTML += `
-                    <button class="option-btn ${isSelected ? 'selected' : ''}" data-index="${index}">
-                        ${emojiElement}
-                        <div class="option-text">${processedText}</div>
-                    </button>
-                `;
-            });
-            
-            optionsContainerElement.innerHTML = optionsHTML;
-            
-            // Adicionar event listeners para as opções
-            document.querySelectorAll('.option-btn').forEach(button => {
-                button.addEventListener('click', handleOptionSelection);
-            });
-            
-            // Atualizar botão de próximo
-            const nextBtn = document.getElementById('next-btn');
-            if (currentQuestionIndex === currentQuiz.questions.length - 1) {
-                nextBtn.textContent = 'Ver Resultados';
-            } else {
-                nextBtn.textContent = 'Próximo';
-            }
-        }
-        
-        // Lidar com a seleção de opção
-        function handleOptionSelection(event) {
-            const selectedIndex = parseInt(event.currentTarget.dataset.index);
-            userAnswers[currentQuestionIndex] = selectedIndex;
-            
-            // Atualizar visualmente as opções
-            document.querySelectorAll('.option-btn').forEach(button => {
-                button.classList.remove('selected');
-            });
-            
-            event.currentTarget.classList.add('selected');
-        }
-        
-        // Ir para a próxima pergunta
-        function nextQuestion() {
-            // Verificar se o usuário selecionou uma opção
-            if (userAnswers[currentQuestionIndex] === null) {
-                alert('Por favor, selecione uma opção para continuar.');
-                return;
-            }
-            
-            if (currentQuestionIndex < currentQuiz.questions.length - 1) {
-                currentQuestionIndex++;
-                displayQuestion();
-            } else {
-                // Mostrar tela de coleta de informações
-                document.getElementById('quiz-interface').style.display = 'none';
-                document.getElementById('info-collection').style.display = 'block';
-            }
-        }
-        
-        // Mostrar o resultado
-        function showResults() {
-            // Personalizar a saudação com o nome do usuário
-            document.getElementById('name-placeholder').textContent = userName;
-            
-            // Mostrar container de resultado
-            document.getElementById('quiz-interface').style.display = 'none';
-            document.getElementById('info-collection').style.display = 'none';
-            document.getElementById('result-container').style.display = 'block';
-            
-            // Scroll para o topo
-            window.scrollTo(0, 0);
-        }
-    </script>NUS 01</span> - Venda com TIKTOK sem gastar nem R$1 (NADA).</span>
-                </li>
-                <li>
-                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
-                    <span><span class="highlight">BÔ
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Variáveis globais
-        let quizzes = [];
-        let currentQuiz = null;
-        let currentQuestionIndex = 0;
-        let userAnswers = [];
-        
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', function() {
-            loadQuizzes();
-            
-            // Event listeners
-            document.getElementById('next-btn').addEventListener('click', nextQuestion);
-            document.getElementById('prev-btn').addEventListener('click', prevQuestion);
-            document.getElementById('restart-btn').addEventListener('click', restartQuiz);
-            document.getElementById('return-btn').addEventListener('click', returnToQuizList);
-        });
-        
-        // Carregar quizzes disponíveis
-        async function loadQuizzes() {
+        // Carregar um quiz específico pelo slug e tenant
+        async function loadSpecificQuiz(slug, tenantId) {
             try {
-                const response = await fetch('quizzes.json');
-                quizzes = await response.json();
-                displayQuizList();
+                // Construir a URL da API com os parâmetros slug e tenant
+                let url = `/api/quizzes?slug=${slug}`;
+                if (tenantId) {
+                    url += `&tenant=${tenantId}`;
+                }
+                
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar quiz específico');
+                }
+                
+                const allQuizzes = await response.json();
+                
+                if (allQuizzes.length > 0) {
+                    // Usar o primeiro quiz encontrado com o slug especificado
+                    startQuiz(allQuizzes[0].id);
+                } else {
+                    // Quiz não encontrado, carregar todos os quizzes disponíveis
+                    quizzes = [];
+                    await loadQuizzes(tenantId);
+                }
             } catch (error) {
-                console.error('Erro ao carregar quizzes:', error);
+                console.error('Erro ao carregar quiz específico:', error);
+                document.getElementById('quiz-selection').style.display = 'block';
                 document.getElementById('quiz-list').innerHTML = `
-                    <div class="col-12 text-center">
-                        <p class="text-danger">Não foi possível carregar os quizzes. Tente novamente mais tarde.</p>
+                    <div class="col-12">
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Não foi possível carregar o quiz. Tente novamente mais tarde.
+                        </div>
                     </div>
                 `;
             }
@@ -822,255 +827,6 @@
         
         // Exibir lista de quizzes disponíveis
         function displayQuizList() {
-            const quizListElement = document.getElementById('quiz-list');
-            
             if (quizzes.length === 0) {
-                quizListElement.innerHTML = `
-                    <div class="col-12 text-center">
-                        <p>Nenhum quiz disponível no momento.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            let quizCardsHTML = '';
-            
-            quizzes.forEach(quiz => {
-                quizCardsHTML += `
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100">
-                            <img src="${quiz.thumbnail || 'https://via.placeholder.com/300x200?text=Quiz'}" class="card-img-top" alt="${quiz.title}">
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">${quiz.title}</h5>
-                                <p class="card-text">${quiz.description}</p>
-                                <button onclick="startQuiz('${quiz.id}')" class="btn btn-primary mt-auto">Iniciar Quiz</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            quizListElement.innerHTML = quizCardsHTML;
-        }
-        
-        // Iniciar um quiz específico
-        function startQuiz(quizId) {
-            currentQuiz = quizzes.find(quiz => quiz.id === quizId);
-            
-            if (!currentQuiz) {
-                alert('Quiz não encontrado.');
-                return;
-            }
-            
-            // Resetar o estado
-            currentQuestionIndex = 0;
-            userAnswers = Array(currentQuiz.questions.length).fill(null);
-            
-            // Atualizar a interface
-            document.getElementById('quiz-logo').src = currentQuiz.logo || 'https://via.placeholder.com/200x100?text=Logo';
-            document.getElementById('quiz-title').textContent = currentQuiz.title;
-            document.getElementById('quiz-description').textContent = currentQuiz.description;
-            document.getElementById('total-questions').textContent = `de ${currentQuiz.questions.length}`;
-            
-            // Mostrar a interface do quiz e esconder a seleção
-            document.getElementById('quiz-selection').style.display = 'none';
-            document.getElementById('quiz-interface').style.display = 'block';
-            document.getElementById('result-container').style.display = 'none';
-            
-            // Carregar a primeira pergunta
-            displayQuestion();
-        }
-        
-        // Exibir a pergunta atual
-        function displayQuestion() {
-            const question = currentQuiz.questions[currentQuestionIndex];
-            const questionTextElement = document.getElementById('question-text');
-            const mediaContainerElement = document.getElementById('media-container');
-            const optionsContainerElement = document.getElementById('options-container');
-            
-            // Atualizar progresso
-            const progressPercentage = ((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100;
-            document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
-            document.getElementById('current-question').textContent = `Pergunta ${currentQuestionIndex + 1}`;
-            
-            // Atualizar texto da pergunta
-            questionTextElement.textContent = question.text;
-            
-            // Atualizar mídia (se houver)
-            if (question.media) {
-                if (question.mediaType === 'image') {
-                    mediaContainerElement.innerHTML = `<img src="${question.media}" alt="Imagem da pergunta">`;
-                } else if (question.mediaType === 'video') {
-                    mediaContainerElement.innerHTML = `<iframe src="${question.media}" allowfullscreen></iframe>`;
-                }
-                mediaContainerElement.style.display = 'block';
-            } else {
-                mediaContainerElement.style.display = 'none';
-            }
-            
-            // Atualizar opções
-            let optionsHTML = '';
-            
-            question.options.forEach((option, index) => {
-                const isSelected = userAnswers[currentQuestionIndex] === index;
-                optionsHTML += `
-                    <button class="option-btn ${isSelected ? 'selected' : ''}" data-index="${index}">
-                        ${option.text}
-                        ${isSelected ? '<i class="fas fa-check-circle text-primary"></i>' : ''}
-                    </button>
-                `;
-            });
-            
-            optionsContainerElement.innerHTML = optionsHTML;
-            
-            // Adicionar event listeners para as opções
-            document.querySelectorAll('.option-btn').forEach(button => {
-                button.addEventListener('click', handleOptionSelection);
-            });
-            
-            // Atualizar botões de navegação
-            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
-            
-            const nextBtn = document.getElementById('next-btn');
-            if (currentQuestionIndex === currentQuiz.questions.length - 1) {
-                nextBtn.textContent = 'Ver Resultado';
-                nextBtn.classList.remove('btn-primary');
-                nextBtn.classList.add('btn-success');
-            } else {
-                nextBtn.textContent = 'Próxima';
-                nextBtn.classList.remove('btn-success');
-                nextBtn.classList.add('btn-primary');
-            }
-        }
-        
-        // Lidar com a seleção de opção
-        function handleOptionSelection(event) {
-            const selectedIndex = parseInt(event.currentTarget.dataset.index);
-            userAnswers[currentQuestionIndex] = selectedIndex;
-            
-            // Atualizar visualmente as opções
-            document.querySelectorAll('.option-btn').forEach(button => {
-                button.classList.remove('selected');
-                button.querySelector('i')?.remove();
-            });
-            
-            event.currentTarget.classList.add('selected');
-            event.currentTarget.innerHTML += '<i class="fas fa-check-circle text-primary"></i>';
-        }
-        
-        // Ir para a próxima pergunta
-        function nextQuestion() {
-            // Verificar se o usuário selecionou uma opção
-            if (userAnswers[currentQuestionIndex] === null) {
-                alert('Por favor, selecione uma opção para continuar.');
-                return;
-            }
-            
-            if (currentQuestionIndex < currentQuiz.questions.length - 1) {
-                currentQuestionIndex++;
-                displayQuestion();
-            } else {
-                showResult();
-            }
-        }
-        
-        // Voltar para a pergunta anterior
-        function prevQuestion() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                displayQuestion();
-            }
-        }
-        
-        // Mostrar o resultado
-        function showResult() {
-            // Calcular resultado com base nas respostas
-            const resultKey = calculateResultKey();
-            const result = currentQuiz.results[resultKey];
-            
-            if (!result) {
-                console.error('Resultado não encontrado para a chave:', resultKey);
-                return;
-            }
-            
-            // Atualizar conteúdo do resultado
-            const resultContentElement = document.getElementById('result-content');
-            resultContentElement.innerHTML = `
-                <div class="result-image-container mb-4">
-                    <img src="${result.image || 'https://via.placeholder.com/300x200?text=Resultado'}" alt="Imagem do resultado" class="img-fluid rounded">
-                </div>
-                <h3>${result.title}</h3>
-                <p>${result.description}</p>
-            `;
-            
-            // Atualizar recomendação de produto
-            const productRecommendation = result.product;
-            const productContentElement = document.getElementById('product-content');
-            
-            if (productRecommendation) {
-                productContentElement.innerHTML = `
-                    <img src="${productRecommendation.image || 'https://via.placeholder.com/200x200?text=Produto'}" alt="${productRecommendation.name}" class="product-image">
-                    <h4>${productRecommendation.name}</h4>
-                    <p>${productRecommendation.description}</p>
-                    <p class="fw-bold">R$ ${productRecommendation.price.toFixed(2)}</p>
-                `;
-                
-                const productLinkElement = document.getElementById('product-link');
-                productLinkElement.href = productRecommendation.url;
-                
-                document.getElementById('product-recommendation').style.display = 'block';
-            } else {
-                document.getElementById('product-recommendation').style.display = 'none';
-            }
-            
-            // Mostrar container de resultado
-            document.getElementById('quiz-interface').style.display = 'none';
-            document.getElementById('result-container').style.display = 'block';
-        }
-        
-        // Calcular a chave do resultado com base nas respostas
-        function calculateResultKey() {
-            // Implementação básica: usar resultado mais comum entre as respostas
-            const answerCounts = {};
-            
-            userAnswers.forEach((answerIndex, questionIndex) => {
-                const question = currentQuiz.questions[questionIndex];
-                const answer = question.options[answerIndex];
-                
-                if (answer.resultKey) {
-                    answerCounts[answer.resultKey] = (answerCounts[answer.resultKey] || 0) + 1;
-                }
-            });
-            
-            let maxCount = 0;
-            let resultKey = Object.keys(currentQuiz.results)[0]; // Valor padrão
-            
-            for (const [key, count] of Object.entries(answerCounts)) {
-                if (count > maxCount) {
-                    maxCount = count;
-                    resultKey = key;
-                }
-            }
-            
-            return resultKey;
-        }
-        
-        // Reiniciar o quiz atual
-        function restartQuiz() {
-            currentQuestionIndex = 0;
-            userAnswers = Array(currentQuiz.questions.length).fill(null);
-            
-            document.getElementById('result-container').style.display = 'none';
-            document.getElementById('quiz-interface').style.display = 'block';
-            
-            displayQuestion();
-        }
-        
-        // Voltar para a lista de quizzes
-        function returnToQuizList() {
-            document.getElementById('result-container').style.display = 'none';
-            document.getElementById('quiz-selection').style.display = 'block';
-        }
-    </script>
-</body>
-</html>
+                document.getElementById('quiz-list').innerHTML = `
+                    <div class="col-12 text
