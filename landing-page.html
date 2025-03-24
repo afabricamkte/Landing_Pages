@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFÁBRICA Quiz - A melhor plataforma de quiz para marketing digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #010d36;
+            --secondary-color: #dfd7c0;
+            --text-color: #333333;
+            --accent-color: #27ae60;
+            --light-bg: #f9f9f9;
+            --white: #ffffff;
+            --light-gray: #f0f0f0;
+            --border-color: #e0e0e0;
+            --highlight: #ffc107;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        h1, h2, h3, h4, h5 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 20px;
+        }
+        
+        img {
+            max-width: 100%;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            background-color: #239d55;
+        }
+        
+        .btn-lg {
+            padding: 16px 36px;
+            font-size: 1.2rem;
+        }
+        
+        .btn-secondary {
+            background-color: var(--primary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #132056;
+        }
+        
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .nav-menu {
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-list {
+            display: flex;
+            list-style: none;
+            margin-right: 20px;
+        }
+        
+        .nav-item {
+            margin: 0 15px;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--accent-color);
+        }
+        
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #192c63 100%);
+            color: white;
+            padding: 180px 0 120px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-shape {
+            position: absolute;
+            bottom: -50px;
+            right: -150px;
+            width: 600px;
+            height: 600px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 5;
+            max-width: 650px;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+        
+        .hero-heading {
+            margin-bottom: 30px;
+        }
+        
+        .hero-description {
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        .hero-img {
+            position: absolute;
+            top: 100px;
+            right: -80px;
+            max-width: 600px;
+            z-index: 2;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background-color: var(--light-bg);
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-subtitle {
+            color: var(--accent-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature-description {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        /* How It Works */
+        .how-works {
+            padding: 100px 0;
+        }
+        
+        .steps-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 50px;
+            position: relative;
+        }
+        
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            top: 70px;
+            left: 50px;
+            right: 50px;
+            height: 3px;
+            background-color: var(--light-gray);
+            z-index: 1;
+        }
+        
+        .step {
+            flex: 0 0 calc(25% - 30px);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-number {
+            width: 70px;
+            height: 70px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .step-description {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        /* Demo Section */
+        .demo {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #192c63 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .demo-img {
+            max-width: 90%;
+            margin: 40px auto 0;
+            border-radius: 10px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Benefits Section */
+        .benefits {
+            padding: 100px 0;
+        }
+        
+        .benefits-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+        }
+        
+        .benefits-text {
+            flex: 0 0 45%;
+        }
+        
+        .benefits-list {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .benefit-item {
+            padding: 15px 0;
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .benefit-item::before {
+            content: "✓";
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+        }
+        
+        .benefits-image {
+            flex: 0 0 50%;
+        }
+        
+        .benefits-img {
+            border-radius: 10px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 100px 0;
+            background-color: var(--light-bg);
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .testimonial-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+        
+        .testimonial-content {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: #444;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+        
+        .author-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .author-title {
+            font-size: 0.85rem;
+            color: #777;
+        }
+        
+        /* Pricing */
+        .pricing {
+            padding: 100px 0;
+        }
+        
+        .pricing-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+        
+        .toggle-label {
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .toggle-label.active {
+            color: var(--accent-color);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            background-color: var(--light-gray);
+            border-radius: 30px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background-color: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-switch.yearly::after {
+            left: 32px;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        
+        .pricing-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .pricing-card.featured {
+            border: 2px solid var(--accent-color);
+            position: relative;
+        }
+        
+        .pricing-card.featured::before {
+            content: 'Mais Popular';
+            position: absolute;
+            top: 15px;
+            right: -30px;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 5px 30px;
+            transform: rotate(45deg);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .pricing-header {
+            padding: 30px;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .pricing-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .pricing-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .price .currency {
+            font-size: 1.5rem;
+            vertical-align: super;
+        }
+        
+        .price-duration {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .pricing-features {
+            padding: 30px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .feature-list li {
+            padding: 10px 0;
+            color: #555;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .feature-list li::before {
+            content: "✓";
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+        }
+        
+        .feature-list li.disabled {
+            color: #999;
+            text-decoration: line-through;
+        }
+        
+        .feature-list li.disabled::before {
+            content: "✕";
+            color: #999;
+        }
+        
+        .pricing-btn {
+            width: 100%;
+        }
+        
+        /* FAQ */
+        .faq {
+            padding: 100px 0;
+            background-color: var(--light-bg);
+        }
+        
+        .faq-item {
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            background-color: white;
+        }
+        
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-question h3 {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .faq-toggle {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-answer p {
+            padding: 0 0 20px;
+        }
+        
+        .faq-item.open .faq-question {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .faq-item.open .faq-toggle {
+            transform: rotate(180deg);
+        }
+        
+        .faq-item.open .faq-answer {
+            max-height: 1000px;
+        }
+        
+        /* CTA */
+        .cta {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #192c63 100%);
+            color: white;
+        }
+        
+        .cta-heading {
+            font-size: 2.8rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .cta-description {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 80px 0 30px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .footer-branding {
+            margin-bottom: 20px;
+        }
+        
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+        
+        .footer-description {
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        
+        .social-links {
+            display: flex;
+        }
+        
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+        
+        .footer-heading {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            h1 {
+                font-size: 3rem;
+            }
+            
+            h2 {
+                font-size: 2.2rem;
+            }
+            
+            .hero {
+                padding: 150px 0 100px;
+            }
+            
+            .hero-img {
+                max-width: 450px;
+                right: -150px;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .steps-container::before {
+                display: none;
+            }
+            
+            .step {
+                flex: 0 0 calc(50% - 20px);
+                margin-bottom: 40px;
+            }
+            
+            .benefits-content {
+                flex-direction: column;
+            }
+            
+            .benefits-text, .benefits-image {
+                flex: 0 0 100%;
+            }
+            
+            .testimonial-grid, .pricing-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .header-container {
+                padding: 15px;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .hero-content {
+                max-width: 100%;
+                text-align: center;
+            }
+            
+            .hero-img {
+                display: none;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .step {
+                flex: 0 0 100%;
+            }
+            
+            .testimonial-grid, .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-container">
+                <a href="#" class="logo">
+                    AFÁBRICA Quiz
+                </a>
+                <div class="nav-menu">
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="#features" class="nav-link">Recursos</a></li>
+                        <li class="nav-item"><a href="#how-works" class="nav-link">Como Funciona</a></li>
+                        <li class="nav-item"><a href="#pricing" class="nav-link">Preços</a></li>
+                        <li class="nav-item"><a href="#faq" class="nav-link">FAQ</a></li>
+                    </ul>
+                    <a href="#" class="btn">Começar Agora</a>
+                </div>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-shape"></div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-subtitle">Plataforma para Geração de Leads e Vendas</div>
+                <h1 class="hero-heading">Crie Quizzes Que Convertem e Venda Mais</h1>
+                <p class="hero-description">Turbine suas vendas com quizzes interativos que engajam, segmentam e convertem leads de alta qualidade. Chega de VSLs e páginas de vendas complexas.</p>
+                <a href="#" class="btn btn-lg">Experimente Grátis por 7 Dias</a>
+            </div>
+            <img src="https://via.placeholder.com/700x500?text=AFABRICA+Quiz+Preview" alt="Preview do AFÁBRICA Quiz" class="hero-img">
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Recursos Exclusivos</div>
+                <h2>Tudo Que Você Precisa Para Vender Mais</h2>
+                <p>Uma plataforma completa para criar quizzes interativos e convertê-los em vendas</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon"><i class="fas fa-magic"></i></span>
+                    <h3 class="feature-title">Criação Simplificada</h3>
+                    <p class="feature-description">Crie quizzes profissionais em minutos com nossa interface intuitiva, sem necessidade de conhecimentos técnicos.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon"><i class="fas fa-paint-brush"></i></span>
+                    <h3 class="feature-title">100% Personalizável</h3>
+                    <p class="feature-description">Customize cores, fontes e estilos para combinar perfeitamente com sua marca e identidade visual.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon"><i class="fas fa-mobile-alt"></i></span>
+                    <h3 class="feature-title">Responsivo</h3>
+                    <p class="feature-description">Seus quizzes funcionam perfeitamente em qualquer dispositivo: desktop, tablets e smartphones.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon"><i class="fas fa-link"></i></span>
+                    <h3 class="feature-title">URLs Personalizadas</h3>
+                    <p class="feature-description">Crie URLs específicas para cada quiz, facilitando compartilhamento e rastreamento de campanhas.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon"><i class="fas fa-chart-line"></i></span>
+                    <h3 class="feature-title">Análise Detalhada</h3>
+                    <p class="feature-description">Acompanhe todas as métricas importantes: taxa de conversão, respostas e comportamento dos usuários.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon"><i class="fas fa-tags"></i></span>
+                    <h3 class="feature-title">Parâmetros UTM</h3>
+                    <p class="feature-description">Configure facilmente seus links de checkout com parâmetros UTM para melhor rastreamento de conversão.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-works" id="how-works">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Processo Simples</div>
+                <h2>Como Funciona</h2>
+                <p>Siga estes passos simples para começar a vender com quizzes</p>
+            </div>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Crie seu Quiz</h3>
+                    <p class="step-description">Defina suas perguntas, opções e resultados com nossa interface intuitiva.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Personalize</h3>
+                    <p class="step-description">Customize cores, fontes e adicione seus produtos para cada perfil de resultado.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Compartilhe</h3>
+                    <p class="step-description">Obtenha sua URL personalizada e comece a divulgar seu quiz para seu público.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">Venda</h3>
+                    <p class="step-description">Aumente suas vendas com ofertas personalizadas para cada perfil de cliente.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="demo">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Veja em Ação</div>
+                <h2>Nossa Plataforma é Simples e Poderosa</h2>
+                <p>Veja como é fácil criar e gerenciar seus quizzes de conversão</p>
+            </div>
+            <img src="https://via.placeholder.com/1000x600?text=AFABRICA+Quiz+Dashboard" alt="Dashboard do AFÁBRICA Quiz" class="demo-img">
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits">
+        <div class="container">
+            <div class="benefits-content">
+                <div class="benefits-text">
+                    <div class="section-subtitle">Por que escolher nossa plataforma</div>
+                    <h2>Vantagens do AFÁBRICA Quiz</h2>
+                    <p>Nossa plataforma foi desenvolvida pensando nas necessidades específicas de profissionais de marketing digital e vendas.</p>
+                    <ul class="benefits-list">
+                        <li class="benefit-item">Múltiplos quizzes ativos simultaneamente</li>
+                        <li class="benefit-item">Integração com plataformas de pagamento</li>
+                        <li class="benefit-item">Sem necessidade de VSLs ou páginas de vendas complexas</li>
+                        <li class="benefit-item">Segmentação automática de leads e clientes</li>
+                        <li class="benefit-item">Template whitelabel 100% personalizado para sua marca</li>
+                        <li class="benefit-item">Suporte especializado para aumentar suas conversões</li>
+                    </ul>
+                    <a href="#" class="btn">Comece a Usar Agora</a>
+                </div>
+                <div class="benefits-image">
+                    <img src="https://via.placeholder.com/600x500?text=AFABRICAquiz+Benefits" alt="Benefícios do AFÁBRICA Quiz" class="benefits-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">O que nossos clientes dizem</div>
+                <h2>Histórias de Sucesso</h2>
+                <p>Empresas e profissionais que já transformaram suas vendas com o AFÁBRICA Quiz</p>
+            </div>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Desde que implementei o AFÁBRICA Quiz, minhas conversões aumentaram em 300%. A facilidade de personalização e a segmentação automática revolucionaram minha forma de vender infoprodutos."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://via.placeholder.com/60x60" alt="Carlos Silva">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">Carlos Silva</div>
+                            <div class="author-title">Produtor Digital</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Consegui vender mais em 30 dias usando quizzes do que em 6 meses com páginas de vendas tradicionais. A plataforma é incrivelmente fácil de usar, mesmo para quem não tem conhecimento técnico."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://via.placeholder.com/60x60" alt="Márcia Santos">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">Márcia Santos</div>
+                            <div class="author-title">Coach de Emagrecimento</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "A possibilidade de ter múltiplos quizzes ativos simultaneamente revolucionou nossa estratégia de marketing. Agora conseguimos segmentar nosso público e oferecer produtos específicos para cada perfil."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://via.placeholder.com/60x60" alt="Roberto Almeida">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">Roberto Almeida</div>
+                            <div class="author-title">CEO da Evolve Digital</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Planos Acessíveis</div>
+                <h2>Escolha o Plano Ideal Para Você</h2>
+                <p>Oferecemos opções flexíveis para atender às necessidades de todos os tipos de negócios</p>
+            </div>
+            <div class="pricing-toggle">
+                <span class="toggle-label active">Mensal</span>
+                <span class="toggle-switch"></span>
+                <span class="toggle-label">Anual <span style="color: var(--accent-color); font-weight: 700;">20% OFF</span></span>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-title">Iniciante</h3>
+                        <div class="pricing-subtitle">Para quem está começando</div>
+                        <div class="price"><span class="currency">R$</span>47<span class="cents">,00</span></div>
+                        <div class="price-duration">por mês</div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul class="feature-list">
+                            <li>1 Quiz ativo</li>
+                            <li>Até 100 respostas por mês</li>
+                            <li>Personalização básica</li>
+                            <li>URLs personalizadas</li>
+                            <li>Integração com 1 plataforma de pagamento</li>
+                            <li class="disabled">Múltiplos quizzes simultâneos</li>
+                            <li class="disabled">Configuração avançada de UTM</li>
+                            <li class="disabled">Suporte prioritário</li>
+                        </ul>
+                        <a href="#" class="btn pricing-btn">Começar Agora</a>
+                    </div>
+                </div>
+                <div class="pricing-card featured">
+                    <div class="pricing-header">
+                        <h3 class="pricing-title">Profissional</h3>
+                        <div class="pricing-subtitle">A melhor opção</div>
+                        <div class="price"><span class="currency">R$</span>97<span class="cents">,00</span></div>
+                        <div class="price-duration">por mês</div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul class="feature-list">
+                            <li>5 Quizzes ativos</li>
+                            <li>Até 1.000 respostas por mês</li>
+                            <li>Personalização completa</li>
+                            <li>URLs personalizadas</li>
+                            <li>Integração com 3 plataformas de pagamento</li>
+                            <li>Múltiplos quizzes simultâneos</li>
+                            <li>Configuração avançada de UTM</li>
+                            <li class="disabled">Suporte prioritário</li>
+                        </ul>
+                        <a href="#" class="btn pricing-btn">Começar Agora</a>
+                    </div>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-title">Agência</h3>
+                        <div class="pricing-subtitle">Para profissionais avançados</div>
+                        <div class="price"><span class="currency">R$</span>197<span class="cents">,00</span></div>
+                        <div class="price-duration">por mês</div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul class="feature-list">
+                            <li>Quizzes ilimitados</li>
+                            <li>Respostas ilimitadas</li>
+                            <li>Personalização completa</li>
+                            <li>URLs personalizadas</li>
+                            <li>Integração com todas as plataformas</li>
+                            <li>Múltiplos quizzes simultâneos</li>
+                            <li>Configuração avançada de UTM</li>
+                            <li>Suporte prioritário</li>
+                        </ul>
+                        <a href="#" class="btn pricing-btn">Começar Agora</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Dúvidas Frequentes</div>
+                <h2>Perguntas e Respostas</h2>
+                <p>Encontre respostas para as perguntas mais comuns sobre o AFÁBRICA Quiz</p>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>O que é o AFÁBRICA Quiz?</h3>
+                        <span class="faq-toggle"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>O AFÁBRICA Quiz é uma plataforma de criação de quizzes interativos focada em geração de leads e conversão de vendas. Diferente de outras ferramentas, nosso sistema foi desenvolvido especificamente para o mercado brasileiro, com foco em vendas diretas, infoprodutos e cursos online.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Preciso ter conhecimentos técnicos para usar?</h3>
+                        <span class="faq-toggle"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Não! Nossa plataforma foi desenvolvida pensando em pessoas sem conhecimento técnico. A interface é intuitiva e você pode criar quizzes profissionais em poucos minutos. Além disso, oferecemos modelos prontos que você pode personalizar facilmente.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Posso personalizar os quizzes com as cores da minha marca?</h3>
+                        <span class="faq-toggle"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Sim! O AFÁBRICA Quiz oferece personalização completa. Você pode alterar cores, fontes, imagens e até adicionar seu próprio logo. Nossa plataforma é 100% white label, o que significa que seus clientes verão apenas sua marca.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Como os quizzes podem aumentar minhas vendas?</h3>
+                        <span class="faq-toggle"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Os quizzes aumentam o engajamento do usuário e permitem segmentar seu público automaticamente. Em vez de oferecer o mesmo produto para todos, você pode recomendar produtos específicos com base nas respostas de cada pessoa. Isso aumenta drasticamente as taxas de conversão, pois cada visitante recebe uma oferta personalizada para seu perfil.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Posso integrar com minha plataforma de pagamentos?</h3>
+                        <span class="faq-toggle"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Sim! O AFÁBRICA Quiz integra com as principais plataformas de pagamento do mercado, incluindo Hotmart, Eduzz, Monetizze, PagSeguro, Mercado Pago e muitas outras. Você pode configurar facilmente os links de checkout com parâmetros UTM para melhor rastreamento das conversões.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Posso ter múltiplos quizzes ativos ao mesmo tempo?</h3>
+                        <span class="faq-toggle"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Sim! Dependendo do seu plano, você pode ter múltiplos quizzes ativos simultaneamente. Cada quiz pode ter sua própria URL personalizada, o que facilita a gestão de diferentes campanhas e produtos. Isso é especialmente útil para quem trabalha com diferentes nichos ou ofertas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2 class="cta-heading">Comece a Vender Mais Hoje Mesmo</h2>
+            <p class="cta-description">Experimente o AFÁBRICA Quiz por 7 dias e descubra como os quizzes podem transformar seus resultados de vendas.</p>
+            <a href="#" class="btn btn-lg">Começar Gratuitamente</a>
+            <p style="margin-top: 20px; opacity: 0.8;">Não é necessário cartão de crédito</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <div class="footer-branding">
+                        <a href="#" class="footer-logo">AFÁBRICA Quiz</a>
+                        <p class="footer-description">A plataforma mais completa para criar quizzes que engajam, segmentam e convertem.</p>
+                    </div>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-heading">Empresa</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Sobre Nós</a></li>
+                        <li><a href="#">Nossa Equipe</a></li>
+                        <li><a href="#">Carreiras</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-heading">Produto</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Recursos</a></li>
+                        <li><a href="#">Preços</a></li>
+                        <li><a href="#">Quizzes</a></li>
+                        <li><a href="#">Integrações</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-heading">Suporte</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Centro de Ajuda</a></li>
+                        <li><a href="#">Contato</a></li>
+                        <li><a href="#">Política de Privacidade</a></li>
+                        <li><a href="#">Termos de Serviço</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 AFÁBRICA Quiz. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle mobile menu
+        document.querySelector('.mobile-menu').addEventListener('click', function() {
+            document.querySelector('.nav-menu').classList.toggle('active');
+        });
+        
+        // Toggle pricing
+        document.querySelector('.toggle-switch').addEventListener('click', function() {
+            this.classList.toggle('yearly');
+            
+            const labels = document.querySelectorAll('.toggle-label');
+            labels.forEach(label => label.classList.toggle('active'));
+            
+            // Here you would update pricing values
+        });
+        
+        // FAQ toggle
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const faqItem = question.parentElement;
+                faqItem.classList.toggle('open');
+            });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const target = document.querySelector(targetId);
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // On scroll header effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>
