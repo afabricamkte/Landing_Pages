@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produção Completa de Eventos Corporativos | AFabricaMkte</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #e30613;
+            --secondary-color: #010d36;
+            --text-color: #333333;
+            --accent-color: #e30613;
+            --light-bg: #f9f9f9;
+            --white: #ffffff;
+            --light-gray: #f0f0f0;
+            --border-color: #e0e0e0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        h1, h2, h3, h4, h5 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 20px;
+        }
+        
+        img {
+            max-width: 100%;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 10px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: #c00511;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid white;
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            max-width: 200px;
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://afabricamkte.com.br/wp-content/uploads/2023/05/eventos-corporativos.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 180px 0 120px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero-shape {
+            position: absolute;
+            bottom: -50px;
+            right: -150px;
+            width: 600px;
+            height: 600px;
+            background-color: rgba(227, 6, 19, 0.1);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .hero p {
+            font-size: 1.4rem;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .hero-buttons {
+            position: relative;
+            z-index: 5;
+        }
+        
+        .services {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            text-transform: uppercase;
+        }
+        
+        .section-subtitle {
+            color: var(--accent-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+        
+        .service-card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border-top: 5px solid var(--accent-color);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        
+        .service-image {
+            height: 200px;
+            background-color: #ddd;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .service-content {
+            padding: 30px;
+        }
+        
+        .service-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+        }
+        
+        .service-content ul {
+            margin-bottom: 30px;
+            list-style-type: none;
+        }
+        
+        .service-content li {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .service-content li:before {
+            content: "✓";
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        .service-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin: 20px 0;
+        }
+        
+        .service-btn {
+            display: block;
+            text-align: center;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 15px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        
+        .service-btn:hover {
+            background-color: #c00511;
+            transform: translateY(-3px);
+        }
+        
+        .results {
+            background-color: #f0f5f7;
+            padding: 100px 0;
+            text-align: center;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .result-item {
+            background-color: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border-top: 5px solid var(--accent-color);
+        }
+        
+        .result-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        
+        .result-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+        
+        .process {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .process-steps {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .process-step {
+            display: flex;
+            margin-bottom: 50px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .process-step:hover {
+            transform: translateX(10px);
+        }
+        
+        .step-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            opacity: 0.2;
+            min-width: 100px;
+        }
+        
+        .step-content {
+            padding-left: 30px;
+        }
+        
+        .step-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+        
+        .cta-bottom {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://afabricamkte.com.br/wp-content/uploads/2023/05/eventos-cta-final.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 120px 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .cta-shape {
+            position: absolute;
+            top: -50px;
+            left: -150px;
+            width: 400px;
+            height: 400px;
+            background-color: rgba(227, 6, 19, 0.1);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .cta-bottom h2 {
+            font-size: 2.8rem;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .cta-content {
+            position: relative;
+            z-index: 5;
+        }
+        
+        .cta-bottom p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+        
+        .cta-buttons {
+            margin-top: 40px;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .countdown {
+            margin: 30px auto;
+            max-width: 500px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .countdown-item {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px 15px;
+            min-width: 100px;
+        }
+        
+        .countdown-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .countdown-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+        
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 50px 0;
+            text-align: center;
+        }
+        
+        .contact-info {
+            margin-top: 30px;
+        }
+        
+        .contact-info a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .floating-cta {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 5px 20px rgba(227, 6, 19, 0.3);
+            display: flex;
+            align-items: center;
+            z-index: 99;
+            transition: all 0.3s ease;
+        }
+        
+        .floating-cta:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(227, 6, 19, 0.4);
+        }
+        
+        .floating-cta i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .testimonials {
+            padding: 100px 0;
+            background-color: var(--light-bg);
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .testimonial-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        
+        .testimonial-card:before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 5rem;
+            font-family: Georgia, serif;
+            color: rgba(227, 6, 19, 0.1);
+            line-height: 1;
+        }
+        
+        .testimonial-content {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: #444;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+        
+        .author-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .author-title {
+            font-size: 0.85rem;
+            color: #777;
+        }
+        
+        @media (max-width: 992px) {
+            h1 {
+                font-size: 3rem;
+            }
+            
+            h2 {
+                font-size: 2.2rem;
+            }
+            
+            .services-grid, .results-grid, .testimonial-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .services-grid, .results-grid, .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .process-step {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .step-content {
+                padding-left: 0;
+                padding-top: 15px;
+            }
+            
+            .countdown {
+                flex-wrap: wrap;
+            }
+            
+            .countdown-item {
+                min-width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <img src="https://afabricamkte.com.br/wp-content/uploads/2023/05/logo-afabrica.png" alt="AFabricaMkte" class="logo">
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-shape"></div>
+        <div class="container">
+            <h1>Produção Completa de Eventos Corporativos</h1>
+            <p>Deixe nosso time de especialistas cuidar de todos os detalhes do seu evento enquanto você foca no que realmente importa: sua mensagem e seus convidados</p>
+            <div class="hero-buttons">
+                <a href="#servicos" class="btn">CONHEÇA NOSSOS SERVIÇOS</a>
+                <a href="#contato" class="btn btn-outline">FALE COM UM ESPECIALISTA</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="services" id="servicos">
+        <div class="container">
+            <div class="section-subtitle">SOLUÇÕES COMPLETAS</div>
+            <h2 class="section-title">Nossos Serviços</h2>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-image" style="background-image: url('https://afabricamkte.com.br/wp-content/uploads/2023/05/eventos-planejamento.jpg');"></div>
+                    <div class="service-content">
+                        <h3>Planejamento Estratégico</h3>
+                        <ul>
+                            <li>Definição de objetivos e KPIs</li>
+                            <li>Desenvolvimento de tema e conceito</li>
+                            <li>Cronograma detalhado de atividades</li>
+                            <li>Orçamento e planejamento financeiro</li>
+                            <li>Seleção de data e local</li>
+                        </ul>
+                        <div class="service-price">A partir de R$ 5.000</div>
+                        <a href="#contato" class="service-btn">SOLICITAR ORÇAMENTO</a>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-image" style="background-image: url('https://afabricamkte.com.br/wp-content/uploads/2023/05/eventos-execucao.jpg');"></div>
+                    <div class="service-content">
+                        <h3>Execução Completa</h3>
+                        <ul>
+                            <li>Gestão de fornecedores e contratos</li>
+                            <li>Coordenação de equipe no local</li>
+                            <li>Gestão de credenciamento</li>
+                            <li>Supervisão de montagem e desmontagem</li>
+                            <li>Solução de problemas em tempo real</li>
+                        </ul>
+                        <div class="service-price">A partir de R$ 8.000</div>
+                        <a href="#contato" class="service-btn">SOLICITAR ORÇAMENTO</a>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-image" style="background-image: url('https://afabricamkte.com.br/wp-content/uploads/2023/05/eventos-tecnologia.jpg');"></div>
+                    <div class="service-content">
+                        <h3>Tecnologia para Eventos</h3>
+                        <ul>
+                            <li>Plataforma de inscrição e credenciamento</li>
+                            <li>App personalizado para participantes</li>
+                            <li>Transmissão ao vivo e gravação</li>
+                            <li>Ferramentas de interação e engajamento</li>
+                            <li>Análise de dados em tempo real</li>
+                        </ul>
+                        <div class="service-price">A partir de R$ 3.500</div>
+                        <a href="#contato" class="service-btn">SOLICITAR ORÇAMENTO</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="results">
+        <div class="container">
+            <div class="section-subtitle">RESULTADOS COMPROVADOS</div>
+            <h2 class="section-title">Resultados que Geramos</h2>
+            
+            <div class="results-grid">
+                <div class="result-item">
+                    <div class="result-number">+200</div>
+                    <p>Eventos produzidos com sucesso</p>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-number">98%</div>
+                    <p>De satisfação dos clientes</p>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-number">+85%</div>
+                    <p>De engajamento dos participantes</p>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-number">-30%</div>
+                    <p>De custos com otimização de fornecedores</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-subtitle">O QUE NOSSOS CLIENTES DIZEM</div>
+            <h2 class="section-title">Depoimentos</h2>
+            
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "A equipe da AFábrica superou todas as nossas expectativas. O evento foi um sucesso absoluto, desde o planejamento até a execução, tudo foi impecável."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="João Silva">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">João Silva</div>
+                            <div class="author-title">CEO da Digital Marketing</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Contratar a AFábrica foi a melhor decisão que tomamos. Eles cuidaram de cada detalhe e nos permitiram focar no conteúdo do evento."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Maria Santos">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">Maria Santos</div>
+                            <div class="author-title">Diretora de Eventos da TechCorp</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Já realizamos 3 eventos com a AFábrica e sempre ficamos impressionados com o profissionalismo e a atenção aos detalhes que eles oferecem."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Carlos Mendes">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">Carlos Mendes</div>
+                            <div class="author-title">Fundador da Growth Marketing</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="process">
+        <div class="container">
+            <div class="section-subtitle">METODOLOGIA COMPROVADA</div>
+            <h2 class="section-title">Nosso Processo</h2>
+            
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <h3>Briefing e Planejamento</h3>
+                        <p>Entendemos profundamente seus objetivos, público-alvo e expectativas para criar um plano estratégico personalizado.</p>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">02</div>
+                    <div class="step-content">
+                        <h3>Desenvolvimento do Conceito</h3>
+                        <p>Criamos uma identidade visual e tema que represente sua marca e engaje seu público-alvo.</p>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <h3>Seleção de Fornecedores</h3>
+                        <p>Negociamos com os melhores fornecedores do mercado para garantir qualidade e custo-benefício.</p>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">04</div>
+                    <div class="step-content">
+                        <h3>Execução Impecável</h3>
+                        <p>Nossa equipe especializada cuida de todos os detalhes no dia do evento para uma experiência perfeita.</p>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">05</div>
+                    <div class="step-content">
+                        <h3>Pós-Evento e Mensuração</h3>
+                        <p>Entregamos relatório completo com resultados, feedbacks e sugestões para próximos eventos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-bottom" id="contato">
+        <div class="cta-shape"></div>
+        <div class="container">
+            <div class="cta-content">
+                <h2>Pronto para Realizar um Evento Memorável?</h2>
+                <p>Fale com nosso time de especialistas e receba uma proposta personalizada para seu evento</p>
+                
+                <div class="countdown">
+                    <div class="countdown-item">
+                        <div class="countdown-number">15</div>
+                        <div class="countdown-label">Dias</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-number">08</div>
+                        <div class="countdown-label">Horas</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-number">45</div>
+                        <div class="countdown-label">Minutos</div>
+                    </div>
+                </div>
+                <p><strong>OFERTA ESPECIAL:</strong> Feche seu evento até o final do mês e ganhe um pacote de marketing digital gratuito!</p>
+                
+                <div class="cta-buttons">
+                    <a href="https://wa.me/5511999999999" class="btn">FALE CONOSCO NO WHATSAPP</a>
+                    <a href="mailto:eventos@afabricamkte.com.br" class="btn btn-outline">SOLICITE UMA PROPOSTA</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <img src="https://afabricamkte.com.br/wp-content/uploads/2023/05/logo-afabrica.png" alt="AFabricaMkte" class="logo" style="max-width: 150px; margin-bottom: 20px;">
+            <p>Produzindo experiências memoráveis desde 2018</p>
+            
+            <div class="contact-info">
+                <p>E-mail: <a href="mailto:eventos@afabricamkte.com.br">eventos@afabricamkte.com.br</a></p>
+                <p>WhatsApp: <a href="https://wa.me/5511999999999">(11) 99999-9999</a></p>
+                <p>CNPJ: 00.000.000/0000-00</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/5511999999999" class="floating-cta">
+        <i class="fab fa-whatsapp"></i> Fale com um especialista
+    </a>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const target = document.querySelector(targetId);
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Simple countdown timer update
+        function updateCountdown() {
+            const countdownNumbers = document.querySelectorAll('.countdown-number');
+            let days = parseInt(countdownNumbers[0].innerText);
+            let hours = parseInt(countdownNumbers[1].innerText);
+            let minutes = parseInt(countdownNumbers[2].innerText);
+            
+            // Decrease minutes
+            minutes--;
+            if (minutes < 0) {
+                minutes = 59;
+                hours--;
+                if (hours < 0) {
+                    hours = 23;
+                    days--;
+                    if (days < 0) {
+                        days = 15; // Reset countdown
+                    }
+                }
+            }
+            
+            countdownNumbers[0].innerText = days;
+            countdownNumbers[1].innerText = hours < 10 ? '0' + hours : hours;
+            countdownNumbers[2].innerText = minutes < 10 ? '0' + minutes : minutes;
+        }
+        
+        // Update countdown every minute
+        setInterval(updateCountdown, 60000);
+    </script>
+</body>
+</html>
