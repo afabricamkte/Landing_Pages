@@ -623,6 +623,7 @@
         </div>
     </div>
     
+    
     <!-- Modal Novo/Editar Usuário -->
     <div class="modal fade" id="user-modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -1152,32 +1153,52 @@
                         <label class="form-label">Opções de Resposta</label>
                         <div class="option-row">
                             <div class="row">
-                                <div class="col-md-8">
+                                <div class="col-md-2">
+                                    <input type="text" class="form-control option-emoji" placeholder="Emoji (opcional)">
+                                </div>
+                                <div class="col-md-6">
                                     <input type="text" class="form-control option-text" placeholder="Texto da opção" required>
                                 </div>
                                 <div class="col-md-4">
                                     <select class="form-select option-result-key">
                                         <option value="">Selecione um resultado</option>
-                                        <option value="result1">Resultado 1</option>
-                                        <option value="result2">Resultado 2</option>
-                                        <option value="result3">Resultado 3</option>
+                                        <option value="iniciante">Iniciante</option>
+                                        <option value="intermediario">Intermediário</option>
+                                        <option value="avancado">Avançado</option>
+                                        <option value="interessado">Interessado</option>
+                                        <option value="desinteressado">Desinteressado</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control option-highlight" placeholder="Palavras para destacar (separadas por vírgula)">
                                 </div>
                             </div>
                             <span class="remove-option"><i class="fas fa-times"></i></span>
                         </div>
                         <div class="option-row">
                             <div class="row">
-                                <div class="col-md-8">
+                                <div class="col-md-2">
+                                    <input type="text" class="form-control option-emoji" placeholder="Emoji (opcional)">
+                                </div>
+                                <div class="col-md-6">
                                     <input type="text" class="form-control option-text" placeholder="Texto da opção" required>
                                 </div>
                                 <div class="col-md-4">
                                     <select class="form-select option-result-key">
                                         <option value="">Selecione um resultado</option>
-                                        <option value="result1">Resultado 1</option>
-                                        <option value="result2">Resultado 2</option>
-                                        <option value="result3">Resultado 3</option>
+                                        <option value="iniciante">Iniciante</option>
+                                        <option value="intermediario">Intermediário</option>
+                                        <option value="avancado">Avançado</option>
+                                        <option value="interessado">Interessado</option>
+                                        <option value="desinteressado">Desinteressado</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control option-highlight" placeholder="Palavras para destacar (separadas por vírgula)">
                                 </div>
                             </div>
                             <span class="remove-option"><i class="fas fa-times"></i></span>
@@ -1189,6 +1210,7 @@
                     </button>
                 </div>
             `;
+            
             
             document.getElementById('questions-container').insertAdjacentHTML('beforeend', questionTemplate);
             
@@ -1226,21 +1248,32 @@
             const optionTemplate = `
                 <div class="option-row">
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-2">
+                            <input type="text" class="form-control option-emoji" placeholder="Emoji (opcional)">
+                        </div>
+                        <div class="col-md-6">
                             <input type="text" class="form-control option-text" placeholder="Texto da opção" required>
                         </div>
                         <div class="col-md-4">
                             <select class="form-select option-result-key">
                                 <option value="">Selecione um resultado</option>
-                                <option value="result1">Resultado 1</option>
-                                <option value="result2">Resultado 2</option>
-                                <option value="result3">Resultado 3</option>
+                                <option value="iniciante">Iniciante</option>
+                                <option value="intermediario">Intermediário</option>
+                                <option value="avancado">Avançado</option>
+                                <option value="interessado">Interessado</option>
+                                <option value="desinteressado">Desinteressado</option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <input type="text" class="form-control option-highlight" placeholder="Palavras para destacar (separadas por vírgula)">
                         </div>
                     </div>
                     <span class="remove-option"><i class="fas fa-times"></i></span>
                 </div>
             `;
+            
             
             optionsContainer.insertAdjacentHTML('beforeend', optionTemplate);
             
@@ -1266,7 +1299,13 @@
                     <h5>Resultado ${resultIndex + 1}</h5>
                     <div class="mb-3">
                         <label class="form-label">Chave do Resultado</label>
-                        <input type="text" class="form-control result-key" value="result${resultIndex + 1}" required>
+                        <select class="form-control result-key" required>
+                            <option value="iniciante">Iniciante</option>
+                            <option value="intermediario">Intermediário</option>
+                            <option value="avancado">Avançado</option>
+                            <option value="interessado">Interessado</option>
+                            <option value="desinteressado">Desinteressado</option>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Título do Resultado</label>
@@ -1315,13 +1354,67 @@
                         </div>
                     </div>
                     
+                    <!-- Novos campos para depoimentos -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <span>Depoimentos</span>
+                        </div>
+                        <div class="card-body testimonials-container">
+                            <div class="testimonial-item mb-3">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Nome do Cliente</label>
+                                            <input type="text" class="form-control testimonial-name">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Resultado Obtido</label>
+                                            <input type="text" class="form-control testimonial-result">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">URL do Vídeo/Imagem</label>
+                                    <input type="text" class="form-control testimonial-video" placeholder="URL do vídeo ou imagem">
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary add-testimonial-btn">
+                                <i class="fas fa-plus"></i> Adicionar Depoimento
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Novos campos para benefícios -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <span>Benefícios do Produto</span>
+                        </div>
+                        <div class="card-body benefits-container">
+                            <div class="benefit-item mb-3">
+                                <div class="input-group">
+                                    <input type="text" class="form-control benefit-text" placeholder="Benefício">
+                                    <button class="btn btn-outline-danger remove-benefit-btn">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control mt-2 benefit-highlight" placeholder="Palavras para destacar (separadas por vírgula)">
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary add-benefit-btn">
+                                <i class="fas fa-plus"></i> Adicionar Benefício
+                            </button>
+                        </div>
+                    </div>
+                    
                     <button type="button" class="btn btn-sm btn-danger remove-result-btn">
                         <i class="fas fa-trash"></i> Remover Resultado
                     </button>
                 </div>
             `;
             
-            document.getElementById('results-container').insertAdjacentHTML('beforeend', resultTemplate);
+            
+            document.querySelector('#results-container').insertAdjacentHTML('beforeend', resultTemplate);
             
             // Adicionar event listener para o botão de remover
             const resultCards = document.querySelectorAll('.result-card');
@@ -1333,6 +1426,69 @@
                 } else {
                     alert('O quiz deve ter pelo menos um resultado.');
                 }
+            });
+            
+            // Adicionar event listeners para os botões de adicionar depoimento e benefício
+            lastCard.querySelector('.add-testimonial-btn').addEventListener('click', function() {
+                const testimonialContainer = this.closest('.testimonials-container');
+                const testimonialTemplate = `
+                    <div class="testimonial-item mb-3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Nome do Cliente</label>
+                                    <input type="text" class="form-control testimonial-name">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Resultado Obtido</label>
+                                    <input type="text" class="form-control testimonial-result">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">URL do Vídeo/Imagem</label>
+                            <input type="text" class="form-control testimonial-video" placeholder="URL do vídeo ou imagem">
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger remove-testimonial-btn">
+                            <i class="fas fa-times"></i> Remover
+                        </button>
+                    </div>
+                `;
+                
+                // Inserir antes do botão de adicionar
+                this.insertAdjacentHTML('beforebegin', testimonialTemplate);
+                
+                // Adicionar event listener para o botão de remover depoimento
+                const newTestimonial = this.previousElementSibling;
+                newTestimonial.querySelector('.remove-testimonial-btn').addEventListener('click', function() {
+                    this.closest('.testimonial-item').remove();
+                });
+            });
+            
+            lastCard.querySelector('.add-benefit-btn').addEventListener('click', function() {
+                const benefitsContainer = this.closest('.benefits-container');
+                const benefitTemplate = `
+                    <div class="benefit-item mb-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control benefit-text" placeholder="Benefício">
+                            <button class="btn btn-outline-danger remove-benefit-btn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="form-control mt-2 benefit-highlight" placeholder="Palavras para destacar (separadas por vírgula)">
+                    </div>
+                `;
+                
+                // Inserir antes do botão de adicionar
+                this.insertAdjacentHTML('beforebegin', benefitTemplate);
+                
+                // Adicionar event listener para o botão de remover benefício
+                const newBenefit = this.previousElementSibling;
+                newBenefit.querySelector('.remove-benefit-btn').addEventListener('click', function() {
+                    this.closest('.benefit-item').remove();
+                });
             });
         }
         
@@ -1352,36 +1508,129 @@
                 return;
             }
             
-            // Em um ambiente real, coletaríamos todos os dados do formulário
-            // e enviaríamos para uma API para salvar
+            // Coletar dados gerais
+            const quizData = {
+                id: currentQuizId || `quiz${quizzes.length + 1}`,
+                title: title,
+                description: document.getElementById('quiz-description').value,
+                status: document.getElementById('quiz-status').value,
+                logo: document.getElementById('quiz-logo-preview').innerHTML ? 
+                      document.getElementById('quiz-logo-preview').querySelector('img').src : 
+                      'https://via.placeholder.com/200x100?text=Logo',
+                thumbnail: document.getElementById('quiz-thumbnail-preview').innerHTML ? 
+                           document.getElementById('quiz-thumbnail-preview').querySelector('img').src : 
+                           'https://via.placeholder.com/400x300?text=Thumbnail',
+                questions: [],
+                results: {}
+            };
             
+            // Coletar perguntas
+            const questionCards = document.querySelectorAll('.question-card');
+            questionCards.forEach(card => {
+                const question = {
+                    text: card.querySelector('.question-text').value,
+                    mediaType: card.querySelector('.media-type').value,
+                    media: card.querySelector('.media-url').value,
+                    options: []
+                };
+                
+                const optionRows = card.querySelectorAll('.option-row');
+                optionRows.forEach(row => {
+                    const emoji = row.querySelector('.option-emoji').value;
+                    const text = row.querySelector('.option-text').value;
+                    const resultKey = row.querySelector('.option-result-key').value;
+                    const highlightText = row.querySelector('.option-highlight').value;
+                    
+                    const option = {
+                        text: text,
+                        resultKey: resultKey
+                    };
+                    
+                    if (emoji) {
+                        option.emoji = emoji;
+                    }
+                    
+                    if (highlightText) {
+                        option.highlight = highlightText.split(',').map(h => h.trim());
+                    }
+                    
+                    question.options.push(option);
+                });
+                
+                quizData.questions.push(question);
+            });
+            
+            // Coletar resultados
+            const resultCards = document.querySelectorAll('.result-card');
+            resultCards.forEach(card => {
+                const resultKey = card.querySelector('.result-key').value;
+                
+                // Coletar depoimentos
+                const testimonials = [];
+                const testimonialItems = card.querySelectorAll('.testimonial-item');
+                testimonialItems.forEach(item => {
+                    const testimonial = {
+                        name: item.querySelector('.testimonial-name').value,
+                        result: item.querySelector('.testimonial-result').value,
+                        video: item.querySelector('.testimonial-video').value
+                    };
+                    testimonials.push(testimonial);
+                });
+                
+                // Coletar benefícios
+                const benefits = [];
+                const benefitItems = card.querySelectorAll('.benefit-item');
+                benefitItems.forEach(item => {
+                    const benefitText = item.querySelector('.benefit-text').value;
+                    const highlightText = item.querySelector('.benefit-highlight').value;
+                    
+                    const benefit = {
+                        text: benefitText
+                    };
+                    
+                    if (highlightText) {
+                        benefit.highlight = highlightText.split(',').map(h => h.trim());
+                    }
+                    
+                    benefits.push(benefit);
+                });
+                
+                quizData.results[resultKey] = {
+                    title: card.querySelector('.result-title').value,
+                    description: card.querySelector('.result-description').value,
+                    image: card.querySelector('.result-image').value,
+                    product: {
+                        name: card.querySelector('.product-name').value,
+                        description: card.querySelector('.product-description').value,
+                        price: parseFloat(card.querySelector('.product-price').value) || 0,
+                        image: card.querySelector('.product-image').value,
+                        url: card.querySelector('.product-url').value
+                    },
+                    testimonials: testimonials,
+                    benefits: benefits
+                };
+            });
+            
+            // Em um ambiente real, enviaríamos esses dados para uma API
             // Aqui, apenas simulamos o salvamento
             if (currentQuizId) {
                 // Atualizar quiz existente
                 const quizIndex = quizzes.findIndex(q => q.id === currentQuizId);
                 if (quizIndex !== -1) {
-                    quizzes[quizIndex].title = title;
-                    quizzes[quizIndex].status = document.getElementById('quiz-status').value;
-                    quizzes[quizIndex].questionCount = document.querySelectorAll('.question-card').length;
+                    quizzes[quizIndex] = quizData;
                 }
                 
                 alert('Quiz atualizado com sucesso!');
             } else {
                 // Criar novo quiz
-                const newQuiz = {
-                    id: `quiz${quizzes.length + 1}`,
-                    title: title,
-                    questionCount: document.querySelectorAll('.question-card').length,
-                    status: document.getElementById('quiz-status').value,
-                    createdAt: new Date().toISOString().split('T')[0]
-                };
-                
-                quizzes.push(newQuiz);
+                quizzes.push(quizData);
                 alert('Quiz criado com sucesso!');
             }
             
             // Fechar o modal e atualizar a tabela
             bootstrap.Modal.getInstance(document.getElementById('quiz-modal')).hide();
+            renderQuizzesTable();
+        }Modal.getInstance(document.getElementById('quiz-modal')).hide();
             renderQuizzesTable();
         }
         
