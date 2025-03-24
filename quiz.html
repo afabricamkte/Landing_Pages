@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MÁQUINA DE VENDER PDFs</title>
+    <title>Quiz System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -498,12 +498,81 @@
             font-size: 18px;
             color: rgba(255, 255, 255, 0.7);
         }
+        
+        .quiz-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        
+        .quiz-card {
+            width: 280px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        .quiz-thumbnail {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+        
+        .quiz-info {
+            padding: 15px;
+        }
+        
+        .quiz-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .quiz-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 15px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .start-quiz-btn {
+            background-color: var(--button-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .start-quiz-btn:hover {
+            background-color: var(--button-hover);
+        }
     </style>
 </head>
 <body>
     <div id="app">
         <div class="header">
-            <div class="logo">MÁQUINA DE<br>VENDER PDFs</div>
+            <div class="logo" id="quiz-logo">Quiz System</div>
             <div class="progress-container">
                 <div class="progress-bar" id="progress" style="width: 0%"></div>
             </div>
@@ -517,65 +586,125 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Variáveis globais
-            let quizData = {};
+            let quizzes = [];
+            let activeQuizId = null;
+            let activeQuiz = null;
             let currentQuestion = 0;
             let answers = [];
+            let resultKeys = {};
             let userName = "";
-
-            // Função para carregar os dados do quiz de um arquivo JSON ou do localStorage
-            async function loadQuizData() {
+            
+            // Função para carregar os quizzes do localStorage
+            function loadQuizzes() {
                 try {
-                    // Primeiro tenta carregar do localStorage (útil para visualização de preview)
-                    const savedData = localStorage.getItem('quizData');
-                    if (savedData) {
-                        quizData = JSON.parse(savedData);
+                    // Carrega os quizzes e o ID do quiz ativo
+                    const savedQuizzes = localStorage.getItem('quizzes');
+                    const savedActiveQuizId = localStorage.getItem('activeQuizId');
+                    
+                    if (savedQuizzes) {
+                        quizzes = JSON.parse(savedQuizzes);
+                    }
+                    
+                    if (savedActiveQuizId) {
+                        activeQuizId = savedActiveQuizId;
+                        activeQuiz = quizzes.find(q => q.id === activeQuizId);
+                    }
+                    
+                    // Se há apenas um quiz disponível ou um quiz ativo, inicia o quiz diretamente
+                    if (quizzes.length === 1 || activeQuiz) {
+                        if (!activeQuiz) {
+                            activeQuiz = quizzes[0];
+                            activeQuizId = activeQuiz.id;
+                        }
                         initQuiz();
-                        return;
+                    } else if (quizzes.length > 1) {
+                        // Se há múltiplos quizzes, exibe a seleção
+                        showQuizSelection();
+                    } else {
+                        // Se não há quizzes, exibe uma mensagem
+                        document.getElementById('quiz-content').innerHTML = `
+                            <div class="result-container">
+                                <h2 class="result-title">Nenhum quiz disponível</h2>
+                                <p class="result-description">Não foi possível encontrar quizzes. Por favor, verifique a configuração do sistema.</p>
+                            </div>
+                        `;
                     }
-                    
-                    // Se não encontrou no localStorage, tenta carregar do arquivo JSON
-                    const response = await fetch('quiz-data.json');
-                    
-                    if (!response.ok) {
-                        throw new Error('Não foi possível carregar os dados do quiz');
-                    }
-                    
-                    quizData = await response.json();
-                    initQuiz();
                 } catch (error) {
-                    console.error('Erro ao carregar o quiz:', error);
+                    console.error('Erro ao carregar quizzes:', error);
                     document.getElementById('quiz-content').innerHTML = `
                         <div class="result-container">
-                            <h2 class="result-title">Erro ao carregar o quiz</h2>
+                            <h2 class="result-title">Erro ao carregar</h2>
                             <p class="result-description">Não foi possível carregar os dados do quiz. Por favor, tente novamente mais tarde.</p>
                         </div>
                     `;
                 }
             }
+            
+            // Função para exibir a seleção de quiz
+            function showQuizSelection() {
+                document.getElementById('quiz-logo').textContent = 'Escolha um Quiz';
+                
+                let selectionHTML = '<div class="quiz-selector">';
+                
+                quizzes.forEach(quiz => {
+                    selectionHTML += `
+                        <div class="quiz-card" data-id="${quiz.id}">
+                            <img src="${quiz.thumbnail}" alt="${quiz.title}" class="quiz-thumbnail">
+                            <div class="quiz-info">
+                                <h3 class="quiz-title">${quiz.title}</h3>
+                                <p class="quiz-description">${quiz.description || 'Descubra mais sobre você através deste quiz interativo.'}</p>
+                                <button class="start-quiz-btn">Iniciar Quiz</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                selectionHTML += '</div>';
+                
+                document.getElementById('quiz-content').innerHTML = selectionHTML;
+                
+                // Adiciona event listeners para os cards de quiz
+                document.querySelectorAll('.quiz-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const quizId = this.getAttribute('data-id');
+                        activeQuizId = quizId;
+                        activeQuiz = quizzes.find(q => q.id === quizId);
+                        initQuiz();
+                    });
+                });
+            }
 
             // Inicializa o quiz
             function initQuiz() {
+                if (!activeQuiz) return;
+                
                 currentQuestion = 0;
                 answers = [];
+                resultKeys = {};
                 userName = "";
                 
-                document.querySelector('.logo').innerHTML = 'MÁQUINA DE<br>VENDER PDFs';
+                document.getElementById('quiz-logo').innerHTML = activeQuiz.title || 'Quiz';
                 
                 // Define as cores personalizadas se fornecidas nos dados do quiz
-                if (quizData.primaryColor) {
-                    document.documentElement.style.setProperty('--accent-color', quizData.primaryColor);
-                    document.documentElement.style.setProperty('--button-color', quizData.primaryColor);
-                    document.documentElement.style.setProperty('--button-hover', adjustColor(quizData.primaryColor, -10));
-                    document.documentElement.style.setProperty('--button-active', adjustColor(quizData.primaryColor, -20));
-                    document.documentElement.style.setProperty('--progress-bg', quizData.primaryColor);
+                if (activeQuiz.primaryColor) {
+                    document.documentElement.style.setProperty('--primary-color', activeQuiz.primaryColor);
+                    document.documentElement.style.setProperty('--card-bg', activeQuiz.primaryColor);
+                    document.documentElement.style.setProperty('--secondary-color', activeQuiz.primaryColor);
+                    
+                    // Derivar cores mais claras/escuras para botões, etc.
+                    document.documentElement.style.setProperty('--button-color', activeQuiz.primaryColor);
+                    document.documentElement.style.setProperty('--button-hover', adjustColor(activeQuiz.primaryColor, 20));
+                    document.documentElement.style.setProperty('--button-active', adjustColor(activeQuiz.primaryColor, -20));
+                    document.documentElement.style.setProperty('--progress-bg', adjustColor(activeQuiz.primaryColor, 40));
                 }
                 
-                if (quizData.secondaryColor) {
-                    document.documentElement.style.setProperty('--cta-color', quizData.secondaryColor);
+                if (activeQuiz.secondaryColor) {
+                    document.documentElement.style.setProperty('--accent-color', activeQuiz.secondaryColor);
+                    document.documentElement.style.setProperty('--cta-color', activeQuiz.secondaryColor);
                 }
                 
                 // Verifica se há perguntas
-                if (!quizData.questions || quizData.questions.length === 0) {
+                if (!activeQuiz.questions || activeQuiz.questions.length === 0) {
                     document.getElementById('quiz-content').innerHTML = `
                         <div class="result-container">
                             <h2 class="result-title">Nenhuma pergunta encontrada</h2>
@@ -590,62 +719,76 @@
 
             // Exibe a pergunta atual
             function showQuestion() {
-                const progressPercent = (currentQuestion / (quizData.questions.length + 1)) * 100;
+                const progressPercent = (currentQuestion / (activeQuiz.questions.length + 1)) * 100;
                 document.getElementById('progress').style.width = `${progressPercent}%`;
                 
-                const question = quizData.questions[currentQuestion];
+                const question = activeQuiz.questions[currentQuestion];
                 let questionHTML = '';
                 
                 if (question) {
-                    switch (question.type) {
-                        case 'text':
-                            questionHTML = `
-                                <div class="question-container">
-                                    <div class="question">${question.question}</div>
-                                    <div class="options-container">
-                                        ${question.options.map((option, index) => `
-                                            <div class="option" data-index="${index}">
-                                                ${option.emoji ? `<div class="option-emoji">${option.emoji}</div>` : ''}
-                                                <div class="option-text">${option.text}</div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
+                    if (question.mediaType === 'video') {
+                        questionHTML = `
+                            <div class="question-container">
+                                <div class="question">${question.text}</div>
+                                <div class="video-container" style="margin-bottom: 20px;">
+                                    <iframe src="${question.media}" frameborder="0" allowfullscreen style="width: 100%; height: 200px;"></iframe>
                                 </div>
-                            `;
-                            break;
+                                <div class="options-container">
+                                    ${question.options.map((option, index) => `
+                                        <div class="option" data-index="${index}" data-result-key="${option.resultKey || ''}">
+                                            ${option.emoji ? `<div class="option-emoji">${option.emoji}</div>` : ''}
+                                            <div class="option-text">${option.text}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    } else if (question.mediaType === 'image') {
+                        questionHTML = `
+                            <div class="question-container">
+                                <div class="question">${question.text}</div>
+                                <div class="image-container" style="margin-bottom: 20px; text-align: center;">
+                                    <img src="${question.media}" alt="Quiz Image" style="max-width: 100%; border-radius: 8px;">
+                                </div>
+                                <div class="options-container">
+                                    ${question.options.map((option, index) => `
+                                        <div class="option" data-index="${index}" data-result-key="${option.resultKey || ''}">
+                                            ${option.emoji ? `<div class="option-emoji">${option.emoji}</div>` : ''}
+                                            <div class="option-text">${option.text}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Determina se é uma pergunta do tipo thumbs
+                        const isThumbsQuestion = question.options.length === 2 && 
+                                               (question.options[0].text.toLowerCase().includes('concordo') || 
+                                                question.options[0].emoji === '👍');
                         
-                        case 'thumbs':
+                        if (isThumbsQuestion) {
                             questionHTML = `
                                 <div class="question-container">
-                                    <div class="question">${question.question}</div>
-                                    <div class="subquestion">Já ficou ultrapassado...</div>
+                                    <div class="question">${question.text}</div>
                                     <div class="thumbs-container">
-                                        <div class="thumbs-option" data-index="0">
-                                            <div class="thumbs-icon">👍</div>
+                                        <div class="thumbs-option" data-index="0" data-result-key="${question.options[0].resultKey || ''}">
+                                            <div class="thumbs-icon">${question.options[0].emoji || '👍'}</div>
                                             <div class="thumbs-text">${question.options[0].text || 'Concordo'}</div>
                                         </div>
-                                        <div class="thumbs-option" data-index="1">
-                                            <div class="thumbs-icon">👎</div>
+                                        <div class="thumbs-option" data-index="1" data-result-key="${question.options[1].resultKey || ''}">
+                                            <div class="thumbs-icon">${question.options[1].emoji || '👎'}</div>
                                             <div class="thumbs-text">${question.options[1].text || 'Discordo'}</div>
                                         </div>
                                     </div>
                                 </div>
                             `;
-                            break;
-                        
-                        case 'video':
+                        } else {
                             questionHTML = `
                                 <div class="question-container">
-                                    <div class="question">${question.question}</div>
-                                    <div class="video-container">
-                                        ${question.mediaUrl.includes('youtube') ? 
-                                            `<iframe src="${question.mediaUrl}" frameborder="0" allowfullscreen></iframe>` :
-                                            `<video controls><source src="${question.mediaUrl}" type="video/mp4">Seu navegador não suporta vídeos.</video>`
-                                        }
-                                    </div>
+                                    <div class="question">${question.text}</div>
                                     <div class="options-container">
                                         ${question.options.map((option, index) => `
-                                            <div class="option" data-index="${index}">
+                                            <div class="option" data-index="${index}" data-result-key="${option.resultKey || ''}">
                                                 ${option.emoji ? `<div class="option-emoji">${option.emoji}</div>` : ''}
                                                 <div class="option-text">${option.text}</div>
                                             </div>
@@ -653,35 +796,17 @@
                                     </div>
                                 </div>
                             `;
-                            break;
-                        
-                        case 'image':
-                            questionHTML = `
-                                <div class="question-container">
-                                    <div class="question">${question.question}</div>
-                                    <div class="image-container">
-                                        <img src="${question.mediaUrl}" alt="Quiz Image">
-                                    </div>
-                                    <div class="options-container">
-                                        ${question.options.map((option, index) => `
-                                            <div class="option" data-index="${index}">
-                                                ${option.emoji ? `<div class="option-emoji">${option.emoji}</div>` : ''}
-                                                <div class="option-text">${option.text}</div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `;
-                            break;
+                        }
                     }
                     
                     document.getElementById('quiz-content').innerHTML = questionHTML;
                     
-                    // Adiciona event listeners
-                    if (question.type === 'thumbs') {
+                    // Adiciona event listeners para as opções
+                    if (isThumbsQuestion(question)) {
                         document.querySelectorAll('.thumbs-option').forEach(option => {
                             option.addEventListener('click', function() {
-                                const index = this.getAttribute('data-index');
+                                const index = parseInt(this.getAttribute('data-index'));
+                                const resultKey = this.getAttribute('data-result-key');
                                 
                                 // Remove seleção de todas as opções
                                 document.querySelectorAll('.thumbs-option').forEach(opt => {
@@ -691,8 +816,13 @@
                                 // Adiciona seleção à opção clicada
                                 this.classList.add('selected');
                                 
-                                // Armazena a resposta
+                                // Armazena a resposta e a chave de resultado
                                 answers[currentQuestion] = index;
+                                
+                                // Incrementa o contador da chave de resultado
+                                if (resultKey) {
+                                    resultKeys[resultKey] = (resultKeys[resultKey] || 0) + 1;
+                                }
                                 
                                 // Mostra o botão de próximo
                                 document.getElementById('quiz-content').innerHTML += `
@@ -705,7 +835,8 @@
                     } else {
                         document.querySelectorAll('.option').forEach(option => {
                             option.addEventListener('click', function() {
-                                const index = this.getAttribute('data-index');
+                                const index = parseInt(this.getAttribute('data-index'));
+                                const resultKey = this.getAttribute('data-result-key');
                                 
                                 // Remove seleção de todas as opções
                                 document.querySelectorAll('.option').forEach(opt => {
@@ -715,8 +846,13 @@
                                 // Adiciona seleção à opção clicada
                                 this.classList.add('selected');
                                 
-                                // Armazena a resposta
+                                // Armazena a resposta e a chave de resultado
                                 answers[currentQuestion] = index;
+                                
+                                // Incrementa o contador da chave de resultado
+                                if (resultKey) {
+                                    resultKeys[resultKey] = (resultKeys[resultKey] || 0) + 1;
+                                }
                                 
                                 // Mostra o botão de próximo automaticamente
                                 setTimeout(() => {
@@ -739,7 +875,7 @@
 
             // Mostra o campo para digitar o nome
             function showNameInput() {
-                const progressPercent = (quizData.questions.length / (quizData.questions.length + 1)) * 100;
+                const progressPercent = (activeQuiz.questions.length / (activeQuiz.questions.length + 1)) * 100;
                 document.getElementById('progress').style.width = `${progressPercent}%`;
                 
                 const nameInputHTML = `
@@ -776,186 +912,143 @@
                 const progressPercent = 100;
                 document.getElementById('progress').style.width = `${progressPercent}%`;
                 
-                const results = quizData.results || {
-                    title: "Obrigado por completar o quiz!",
-                    description: "Seus resultados foram registrados.",
-                    benefits: [],
-                    bonuses: [],
-                    priceOriginal: "",
-                    priceDiscount: "",
-                    ctaText: "Concluir",
-                    ctaLink: "#",
-                    audience: []
-                };
-
-                // Personaliza o texto com o nome do usuário se disponível
-                let personalizedTitle = results.title;
+                // Determina a chave de resultado dominante
+                let dominantResultKey = getDominantResultKey();
+                
+                // Obtém o resultado correspondente
+                const result = activeQuiz.results[dominantResultKey];
+                
+                if (!result) {
+                    document.getElementById('quiz-content').innerHTML = `
+                        <div class="result-container">
+                            <h2 class="result-title">Resultado não encontrado</h2>
+                            <p class="result-description">Não foi possível determinar seu resultado. Por favor, tente novamente.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Personaliza o texto com o nome do usuário
+                let personalizedTitle = result.title;
                 if (userName && personalizedTitle.includes('{nome}')) {
                     personalizedTitle = personalizedTitle.replace('{nome}', userName);
                 }
                 
-                const resultsHTML = `
+                let resultsHTML = `
                     <div class="result-container">
                         <div class="question">${personalizedTitle}</div>
-                        <div class="subquestion">Só depende de você...</div>
-                        
-                        <div class="benefit-card">
-                            <div class="benefit-list">
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">Colha seus <span class="benefit-highlight">PRIMEIROS RESULTADOS</span> e receba <span class="benefit-highlight">100% DAS COMISSÕES</span>.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">Você <span class="benefit-highlight">NÃO SERÁ AFILIADO</span>, os produtos serão <span class="benefit-highlight">100% SEUS</span>.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">O conteúdo estará <span class="benefit-highlight">100% LIBERADO</span> em sua área de membros, aplique <span class="benefit-highlight">TUDO HOJE!</span></div>
-                                </div>
-                            </div>
-                        </div>
-                        
+                        <div class="subquestion">${result.description}</div>
+                `;
+                
+                // Adiciona gráfico se estiver habilitado
+                if (activeQuiz.chartEnabled !== false) {
+                    resultsHTML += `
                         <div class="chart-container">
                             <div class="chart-bar">
                                 <div class="chart-column">
-                                    <div class="chart-fill" style="height: 20%; background-color: #3498db;"></div>
+                                    <div class="chart-fill" style="height: 20%; background-color: var(--accent-color);"></div>
                                 </div>
                                 <div class="chart-label">Hoje</div>
                                 <div class="chart-sublabel">Você está aqui...</div>
                             </div>
                             <div class="chart-bar">
                                 <div class="chart-column">
-                                    <div class="chart-fill" style="height: 50%; background-color: #3498db;"></div>
+                                    <div class="chart-fill" style="height: 50%; background-color: var(--accent-color);"></div>
                                 </div>
                                 <div class="chart-label">24hs</div>
                                 <div class="chart-sublabel">Primeiros resultados</div>
                             </div>
                             <div class="chart-bar">
                                 <div class="chart-column">
-                                    <div class="chart-fill" style="height: 70%; background-color: #3498db;"></div>
+                                    <div class="chart-fill" style="height: 70%; background-color: var(--accent-color);"></div>
                                 </div>
                                 <div class="chart-label">7 dias</div>
                                 <div class="chart-sublabel">Início de escala</div>
                             </div>
                             <div class="chart-bar">
                                 <div class="chart-column">
-                                    <div class="chart-fill" style="height: 100%; background-color: #3498db;"></div>
+                                    <div class="chart-fill" style="height: 100%; background-color: var(--accent-color);"></div>
                                 </div>
                                 <div class="chart-label">30 dias</div>
                                 <div class="chart-sublabel">10k mês</div>
                             </div>
                         </div>
-                        
-                        <div class="benefit-card" style="margin-top: 15px;">
-                            <div class="benefit-title">QUAIS BENEFÍCIOS VOU TER:</div>
-                            <div class="benefit-list">
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">Aprenda do <span class="benefit-highlight">ZERO</span> ao <span class="benefit-highlight">AVANÇADO</span> como fazer suas <span class="benefit-highlight">primeiras vendas no digital</span>.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text"><span class="benefit-highlight">4 Produtos (PDFs) PRONTOS</span> e <span class="benefit-highlight">VALIDADOS</span> com toda a estrutura <span class="benefit-highlight">montada, basta você replicar rapidamente</span>.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">Todos os <span class="benefit-highlight">criativos</span> e <span class="benefit-highlight">anúncios prontos</span>.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">O <span class="benefit-highlight">QUIZZ COMPLETO</span> (Funil de Venda).</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">Contato <span class="benefit-highlight">DIRETO</span> comigo no WhatsApp.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text"><span class="benefit-highlight">FACEBOOK ADS</span> - Do <span class="benefit-highlight">BÁSICO</span> até sua <span class="benefit-highlight">ESCALA</span> (10k mês).</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">+ de <span class="benefit-highlight">25 VIDEO AULAS</span> te ensinando tudo como <span class="benefit-highlight">desenvolver novos PDFs</span> para o futuro.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">Total de <span class="benefit-highlight">47 aulas gravadas</span> para que você possa <span class="benefit-highlight">assistir quantas vezes for necessário</span>.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text"><span class="benefit-highlight">Acompanhamento</span> da sua evolução durante <span class="benefit-highlight">1 ANO</span>.</div>
-                                </div>
-                            </div>
-                        </div>
-                        
+                    `;
+                }
+                
+                // Adiciona benefícios
+                if (result.benefits && result.benefits.length > 0) {
+                    resultsHTML += `
                         <div class="benefit-card">
-                            <div class="benefit-title">BÔNUS ADICIONAIS</div>
+                            <div class="benefit-title">BENEFÍCIOS</div>
                             <div class="benefit-list">
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text"><span class="benefit-highlight">BÔNUS 1</span> - Venda com <span class="benefit-highlight">TIKTOK</span> sem gastar nem <span class="benefit-highlight">R$1 (NADA)</span>.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text"><span class="benefit-highlight">BÔNUS 2</span> - Recuperação de Vendas Automáticas (<span class="benefit-highlight">Aumente</span> seu faturamento em <span class="benefit-highlight">20%</span>).</div>
-                                </div>
+                    `;
+                    
+                    result.benefits.forEach(benefit => {
+                        let benefitText = benefit;
+                        let highlights = [];
+                        
+                        // Verifica se o benefício é um objeto com texto e destaques
+                        if (typeof benefit === 'object' && benefit.text) {
+                            benefitText = benefit.text;
+                            highlights = benefit.highlight || [];
+                        }
+                        
+                        // Aplica os destaques ao texto
+                        highlights.forEach(highlight => {
+                            const regex = new RegExp(highlight, 'gi');
+                            benefitText = benefitText.replace(regex, `<span class="benefit-highlight">${highlight}</span>`);
+                        });
+                        
+                        resultsHTML += `
+                            <div class="benefit-item">
+                                <div class="benefit-check">✓</div>
+                                <div class="benefit-text">${benefitText}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    resultsHTML += `
                             </div>
                         </div>
-                        
+                    `;
+                }
+                
+                // Adiciona produto
+                if (result.product) {
+                    resultsHTML += `
                         <div class="price-container">
-                            <div class="price-title">ÚLTIMAS VAGAS</div>
-                            <div class="price-original">DE: R$497,00</div>
-                            <div class="price-current">POR APENAS R$97,00</div>
+                            <div class="price-title">${result.product.name}</div>
+                            <div class="price-current">R$ ${result.product.price.toFixed(2)}</div>
                         </div>
                         
-                        <a href="${results.ctaLink || '#'}" class="cta-button">Quero começar agora</a>
-                        
-                        <div class="benefit-card">
-                            <div class="benefit-title">Para quem é o MVP?</div>
-                            <div class="benefit-list">
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">Para todos aqueles que querem realizar sua <span class="benefit-highlight">PRIMEIRA VENDA EM 24 HORAS</span>.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">Para quem precisa escalar suas vendas para <span class="benefit-highlight">10K OU MAIS</span> mensalmente.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">Para todos aqueles que já se sentiram frustrados por não conseguirem realizar vendas no digital com outro método.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">Para todos aqueles que <span class="benefit-highlight">NÃO</span> querem gastar dinheiro com <span class="benefit-highlight">VSL, PÁGINAS DE VENDA, DESIGNER, FAZER X1 NO WHATSAPP</span> ou contratar alguma ferramenta cara.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">Para todos aqueles que <span class="benefit-highlight">NÃO</span> querem aparecer para realizar vendas.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">Para todos aqueles que <span class="benefit-highlight">NÃO</span> querem ser afiliados.</div>
-                                </div>
-                                <div class="benefit-item">
-                                    <div class="benefit-check">✓</div>
-                                    <div class="benefit-text">Para todos aqueles que <span class="benefit-highlight">NÃO</span> querem perder tempo desenvolvendo produto.</div>
+                        <a href="${result.product.url}" class="cta-button" target="_blank">Quero começar agora</a>
+                    `;
+                }
+                
+                // Adiciona depoimentos
+                if (result.testimonials && result.testimonials.length > 0) {
+                    resultsHTML += `<div class="benefit-card"><div class="benefit-title">DEPOIMENTOS</div>`;
+                    
+                    result.testimonials.forEach(testimonial => {
+                        resultsHTML += `
+                            <div class="testimonial">
+                                <div class="testimonial-name">${testimonial.name}</div>
+                                <div class="testimonial-result">${testimonial.result}</div>
+                                <div class="testimonial-video">
+                                    <a href="${testimonial.video}" target="_blank" style="color: white;">
+                                        <div class="video-play">▶</div>
+                                    </a>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="guarantee-box">
-                            <div class="guarantee-title">Teste Seguro</div>
-                            <div class="guarantee-text">
-                                Desfrute de todo o conteúdo.<br>
-                                Teste e se surpreenda, mas caso não goste, eu devolvo seu dinheiro todo.
-                            </div>
-                        </div>
-                        
-                        <a href="${results.ctaLink || '#'}" class="cta-button">Quero começar agora</a>
-                    </div>
-                `;
+                        `;
+                    });
+                    
+                    resultsHTML += `</div>`;
+                }
+                
+                // Finaliza o HTML
+                resultsHTML += `</div>`;
                 
                 document.getElementById('quiz-content').innerHTML = resultsHTML;
                 
@@ -971,8 +1064,36 @@
                     });
                 }, 300);
                 
-                // Registra a conclusão do quiz (você pode adicionar um endpoint para isso)
-                saveQuizCompletion();
+                // Registra a conclusão do quiz
+                saveQuizCompletion(dominantResultKey);
+            }
+            
+            // Determina a chave de resultado dominante
+            function getDominantResultKey() {
+                // Se não há chaves de resultado, retorna uma chave padrão
+                if (Object.keys(resultKeys).length === 0) {
+                    return Object.keys(activeQuiz.results)[0] || 'default';
+                }
+                
+                // Encontra a chave com maior contagem
+                let dominantKey = '';
+                let maxCount = 0;
+                
+                for (const [key, count] of Object.entries(resultKeys)) {
+                    if (count > maxCount) {
+                        maxCount = count;
+                        dominantKey = key;
+                    }
+                }
+                
+                return dominantKey;
+            }
+            
+            // Verifica se a pergunta é do tipo thumbs
+            function isThumbsQuestion(question) {
+                return question.options.length === 2 && 
+                       (question.options[0].text.toLowerCase().includes('concordo') || 
+                        question.options[0].emoji === '👍');
             }
 
             // Função auxiliar para ajustar cores
@@ -988,9 +1109,9 @@
                 var b = parseInt(hex.substr(4, 2), 16);
                 
                 // Ajusta a cor
-                r = Math.max(0, Math.min(255, r + percent));
-                g = Math.max(0, Math.min(255, g + percent));
-                b = Math.max(0, Math.min(255, b + percent));
+                r = Math.min(255, Math.max(0, r + percent));
+                g = Math.min(255, Math.max(0, g + percent));
+                b = Math.min(255, Math.max(0, b + percent));
                 
                 // Converte RGB de volta para hex
                 return "#" + 
@@ -998,38 +1119,28 @@
                     .toString(16).slice(1);
             }
 
-            // Salva a conclusão do quiz (você pode implementar com um endpoint real)
-            function saveQuizCompletion() {
+            // Salva a conclusão do quiz
+            function saveQuizCompletion(resultKey) {
                 // Aqui você poderia enviar os dados para um servidor
-                const quizData = {
+                const completionData = {
+                    quizId: activeQuizId,
+                    quizTitle: activeQuiz.title,
                     userName: userName,
                     answers: answers,
+                    resultKey: resultKey,
                     timestamp: new Date().toISOString()
                 };
                 
-                console.log('Quiz concluído:', quizData);
+                console.log('Quiz concluído:', completionData);
                 
-                // Exemplo de como enviar para um servidor (comentado)
-                /*
-                fetch('/api/quiz-completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(quizData),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Sucesso:', data);
-                })
-                .catch((error) => {
-                    console.error('Erro:', error);
-                });
-                */
+                // Armazena localmente as estatísticas
+                const completions = JSON.parse(localStorage.getItem('completions') || '[]');
+                completions.push(completionData);
+                localStorage.setItem('completions', JSON.stringify(completions));
             }
 
-            // Carrega os dados do quiz ao iniciar
-            loadQuizData();
+            // Carrega os quizzes ao iniciar
+            loadQuizzes();
         });
     </script>
 </body>
