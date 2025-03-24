@@ -7,6 +7,8 @@
     "thumbnail": "https://via.placeholder.com/400x300?text=M%C3%A1quina+de+Vender+PDFs",
     "primaryColor": "#010d36",
     "secondaryColor": "#3498db",
+    "active": true,
+    "slug": "vender-pdfs",
     "questions": [
       {
         "text": "Você já realiza vendas no mercado digital?",
@@ -192,7 +194,12 @@
           "description": "Método passo a passo para realizar sua primeira venda online em até 24 horas, mesmo que você esteja começando do zero.",
           "price": 97.00,
           "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
-          "url": "https://pay.hotmart.com/XXXXXXX?iniciante"
+          "url": "https://pay.hotmart.com/XXXXXXX",
+          "utmSource": "quiz-pdf",
+          "utmMedium": "resultado",
+          "utmCampaign": "maquina-pdfs",
+          "utmContent": "iniciante",
+          "addResultKey": true
         },
         "benefits": [
           {
@@ -238,7 +245,12 @@
           "description": "Método comprovado para escalar suas vendas de produtos digitais sem precisar de VSL ou páginas de vendas complexas.",
           "price": 197.00,
           "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
-          "url": "https://pay.hotmart.com/XXXXXXX?intermediario"
+          "url": "https://pay.hotmart.com/XXXXXXX",
+          "utmSource": "quiz-pdf",
+          "utmMedium": "resultado",
+          "utmCampaign": "maquina-pdfs",
+          "utmContent": "intermediario",
+          "addResultKey": true
         },
         "benefits": [
           {
@@ -280,7 +292,12 @@
           "description": "Otimize seu funil de vendas com um método inovador que elimina a necessidade de VSLs e páginas de vendas complexas.",
           "price": 297.00,
           "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
-          "url": "https://pay.hotmart.com/XXXXXXX?avancado"
+          "url": "https://pay.hotmart.com/XXXXXXX",
+          "utmSource": "quiz-pdf",
+          "utmMedium": "resultado",
+          "utmCampaign": "maquina-pdfs",
+          "utmContent": "avancado",
+          "addResultKey": true
         },
         "benefits": [
           {
@@ -322,7 +339,12 @@
           "description": "Método completo para vender PDFs utilizando quizzes interativos como ferramenta de conversão, sem a necessidade de VSLs.",
           "price": 97.00,
           "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
-          "url": "https://pay.hotmart.com/XXXXXXX?interessado"
+          "url": "https://pay.hotmart.com/XXXXXXX",
+          "utmSource": "quiz-pdf",
+          "utmMedium": "resultado",
+          "utmCampaign": "maquina-pdfs",
+          "utmContent": "interessado",
+          "addResultKey": true
         },
         "benefits": [
           {
@@ -355,7 +377,12 @@
           "description": "Dê uma chance ao método que está ajudando centenas de pessoas a realizar suas primeiras vendas online em tempo recorde.",
           "price": 0.00,
           "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
-          "url": "https://pay.hotmart.com/XXXXXXX?minicurso"
+          "url": "https://pay.hotmart.com/XXXXXXX",
+          "utmSource": "quiz-pdf",
+          "utmMedium": "resultado",
+          "utmCampaign": "maquina-pdfs",
+          "utmContent": "desinteressado",
+          "addResultKey": true
         },
         "benefits": [
           {
@@ -389,6 +416,8 @@
     "thumbnail": "https://via.placeholder.com/400x300?text=Perfil+Financeiro",
     "primaryColor": "#1c3144",
     "secondaryColor": "#22c55e",
+    "active": true,
+    "slug": "perfil-financeiro",
     "questions": [
       {
         "text": "Ao receber seu salário, o que você faz primeiro?",
@@ -543,7 +572,12 @@
           "description": "Leve seus investimentos para o próximo nível. Aprenda estratégias avançadas para maximizar seus rendimentos com segurança.",
           "price": 297.00,
           "image": "https://via.placeholder.com/300x200?text=Curso+Avançado",
-          "url": "https://example.com/produtos/curso-avancado"
+          "url": "https://example.com/produtos/curso-avancado",
+          "utmSource": "quiz-financeiro",
+          "utmMedium": "resultado",
+          "utmCampaign": "perfil-financeiro",
+          "utmContent": "poupador",
+          "addResultKey": true
         },
         "benefits": [
           {
@@ -569,7 +603,12 @@
           "description": "Otimize sua vida financeira com um planejamento personalizado que equilibra seus objetivos de curto, médio e longo prazo.",
           "price": 247.00,
           "image": "https://via.placeholder.com/300x200?text=Consultoria+Financeira",
-          "url": "https://example.com/produtos/consultoria-financeira"
+          "url": "https://example.com/produtos/consultoria-financeira",
+          "utmSource": "quiz-financeiro",
+          "utmMedium": "resultado",
+          "utmCampaign": "perfil-financeiro",
+          "utmContent": "equilibrado",
+          "addResultKey": true
         },
         "benefits": [
           {
@@ -595,7 +634,12 @@
           "description": "Aprenda a controlar seus gastos sem abrir mão da qualidade de vida. Método prático para reorganizar suas finanças em 60 dias.",
           "price": 197.00,
           "image": "https://via.placeholder.com/300x200?text=Programa+Controle",
-          "url": "https://example.com/produtos/controle-financeiro"
+          "url": "https://example.com/produtos/controle-financeiro",
+          "utmSource": "quiz-financeiro",
+          "utmMedium": "resultado",
+          "utmCampaign": "perfil-financeiro",
+          "utmContent": "gastador",
+          "addResultKey": true
         },
         "benefits": [
           {
@@ -621,7 +665,12 @@
           "description": "Método comprovado para sair das dívidas em menos tempo, reorganizar suas finanças e construir uma base sólida para seu futuro.",
           "price": 147.00,
           "image": "https://via.placeholder.com/300x200?text=Programa+Dívidas",
-          "url": "https://example.com/produtos/saindo-das-dividas"
+          "url": "https://example.com/produtos/saindo-das-dividas",
+          "utmSource": "quiz-financeiro",
+          "utmMedium": "resultado",
+          "utmCampaign": "perfil-financeiro",
+          "utmContent": "endividado",
+          "addResultKey": true
         },
         "benefits": [
           {

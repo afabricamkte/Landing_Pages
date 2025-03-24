@@ -891,6 +891,24 @@
                                     <input type="text" id="quiz-thumbnail" class="form-input" placeholder="URL da imagem de miniatura">
                                 </div>
                                 <div class="form-group">
+                                    <label for="quiz-slug" class="form-label">URL Personalizada</label>
+                                    <div style="display: flex; align-items: center;">
+                                        <span style="margin-right: 10px;">/quiz.html?quiz=</span>
+                                        <input type="text" id="quiz-slug" class="form-input" placeholder="url-personalizada">
+                                    </div>
+                                    <small style="color: var(--text-secondary);">Use apenas letras minúsculas, números e hífens. Não use espaços ou caracteres especiais.</small>
+                                </div>
+                                <div class="form-group">
+                                    <div class="toggle-container">
+                                        <label class="toggle-label">Quiz ativo:</label>
+                                        <label class="toggle">
+                                            <input type="checkbox" id="quiz-active">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                    <small style="color: var(--text-secondary);">Apenas quizzes ativos são exibidos para os usuários</small>
+                                </div>
+                                <div class="form-group">
                                     <label for="primary-color" class="form-label">Cor Principal</label>
                                     <input type="color" id="primary-color" class="form-input" value="#010d36">
                                 </div>
@@ -1211,6 +1229,23 @@
                     <label for="new-quiz-thumbnail" class="form-label">URL da Miniatura (opcional)</label>
                     <input type="text" id="new-quiz-thumbnail" class="form-input" placeholder="URL da imagem de miniatura">
                 </div>
+                <div class="form-group">
+                    <label for="new-quiz-slug" class="form-label">URL Personalizada</label>
+                    <div style="display: flex; align-items: center;">
+                        <span style="margin-right: 10px;">/quiz.html?quiz=</span>
+                        <input type="text" id="new-quiz-slug" class="form-input" placeholder="url-personalizada">
+                    </div>
+                    <small style="color: var(--text-secondary);">Use apenas letras minúsculas, números e hífens. Não use espaços ou caracteres especiais.</small>
+                </div>
+                <div class="form-group">
+                    <div class="toggle-container">
+                        <label class="toggle-label">Quiz ativo:</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="new-quiz-active" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
                     <button type="submit" class="btn btn-primary">Criar Quiz</button>
                     <button type="button" class="btn btn-secondary" id="cancel-quiz-btn">Cancelar</button>
@@ -1244,8 +1279,29 @@
                     <input type="text" id="product-image" class="form-input" placeholder="URL da imagem do produto">
                 </div>
                 <div class="form-group">
-                    <label for="product-url" class="form-label">URL de Venda</label>
-                    <input type="text" id="product-url" class="form-input" placeholder="Link para compra do produto">
+                    <label for="product-url" class="form-label">URL de Checkout</label>
+                    <input type="text" id="product-url" class="form-input" placeholder="Link para checkout do produto">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Parâmetros UTM (opcional)</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <input type="text" id="utm-source" class="form-input" placeholder="utm_source">
+                        <input type="text" id="utm-medium" class="form-input" placeholder="utm_medium">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <input type="text" id="utm-campaign" class="form-input" placeholder="utm_campaign">
+                        <input type="text" id="utm-content" class="form-input" placeholder="utm_content">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="toggle-container">
+                        <label class="toggle-label">Adicionar resultKey no link:</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="add-result-key-to-url">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <small style="color: var(--text-secondary);">Adiciona o resultKey como parâmetro na URL (ex: ?resultKey=iniciante)</small>
                 </div>
                 <div class="form-group">
                     <label for="product-result-key" class="form-label">Chave de Resultado Associada</label>
@@ -1879,10 +1935,38 @@
                 const description = document.getElementById('new-quiz-description').value;
                 const logo = document.getElementById('new-quiz-logo').value;
                 const thumbnail = document.getElementById('new-quiz-thumbnail').value;
+                const slug = document.getElementById('new-quiz-slug').value;
+                const active = document.getElementById('new-quiz-active').checked;
                 
                 if (!title) {
                     alert('Por favor, digite um título para o quiz.');
                     return;
+                }
+                
+                // Validar o slug
+                if (slug && !/^[a-z0-9-]+$/.test(slug)) {
+                    alert('A URL personalizada deve conter apenas letras minúsculas, números e hífens.');
+                    return;
+                }
+                
+                // Verificar se o slug já está em uso
+                const slugExists = quizzes.some(q => q.slug === slug);
+                if (slug && slugExists) {
+                    alert('Esta URL personalizada já está em uso por outro quiz.');
+                    return;
+                }
+                
+                // Gera um slug único se não for fornecido
+                let finalSlug = slug;
+                if (!finalSlug) {
+                    finalSlug = title.toLowerCase()
+                        .replace(/[^a-z0-9]+/g, '-')
+                        .replace(/^-+|-+$/g, '');
+                        
+                    // Verifica se o slug gerado já existe e adiciona um timestamp se necessário
+                    if (quizzes.some(q => q.slug === finalSlug)) {
+                        finalSlug = `${finalSlug}-${Date.now()}`;
+                    }
                 }
                 
                 // Cria um novo quiz
@@ -1892,6 +1976,10 @@
                     description,
                     logo: logo || "https://via.placeholder.com/200x100?text=Logo+Quiz",
                     thumbnail: thumbnail || "https://via.placeholder.com/400x300?text=Thumbnail+Quiz",
+                    active: active,
+                    slug: finalSlug,
+                    primaryColor: "#010d36",
+                    secondaryColor: "#dfd7c0",
                     questions: [],
                     results: {}
                 };
@@ -1899,7 +1987,7 @@
                 // Adiciona o novo quiz à lista
                 quizzes.push(newQuiz);
                 
-                // Define o novo quiz como ativo
+                // Define o novo quiz como ativo para edição
                 activeQuizId = newQuiz.id;
                 
                 // Atualiza os seletores de quiz
@@ -1937,8 +2025,23 @@
                 const description = document.getElementById('quiz-description').value;
                 const logo = document.getElementById('quiz-logo').value;
                 const thumbnail = document.getElementById('quiz-thumbnail').value;
+                const slug = document.getElementById('quiz-slug').value;
+                const active = document.getElementById('quiz-active').checked;
                 const primaryColor = document.getElementById('primary-color').value;
                 const secondaryColor = document.getElementById('secondary-color').value;
+                
+                // Validar o slug
+                if (slug && !/^[a-z0-9-]+$/.test(slug)) {
+                    alert('A URL personalizada deve conter apenas letras minúsculas, números e hífens.');
+                    return;
+                }
+                
+                // Verificar se o slug já está em uso por outro quiz
+                const slugExists = quizzes.some(q => q.id !== activeQuizId && q.slug === slug);
+                if (slug && slugExists) {
+                    alert('Esta URL personalizada já está em uso por outro quiz.');
+                    return;
+                }
                 
                 // Encontra o quiz ativo
                 const activeQuiz = quizzes.find(q => q.id === activeQuizId);
@@ -1948,6 +2051,8 @@
                 activeQuiz.description = description;
                 activeQuiz.logo = logo;
                 activeQuiz.thumbnail = thumbnail;
+                activeQuiz.slug = slug;
+                activeQuiz.active = active;
                 activeQuiz.primaryColor = primaryColor;
                 activeQuiz.secondaryColor = secondaryColor;
                 
@@ -1982,9 +2087,18 @@
                 const url = document.getElementById('product-url').value;
                 const resultKey = document.getElementById('product-result-key').value;
                 
+                // Obtém os parâmetros UTM
+                const utmSource = document.getElementById('utm-source').value;
+                const utmMedium = document.getElementById('utm-medium').value;
+                const utmCampaign = document.getElementById('utm-campaign').value;
+                const utmContent = document.getElementById('utm-content').value;
+                
+                // Obtém se deve adicionar resultKey na URL
+                const addResultKey = document.getElementById('add-result-key-to-url').checked;
+                
                 // Validações básicas
                 if (!name || !description || isNaN(price) || !image || !url || !resultKey) {
-                    alert('Por favor, preencha todos os campos.');
+                    alert('Por favor, preencha todos os campos obrigatórios.');
                     return;
                 }
                 
@@ -1994,7 +2108,12 @@
                     description,
                     price,
                     image,
-                    url
+                    url,
+                    utmSource,
+                    utmMedium,
+                    utmCampaign,
+                    utmContent,
+                    addResultKey
                 };
                 
                 // Encontra o quiz ativo
@@ -2161,7 +2280,9 @@
                 linkElement.click();
             });
             
-            // Importar Quiz
+          // Continuação do arquivo quiz-admin.html a partir da função de importação do quiz
+
+            // Importar Quiz (continuação)
             document.getElementById('import-btn').addEventListener('click', function() {
                 const importData = document.getElementById('import-data').value;
                 
@@ -2180,6 +2301,17 @@
                     
                     // Garante que o quiz tenha um ID único
                     newQuizData.id = `quiz${Date.now()}`;
+                    
+                    // Garante que as propriedades novas existam
+                    if (newQuizData.slug === undefined) {
+                        newQuizData.slug = newQuizData.title.toLowerCase()
+                            .replace(/[^a-z0-9]+/g, '-')
+                            .replace(/^-+|-+$/g, '');
+                    }
+                    
+                    if (newQuizData.active === undefined) {
+                        newQuizData.active = true;
+                    }
                     
                     // Adiciona o quiz importado à lista
                     quizzes.push(newQuizData);
@@ -2224,10 +2356,13 @@
                         // Mantém o ID e o título, mas reseta o restante
                         const id = quizzes[index].id;
                         const title = quizzes[index].title;
+                        const slug = quizzes[index].slug || `quiz-${Date.now()}`;
                         
                         quizzes[index] = {
                             id,
                             title,
+                            slug,
+                            active: true,
                             description: "Descrição do Quiz",
                             logo: "https://via.placeholder.com/200x100?text=Logo+Quiz",
                             thumbnail: "https://via.placeholder.com/400x300?text=Thumbnail+Quiz",
@@ -2322,6 +2457,8 @@
                     thumbnail: "https://via.placeholder.com/400x300?text=M%C3%A1quina+de+Vender+PDFs",
                     primaryColor: "#010d36",
                     secondaryColor: "#dfd7c0",
+                    active: true, // Nova propriedade para indicar que está ativo
+                    slug: "vender-pdfs", // Nova propriedade para URL personalizada
                     questions: [
                         {
                             text: "Você já realiza vendas no mercado digital?",
@@ -2361,7 +2498,12 @@
                                 description: "Método passo a passo para realizar sua primeira venda online em até 24 horas, mesmo que você esteja começando do zero.",
                                 price: 97.00,
                                 image: "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
-                                url: "https://pay.hotmart.com/XXXXXXX"
+                                url: "https://pay.hotmart.com/XXXXXXX",
+                                utmSource: "quiz",
+                                utmMedium: "resultado",
+                                utmCampaign: "maquina-pdfs",
+                                utmContent: "iniciante",
+                                addResultKey: true
                             }
                         }
                     }
@@ -2399,11 +2541,21 @@
                         <div class="quiz-info">
                             <div class="quiz-title">${quiz.title}</div>
                             <div class="quiz-description">${quiz.description || 'Sem descrição'}</div>
+                            <div class="quiz-url">URL: <strong>${window.location.origin}/quiz.html?quiz=${quiz.slug || ''}</strong></div>
                         </div>
-                        <div class="table-actions">
-                            <button class="btn btn-small btn-secondary edit-quiz" data-id="${quiz.id}">Editar</button>
-                            <button class="btn btn-small btn-secondary clone-quiz" data-id="${quiz.id}">Clonar</button>
-                            <button class="btn btn-small btn-danger delete-quiz" data-id="${quiz.id}">Excluir</button>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div class="toggle-container">
+                                <label class="toggle">
+                                    <input type="checkbox" class="toggle-active" data-id="${quiz.id}" ${quiz.active ? 'checked' : ''}>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span style="margin-left: 5px; font-size: 14px;">Ativo</span>
+                            </div>
+                            <div class="table-actions">
+                                <button class="btn btn-small btn-secondary edit-quiz" data-id="${quiz.id}">Editar</button>
+                                <button class="btn btn-small btn-secondary clone-quiz" data-id="${quiz.id}">Clonar</button>
+                                <button class="btn btn-small btn-danger delete-quiz" data-id="${quiz.id}">Excluir</button>
+                            </div>
                         </div>
                     `;
                     quizzesListContainer.appendChild(quizItem);
@@ -2423,6 +2575,20 @@
                     });
                 });
                 
+                document.querySelectorAll('.toggle-active').forEach(toggle => {
+                    toggle.addEventListener('change', function() {
+                        const quizId = this.getAttribute('data-id');
+                        const isActive = this.checked;
+                        
+                        // Atualiza o status de ativação do quiz
+                        const quiz = quizzes.find(q => q.id === quizId);
+                        if (quiz) {
+                            quiz.active = isActive;
+                            saveQuizData();
+                        }
+                    });
+                });
+                
                 document.querySelectorAll('.clone-quiz').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const quizId = this.getAttribute('data-id');
@@ -2435,6 +2601,14 @@
                             // Gera um novo ID e atualiza o título
                             clonedQuiz.id = `quiz${Date.now()}`;
                             clonedQuiz.title = `${sourceQuiz.title} (Cópia)`;
+                            
+                            // Gera um novo slug baseado no título atualizado
+                            clonedQuiz.slug = `${sourceQuiz.slug}-copia`;
+                            
+                            // Verifica se o slug já existe
+                            if (quizzes.some(q => q.slug === clonedQuiz.slug)) {
+                                clonedQuiz.slug = `${clonedQuiz.slug}-${Date.now()}`;
+                            }
                             
                             // Adiciona o quiz clonado à lista
                             quizzes.push(clonedQuiz);
@@ -2517,6 +2691,8 @@
                 document.getElementById('quiz-description').value = activeQuiz.description || '';
                 document.getElementById('quiz-logo').value = activeQuiz.logo || '';
                 document.getElementById('quiz-thumbnail').value = activeQuiz.thumbnail || '';
+                document.getElementById('quiz-slug').value = activeQuiz.slug || '';
+                document.getElementById('quiz-active').checked = activeQuiz.active !== false; // Por padrão, ativo
                 document.getElementById('primary-color').value = activeQuiz.primaryColor || '#010d36';
                 document.getElementById('secondary-color').value = activeQuiz.secondaryColor || '#dfd7c0';
             }
@@ -2772,6 +2948,19 @@
                     productCard.className = 'card';
                     productCard.style.marginBottom = '20px';
                     
+                    let utmDetails = '';
+                    if (result.product.utmSource || result.product.utmMedium || result.product.utmCampaign || result.product.utmContent) {
+                        utmDetails = `
+                            <p><strong>Parâmetros UTM:</strong></p>
+                            <ul style="margin-left: 20px; margin-bottom: 10px;">
+                                ${result.product.utmSource ? `<li>utm_source: ${result.product.utmSource}</li>` : ''}
+                                ${result.product.utmMedium ? `<li>utm_medium: ${result.product.utmMedium}</li>` : ''}
+                                ${result.product.utmCampaign ? `<li>utm_campaign: ${result.product.utmCampaign}</li>` : ''}
+                                ${result.product.utmContent ? `<li>utm_content: ${result.product.utmContent}</li>` : ''}
+                            </ul>
+                        `;
+                    }
+                    
                     productCard.innerHTML = `
                         <div class="card-header">
                             <h3 class="card-title">${result.product.name}</h3>
@@ -2785,6 +2974,8 @@
                             <p><strong>Descrição:</strong> ${result.product.description}</p>
                             <p><strong>Preço:</strong> R$ ${result.product.price.toFixed(2)}</p>
                             <p><strong>URL:</strong> <a href="${result.product.url}" target="_blank">${result.product.url.substring(0, 30)}...</a></p>
+                            <p><strong>Adicionar resultKey à URL:</strong> ${result.product.addResultKey ? 'Sim' : 'Não'}</p>
+                            ${utmDetails}
                             <p><strong>Imagem:</strong> ${result.product.image ? `<a href="${result.product.image}" target="_blank">${result.product.image.substring(0, 30)}...</a>` : 'Não definida'}</p>
                         </div>
                     `;
@@ -3022,12 +3213,21 @@
                 if (!result || !result.product) return;
                 
                 // Preenche o formulário
-                document.getElementById('product-id').value = resultKey; // Usado para identificar o resultado
+                document.getElementById('product-id').value = resultKey;
                 document.getElementById('product-name').value = result.product.name || '';
                 document.getElementById('product-description').value = result.product.description || '';
                 document.getElementById('product-price').value = result.product.price || 0;
                 document.getElementById('product-image').value = result.product.image || '';
                 document.getElementById('product-url').value = result.product.url || '';
+                
+                // Preenche os campos UTM se existirem
+                document.getElementById('utm-source').value = result.product.utmSource || '';
+                document.getElementById('utm-medium').value = result.product.utmMedium || '';
+                document.getElementById('utm-campaign').value = result.product.utmCampaign || '';
+                document.getElementById('utm-content').value = result.product.utmContent || '';
+                
+                // Define o checkbox de adicionar resultKey
+                document.getElementById('add-result-key-to-url').checked = result.product.addResultKey || false;
                 
                 // Carrega as chaves de resultado e seleciona a atual
                 loadResultKeys();
@@ -3146,20 +3346,24 @@
                 // Salva os dados atuais no localStorage
                 saveQuizData();
                 
-                // Define o quiz ativo para visualização
-                localStorage.setItem('activeQuizId', activeQuizId);
+                // Define o quiz a ser visualizado (não precisa definir um ID ativo, pois agora usamos slug)
+                const activeQuiz = quizzes.find(q => q.id === activeQuizId);
                 
-                // Atualiza o frame de visualização
+                if (!activeQuiz || !activeQuiz.slug) {
+                    alert('Este quiz não possui uma URL personalizada definida. Configure uma URL personalizada nas configurações do quiz.');
+                    return;
+                }
+                
+                // Atualiza o frame de visualização com a URL específica do quiz
                 const previewFrame = document.getElementById('preview-frame');
-                previewFrame.src = 'quiz.html';
+                previewFrame.src = `quiz.html?quiz=${activeQuiz.slug}`;
             }
             
             function saveQuizData() {
                 // Salva os quizzes no localStorage
                 localStorage.setItem('quizzes', JSON.stringify(quizzes));
-                localStorage.setItem('activeQuizId', activeQuizId);
             }
         });
-    </script>
-</body>
-</html>
+            </script>
+        </body>
+        </html>

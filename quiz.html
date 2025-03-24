@@ -597,34 +597,51 @@
             // Função para carregar os quizzes do localStorage
             function loadQuizzes() {
                 try {
-                    // Carrega os quizzes e o ID do quiz ativo
+                    // Carrega os quizzes
                     const savedQuizzes = localStorage.getItem('quizzes');
-                    const savedActiveQuizId = localStorage.getItem('activeQuizId');
                     
                     if (savedQuizzes) {
                         quizzes = JSON.parse(savedQuizzes);
-                    }
-                    
-                    if (savedActiveQuizId) {
-                        activeQuizId = savedActiveQuizId;
-                        activeQuiz = quizzes.find(q => q.id === activeQuizId);
-                    }
-                    
-                    // Se há apenas um quiz disponível ou um quiz ativo, inicia o quiz diretamente
-                    if (quizzes.length === 1 || activeQuiz) {
-                        if (!activeQuiz) {
-                            activeQuiz = quizzes[0];
-                            activeQuizId = activeQuiz.id;
+                        
+                        // Verifica se há um slug na URL
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const quizSlug = urlParams.get('quiz');
+                        
+                        if (quizSlug) {
+                            // Tenta encontrar o quiz pelo slug
+                            activeQuiz = quizzes.find(q => q.slug === quizSlug && q.active);
+                            
+                            if (activeQuiz) {
+                                activeQuizId = activeQuiz.id;
+                                initQuiz();
+                                return;
+                            }
                         }
-                        initQuiz();
-                    } else if (quizzes.length > 1) {
-                        // Se há múltiplos quizzes, exibe a seleção
-                        showQuizSelection();
+                        
+                        // Se não há slug ou não encontrou o quiz, filtra apenas os quizzes ativos
+                        const activeQuizzes = quizzes.filter(q => q.active === true);
+                        
+                        if (activeQuizzes.length === 1) {
+                            // Se há apenas um quiz ativo, inicializa diretamente
+                            activeQuiz = activeQuizzes[0];
+                            activeQuizId = activeQuiz.id;
+                            initQuiz();
+                        } else if (activeQuizzes.length > 1) {
+                            // Se há múltiplos quizzes ativos, exibe a seleção
+                            showQuizSelection(activeQuizzes);
+                        } else {
+                            // Se não há quizzes ativos
+                            document.getElementById('quiz-content').innerHTML = `
+                                <div class="result-container">
+                                    <h2 class="result-title">Nenhum quiz disponível</h2>
+                                    <p class="result-description">Não foi possível encontrar quizzes ativos. Por favor, verifique a configuração do sistema.</p>
+                                </div>
+                            `;
+                        }
                     } else {
-                        // Se não há quizzes, exibe uma mensagem
                         document.getElementById('quiz-content').innerHTML = `
                             <div class="result-container">
-                                <h2 class="result-title">Nenhum quiz disponível</h2>
+                                <h2 class="result-title">Nenhum quiz configurado</h2>
                                 <p class="result-description">Não foi possível encontrar quizzes. Por favor, verifique a configuração do sistema.</p>
                             </div>
                         `;
@@ -641,12 +658,12 @@
             }
             
             // Função para exibir a seleção de quiz
-            function showQuizSelection() {
+            function showQuizSelection(activeQuizzes) {
                 document.getElementById('quiz-logo').textContent = 'Escolha um Quiz';
                 
                 let selectionHTML = '<div class="quiz-selector">';
                 
-                quizzes.forEach(quiz => {
+                activeQuizzes.forEach(quiz => {
                     selectionHTML += `
                         <div class="quiz-card" data-id="${quiz.id}">
                             <img src="${quiz.thumbnail}" alt="${quiz.title}" class="quiz-thumbnail">
@@ -1014,15 +1031,35 @@
                     `;
                 }
                 
-                // Adiciona produto
+                // Adiciona produto com URL modificada
                 if (result.product) {
+                    // Constrói a URL com parâmetros UTM e resultKey
+                    let productUrl = result.product.url;
+                    
+                    // Adiciona parâmetros UTM se fornecidos
+                    const utmParams = [];
+                    if (result.product.utmSource) utmParams.push(`utm_source=${encodeURIComponent(result.product.utmSource)}`);
+                    if (result.product.utmMedium) utmParams.push(`utm_medium=${encodeURIComponent(result.product.utmMedium)}`);
+                    if (result.product.utmCampaign) utmParams.push(`utm_campaign=${encodeURIComponent(result.product.utmCampaign)}`);
+                    if (result.product.utmContent) utmParams.push(`utm_content=${encodeURIComponent(result.product.utmContent)}`);
+                    
+                    // Adiciona resultKey se configurado
+                    if (result.product.addResultKey) {
+                        utmParams.push(`resultKey=${encodeURIComponent(dominantResultKey)}`);
+                    }
+                    
+                    // Adiciona os parâmetros à URL
+                    if (utmParams.length > 0) {
+                        productUrl += (productUrl.includes('?') ? '&' : '?') + utmParams.join('&');
+                    }
+                    
                     resultsHTML += `
                         <div class="price-container">
                             <div class="price-title">${result.product.name}</div>
                             <div class="price-current">R$ ${result.product.price.toFixed(2)}</div>
                         </div>
                         
-                        <a href="${result.product.url}" class="cta-button" target="_blank">Quero começar agora</a>
+                        <a href="${productUrl}" class="cta-button" target="_blank">Quero começar agora</a>
                     `;
                 }
                 
