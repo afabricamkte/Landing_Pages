@@ -3,17 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Customizável</title>
+    <title>Quiz | AFÁBRICA</title>
+    <!-- Importando as fontes Source Serif Pro e Neue Montreal (ou equivalente) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <style>
         :root {
-            --primary-color: #0a0a14;
-            --secondary-color: #1e1e2e;
-            --accent-color: #3498db;
-            --text-color: #ffffff;
-            --button-color: #2980b9;
-            --button-hover: #3498db;
-            --button-active: #1c6ea4;
-            --success-color: #2ecc71;
+            /* Cores da AFÁBRICA */
+            --primary-color: #010d36;      /* Azul escuro */
+            --secondary-color: #dfd7c0;    /* Bege claro */
+            --tertiary-color: #fef9ef;     /* Branco/creme */
+            
+            /* Cores derivadas para UI */
+            --accent-color: #dfd7c0;
+            --text-color: #fef9ef;
+            --button-color: #dfd7c0;
+            --button-hover: #c8c2ad;
+            --button-active: #b5af9b;
+            --success-color: #22c55e;
             --warning-color: #e74c3c;
         }
 
@@ -21,7 +28,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif; /* Substituto para Neue Montreal */
         }
 
         body {
@@ -30,6 +37,11 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Source Serif Pro', serif;
+            font-weight: 600;
         }
 
         #app {
@@ -44,32 +56,35 @@
 
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .header h1 {
-            font-size: 24px;
+            font-size: 32px;
             margin-bottom: 10px;
             text-transform: uppercase;
+            font-family: 'Source Serif Pro', serif;
+            color: var(--secondary-color);
         }
 
         .progress-container {
             width: 100%;
             height: 8px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(223, 215, 192, 0.2);
             border-radius: 4px;
             margin-bottom: 30px;
         }
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #3498db, #2ecc71);
+            background: var(--secondary-color);
             border-radius: 4px;
             transition: width 0.5s ease;
         }
 
         .quiz-container {
-            background-color: var(--secondary-color);
+            background-color: rgba(223, 215, 192, 0.05);
+            border: 1px solid rgba(223, 215, 192, 0.2);
             border-radius: 10px;
             padding: 30px;
             flex-grow: 1;
@@ -83,10 +98,12 @@
         }
 
         .question {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 600;
+            font-family: 'Source Serif Pro', serif;
             text-align: center;
             margin-bottom: 30px;
+            color: var(--text-color);
         }
 
         .video-container {
@@ -120,8 +137,8 @@
         }
 
         .option {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(223, 215, 192, 0.1);
+            border: 2px solid rgba(223, 215, 192, 0.2);
             border-radius: 10px;
             padding: 15px;
             cursor: pointer;
@@ -132,13 +149,14 @@
         }
 
         .option:hover {
-            background-color: rgba(255, 255, 255, 0.15);
+            background-color: rgba(223, 215, 192, 0.15);
             transform: translateY(-2px);
         }
 
         .option.selected {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: var(--primary-color);
         }
 
         .option-emoji {
@@ -156,7 +174,7 @@
 
         .action-button {
             background-color: var(--button-color);
-            color: white;
+            color: var(--primary-color);
             border: none;
             border-radius: 8px;
             padding: 15px 30px;
@@ -186,8 +204,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(223, 215, 192, 0.1);
+            border: 2px solid rgba(223, 215, 192, 0.2);
             border-radius: 10px;
             padding: 15px;
             cursor: pointer;
@@ -195,13 +213,14 @@
         }
 
         .thumbs-option:hover {
-            background-color: rgba(255, 255, 255, 0.15);
+            background-color: rgba(223, 215, 192, 0.15);
             transform: translateY(-2px);
         }
 
         .thumbs-option.selected {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: var(--primary-color);
         }
 
         .thumbs-icon {
@@ -224,13 +243,16 @@
         }
 
         .result-title {
-            font-size: 28px;
-            margin-bottom: 15px;
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            font-family: 'Source Serif Pro', serif;
         }
 
         .result-description {
             font-size: 18px;
             margin-bottom: 30px;
+            line-height: 1.6;
         }
 
         .benefit-list {
@@ -243,10 +265,11 @@
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
+            line-height: 1.4;
         }
 
         .benefit-icon {
-            color: var(--success-color);
+            color: var(--secondary-color);
         }
 
         .testimonials {
@@ -255,7 +278,7 @@
         }
 
         .testimonial {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(223, 215, 192, 0.1);
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
@@ -290,9 +313,10 @@
         }
 
         .price-container {
-            background-color: rgba(0, 0, 0, 0.3);
+            background-color: rgba(223, 215, 192, 0.1);
+            border: 1px solid rgba(223, 215, 192, 0.2);
             border-radius: 10px;
-            padding: 20px;
+            padding: 25px;
             margin: 30px 0;
             text-align: center;
             width: 100%;
@@ -301,24 +325,28 @@
         .price-title {
             text-transform: uppercase;
             font-size: 18px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-family: 'Source Serif Pro', serif;
+            color: var(--secondary-color);
         }
 
         .price-original {
             text-decoration: line-through;
             color: #aaa;
             font-size: 20px;
+            margin-bottom: 5px;
         }
 
         .price-current {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 700;
-            color: var(--success-color);
+            color: var(--secondary-color);
+            margin-bottom: 15px;
         }
 
         .cta-button {
-            background-color: #27ae60;
-            color: white;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
             border: none;
             border-radius: 8px;
             padding: 20px 30px;
@@ -334,7 +362,7 @@
         }
 
         .cta-button:hover {
-            background-color: #2ecc71;
+            background-color: var(--button-hover);
             transform: translateY(-2px);
         }
 
@@ -353,8 +381,8 @@
             width: 100%;
             padding: 15px;
             border-radius: 8px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(223, 215, 192, 0.2);
+            background-color: rgba(223, 215, 192, 0.1);
             color: white;
             font-size: 16px;
             margin-bottom: 20px;
@@ -366,7 +394,7 @@
 
         .input-field:focus {
             outline: none;
-            border-color: var(--accent-color);
+            border-color: var(--secondary-color);
         }
 
         .chart-container {
@@ -387,7 +415,7 @@
 
         .chart-column {
             width: 100%;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(223, 215, 192, 0.1);
             border-radius: 5px;
             margin-bottom: 10px;
             position: relative;
@@ -398,7 +426,7 @@
             position: absolute;
             bottom: 0;
             width: 100%;
-            background-color: var(--accent-color);
+            background-color: var(--secondary-color);
             border-radius: 5px;
             transition: height 1s ease;
         }
@@ -415,7 +443,7 @@
             }
 
             .question {
-                font-size: 18px;
+                font-size: 20px;
             }
 
             .option {
@@ -431,7 +459,7 @@
             }
 
             .result-title {
-                font-size: 24px;
+                font-size: 26px;
             }
 
             .result-description {
@@ -452,14 +480,14 @@
             text-align: center;
             padding: 40px;
             font-size: 18px;
-            color: var(--text-secondary);
+            color: var(--secondary-color);
         }
     </style>
 </head>
 <body>
     <div id="app">
         <div class="header">
-            <h1 id="header-title">Máquina de Vender PDFs</h1>
+            <h1 id="header-title">AFÁBRICA</h1>
         </div>
         <div class="progress-container">
             <div class="progress-bar" id="progress" style="width: 0%"></div>
@@ -515,14 +543,18 @@
                 answers = [];
                 userName = "";
                 
-                document.getElementById('header-title').textContent = quizData.title || 'Quiz Interativo';
+                document.getElementById('header-title').textContent = quizData.title || 'AFÁBRICA';
                 
                 // Define as cores personalizadas
                 if (quizData.primaryColor) {
-                    document.documentElement.style.setProperty('--accent-color', quizData.primaryColor);
-                    document.documentElement.style.setProperty('--button-color', adjustColor(quizData.primaryColor, -20));
-                    document.documentElement.style.setProperty('--button-hover', quizData.primaryColor);
-                    document.documentElement.style.setProperty('--button-active', adjustColor(quizData.primaryColor, -40));
+                    document.documentElement.style.setProperty('--primary-color', quizData.primaryColor);
+                }
+                
+                if (quizData.secondaryColor) {
+                    document.documentElement.style.setProperty('--secondary-color', quizData.secondaryColor);
+                    document.documentElement.style.setProperty('--button-color', quizData.secondaryColor);
+                    document.documentElement.style.setProperty('--button-hover', adjustColor(quizData.secondaryColor, -20));
+                    document.documentElement.style.setProperty('--button-active', adjustColor(quizData.secondaryColor, -40));
                 }
                 
                 // Verifica se há perguntas
@@ -696,7 +728,7 @@
                 
                 const nameInputHTML = `
                     <div class="question-container">
-                        <div class="question">Me fala seu nome aqui abaixo...</div>
+                        <div class="question">Qual o seu nome?</div>
                         <div class="input-container">
                             <input type="text" id="user-name" class="input-field" placeholder="Digite o seu primeiro nome">
                         </div>
@@ -809,7 +841,7 @@
                         ` : ''}
                         
                         ${results.bonuses && results.bonuses.length > 0 ? `
-                            <h3 style="margin-top: 30px; margin-bottom: 15px;">BÔNUS ADICIONAIS</h3>
+                            <h3 style="margin-top: 30px; margin-bottom: 15px; font-family: 'Source Serif Pro', serif; color: var(--secondary-color);">BÔNUS ADICIONAIS</h3>
                             <div class="benefit-list">
                                 ${results.bonuses.map(bonus => `
                                     <div class="benefit-item">
@@ -832,7 +864,7 @@
                         
                         ${results.audience && results.audience.length > 0 ? `
                             <div class="audience-list">
-                                <h3 style="margin-bottom: 15px;">Para quem é o MVP?</h3>
+                                <h3 style="margin-bottom: 15px; font-family: 'Source Serif Pro', serif; color: var(--secondary-color);">Para quem é o produto?</h3>
                                 ${results.audience.map(audience => `
                                     <div class="benefit-item">
                                         <div class="benefit-icon">✓</div>

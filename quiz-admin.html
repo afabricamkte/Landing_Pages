@@ -3,34 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administração do Quiz</title>
+    <title>Administração do Quiz | AFÁBRICA</title>
+    <!-- Importando as fontes Source Serif Pro e Neue Montreal (ou equivalente) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <style>
         :root {
-            --primary-color: #1e293b;
-            --secondary-color: #0f172a;
-            --accent-color: #3b82f6;
-            --text-color: #ffffff;
-            --text-secondary: #94a3b8;
+            /* Cores da AFÁBRICA */
+            --primary-color: #010d36;      /* Azul escuro */
+            --secondary-color: #dfd7c0;    /* Bege claro */
+            --tertiary-color: #fef9ef;     /* Branco/creme */
+            
+            /* Cores derivadas para UI */
+            --accent-color: #dfd7c0;
+            --text-color: #fef9ef;
+            --text-secondary: #dfd7c0;
             --success-color: #22c55e;
             --warning-color: #ef4444;
-            --card-bg: #1e293b;
-            --input-bg: #334155;
-            --border-color: #475569;
+            --card-bg: #010d36;
+            --input-bg: #132147;
+            --border-color: #1e293b;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: var(--secondary-color);
+            background-color: var(--primary-color);
             color: var(--text-color);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            font-family: 'Inter', sans-serif; /* Substituto para Neue Montreal */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Source Serif Pro', serif;
+            font-weight: 600;
         }
 
         #app {
@@ -51,14 +63,17 @@
         }
 
         .header h1 {
-            font-size: 24px;
+            font-size: 28px;
             color: var(--text-color);
+            font-family: 'Source Serif Pro', serif;
+            font-weight: 700;
         }
 
         .logo {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            color: var(--accent-color);
+            color: var(--secondary-color);
+            font-family: 'Source Serif Pro', serif;
         }
 
         .user-info {
@@ -71,7 +86,8 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: var(--accent-color);
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -102,6 +118,7 @@
         .sidebar {
             width: 250px;
             background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 20px;
             height: fit-content;
@@ -131,13 +148,13 @@
         }
 
         .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(223, 215, 192, 0.1);
             color: var(--text-color);
         }
 
         .nav-link.active {
-            background-color: var(--accent-color);
-            color: white;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
         }
 
         .nav-icon {
@@ -146,6 +163,7 @@
 
         .card {
             background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
@@ -161,8 +179,9 @@
         }
 
         .card-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
+            font-family: 'Source Serif Pro', serif;
         }
 
         .form-group {
@@ -173,6 +192,7 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
+            color: var(--text-secondary);
         }
 
         .form-input, .form-select, .form-textarea {
@@ -183,6 +203,7 @@
             background-color: var(--input-bg);
             color: var(--text-color);
             font-size: 16px;
+            font-family: 'Inter', sans-serif;
         }
 
         .form-input[type="color"] {
@@ -209,30 +230,31 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border: none;
+            font-family: 'Inter', sans-serif;
         }
 
         .btn-primary {
-            background-color: var(--accent-color);
-            color: white;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
         }
 
         .btn-primary:hover {
-            background-color: #2563eb;
+            background-color: #d0c8b1;
         }
 
         .btn-secondary {
             background-color: transparent;
-            border: 1px solid var(--accent-color);
-            color: var(--accent-color);
+            border: 1px solid var(--secondary-color);
+            color: var(--secondary-color);
         }
 
         .btn-secondary:hover {
-            background-color: rgba(59, 130, 246, 0.1);
+            background-color: rgba(223, 215, 192, 0.1);
         }
 
         .btn-danger {
             background-color: var(--warning-color);
-            color: white;
+            color: var(--text-color);
         }
 
         .btn-danger:hover {
@@ -300,6 +322,7 @@
             margin: 100px auto;
             padding: 30px;
             background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
@@ -307,9 +330,10 @@
         .login-logo {
             text-align: center;
             margin-bottom: 30px;
-            font-size: 28px;
-            color: var(--accent-color);
+            font-size: 32px;
+            color: var(--secondary-color);
             font-weight: bold;
+            font-family: 'Source Serif Pro', serif;
         }
 
         .login-form {
@@ -396,8 +420,8 @@
         }
 
         .tab.active {
-            color: var(--accent-color);
-            border-bottom: 2px solid var(--accent-color);
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--secondary-color);
         }
 
         .tab-content {
@@ -445,9 +469,9 @@
         }
 
         .device-btn.active {
-            background-color: var(--accent-color);
-            color: white;
-            border-color: var(--accent-color);
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            border-color: var(--secondary-color);
         }
 
         /* Estilos para a visualização mobile */
@@ -464,7 +488,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(1, 13, 54, 0.7);
             z-index: 100;
             align-items: center;
             justify-content: center;
@@ -472,6 +496,7 @@
 
         .modal-content {
             background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 20px;
             width: 90%;
@@ -490,8 +515,9 @@
         }
 
         .modal-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
+            font-family: 'Source Serif Pro', serif;
         }
 
         .modal-close {
@@ -514,6 +540,7 @@
 
         .toggle-label {
             margin-right: 10px;
+            color: var(--text-secondary);
         }
 
         .toggle {
@@ -554,7 +581,7 @@
         }
 
         input:checked + .toggle-slider {
-            background-color: var(--accent-color);
+            background-color: var(--secondary-color);
         }
 
         input:checked + .toggle-slider:before {
@@ -599,7 +626,7 @@
     <div id="app">
         <!-- Login Container (exibido inicialmente) -->
         <div id="login-container" class="login-container">
-            <div class="login-logo">Quiz Admin</div>
+            <div class="login-logo">AFÁBRICA Quiz</div>
             <div id="login-alert" class="alert alert-danger" style="display: none;">
                 Usuário ou senha incorretos.
             </div>
@@ -619,7 +646,7 @@
         <!-- Admin Dashboard (inicialmente oculto) -->
         <div id="admin-dashboard" style="display: none;">
             <div class="header">
-                <div class="logo">Quiz Admin</div>
+                <div class="logo">AFÁBRICA Quiz</div>
                 <div class="user-info">
                     <div class="user-avatar" id="user-avatar">A</div>
                     <div class="user-name" id="user-name">Admin</div>
@@ -679,25 +706,25 @@
                             <p>Bem-vindo ao painel de administração do Quiz. Use a navegação à esquerda para gerenciar seu quiz.</p>
                             
                             <div style="margin-top: 20px;">
-                                <h3 style="margin-bottom: 10px;">Resumo</h3>
+                                <h3 style="margin-bottom: 10px; font-family: 'Source Serif Pro', serif;">Resumo</h3>
                                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
-                                    <div style="background-color: rgba(59, 130, 246, 0.2); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; align-items: center;">
-                                        <span style="font-size: 36px; font-weight: bold;" id="questions-count">0</span>
+                                    <div style="background-color: rgba(223, 215, 192, 0.1); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border-color);">
+                                        <span style="font-size: 36px; font-weight: bold; color: var(--secondary-color);" id="questions-count">0</span>
                                         <span>Perguntas</span>
                                     </div>
-                                    <div style="background-color: rgba(34, 197, 94, 0.2); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; align-items: center;">
-                                        <span style="font-size: 36px; font-weight: bold;" id="completions-count">0</span>
+                                    <div style="background-color: rgba(223, 215, 192, 0.1); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border-color);">
+                                        <span style="font-size: 36px; font-weight: bold; color: var(--secondary-color);" id="completions-count">0</span>
                                         <span>Conclusões</span>
                                     </div>
-                                    <div style="background-color: rgba(234, 88, 12, 0.2); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; align-items: center;">
-                                        <span style="font-size: 36px; font-weight: bold;" id="conversion-rate">0%</span>
+                                    <div style="background-color: rgba(223, 215, 192, 0.1); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border-color);">
+                                        <span style="font-size: 36px; font-weight: bold; color: var(--secondary-color);" id="conversion-rate">0%</span>
                                         <span>Taxa de Conversão</span>
                                     </div>
                                 </div>
                             </div>
                             
                             <div style="margin-top: 30px;">
-                                <h3 style="margin-bottom: 10px;">Ações Rápidas</h3>
+                                <h3 style="margin-bottom: 10px; font-family: 'Source Serif Pro', serif;">Ações Rápidas</h3>
                                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
                                     <button class="btn btn-primary" onclick="document.querySelector('[data-section=\'questions\']').click()">Gerenciar Perguntas</button>
                                     <button class="btn btn-secondary" onclick="document.querySelector('[data-section=\'preview\']').click()">Visualizar Quiz</button>
@@ -724,11 +751,11 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="primary-color" class="form-label">Cor Principal</label>
-                                    <input type="color" id="primary-color" class="form-input" value="#3b82f6">
+                                    <input type="color" id="primary-color" class="form-input" value="#010d36">
                                 </div>
                                 <div class="form-group">
                                     <label for="secondary-color" class="form-label">Cor Secundária</label>
-                                    <input type="color" id="secondary-color" class="form-input" value="#22c55e">
+                                    <input type="color" id="secondary-color" class="form-input" value="#dfd7c0">
                                 </div>
                                 <button type="submit" class="btn btn-primary">Salvar Configurações</button>
                             </form>
@@ -965,8 +992,8 @@
             let quizData = {
                 title: "Máquina de Vender PDFs",
                 subtitle: "O método definitivo para vender todos os dias e escalar seus resultados.",
-                primaryColor: "#3b82f6",
-                secondaryColor: "#22c55e",
+                primaryColor: "#010d36",
+                secondaryColor: "#dfd7c0",
                 questions: [
                     {
                         id: 1,
@@ -1483,8 +1510,8 @@
                     quizData = {
                         title: "Novo Quiz",
                         subtitle: "Descrição do Quiz",
-                        primaryColor: "#3b82f6",
-                        secondaryColor: "#22c55e",
+                        primaryColor: "#010d36",
+                        secondaryColor: "#dfd7c0",
                         questions: [],
                         results: {
                             title: "Obrigado por completar o quiz!",
@@ -1551,8 +1578,8 @@
             function updateQuizForm() {
                 document.getElementById('quiz-title').value = quizData.title || '';
                 document.getElementById('quiz-subtitle').value = quizData.subtitle || '';
-                document.getElementById('primary-color').value = quizData.primaryColor || '#3b82f6';
-                document.getElementById('secondary-color').value = quizData.secondaryColor || '#22c55e';
+                document.getElementById('primary-color').value = quizData.primaryColor || '#010d36';
+                document.getElementById('secondary-color').value = quizData.secondaryColor || '#dfd7c0';
             }
             
             function updateResultsForm() {
