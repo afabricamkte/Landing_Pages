@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo de Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f2d7f;
+            --secondary-color: #f0ad4e;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            background-color: var(--dark-bg);
+            color: white;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 20px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-header h3 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        
+        .sidebar-menu {
+            padding: 0;
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .sidebar-menu li a {
+            display: block;
+            padding: 15px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-menu li a:hover, .sidebar-menu li a.active {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: var(--primary-color);
+        }
+        
+        .sidebar-menu li a i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .main-content.expanded {
+            margin-left: 0;
+        }
+        
+        .toggle-sidebar {
+            display: none;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            font-weight: 600;
+            padding: 15px 20px;
+            border-top-left-radius: 10px !important;
+            border-top-right-radius: 10px !important;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #3d2162;
+            border-color: #3d2162;
+        }
+        
+        .btn-warning {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-logo img {
+            max-width: 150px;
+        }
+        
+        .login-card {
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .custom-control-input:checked ~ .custom-control-label::before {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        /* Estilos para editor de quiz */
+        .question-card {
+            margin-bottom: 30px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+        }
+        
+        .question-handle {
+            cursor: move;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .option-row {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        .remove-question, .remove-option {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: var(--danger-color);
+        }
+        
+        .result-card {
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: -250px;
+            }
+            
+            .sidebar.active {
+                margin-left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .toggle-sidebar {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div id="login-screen" class="container">
+        <div class="login-container">
+            <div class="login-logo">
+                <h2>Admin do Quiz</h2>
+                <p>Painel de Gerenciamento</p>
+            </div>
+            
+            <div class="card login-card">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-4">Login</h4>
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Senha</label>
+                            <input type="password" class="form-control" id="password" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember-me">
+                            <label class="form-check-label" for="remember-me">Lembrar-me</label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Entrar</button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <span id="login-error" class="text-danger" style="display: none;">Credenciais inválidas. Tente novamente.</span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Painel Admin (Inicialmente escondido) -->
+    <div id="admin-panel" style="display: none;">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>Painel Admin</h3>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li><a href="#dashboard" class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#quizzes" data-section="quizzes"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                <li><a href="#users" data-section="users"><i class="fas fa-users"></i> Usuários</a></li>
+                <li><a href="#settings" data-section="settings"><i class="fas fa-cog"></i> Configurações</a></li>
+                <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+            </ul>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <button class="btn btn-primary toggle-sidebar mb-3">
+                <i class="fas fa-bars"></i> Menu
+            </button>
+            
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="mb-4">Dashboard</h2>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-3 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h1 class="display-4" id="total-quizzes">0</h1>
+                                <p class="text-muted">Total de Quizzes</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h1 class="display-4" id="total-users">0</h1>
+                                <p class="text-muted">Usuários Cadastrados</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h1 class="display-4" id="total-completions">0</h1>
+                                <p class="text-muted">Quizzes Completos</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h1 class="display-4" id="conversion-rate">0%</h1>
+                                <p class="text-muted">Taxa de Conversão</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8 mb-4">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>Estatísticas de Uso</span>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        Últimos 7 dias
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">Hoje</a></li>
+                                        <li><a class="dropdown-item" href="#">Últimos 7 dias</a></li>
+                                        <li><a class="dropdown-item" href="#">Últimos 30 dias</a></li>
+                                        <li><a class="dropdown-item" href="#">Este mês</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="usage-chart" height="250"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <span>Quizzes Populares</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <ul class="list-group list-group-flush" id="popular-quizzes">
+                                    <li class="list-group-item text-center">
+                                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                            <span class="visually-hidden">Carregando...</span>
+                                        </div>
+                                        <span>Carregando...</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Quizzes Section -->
+            <section id="quizzes-section" class="content-section" style="display: none;">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h2>Gerenciar Quizzes</h2>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button id="add-quiz-btn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Novo Quiz
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome</th>
+                                        <th>Perguntas</th>
+                                        <th>Status</th>
+                                        <th>Criado em</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="quizzes-table-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                                <span class="visually-hidden">Carregando...</span>
+                                            </div>
+                                            <span>Carregando quizzes...</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Users Section -->
+            <section id="users-section" class="content-section" style="display: none;">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h2>Gerenciar Usuários</h2>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button id="add-user-btn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Novo Usuário
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>Perfil</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                                <span class="visually-hidden">Carregando...</span>
+                                            </div>
+                                            <span>Carregando usuários...</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Settings Section -->
+            <section id="settings-section" class="content-section" style="display: none;">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="mb-4">Configurações</h2>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <span>Configurações Gerais</span>
+                    </div>
+                    <div class="card-body">
+                        <form id="settings-form">
+                            <div class="mb-3">
+                                <label for="site-title" class="form-label">Título do Site</label>
+                                <input type="text" class="form-control" id="site-title" value="Plataforma de Quiz">
+                            </div>
+                            <div class="mb-3">
+                                <label for="site-logo" class="form-label">Logo do Site</label>
+                                <input type="file" class="form-control" id="site-logo">
+                                <div id="logo-preview" class="mt-2"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="primary-color" class="form-label">Cor Primária</label>
+                                <input type="color" class="form-control form-control-color" id="primary-color" value="#4f2d7f">
+                            </div>
+                            <div class="mb-3">
+                                <label for="secondary-color" class="form-label">Cor Secundária</label>
+                                <input type="color" class="form-control form-control-color" id="secondary-color" value="#f0ad4e">
+                            </div>
+                            <div class="d-grid d-md-flex justify-content-md-end">
+                                <button type="submit" class="btn btn-primary">Salvar Configurações</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <span>Exportar/Importar Dados</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <h5>Exportar Dados</h5>
+                                <p>Faça o backup de todos os seus quizzes e configurações.</p>
+                                <button id="export-data-btn" class="btn btn-outline-primary">
+                                    <i class="fas fa-download"></i> Exportar Dados
+                                </button>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h5>Importar Dados</h5>
+                                <p>Restaure quizzes e configurações a partir de um backup.</p>
+                                <input type="file" class="form-control mb-2" id="import-file">
+                                <button id="import-data-btn" class="btn btn-outline-primary">
+                                    <i class="fas fa-upload"></i> Importar Dados
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <!-- Modais -->
+    
+    <!-- Modal Novo/Editar Quiz -->
+    <div class="modal fade" id="quiz-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="quiz-modal-title">Novo Quiz</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="quiz-form">
+                        <ul class="nav nav-tabs mb-3" id="quiz-tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general-tab-pane" type="button" role="tab" aria-controls="general-tab-pane" aria-selected="true">Geral</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="questions-tab" data-bs-toggle="tab" data-bs-target="#questions-tab-pane" type="button" role="tab" aria-controls="questions-tab-pane" aria-selected="false">Perguntas</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="results-tab" data-bs-toggle="tab" data-bs-target="#results-tab-pane" type="button" role="tab" aria-controls="results-tab-pane" aria-selected="false">Resultados</button>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content" id="quiz-tab-content">
+                            <!-- Aba Geral -->
+                            <div class="tab-pane fade show active" id="general-tab-pane" role="tabpanel" aria-labelledby="general-tab" tabindex="0">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="quiz-title" class="form-label">Título do Quiz</label>
+                                            <input type="text" class="form-control" id="quiz-title" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="quiz-description" class="form-label">Descrição</label>
+                                            <textarea class="form-control" id="quiz-description" rows="3"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="quiz-status" class="form-label">Status</label>
+                                            <select class="form-select" id="quiz-status">
+                                                <option value="draft">Rascunho</option>
+                                                <option value="published">Publicado</option>
+                                                <option value="archived">Arquivado</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="quiz-logo" class="form-label">Logo do Quiz</label>
+                                            <input type="file" class="form-control" id="quiz-logo">
+                                            <div id="quiz-logo-preview" class="mt-2"></div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="quiz-thumbnail" class="form-label">Imagem de Thumbnail</label>
+                                            <input type="file" class="form-control" id="quiz-thumbnail">
+                                            <div id="quiz-thumbnail-preview" class="mt-2"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Aba Perguntas -->
+                            <div class="tab-pane fade" id="questions-tab-pane" role="tabpanel" aria-labelledby="questions-tab" tabindex="0">
+                                <div id="questions-container">
+                                    <!-- As perguntas serão adicionadas aqui -->
+                                </div>
+                                <button type="button" id="add-question-btn" class="btn btn-success">
+                                    <i class="fas fa-plus"></i> Adicionar Pergunta
+                                </button>
+                            </div>
+                            
+                            <!-- Aba Resultados -->
+                            <div class="tab-pane fade" id="results-tab-pane" role="tabpanel" aria-labelledby="results-tab" tabindex="0">
+                                <div id="results-container">
+                                    <!-- Os resultados serão adicionados aqui -->
+                                </div>
+                                <button type="button" id="add-result-btn" class="btn btn-success">
+                                    <i class="fas fa-plus"></i> Adicionar Resultado
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="save-quiz-btn" class="btn btn-primary">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <!-- Modal Novo/Editar Usuário -->
+    <div class="modal fade" id="user-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="user-modal-title">Novo Usuário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="user-form">
+                        <div class="mb-3">
+                            <label for="user-name" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="user-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user-email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="user-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user-password" class="form-label">Senha</label>
+                            <input type="password" class="form-control" id="user-password">
+                            <div class="form-text" id="password-help">Deixe em branco para manter a senha atual (ao editar).</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user-role" class="form-label">Perfil</label>
+                            <select class="form-select" id="user-role">
+                                <option value="admin">Administrador</option>
+                                <option value="editor">Editor</option>
+                                <option value="viewer">Visualizador</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user-status" class="form-label">Status</label>
+                            <select class="form-select" id="user-status">
+                                <option value="active">Ativo</option>
+                                <option value="inactive">Inativo</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="save-user-btn" class="btn btn-primary">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Variáveis globais
+        let currentUser = null;
+        let quizzes = [];
+        let users = [];
+        let currentQuizId = null;
+        
+        // Função de inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listeners para login
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            
+            // Event listeners para navegação
+            document.querySelectorAll('.sidebar-menu a[data-section]').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    showSection(section);
+                });
+            });
+            
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            
+            // Toggle sidebar em dispositivos móveis
+            document.querySelector('.toggle-sidebar').addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('active');
+                document.querySelector('.main-content').classList.toggle('expanded');
+            });
+            
+            // Event listeners para modais
+            document.getElementById('add-quiz-btn').addEventListener('click', showNewQuizModal);
+            document.getElementById('add-user-btn').addEventListener('click', showNewUserModal);
+            document.getElementById('save-quiz-btn').addEventListener('click', saveQuiz);
+            document.getElementById('save-user-btn').addEventListener('click', saveUser);
+            document.getElementById('add-question-btn').addEventListener('click', addQuestionTemplate);
+            document.getElementById('add-result-btn').addEventListener('click', addResultTemplate);
+            
+            // Restaurar sessão se existir
+            restoreSession();
+        });
+        
+        // Função para verificar e restaurar sessão
+        function restoreSession() {
+            const savedUser = localStorage.getItem('quizAdminUser');
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    showAdminPanel();
+                    loadDashboardData();
+                } catch (error) {
+                    console.error('Erro ao restaurar sessão:', error);
+                    showLoginScreen();
+                }
+            }
+        }
+        
+        // Função para lidar com o login
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password');
+            
+            // Verificação básica (em um ambiente real, isso deveria ser verificado no servidor)
+            // Credenciais iniciais para primeiro acesso
+            if (email === 'admin@example.com' && password.value === 'admin123') {
+                currentUser = {
+                    id: 1,
+                    name: 'Administrador',
+                    email: email,
+                    role: 'admin'
+                };
+                
+                // Salvar sessão se "lembrar-me" estiver marcado
+                if (document.getElementById('remember-me').checked) {
+                    localStorage.setItem('quizAdminUser', JSON.stringify(currentUser));
+                }
+                
+                showAdminPanel();
+                loadDashboardData();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+        
+        // Função para lidar com o logout
+        function handleLogout(e) {
+            e.preventDefault();
+            
+            currentUser = null;
+            localStorage.removeItem('quizAdminUser');
+            showLoginScreen();
+        }
+        
+        // Função para mostrar tela de login
+        function showLoginScreen() {
+            document.getElementById('login-screen').style.display = 'block';
+            document.getElementById('admin-panel').style.display = 'none';
+            
+            // Limpar campos
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('login-error').style.display = 'none';
+        }
+        
+        // Função para mostrar painel admin
+        function showAdminPanel() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+            
+            // Mostrar a seção dashboard por padrão
+            showSection('dashboard');
+        }
+        
+        // Função para mostrar uma seção específica
+        function showSection(sectionId) {
+            // Esconder todas as seções
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Remover classe 'active' de todos os links
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Mostrar a seção requisitada
+            document.getElementById(`${sectionId}-section`).style.display = 'block';
+            
+            // Adicionar classe 'active' ao link correspondente
+            document.querySelector(`.sidebar-menu a[data-section="${sectionId}"]`).classList.add('active');
+            
+            // Carregar dados da seção
+            if (sectionId === 'dashboard') {
+                loadDashboardData();
+            } else if (sectionId === 'quizzes') {
+                loadQuizzes();
+            } else if (sectionId === 'users') {
+                loadUsers();
+            } else if (sectionId === 'settings') {
+                loadSettings();
+            }
+        }
+        
+        // Função para carregar dados do dashboard
+        function loadDashboardData() {
+            // Em um ambiente real, esses dados viriam de uma API
+            // Aqui usamos dados simulados para demonstração
+            
+            // Atualizar estatísticas
+            document.getElementById('total-quizzes').textContent = '5';
+            document.getElementById('total-users').textContent = '120';
+            document.getElementById('total-completions').textContent = '428';
+            document.getElementById('conversion-rate').textContent = '32%';
+            
+            // Carregar quizzes populares
+            const popularQuizzesData = [
+                { id: 'quiz1', title: 'Que tipo de investidor você é?', completions: 126 },
+                { id: 'quiz2', title: 'Descubra seu perfil financeiro', completions: 98 },
+                { id: 'quiz3', title: 'Teste seu conhecimento em finanças', completions: 87 },
+                { id: 'quiz4', title: 'Qual produto é ideal para você?', completions: 72 },
+                { id: 'quiz5', title: 'Avalie seu perfil de risco', completions: 45 }
+            ];
+            
+            let popularQuizzesHTML = '';
+            popularQuizzesData.forEach(quiz => {
+                popularQuizzesHTML += `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="text-truncate" style="max-width: 70%;">${quiz.title}</span>
+                        <span class="badge bg-primary rounded-pill">${quiz.completions}</span>
+                    </li>
+                `;
+            });
+            
+            document.getElementById('popular-quizzes').innerHTML = popularQuizzesHTML;
+            
+            // Criar gráfico de uso
+            const ctx = document.getElementById('usage-chart').getContext('2d');
+            
+            // Destruir gráfico existente se houver
+            if (window.usageChart) {
+                window.usageChart.destroy();
+            }
+            
+            window.usageChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                    datasets: [
+                        {
+                            label: 'Visualizações',
+                            data: [24, 36, 42, 38, 46, 55, 70],
+                            borderColor: '#4f2d7f',
+                            backgroundColor: 'rgba(79, 45, 127, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Completados',
+                            data: [12, 18, 20, 22, 28, 32, 38],
+                            borderColor: '#f0ad4e',
+                            backgroundColor: 'rgba(240, 173, 78, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Função para carregar lista de quizzes
+        function loadQuizzes() {
+            // Em um ambiente real, esses dados viriam de uma API
+            // Aqui usamos dados simulados para demonstração
+            quizzes = [
+                { id: 'quiz1', title: 'Que tipo de investidor você é?', questionCount: 8, status: 'published', createdAt: '2023-05-10' },
+                { id: 'quiz2', title: 'Descubra seu perfil financeiro', questionCount: 10, status: 'published', createdAt: '2023-05-15' },
+                { id: 'quiz3', title: 'Teste seu conhecimento em finanças', questionCount: 12, status: 'published', createdAt: '2023-06-01' },
+                { id: 'quiz4', title: 'Qual produto é ideal para você?', questionCount: 6, status: 'draft', createdAt: '2023-06-10' },
+                { id: 'quiz5', title: 'Avalie seu perfil de risco', questionCount: 5, status: 'archived', createdAt: '2023-04-20' }
+            ];
+            
+            renderQuizzesTable();
+        }
+        
+        // Função para renderizar tabela de quizzes
+        function renderQuizzesTable() {
+            let quizzesHTML = '';
+            
+            quizzes.forEach(quiz => {
+                let statusBadge = '';
+                
+                if (quiz.status === 'published') {
+                    statusBadge = '<span class="badge bg-success">Publicado</span>';
+                } else if (quiz.status === 'draft') {
+                    statusBadge = '<span class="badge bg-warning">Rascunho</span>';
+                } else if (quiz.status === 'archived') {
+                    statusBadge = '<span class="badge bg-secondary">Arquivado</span>';
+                }
+                
+                quizzesHTML += `
+                    <tr>
+                        <td>${quiz.id}</td>
+                        <td>${quiz.title}</td>
+                        <td>${quiz.questionCount}</td>
+                        <td>${statusBadge}</td>
+                        <td>${quiz.createdAt}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary action-btn edit-quiz-btn" data-id="${quiz.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger action-btn delete-quiz-btn" data-id="${quiz.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="btn btn-sm btn-info action-btn view-stats-btn" data-id="${quiz.id}">
+                                <i class="fas fa-chart-bar"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('quizzes-table-body').innerHTML = quizzesHTML;
+            
+            // Adicionar event listeners para os botões de ação
+            document.querySelectorAll('.edit-quiz-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const quizId = this.getAttribute('data-id');
+                    editQuiz(quizId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-quiz-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const quizId = this.getAttribute('data-id');
+                    deleteQuiz(quizId);
+                });
+            });
+        }
+        
+        // Função para carregar lista de usuários
+        function loadUsers() {
+            // Em um ambiente real, esses dados viriam de uma API
+            // Aqui usamos dados simulados para demonstração
+            users = [
+                { id: 1, name: 'Administrador', email: 'admin@example.com', role: 'admin', status: 'active' },
+                { id: 2, name: 'João Silva', email: 'joao@example.com', role: 'editor', status: 'active' },
+                { id: 3, name: 'Maria Santos', email: 'maria@example.com', role: 'viewer', status: 'active' },
+                { id: 4, name: 'Carlos Oliveira', email: 'carlos@example.com', role: 'editor', status: 'inactive' }
+            ];
+            
+            renderUsersTable();
+        }
+        
+        // Função para renderizar tabela de usuários
+        function renderUsersTable() {
+            let usersHTML = '';
+            
+            users.forEach(user => {
+                let roleBadge = '';
+                let statusBadge = '';
+                
+                if (user.role === 'admin') {
+                    roleBadge = '<span class="badge bg-primary">Administrador</span>';
+                } else if (user.role === 'editor') {
+                    roleBadge = '<span class="badge bg-info">Editor</span>';
+                } else if (user.role === 'viewer') {
+                    roleBadge = '<span class="badge bg-secondary">Visualizador</span>';
+                }
+                
+                if (user.status === 'active') {
+                    statusBadge = '<span class="badge bg-success">Ativo</span>';
+                } else {
+                    statusBadge = '<span class="badge bg-danger">Inativo</span>';
+                }
+                
+                usersHTML += `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${roleBadge}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary action-btn edit-user-btn" data-id="${user.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger action-btn delete-user-btn" data-id="${user.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('users-table-body').innerHTML = usersHTML;
+            
+            // Adicionar event listeners para os botões de ação
+            document.querySelectorAll('.edit-user-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-id');
+                    editUser(userId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-user-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-id');
+                    deleteUser(userId);
+                });
+            });
+        }
+        
+        // Função para carregar configurações
+        function loadSettings() {
+            // Em um ambiente real, esses dados viriam de uma API
+            // Aqui usamos dados simulados para demonstração
+            const settings = {
+                siteTitle: 'Plataforma de Quiz',
+                primaryColor: '#4f2d7f',
+                secondaryColor: '#f0ad4e'
+            };
+            
+            document.getElementById('site-title').value = settings.siteTitle;
+            document.getElementById('primary-color').value = settings.primaryColor;
+            document.getElementById('secondary-color').value = settings.secondaryColor;
+        }
+        
+        // Função para mostrar modal de novo quiz
+        function showNewQuizModal() {
+            currentQuizId = null;
+            
+            document.getElementById('quiz-modal-title').textContent = 'Novo Quiz';
+            document.getElementById('quiz-form').reset();
+            document.getElementById('questions-container').innerHTML = '';
+            document.getElementById('results-container').innerHTML = '';
+            
+            // Adicionar template inicial para uma pergunta e um resultado
+            addQuestionTemplate();
+            addResultTemplate();
+            
+            const quizModal = new bootstrap.Modal(document.getElementById('quiz-modal'));
+            quizModal.show();
+        }
+        
+        // Função para editar quiz existente
+        function editQuiz(quizId) {
+            currentQuizId = quizId;
+            
+            // Buscar dados do quiz (em um ambiente real, isso viria de uma API)
+            const quiz = quizzes.find(q => q.id === quizId);
+            
+            if (!quiz) {
+                alert('Quiz não encontrado.');
+                return;
+            }
+            
+            document.getElementById('quiz-modal-title').textContent = 'Editar Quiz';
+            document.getElementById('quiz-title').value = quiz.title;
+            document.getElementById('quiz-status').value = quiz.status;
+            
+            // Em um ambiente real, carregaríamos as perguntas e resultados do quiz
+            // Para este exemplo, vamos apenas adicionar templates vazios
+            document.getElementById('questions-container').innerHTML = '';
+            document.getElementById('results-container').innerHTML = '';
+            
+            // Adicionar templates para perguntas e resultados
+            for (let i = 0; i < quiz.questionCount; i++) {
+                addQuestionTemplate();
+            }
+            
+            // Adicionar templates para resultados (vamos supor 3 resultados)
+            for (let i = 0; i < 3; i++) {
+                addResultTemplate();
+            }
+            
+            const quizModal = new bootstrap.Modal(document.getElementById('quiz-modal'));
+            quizModal.show();
+        }
+        
+        // Função para excluir quiz
+        function deleteQuiz(quizId) {
+            if (confirm('Tem certeza que deseja excluir este quiz?')) {
+                // Em um ambiente real, enviaríamos uma requisição para deletar o quiz
+                quizzes = quizzes.filter(quiz => quiz.id !== quizId);
+                renderQuizzesTable();
+                alert('Quiz excluído com sucesso!');
+            }
+        }
+        
+        // Função para adicionar template de pergunta
+        function addQuestionTemplate() {
+            const questionIndex = document.querySelectorAll('.question-card').length;
+            
+            const questionTemplate = `
+                <div class="question-card">
+                    <div class="question-handle">
+                        <i class="fas fa-grip-lines"></i> Pergunta ${questionIndex + 1}
+                    </div>
+                    <span class="remove-question"><i class="fas fa-times"></i></span>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Texto da Pergunta</label>
+                        <input type="text" class="form-control question-text" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Mídia (opcional)</label>
+                        <div class="input-group mb-2">
+                            <select class="form-select media-type" style="max-width: 150px;">
+                                <option value="">Sem mídia</option>
+                                <option value="image">Imagem</option>
+                                <option value="video">Vídeo</option>
+                            </select>
+                            <input type="text" class="form-control media-url" placeholder="URL da mídia">
+                        </div>
+                    </div>
+                    
+                    <div class="options-container">
+                        <label class="form-label">Opções de Resposta</label>
+                        <div class="option-row">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <input type="text" class="form-control option-emoji" placeholder="Emoji (opcional)">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control option-text" placeholder="Texto da opção" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select option-result-key">
+                                        <option value="">Selecione um resultado</option>
+                                        <option value="iniciante">Iniciante</option>
+                                        <option value="intermediario">Intermediário</option>
+                                        <option value="avancado">Avançado</option>
+                                        <option value="interessado">Interessado</option>
+                                        <option value="desinteressado">Desinteressado</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control option-highlight" placeholder="Palavras para destacar (separadas por vírgula)">
+                                </div>
+                            </div>
+                            <span class="remove-option"><i class="fas fa-times"></i></span>
+                        </div>
+                        <div class="option-row">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <input type="text" class="form-control option-emoji" placeholder="Emoji (opcional)">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control option-text" placeholder="Texto da opção" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select option-result-key">
+                                        <option value="">Selecione um resultado</option>
+                                        <option value="iniciante">Iniciante</option>
+                                        <option value="intermediario">Intermediário</option>
+                                        <option value="avancado">Avançado</option>
+                                        <option value="interessado">Interessado</option>
+                                        <option value="desinteressado">Desinteressado</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control option-highlight" placeholder="Palavras para destacar (separadas por vírgula)">
+                                </div>
+                            </div>
+                            <span class="remove-option"><i class="fas fa-times"></i></span>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-sm btn-primary add-option-btn mt-2">
+                        <i class="fas fa-plus"></i> Adicionar Opção
+                    </button>
+                </div>
+            `;
+            
+            
+            document.getElementById('questions-container').insertAdjacentHTML('beforeend', questionTemplate);
+            
+            // Adicionar event listeners para os botões de adicionar/remover
+            const questionCards = document.querySelectorAll('.question-card');
+            const lastCard = questionCards[questionCards.length - 1];
+            
+            lastCard.querySelector('.add-option-btn').addEventListener('click', function() {
+                addOptionTemplate(this.parentElement.querySelector('.options-container'));
+            });
+            
+            lastCard.querySelector('.remove-question').addEventListener('click', function() {
+                if (document.querySelectorAll('.question-card').length > 1) {
+                    this.parentElement.remove();
+                    updateQuestionNumbers();
+                } else {
+                    alert('O quiz deve ter pelo menos uma pergunta.');
+                }
+            });
+            
+            lastCard.querySelectorAll('.remove-option').forEach(button => {
+                button.addEventListener('click', function() {
+                    const optionsContainer = this.closest('.options-container');
+                    if (optionsContainer.querySelectorAll('.option-row').length > 2) {
+                        this.closest('.option-row').remove();
+                    } else {
+                        alert('Cada pergunta deve ter pelo menos duas opções.');
+                    }
+                });
+            });
+        }
+        
+        // Função para adicionar template de opção
+        function addOptionTemplate(optionsContainer) {
+            const optionTemplate = `
+                <div class="option-row">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <input type="text" class="form-control option-emoji" placeholder="Emoji (opcional)">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control option-text" placeholder="Texto da opção" required>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select option-result-key">
+                                <option value="">Selecione um resultado</option>
+                                <option value="iniciante">Iniciante</option>
+                                <option value="intermediario">Intermediário</option>
+                                <option value="avancado">Avançado</option>
+                                <option value="interessado">Interessado</option>
+                                <option value="desinteressado">Desinteressado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <input type="text" class="form-control option-highlight" placeholder="Palavras para destacar (separadas por vírgula)">
+                        </div>
+                    </div>
+                    <span class="remove-option"><i class="fas fa-times"></i></span>
+                </div>
+            `;
+            
+            
+            optionsContainer.insertAdjacentHTML('beforeend', optionTemplate);
+            
+            // Adicionar event listener para o botão de remover
+            const optionRows = optionsContainer.querySelectorAll('.option-row');
+            const lastRow = optionRows[optionRows.length - 1];
+            
+            lastRow.querySelector('.remove-option').addEventListener('click', function() {
+                if (optionsContainer.querySelectorAll('.option-row').length > 2) {
+                    this.closest('.option-row').remove();
+                } else {
+                    alert('Cada pergunta deve ter pelo menos duas opções.');
+                }
+            });
+        }
+        
+        // Função para adicionar template de resultado
+        function addResultTemplate() {
+            const resultIndex = document.querySelectorAll('.result-card').length;
+            
+            const resultTemplate = `
+                <div class="result-card">
+                    <h5>Resultado ${resultIndex + 1}</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Chave do Resultado</label>
+                        <select class="form-control result-key" required>
+                            <option value="iniciante">Iniciante</option>
+                            <option value="intermediario">Intermediário</option>
+                            <option value="avancado">Avançado</option>
+                            <option value="interessado">Interessado</option>
+                            <option value="desinteressado">Desinteressado</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Título do Resultado</label>
+                        <input type="text" class="form-control result-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control result-description" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Imagem do Resultado</label>
+                        <input type="text" class="form-control result-image" placeholder="URL da imagem">
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <span>Produto Recomendado</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Nome do Produto</label>
+                                <input type="text" class="form-control product-name">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descrição do Produto</label>
+                                <textarea class="form-control product-description" rows="2"></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Preço (R$)</label>
+                                        <input type="number" class="form-control product-price" step="0.01">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">URL do Produto</label>
+                                        <input type="text" class="form-control product-url">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Imagem do Produto</label>
+                                <input type="text" class="form-control product-image" placeholder="URL da imagem">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Novos campos para depoimentos -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <span>Depoimentos</span>
+                        </div>
+                        <div class="card-body testimonials-container">
+                            <div class="testimonial-item mb-3">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Nome do Cliente</label>
+                                            <input type="text" class="form-control testimonial-name">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Resultado Obtido</label>
+                                            <input type="text" class="form-control testimonial-result">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">URL do Vídeo/Imagem</label>
+                                    <input type="text" class="form-control testimonial-video" placeholder="URL do vídeo ou imagem">
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary add-testimonial-btn">
+                                <i class="fas fa-plus"></i> Adicionar Depoimento
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Novos campos para benefícios -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <span>Benefícios do Produto</span>
+                        </div>
+                        <div class="card-body benefits-container">
+                            <div class="benefit-item mb-3">
+                                <div class="input-group">
+                                    <input type="text" class="form-control benefit-text" placeholder="Benefício">
+                                    <button class="btn btn-outline-danger remove-benefit-btn">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control mt-2 benefit-highlight" placeholder="Palavras para destacar (separadas por vírgula)">
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary add-benefit-btn">
+                                <i class="fas fa-plus"></i> Adicionar Benefício
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-sm btn-danger remove-result-btn">
+                        <i class="fas fa-trash"></i> Remover Resultado
+                    </button>
+                </div>
+            `;
+            
+            
+            document.querySelector('#results-container').insertAdjacentHTML('beforeend', resultTemplate);
+            
+            // Adicionar event listener para o botão de remover
+            const resultCards = document.querySelectorAll('.result-card');
+            const lastCard = resultCards[resultCards.length - 1];
+            
+            lastCard.querySelector('.remove-result-btn').addEventListener('click', function() {
+                if (document.querySelectorAll('.result-card').length > 1) {
+                    this.parentElement.remove();
+                } else {
+                    alert('O quiz deve ter pelo menos um resultado.');
+                }
+            });
+            
+            // Adicionar event listeners para os botões de adicionar depoimento e benefício
+            lastCard.querySelector('.add-testimonial-btn').addEventListener('click', function() {
+                const testimonialContainer = this.closest('.testimonials-container');
+                const testimonialTemplate = `
+                    <div class="testimonial-item mb-3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Nome do Cliente</label>
+                                    <input type="text" class="form-control testimonial-name">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Resultado Obtido</label>
+                                    <input type="text" class="form-control testimonial-result">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">URL do Vídeo/Imagem</label>
+                            <input type="text" class="form-control testimonial-video" placeholder="URL do vídeo ou imagem">
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger remove-testimonial-btn">
+                            <i class="fas fa-times"></i> Remover
+                        </button>
+                    </div>
+                `;
+                
+                // Inserir antes do botão de adicionar
+                this.insertAdjacentHTML('beforebegin', testimonialTemplate);
+                
+                // Adicionar event listener para o botão de remover depoimento
+                const newTestimonial = this.previousElementSibling;
+                newTestimonial.querySelector('.remove-testimonial-btn').addEventListener('click', function() {
+                    this.closest('.testimonial-item').remove();
+                });
+            });
+            
+            lastCard.querySelector('.add-benefit-btn').addEventListener('click', function() {
+                const benefitsContainer = this.closest('.benefits-container');
+                const benefitTemplate = `
+                    <div class="benefit-item mb-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control benefit-text" placeholder="Benefício">
+                            <button class="btn btn-outline-danger remove-benefit-btn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="form-control mt-2 benefit-highlight" placeholder="Palavras para destacar (separadas por vírgula)">
+                    </div>
+                `;
+                
+                // Inserir antes do botão de adicionar
+                this.insertAdjacentHTML('beforebegin', benefitTemplate);
+                
+                // Adicionar event listener para o botão de remover benefício
+                const newBenefit = this.previousElementSibling;
+                newBenefit.querySelector('.remove-benefit-btn').addEventListener('click', function() {
+                    this.closest('.benefit-item').remove();
+                });
+            });
+        }
+        
+        // Função para atualizar a numeração das perguntas
+        function updateQuestionNumbers() {
+            document.querySelectorAll('.question-card').forEach((card, index) => {
+                card.querySelector('.question-handle').innerHTML = `<i class="fas fa-grip-lines"></i> Pergunta ${index + 1}`;
+            });
+        }
+        
+        // Função para salvar quiz
+        function saveQuiz() {
+            // Validar campos obrigatórios
+            const title = document.getElementById('quiz-title').value;
+            if (!title) {
+                alert('Por favor, preencha o título do quiz.');
+                return;
+            }
+            
+            // Coletar dados gerais
+            const quizData = {
+                id: currentQuizId || `quiz${quizzes.length + 1}`,
+                title: title,
+                description: document.getElementById('quiz-description').value,
+                status: document.getElementById('quiz-status').value,
+                logo: document.getElementById('quiz-logo-preview').innerHTML ? 
+                      document.getElementById('quiz-logo-preview').querySelector('img').src : 
+                      'https://via.placeholder.com/200x100?text=Logo',
+                thumbnail: document.getElementById('quiz-thumbnail-preview').innerHTML ? 
+                           document.getElementById('quiz-thumbnail-preview').querySelector('img').src : 
+                           'https://via.placeholder.com/400x300?text=Thumbnail',
+                questions: [],
+                results: {}
+            };
+            
+            // Coletar perguntas
+            const questionCards = document.querySelectorAll('.question-card');
+            questionCards.forEach(card => {
+                const question = {
+                    text: card.querySelector('.question-text').value,
+                    mediaType: card.querySelector('.media-type').value,
+                    media: card.querySelector('.media-url').value,
+                    options: []
+                };
+                
+                const optionRows = card.querySelectorAll('.option-row');
+                optionRows.forEach(row => {
+                    const emoji = row.querySelector('.option-emoji').value;
+                    const text = row.querySelector('.option-text').value;
+                    const resultKey = row.querySelector('.option-result-key').value;
+                    const highlightText = row.querySelector('.option-highlight').value;
+                    
+                    const option = {
+                        text: text,
+                        resultKey: resultKey
+                    };
+                    
+                    if (emoji) {
+                        option.emoji = emoji;
+                    }
+                    
+                    if (highlightText) {
+                        option.highlight = highlightText.split(',').map(h => h.trim());
+                    }
+                    
+                    question.options.push(option);
+                });
+                
+                quizData.questions.push(question);
+            });
+            
+            // Coletar resultados
+            const resultCards = document.querySelectorAll('.result-card');
+            resultCards.forEach(card => {
+                const resultKey = card.querySelector('.result-key').value;
+                
+                // Coletar depoimentos
+                const testimonials = [];
+                const testimonialItems = card.querySelectorAll('.testimonial-item');
+                testimonialItems.forEach(item => {
+                    const testimonial = {
+                        name: item.querySelector('.testimonial-name').value,
+                        result: item.querySelector('.testimonial-result').value,
+                        video: item.querySelector('.testimonial-video').value
+                    };
+                    testimonials.push(testimonial);
+                });
+                
+                // Coletar benefícios
+                const benefits = [];
+                const benefitItems = card.querySelectorAll('.benefit-item');
+                benefitItems.forEach(item => {
+                    const benefitText = item.querySelector('.benefit-text').value;
+                    const highlightText = item.querySelector('.benefit-highlight').value;
+                    
+                    const benefit = {
+                        text: benefitText
+                    };
+                    
+                    if (highlightText) {
+                        benefit.highlight = highlightText.split(',').map(h => h.trim());
+                    }
+                    
+                    benefits.push(benefit);
+                });
+                
+                quizData.results[resultKey] = {
+                    title: card.querySelector('.result-title').value,
+                    description: card.querySelector('.result-description').value,
+                    image: card.querySelector('.result-image').value,
+                    product: {
+                        name: card.querySelector('.product-name').value,
+                        description: card.querySelector('.product-description').value,
+                        price: parseFloat(card.querySelector('.product-price').value) || 0,
+                        image: card.querySelector('.product-image').value,
+                        url: card.querySelector('.product-url').value
+                    },
+                    testimonials: testimonials,
+                    benefits: benefits
+                };
+            });
+            
+            // Em um ambiente real, enviaríamos esses dados para uma API
+            // Aqui, apenas simulamos o salvamento
+            if (currentQuizId) {
+                // Atualizar quiz existente
+                const quizIndex = quizzes.findIndex(q => q.id === currentQuizId);
+                if (quizIndex !== -1) {
+                    quizzes[quizIndex] = quizData;
+                }
+                
+                alert('Quiz atualizado com sucesso!');
+            } else {
+                // Criar novo quiz
+                quizzes.push(quizData);
+                alert('Quiz criado com sucesso!');
+            }
+            
+            // Fechar o modal e atualizar a tabela
+            bootstrap.Modal.getInstance(document.getElementById('quiz-modal')).hide();
+            renderQuizzesTable();
+        }Modal.getInstance(document.getElementById('quiz-modal')).hide();
+            renderQuizzesTable();
+        }
+        
+        // Função para mostrar modal de novo usuário
+        function showNewUserModal() {
+            document.getElementById('user-modal-title').textContent = 'Novo Usuário';
+            document.getElementById('user-form').reset();
+            document.getElementById('password-help').textContent = 'A senha é obrigatória para novos usuários.';
+            
+            const userModal = new bootstrap.Modal(document.getElementById('user-modal'));
+            userModal.show();
+        }
+        
+        // Função para editar usuário existente
+        function editUser(userId) {
+            const user = users.find(u => u.id === parseInt(userId));
+            
+            if (!user) {
+                alert('Usuário não encontrado.');
+                return;
+            }
+            
+            document.getElementById('user-modal-title').textContent = 'Editar Usuário';
+            document.getElementById('user-name').value = user.name;
+            document.getElementById('user-email').value = user.email;
+            document.getElementById('user-password').value = '';
+            document.getElementById('user-role').value = user.role;
+            document.getElementById('user-status').value = user.status;
+            document.getElementById('password-help').textContent = 'Deixe em branco para manter a senha atual.';
+            
+            // Armazenar ID do usuário em um atributo data do botão salvar
+            document.getElementById('save-user-btn').setAttribute('data-user-id', userId);
+            
+            const userModal = new bootstrap.Modal(document.getElementById('user-modal'));
+            userModal.show();
+        }
+        
+        // Função para excluir usuário
+        function deleteUser(userId) {
+            if (confirm('Tem certeza que deseja excluir este usuário?')) {
+                // Em um ambiente real, enviaríamos uma requisição para deletar o usuário
+                users = users.filter(user => user.id !== parseInt(userId));
+                renderUsersTable();
+                alert('Usuário excluído com sucesso!');
+            }
+        }
+        
+        // Função para salvar usuário
+        function saveUser() {
+            // Validar campos obrigatórios
+            const name = document.getElementById('user-name').value;
+            const email = document.getElementById('user-email').value;
+            const password = document.getElementById('user-password').value;
+            const role = document.getElementById('user-role').value;
+            const status = document.getElementById('user-status').value;
+            
+            if (!name || !email) {
+                alert('Por favor, preencha os campos obrigatórios.');
+                return;
+            }
+            
+            const userId = document.getElementById('save-user-btn').getAttribute('data-user-id');
+            
+            if (userId) {
+                // Atualizar usuário existente
+                const userIndex = users.findIndex(u => u.id === parseInt(userId));
+                if (userIndex !== -1) {
+                    users[userIndex].name = name;
+                    users[userIndex].email = email;
+                    users[userIndex].role = role;
+                    users[userIndex].status = status;
+                }
+                
+                alert('Usuário atualizado com sucesso!');
+            } else {
+                // Criar novo usuário
+                if (!password) {
+                    alert('Por favor, defina uma senha para o novo usuário.');
+                    return;
+                }
+                
+                const newUser = {
+                    id: users.length + 1,
+                    name: name,
+                    email: email,
+                    role: role,
+                    status: status
+                };
+                
+                users.push(newUser);
+                alert('Usuário criado com sucesso!');
+            }
+            
+            // Fechar o modal e atualizar a tabela
+            bootstrap.Modal.getInstance(document.getElementById('user-modal')).hide();
+            renderUsersTable();
+        }
+    </script>
+</body>
+</html>

@@ -3,24 +3,8 @@
     "id": "quiz1",
     "title": "MÁQUINA DE VENDER PDFs",
     "description": "O método definitivo para vender todos os dias e escalar seus resultados",
-    "slug": "vender-pdfs",
-    "tenantId": "tenant1",
     "logo": "https://via.placeholder.com/200x100?text=Logo+PDF",
     "thumbnail": "https://via.placeholder.com/400x300?text=M%C3%A1quina+de+Vender+PDFs",
-    "branding": {
-      "logo": "https://via.placeholder.com/200x100?text=Logo+PDF",
-      "title": "MÁQUINA DE VENDER PDFs",
-      "description": "O método definitivo para vender todos os dias e escalar seus resultados",
-      "styles": {
-        "primaryColor": "#010d36",
-        "secondaryColor": "#dfd7c0",
-        "accentColor": "#fef9ef",
-        "darkBg": "#010d36",
-        "textColor": "#ffffff",
-        "cardBg": "#111a42",
-        "fontFamily": "'Neue Montreal', sans-serif"
-      }
-    },
     "questions": [
       {
         "text": "Você já realiza vendas no mercado digital?",
@@ -205,44 +189,280 @@
         "title": "Você está pronto para dar o primeiro passo",
         "description": "Identificamos que você está começando no marketing digital e precisa de uma solução completa para fazer sua primeira venda.",
         "image": "https://via.placeholder.com/600x400?text=Perfil+Iniciante",
-        "ctaButtons": {
-          "primary": {
-            "text": "Quero começar agora",
-            "url": "https://pay.hotmart.com/T82219591V"
+        "product": {
+          "name": "Máquina de Vender PDFs",
+          "description": "Método passo a passo para realizar sua primeira venda online em até 24 horas, mesmo que você esteja começando do zero.",
+          "price": 97.00,
+          "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
+          "url": "https://pay.hotmart.com/XXXXXXX"
+        },
+        "testimonials": [
+          {
+            "name": "Junior",
+            "result": "Fez mais de 2 salários mínimos em 7 dias",
+            "video": "https://via.placeholder.com/600x400?text=Depoimento+Junior"
           },
-          "secondary": {
-            "text": "Preciso pensar",
-            "url": "https://pay.hotmart.com/T82219591V?off=vk39l4m3"
+          {
+            "name": "Aline",
+            "result": "Primeira venda em menos de 24 horas e mais de R$ 4.000 em poucos dias",
+            "video": "https://via.placeholder.com/600x400?text=Depoimento+Aline"
+          },
+          {
+            "name": "João",
+            "result": "Quase 2 salários mínimos em 7 dias com PDF!",
+            "video": "https://via.placeholder.com/600x400?text=Depoimento+Jo%C3%A3o"
           }
-        },
-        "progressCard": {
-          "title": "Veja o que você pode estar perdendo!",
-          "benefits": [
-            "Pessoas como você já <span class='highlight'>MUDARAM DE IDEIA</span> e tiveram ótimos resultados.",
-            "Método <span class='highlight'>100% GARANTIDO</span> que funciona mesmo para céticos.",
-            "Aproveite a <span class='highlight'>OFERTA ESPECIAL</span> por tempo limitado!"
-          ],
-          "timeline": {
-            "stages": ["Hoje", "24hs", "7 dias", "30 dias"],
-            "percentages": ["20%", "50%", "70%", "100%"],
-            "descriptions": ["Você está aqui...", "Primeiros resultados", "Início de escala", "10k mês"],
-            "currentProgress": 20
+        ],
+        "benefits": [
+          {
+            "text": "Aprenda do ZERO ao AVANÇADO como fazer suas primeiras vendas no digital.",
+            "highlight": ["ZERO", "AVANÇADO"]
+          },
+          {
+            "text": "4 Produtos (PDFs) PRONTOS e VALIDADOS com toda a estrutura montada, basta você replicar rapidamente.",
+            "highlight": ["4 Produtos (PDFs) PRONTOS", "VALIDADOS"]
+          },
+          {
+            "text": "Todos os criativos e anúncios prontos.",
+            "highlight": ["criativos e anúncios prontos"]
+          },
+          {
+            "text": "O QUIZZ COMPLETO (Funil de Venda).",
+            "highlight": ["QUIZZ COMPLETO"]
+          },
+          {
+            "text": "Contato DIRETO comigo no WhatsApp.",
+            "highlight": ["DIRETO"]
+          },
+          {
+            "text": "FACEBOOK ADS - Do BÁSICO até sua ESCALA (10k mês).",
+            "highlight": ["FACEBOOK ADS", "BÁSICO", "ESCALA"]
+          },
+          {
+            "text": "+ de 25 VIDEO AULAS te ensinando tudo como desenvolver novos PDFs para o futuro.",
+            "highlight": ["25 VIDEO AULAS"]
+          },
+          {
+            "text": "Total de 47 aulas gravadas para que você possa assistir quantas vezes for necessário.",
+            "highlight": ["47 aulas gravadas"]
+          },
+          {
+            "text": "Acompanhamento da sua evolução durante 1 ANO.",
+            "highlight": ["Acompanhamento", "1 ANO"]
           }
+        ]
+      },
+      "intermediario": {
+        "title": "Você está pronto para escalar seus resultados",
+        "description": "Você já tem alguma experiência, mas precisa de um método mais eficiente para aumentar suas vendas e alcançar a marca de 10k por mês.",
+        "image": "https://via.placeholder.com/600x400?text=Perfil+Intermedi%C3%A1rio",
+        "product": {
+          "name": "Máquina de Vender PDFs",
+          "description": "Método comprovado para escalar suas vendas de produtos digitais sem precisar de VSL ou páginas de vendas complexas.",
+          "price": 97.00,
+          "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
+          "url": "https://pay.hotmart.com/XXXXXXX"
         },
+        "testimonials": [
+          {
+            "name": "Junior",
+            "result": "Fez mais de 2 salários mínimos em 7 dias",
+            "video": "https://via.placeholder.com/600x400?text=Depoimento+Junior"
+          },
+          {
+            "name": "Aline",
+            "result": "Primeira venda em menos de 24 horas e mais de R$ 4.000 em poucos dias",
+            "video": "https://via.placeholder.com/600x400?text=Depoimento+Aline"
+          },
+          {
+            "name": "João",
+            "result": "Quase 2 salários mínimos em 7 dias com PDF!",
+            "video": "https://via.placeholder.com/600x400?text=Depoimento+Jo%C3%A3o"
+          }
+        ],
+        "benefits": [
+          {
+            "text": "Aprenda do ZERO ao AVANÇADO como fazer suas primeiras vendas no digital.",
+            "highlight": ["ZERO", "AVANÇADO"]
+          },
+          {
+            "text": "4 Produtos (PDFs) PRONTOS e VALIDADOS com toda a estrutura montada, basta você replicar rapidamente.",
+            "highlight": ["4 Produtos (PDFs) PRONTOS", "VALIDADOS"]
+          },
+          {
+            "text": "Todos os criativos e anúncios prontos.",
+            "highlight": ["criativos e anúncios prontos"]
+          },
+          {
+            "text": "O QUIZZ COMPLETO (Funil de Venda).",
+            "highlight": ["QUIZZ COMPLETO"]
+          },
+          {
+            "text": "Contato DIRETO comigo no WhatsApp.",
+            "highlight": ["DIRETO"]
+          },
+          {
+            "text": "FACEBOOK ADS - Do BÁSICO até sua ESCALA (10k mês).",
+            "highlight": ["FACEBOOK ADS", "BÁSICO", "ESCALA"]
+          },
+          {
+            "text": "+ de 25 VIDEO AULAS te ensinando tudo como desenvolver novos PDFs para o futuro.",
+            "highlight": ["25 VIDEO AULAS"]
+          },
+          {
+            "text": "Total de 47 aulas gravadas para que você possa assistir quantas vezes for necessário.",
+            "highlight": ["47 aulas gravadas"]
+          },
+          {
+            "text": "Acompanhamento da sua evolução durante 1 ANO.",
+            "highlight": ["Acompanhamento", "1 ANO"]
+          }
+        ]
+      },
+      "avancado": {
+        "title": "Você está pronto para otimizar seus resultados",
+        "description": "Como produtor experiente, você vai se beneficiar de um sistema mais eficiente que reduz custos e aumenta suas conversões.",
+        "image": "https://via.placeholder.com/600x400?text=Perfil+Avan%C3%A7ado",
+        "product": {
+          "name": "Máquina de Vender PDFs",
+          "description": "Otimize seu funil de vendas com um método inovador que elimina a necessidade de VSLs e páginas de vendas complexas.",
+          "price": 97.00,
+          "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
+          "url": "https://pay.hotmart.com/XXXXXXX"
+        },
+        "testimonials": [
+          {
+            "name": "Junior",
+            "result": "Fez mais de 2 salários mínimos em 7 dias",
+            "video": "https://via.placeholder.com/600x400?text=Depoimento+Junior"
+          },
+          {
+            "name": "Aline",
+            "result": "Primeira venda em menos de 24 horas e mais de R$ 4.000 em poucos dias",
+            "video": "https://via.placeholder.com/600x400?text=Depoimento+Aline"
+          },
+          {
+            "name": "João",
+            "result": "Quase 2 salários mínimos em 7 dias com PDF!",
+            "video": "https://via.placeholder.com/600x400?text=Depoimento+Jo%C3%A3o"
+          }
+        ],
+        "benefits": [
+          {
+            "text": "Aprenda do ZERO ao AVANÇADO como fazer suas primeiras vendas no digital.",
+            "highlight": ["ZERO", "AVANÇADO"]
+          },
+          {
+            "text": "4 Produtos (PDFs) PRONTOS e VALIDADOS com toda a estrutura montada, basta você replicar rapidamente.",
+            "highlight": ["4 Produtos (PDFs) PRONTOS", "VALIDADOS"]
+          },
+          {
+            "text": "Todos os criativos e anúncios prontos.",
+            "highlight": ["criativos e anúncios prontos"]
+          },
+          {
+            "text": "O QUIZZ COMPLETO (Funil de Venda).",
+            "highlight": ["QUIZZ COMPLETO"]
+          },
+          {
+            "text": "Contato DIRETO comigo no WhatsApp.",
+            "highlight": ["DIRETO"]
+          },
+          {
+            "text": "FACEBOOK ADS - Do BÁSICO até sua ESCALA (10k mês).",
+            "highlight": ["FACEBOOK ADS", "BÁSICO", "ESCALA"]
+          },
+          {
+            "text": "+ de 25 VIDEO AULAS te ensinando tudo como desenvolver novos PDFs para o futuro.",
+            "highlight": ["25 VIDEO AULAS"]
+          },
+          {
+            "text": "Total de 47 aulas gravadas para que você possa assistir quantas vezes for necessário.",
+            "highlight": ["47 aulas gravadas"]
+          },
+          {
+            "text": "Acompanhamento da sua evolução durante 1 ANO.",
+            "highlight": ["Acompanhamento", "1 ANO"]
+          }
+        ]
+      },
+      "interessado": {
+        "title": "Você está pronto para conhecer o método",
+        "description": "Vamos te mostrar como vender PDFs de forma eficiente usando quizzes como ferramenta de conversão.",
+        "image": "https://via.placeholder.com/600x400?text=Interessado",
+        "product": {
+          "name": "Máquina de Vender PDFs",
+          "description": "Método completo para vender PDFs utilizando quizzes interativos como ferramenta de conversão, sem a necessidade de VSLs.",
+          "price": 97.00,
+          "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
+          "url": "https://pay.hotmart.com/XXXXXXX"
+        },
+        "testimonials": [
+          {
+            "name": "Junior",
+            "result": "Fez mais de 2 salários mínimos em 7 dias",
+            "video": "https://via.placeholder.com/600x400?text=Depoimento+Junior"
+          },
+          {
+            "name": "Aline",
+            "result": "Primeira venda em menos de 24 horas e mais de R$ 4.000 em poucos dias",
+            "video": "https://via.placeholder.com/600x400?text=Depoimento+Aline"
+          },
+          {
+            "name": "João",
+            "result": "Quase 2 salários mínimos em 7 dias com PDF!",
+            "video": "https://via.placeholder.com/600x400?text=Depoimento+Jo%C3%A3o"
+          }
+        ],
+        "benefits": [
+          {
+            "text": "Aprenda do ZERO ao AVANÇADO como fazer suas primeiras vendas no digital.",
+            "highlight": ["ZERO", "AVANÇADO"]
+          },
+          {
+            "text": "4 Produtos (PDFs) PRONTOS e VALIDADOS com toda a estrutura montada, basta você replicar rapidamente.",
+            "highlight": ["4 Produtos (PDFs) PRONTOS", "VALIDADOS"]
+          },
+          {
+            "text": "Todos os criativos e anúncios prontos.",
+            "highlight": ["criativos e anúncios prontos"]
+          },
+          {
+            "text": "O QUIZZ COMPLETO (Funil de Venda).",
+            "highlight": ["QUIZZ COMPLETO"]
+          },
+          {
+            "text": "Contato DIRETO comigo no WhatsApp.",
+            "highlight": ["DIRETO"]
+          },
+          {
+            "text": "FACEBOOK ADS - Do BÁSICO até sua ESCALA (10k mês).",
+            "highlight": ["FACEBOOK ADS", "BÁSICO", "ESCALA"]
+          },
+          {
+            "text": "+ de 25 VIDEO AULAS te ensinando tudo como desenvolver novos PDFs para o futuro.",
+            "highlight": ["25 VIDEO AULAS"]
+          },
+          {
+            "text": "Total de 47 aulas gravadas para que você possa assistir quantas vezes for necessário.",
+            "highlight": ["47 aulas gravadas"]
+          },
+          {
+            "text": "Acompanhamento da sua evolução durante 1 ANO.",
+            "highlight": ["Acompanhamento", "1 ANO"]
+          }
+        ]
+      },
+      "desinteressado": {
+        "title": "Você pode estar perdendo uma oportunidade",
+        "description": "Mesmo não tendo interesse inicial, muitos dos nossos alunos que estavam céticos conseguiram resultados surpreendentes.",
+        "image": "https://via.placeholder.com/600x400?text=Reconsidere",
         "product": {
           "name": "Máquina de Vender PDFs",
           "description": "Dê uma chance ao método que está ajudando centenas de pessoas a realizar suas primeiras vendas online em tempo recorde.",
-          "offerTitle": "OFERTA FINAL",
-          "originalPrice": "R$497,00",
-          "currentPrice": "POR APENAS R$97,00",
-          "ctaText": "Quero dar uma chance",
-          "checkoutUrl": "https://pay.hotmart.com/T82219591V",
-          "audience": [
-            "Até mesmo para céticos que não acreditavam no método, mas se surpreenderam com os resultados.",
-            "Para quem quer uma alternativa às formas tradicionais de venda online.",
-            "Para quem está cansado de tentar métodos complicados sem resultados."
-          ],
-          "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs"
+          "price": 97.00,
+          "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
+          "url": "https://pay.hotmart.com/XXXXXXX"
         },
         "testimonials": [
           {
@@ -298,163 +518,65 @@
             "text": "Acompanhamento da sua evolução durante 1 ANO.",
             "highlight": ["Acompanhamento", "1 ANO"]
           }
-        ],
-        "bonuses": [
-          {
-            "text": "BÔNUS 01 - Venda com TIKTOK sem gastar nem R$1 (NADA).",
-            "highlight": ["BÔNUS 01", "TIKTOK", "sem gastar nem R$1"]
-          },
-          {
-            "text": "BÔNUS 02 - Recuperação de Vendas Automáticas (Aumente seu faturamento em 20%).",
-            "highlight": ["BÔNUS 02", "Recuperação de Vendas Automáticas", "20%"]
-          }
         ]
       }
     }
-  },
-  {
-    "id": "quiz2",
-    "title": "Que tipo de investidor você é?",
-    "description": "Descubra seu perfil de investimento e as melhores opções para você",
-    "slug": "perfil-investidor",
-    "tenantId": "tenant2",
-    "logo": "https://via.placeholder.com/200x100?text=Logo+Investidor",
-    "thumbnail": "https://via.placeholder.com/400x300?text=Perfil+de+Investidor",
-    "branding": {
-      "logo": "https://via.placeholder.com/200x100?text=Logo+Investidor",
-      "title": "QUE TIPO DE INVESTIDOR VOCÊ É?",
-      "description": "Descubra seu perfil de investimento e as melhores opções para você",
-      "styles": {
-        "primaryColor": "#0d2957",
-        "secondaryColor": "#ffc107",
-        "accentColor": "#f8f9fa",
-        "darkBg": "#0d2957",
-        "textColor": "#ffffff",
-        "cardBg": "#0e3367",
-        "fontFamily": "'Source Serif Pro', serif"
+  }
+]ados",
+        "description": "Você já tem alguma experiência, mas precisa de um método mais eficiente para aumentar suas vendas e alcançar a marca de 10k por mês.",
+        "image": "https://via.placeholder.com/600x400?text=Perfil+Intermedi%C3%A1rio",
+        "product": {
+          "name": "Máquina de Vender PDFs",
+          "description": "Método comprovado para escalar suas vendas de produtos digitais sem precisar de VSL ou páginas de vendas complexas.",
+          "price": 97.00,
+          "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
+          "url": "https://pay.hotmart.com/XXXXXXX"
+        }
+      },
+      "avancado": {
+        "title": "Você está pronto para otimizar seus resultados",
+        "description": "Como produtor experiente, você vai se beneficiar de um sistema mais eficiente que reduz custos e aumenta suas conversões.",
+        "image": "https://via.placeholder.com/600x400?text=Perfil+Avan%C3%A7ado",
+        "product": {
+          "name": "Máquina de Vender PDFs",
+          "description": "Otimize seu funil de vendas com um método inovador que elimina a necessidade de VSLs e páginas de vendas complexas.",
+          "price": 97.00,
+          "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
+          "url": "https://pay.hotmart.com/XXXXXXX"
+        }
+      },
+      "interessado": {
+        "title": "Você está pronto para conhecer o método",
+        "description": "Vamos te mostrar como vender PDFs de forma eficiente usando quizzes como ferramenta de conversão.",
+        "image": "https://via.placeholder.com/600x400?text=Interessado",
+        "product": {
+          "name": "Máquina de Vender PDFs",
+          "description": "Método completo para vender PDFs utilizando quizzes interativos como ferramenta de conversão, sem a necessidade de VSLs.",
+          "price": 97.00,
+          "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
+          "url": "https://pay.hotmart.com/XXXXXXX"
+        }
+      },
+      "desinteressado": {
+        "title": "Você pode estar perdendo uma oportunidade",
+        "description": "Mesmo não tendo interesse inicial, muitos dos nossos alunos que estavam céticos conseguiram resultados surpreendentes.",
+        "image": "https://via.placeholder.com/600x400?text=Reconsidere",
+        "product": {
+          "name": "Máquina de Vender PDFs",
+          "description": "Dê uma chance ao método que está ajudando centenas de pessoas a realizar suas primeiras vendas online em tempo recorde.",
+          "price": 97.00,
+          "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs",
+          "url": "https://pay.hotmart.com/XXXXXXX"
+        }
       }
-    },
-    "questions": [
-      {
-        "text": "Qual é o seu principal objetivo ao investir?",
-        "mediaType": null,
-        "media": null,
-        "options": [
-          {
-            "text": "Preservar meu patrimônio, mesmo com retornos menores",
-            "resultKey": "conservador",
-            "emoji": "🛡️"
-          },
-          {
-            "text": "Equilíbrio entre segurança e rentabilidade",
-            "resultKey": "moderado",
-            "emoji": "⚖️"
-          },
-          {
-            "text": "Maximizar retornos, mesmo assumindo mais riscos",
-            "resultKey": "agressivo",
-            "emoji": "📈"
-          },
-          {
-            "text": "Não sei, estou confuso sobre investimentos",
-            "resultKey": "iniciante",
-            "emoji": "🤔"
-          }
-        ]
-      },
-      {
-        "text": "Ao ver uma queda repentina de 20% em seus investimentos, qual seria sua reação?",
-        "mediaType": "image",
-        "media": "https://via.placeholder.com/600x400?text=Queda+na+Bolsa",
-        "options": [
-          {
-            "text": "Entraria em pânico e venderia tudo imediatamente",
-            "resultKey": "conservador"
-          },
-          {
-            "text": "Ficaria preocupado, mas esperaria alguns dias para decidir",
-            "resultKey": "moderado"
-          },
-          {
-            "text": "Compraria mais, aproveitando os preços baixos",
-            "resultKey": "agressivo"
-          },
-          {
-            "text": "Não saberia o que fazer e buscaria ajuda profissional",
-            "resultKey": "iniciante"
-          }
-        ]
-      },
-      {
-        "text": "Quanto tempo você pretende deixar seu dinheiro investido?",
-        "mediaType": null,
-        "media": null,
-        "options": [
-          {
-            "text": "Menos de 1 ano",
-            "resultKey": "conservador"
-          },
-          {
-            "text": "Entre 1 e 5 anos",
-            "resultKey": "moderado"
-          },
-          {
-            "text": "Mais de 5 anos",
-            "resultKey": "agressivo"
-          },
-          {
-            "text": "Não sei ainda",
-            "resultKey": "iniciante"
-          }
-        ]
-      },
-      {
-        "text": "Você possui alguma reserva financeira para emergências?",
-        "mediaType": null,
-        "media": null,
-        "options": [
-          {
-            "text": "Sim, tenho ao menos 6 meses de gastos guardados",
-            "resultKey": "agressivo",
-            "highlight": ["6 meses"]
-          },
-          {
-            "text": "Sim, tenho entre 3 e 6 meses de gastos guardados",
-            "resultKey": "moderado",
-            "highlight": ["3 e 6 meses"]
-          },
-          {
-            "text": "Sim, mas menos de 3 meses de gastos",
-            "resultKey": "conservador",
-            "highlight": ["menos de 3 meses"]
-          },
-          {
-            "text": "Não tenho nenhuma reserva financeira",
-            "resultKey": "iniciante",
-            "highlight": ["Não tenho"]
-          }
-        ]
-      },
-      {
-        "text": "Como você pagaria uma compra inesperada de R$ 5.000?",
-        "mediaType": null,
-        "media": null,
-        "options": [
-          {
-            "text": "Usaria minha reserva de emergência sem problemas",
-            "resultKey": "agressivo"
-          },
-          {
-            "text": "Usaria parte da reserva e parcelaria o restante",
-            "resultKey": "moderado"
-          },
-          {
-            "text": "Parcelaria no cartão de crédito",
-            "resultKey": "conservador"
+    }
+  }
+]stimos",
+            "resultKey": "gastador"
           },
           {
             "text": "Seria impossível pagar, já estou endividado",
-            "resultKey": "iniciante"
+            "resultKey": "endividado"
           }
         ]
       },
@@ -465,19 +587,19 @@
         "options": [
           {
             "text": "Sim, tenho planilha ou app e faço controle rigoroso",
-            "resultKey": "agressivo"
+            "resultKey": "poupador"
           },
           {
             "text": "Acompanho de forma mais geral, sem muito detalhe",
-            "resultKey": "moderado"
+            "resultKey": "equilibrado"
           },
           {
             "text": "Só olho o saldo da conta e fatura do cartão no final",
-            "resultKey": "conservador"
+            "resultKey": "gastador"
           },
           {
             "text": "Evito olhar as contas, me causa ansiedade",
-            "resultKey": "iniciante"
+            "resultKey": "endividado"
           }
         ]
       },
@@ -488,804 +610,72 @@
         "options": [
           {
             "text": "Mais de 20%",
-            "resultKey": "agressivo"
+            "resultKey": "poupador"
           },
           {
             "text": "Entre 10% e 20%",
-            "resultKey": "moderado"
+            "resultKey": "equilibrado"
           },
           {
             "text": "Menos de 10%",
-            "resultKey": "conservador"
+            "resultKey": "gastador"
           },
           {
             "text": "Nada, não sobra dinheiro para investir",
-            "resultKey": "iniciante"
+            "resultKey": "endividado"
           }
         ]
       }
     ],
     "results": {
-      "conservador": {
-        "title": "Perfil Conservador",
-        "description": "Você prioriza a segurança do seu patrimônio e prefere investimentos com menor risco, mesmo que isso signifique uma rentabilidade mais baixa.",
-        "image": "https://via.placeholder.com/600x400?text=Perfil+Conservador",
-        "ctaButtons": {
-          "primary": {
-            "text": "Conhecer plano recomendado",
-            "url": "https://pay.hotmart.com/X12345678?plan=conservador"
-          },
-          "secondary": {
-            "text": "Quero saber mais",
-            "url": "https://pay.hotmart.com/X12345678?off=conservador"
-          }
-        },
-        "progressCard": {
-          "title": "Suas características como investidor conservador:",
-          "benefits": [
-            "Prioriza a <span class='highlight'>SEGURANÇA</span> do capital.",
-            "Prefere <span class='highlight'>PREVISIBILIDADE</span> nos rendimentos.",
-            "Busca proteção contra a <span class='highlight'>INFLAÇÃO</span> com baixa exposição a riscos."
-          ]
-        },
+      "poupador": {
+        "title": "Perfil Poupador",
+        "description": "Você tem excelente disciplina financeira e prioriza a segurança e o futuro. Talvez precise encontrar um equilíbrio para também aproveitar o presente.",
+        "image": "https://via.placeholder.com/600x400?text=Perfil+Poupador",
         "product": {
-          "name": "Estratégia Renda Segura",
-          "description": "Um programa completo para investidores conservadores que desejam proteger seu patrimônio e obter rendimentos previsíveis acima da inflação.",
-          "offerTitle": "OFERTA ESPECIAL",
-          "originalPrice": "R$997,00",
-          "currentPrice": "POR APENAS R$497,00",
-          "ctaText": "Quero investir com segurança",
-          "checkoutUrl": "https://pay.hotmart.com/X12345678?plan=conservador",
-          "audience": [
-            "Para quem busca segurança e previsibilidade nos investimentos.",
-            "Para quem deseja proteger seu patrimônio contra a inflação.",
-            "Para quem não quer perder noites de sono por causa de oscilações de mercado."
-          ],
-          "image": "https://via.placeholder.com/300x200?text=Estratégia+Renda+Segura"
-        },
-        "testimonials": [
-          {
-            "name": "Carlos Oliveira",
-            "result": "Rendimento 2,5% acima da inflação com baixíssimo risco",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Carlos"
-          },
-          {
-            "name": "Márcia Souza",
-            "result": "Finalmente durmo tranquila sabendo que meu patrimônio está protegido",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Márcia"
-          }
-        ],
-        "benefits": [
-          {
-            "text": "Carteira de investimentos balanceada com foco em renda fixa de alta qualidade.",
-            "highlight": ["renda fixa", "alta qualidade"]
-          },
-          {
-            "text": "Estratégias para proteger seu patrimônio contra a inflação.",
-            "highlight": ["proteger", "inflação"]
-          },
-          {
-            "text": "Acesso a 12 aulas sobre investimentos seguros.",
-            "highlight": ["12 aulas", "investimentos seguros"]
-          },
-          {
-            "text": "Planilha exclusiva para acompanhamento dos seus investimentos.",
-            "highlight": ["Planilha exclusiva"]
-          },
-          {
-            "text": "2 consultorias individuais para montar sua carteira.",
-            "highlight": ["2 consultorias individuais"]
-          }
-        ],
-        "bonuses": [
-          {
-            "text": "BÔNUS 1: E-book "Como escolher os melhores CDBs".",
-            "highlight": ["BÔNUS 1", "melhores CDBs"]
-          },
-          {
-            "text": "BÔNUS 2: Acesso ao grupo exclusivo de investidores conservadores.",
-            "highlight": ["BÔNUS 2", "grupo exclusivo"]
-          }
-        ]
+          "name": "Curso Avançado de Investimentos",
+          "description": "Leve seus investimentos para o próximo nível. Aprenda estratégias avançadas para maximizar seus rendimentos com segurança.",
+          "price": 297.00,
+          "image": "https://via.placeholder.com/300x200?text=Curso+Avançado",
+          "url": "https://example.com/produtos/curso-avancado"
+        }
       },
-      "moderado": {
-        "title": "Perfil Moderado",
-        "description": "Você busca um equilíbrio entre segurança e rentabilidade, estando disposto a assumir riscos moderados para obter melhores retornos.",
-        "image": "https://via.placeholder.com/600x400?text=Perfil+Moderado",
-        "ctaButtons": {
-          "primary": {
-            "text": "Conhecer plano recomendado",
-            "url": "https://pay.hotmart.com/X12345678?plan=moderado"
-          },
-          "secondary": {
-            "text": "Quero saber mais",
-            "url": "https://pay.hotmart.com/X12345678?off=moderado"
-          }
-        },
-        "progressCard": {
-          "title": "Suas características como investidor moderado:",
-          "benefits": [
-            "Busca <span class='highlight'>EQUILÍBRIO</span> entre segurança e rentabilidade.",
-            "Aceita <span class='highlight'>VOLATILIDADE MODERADA</span> em parte dos investimentos.",
-            "Tem <span class='highlight'>HORIZONTE DE MÉDIO PRAZO</span> para seus objetivos financeiros."
-          ]
-        },
+      "equilibrado": {
+        "title": "Perfil Equilibrado",
+        "description": "Você mantém um bom equilíbrio entre aproveitar o presente e planejar o futuro. Com alguns ajustes, pode otimizar ainda mais sua vida financeira.",
+        "image": "https://via.placeholder.com/600x400?text=Perfil+Equilibrado",
         "product": {
-          "name": "Estratégia Crescimento Balanceado",
-          "description": "Um programa completo para investidores moderados que desejam uma carteira balanceada entre segurança e oportunidades de crescimento.",
-          "offerTitle": "OFERTA ESPECIAL",
-          "originalPrice": "R$997,00",
-          "currentPrice": "POR APENAS R$497,00",
-          "ctaText": "Quero equilibrar meus investimentos",
-          "checkoutUrl": "https://pay.hotmart.com/X12345678?plan=moderado",
-          "audience": [
-            "Para quem busca equilibrar segurança e rentabilidade.",
-            "Para quem está disposto a aceitar alguma volatilidade em busca de melhores retornos.",
-            "Para quem tem objetivos financeiros de médio prazo (3 a 5 anos)."
-          ],
-          "image": "https://via.placeholder.com/300x200?text=Estratégia+Crescimento+Balanceado"
-        },
-        "testimonials": [
-          {
-            "name": "Roberto Almeida",
-            "result": "Rendimento médio de 12% ao ano com risco controlado",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Roberto"
-          },
-          {
-            "name": "Carla Mendes",
-            "result": "Consegui equilibrar segurança e rentabilidade pela primeira vez",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Carla"
-          }
-        ],
-        "benefits": [
-          {
-            "text": "Carteira de investimentos diversificada com mix ideal entre renda fixa e variável.",
-            "highlight": ["diversificada", "mix ideal"]
-          },
-          {
-            "text": "Estratégias para maximizar retornos mantendo o risco sob controle.",
-            "highlight": ["maximizar retornos", "risco sob controle"]
-          },
-          {
-            "text": "Acesso a 16 aulas sobre diversificação e gestão de risco.",
-            "highlight": ["16 aulas"]
-          },
-          {
-            "text": "Software exclusivo para balanceamento automático da sua carteira.",
-            "highlight": ["Software exclusivo", "balanceamento automático"]
-          },
-          {
-            "text": "3 consultorias individuais para montar e ajustar sua carteira.",
-            "highlight": ["3 consultorias individuais"]
-          }
-        ],
-        "bonuses": [
-          {
-            "text": "BÔNUS 1: E-book "Os melhores fundos multimercado para 2025".",
-            "highlight": ["BÔNUS 1", "fundos multimercado"]
-          },
-          {
-            "text": "BÔNUS 2: Acesso ao grupo exclusivo de investidores moderados.",
-            "highlight": ["BÔNUS 2", "grupo exclusivo"]
-          },
-          {
-            "text": "BÔNUS 3: Workshop "Investindo em Small Caps com segurança".",
-            "highlight": ["BÔNUS 3", "Small Caps"]
-          }
-        ]
+          "name": "Consultoria de Planejamento Financeiro",
+          "description": "Otimize sua vida financeira com um planejamento personalizado que equilibra seus objetivos de curto, médio e longo prazo.",
+          "price": 247.00,
+          "image": "https://via.placeholder.com/300x200?text=Consultoria+Financeira",
+          "url": "https://example.com/produtos/consultoria-financeira"
+        }
       },
-      "agressivo": {
-        "title": "Perfil Agressivo",
-        "description": "Você busca maximizar os retornos e está disposto a assumir riscos mais elevados, incluindo maior volatilidade e possíveis perdas temporárias.",
-        "image": "https://via.placeholder.com/600x400?text=Perfil+Agressivo",
-        "ctaButtons": {
-          "primary": {
-            "text": "Conhecer plano recomendado",
-            "url": "https://pay.hotmart.com/X12345678?plan=agressivo"
-          },
-          "secondary": {
-            "text": "Quero saber mais",
-            "url": "https://pay.hotmart.com/X12345678?off=agressivo"
-          }
-        },
-        "progressCard": {
-          "title": "Suas características como investidor agressivo:",
-          "benefits": [
-            "Busca <span class='highlight'>MAXIMIZAR RETORNOS</span>, mesmo com maior risco.",
-            "Tolera <span class='highlight'>ALTA VOLATILIDADE</span> em busca de ganhos expressivos.",
-            "Tem <span class='highlight'>HORIZONTE DE LONGO PRAZO</span> para seus investimentos."
-          ]
-        },
+      "gastador": {
+        "title": "Perfil Gastador",
+        "description": "Você prioriza aproveitar o presente, mas isso pode comprometer seu futuro financeiro. Com pequenos ajustes, pode encontrar mais equilíbrio.",
+        "image": "https://via.placeholder.com/600x400?text=Perfil+Gastador",
         "product": {
-          "name": "Estratégia Crescimento Acelerado",
-          "description": "Um programa completo para investidores agressivos que buscam maximizar o crescimento do patrimônio no longo prazo.",
-          "offerTitle": "OFERTA ESPECIAL",
-          "originalPrice": "R$1.497,00",
-          "currentPrice": "POR APENAS R$797,00",
-          "ctaText": "Quero maximizar meus retornos",
-          "checkoutUrl": "https://pay.hotmart.com/X12345678?plan=agressivo",
-          "audience": [
-            "Para quem busca maximizar retornos e está disposto a assumir riscos.",
-            "Para quem tem uma visão de longo prazo dos investimentos.",
-            "Para quem possui reserva de emergência e base financeira sólida."
-          ],
-          "image": "https://via.placeholder.com/300x200?text=Estratégia+Crescimento+Acelerado"
-        },
-        "testimonials": [
-          {
-            "name": "Fernando Costa",
-            "result": "Rendimento de 28% em 12 meses após aplicar a estratégia",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Fernando"
-          },
-          {
-            "name": "Juliana Santos",
-            "result": "Multipliquei meu patrimônio em 2,5x em apenas 2 anos",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Juliana"
-          }
-        ],
-        "benefits": [
-          {
-            "text": "Carteira de investimentos otimizada para máximo crescimento de longo prazo.",
-            "highlight": ["máximo crescimento", "longo prazo"]
-          },
-          {
-            "text": "Estratégias avançadas para seleção de ações de alto potencial.",
-            "highlight": ["avançadas", "alto potencial"]
-          },
-          {
-            "text": "Acesso a 20 aulas sobre investimentos de alto retorno.",
-            "highlight": ["20 aulas", "alto retorno"]
-          },
-          {
-            "text": "Plataforma exclusiva com alertas de compra e venda.",
-            "highlight": ["Plataforma exclusiva", "alertas"]
-          },
-          {
-            "text": "5 consultorias individuais para montar e gerenciar sua carteira agressiva.",
-            "highlight": ["5 consultorias individuais"]
-          }
-        ],
-        "bonuses": [
-          {
-            "text": "BÔNUS 1: E-book "Investindo em Small Caps com alto potencial".",
-            "highlight": ["BÔNUS 1", "Small Caps"]
-          },
-          {
-            "text": "BÔNUS 2: Curso completo sobre opções e derivativos.",
-            "highlight": ["BÔNUS 2", "opções e derivativos"]
-          },
-          {
-            "text": "BÔNUS 3: Acesso ao grupo exclusivo de investidores agressivos.",
-            "highlight": ["BÔNUS 3", "grupo exclusivo"]
-          },
-          {
-            "text": "BÔNUS 4: Análise de 10 ações com potencial de valorização acima de 100%.",
-            "highlight": ["BÔNUS 4", "valorização acima de 100%"]
-          }
-        ]
+          "name": "Programa de Controle Financeiro",
+          "description": "Aprenda a controlar seus gastos sem abrir mão da qualidade de vida. Método prático para reorganizar suas finanças em 60 dias.",
+          "price": 197.00,
+          "image": "https://via.placeholder.com/300x200?text=Programa+Controle",
+          "url": "https://example.com/produtos/controle-financeiro"
+        }
       },
-      "iniciante": {
-        "title": "Investidor Iniciante",
-        "description": "Você está começando sua jornada no mundo dos investimentos e precisa construir uma base sólida antes de tomar decisões mais complexas.",
-        "image": "https://via.placeholder.com/600x400?text=Perfil+Iniciante",
-        "ctaButtons": {
-          "primary": {
-            "text": "Começar minha jornada",
-            "url": "https://pay.hotmart.com/X12345678?plan=iniciante"
-          },
-          "secondary": {
-            "text": "Quero saber mais",
-            "url": "https://pay.hotmart.com/X12345678?off=iniciante"
-          }
-        },
-        "progressCard": {
-          "title": "Suas características como investidor iniciante:",
-          "benefits": [
-            "Precisa construir uma <span class='highlight'>BASE SÓLIDA</span> de conhecimento financeiro.",
-            "Deve priorizar a <span class='highlight'>ORGANIZAÇÃO DAS FINANÇAS</span> e criação de reserva.",
-            "Necessita de <span class='highlight'>ORIENTAÇÃO CLARA</span> para dar os primeiros passos."
-          ]
-        },
+      "endividado": {
+        "title": "Perfil Endividado",
+        "description": "Você está enfrentando desafios financeiros que precisam ser resolvidos. Com as estratégias certas, é possível recuperar o controle das suas finanças.",
+        "image": "https://via.placeholder.com/600x400?text=Perfil+Endividado",
         "product": {
-          "name": "Fundamentos de Investimentos",
-          "description": "Um programa passo a passo para quem está começando no mundo dos investimentos, focado em construir uma base financeira sólida.",
-          "offerTitle": "OFERTA ESPECIAL PARA INICIANTES",
-          "originalPrice": "R$597,00",
-          "currentPrice": "POR APENAS R$297,00",
-          "ctaText": "Quero começar a investir",
-          "checkoutUrl": "https://pay.hotmart.com/X12345678?plan=iniciante",
-          "audience": [
-            "Para quem está começando no mundo dos investimentos.",
-            "Para quem precisa organizar as finanças antes de investir.",
-            "Para quem quer aprender a investir de forma segura e gradual."
-          ],
-          "image": "https://via.placeholder.com/300x200?text=Fundamentos+de+Investimentos"
-        },
-        "testimonials": [
-          {
-            "name": "Ana Paula Silva",
-            "result": "Saí de endividada para ter minha primeira reserva de emergência completa",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Ana"
-          },
-          {
-            "name": "Paulo Henrique",
-            "result": "Nunca tinha investido antes e já consegui montar minha primeira carteira",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Paulo"
-          }
-        ],
-        "benefits": [
-          {
-            "text": "Passo a passo completo para organizar suas finanças antes de investir.",
-            "highlight": ["passo a passo", "organizar suas finanças"]
-          },
-          {
-            "text": "Método simples para criar sua reserva de emergência em até 6 meses.",
-            "highlight": ["reserva de emergência", "6 meses"]
-          },
-          {
-            "text": "Acesso a 12 aulas básicas sobre fundamentos de investimentos.",
-            "highlight": ["12 aulas básicas"]
-          },
-          {
-            "text": "Planilha simplificada para controle financeiro pessoal.",
-            "highlight": ["Planilha simplificada"]
-          },
-          {
-            "text": "2 consultorias individuais para criar seu plano financeiro inicial.",
-            "highlight": ["2 consultorias", "plano financeiro inicial"]
-          }
-        ],
-        "bonuses": [
-          {
-            "text": "BÔNUS 1: E-book "Os 10 erros que todo investidor iniciante comete".",
-            "highlight": ["BÔNUS 1", "10 erros"]
-          },
-          {
-            "text": "BÔNUS 2: Curso "Como sair das dívidas em 90 dias".",
-            "highlight": ["BÔNUS 2", "sair das dívidas", "90 dias"]
-          },
-          {
-            "text": "BÔNUS 3: Acesso ao grupo de apoio para iniciantes.",
-            "highlight": ["BÔNUS 3", "grupo de apoio"]
-          }
-        ]
+          "name": "Programa Saindo das Dívidas",
+          "description": "Método comprovado para sair das dívidas em menos tempo, reorganizar suas finanças e construir uma base sólida para seu futuro.",
+          "price": 147.00,
+          "image": "https://via.placeholder.com/300x200?text=Programa+Dívidas",
+          "url": "https://example.com/produtos/saindo-das-dividas"
+        }
       }
     }
   }
 ]
-          }
-        },
-        "progressCard": {
-          "title": "Primeira venda em 24 horas!",
-          "benefits": [
-            "Colha seus <span class='highlight'>PRIMEIROS RESULTADOS</span> e receba 100% DAS COMISSÕES.",
-            "Você <span class='highlight'>NÃO SERÁ AFILIADO</span>, os produtos serão 100% SEUS.",
-            "O conteúdo estará <span class='highlight'>100% LIBERADO</span> em sua área de membros, aplique TUDO HOJE!"
-          ],
-          "timeline": {
-            "stages": ["Hoje", "24hs", "7 dias", "30 dias"],
-            "percentages": ["20%", "50%", "70%", "100%"],
-            "descriptions": ["Você está aqui...", "Primeiros resultados", "Início de escala", "10k mês"],
-            "currentProgress": 20
-          }
-        },
-        "product": {
-          "name": "Máquina de Vender PDFs",
-          "description": "Método passo a passo para realizar sua primeira venda online em até 24 horas, mesmo que você esteja começando do zero.",
-          "offerTitle": "ÚLTIMAS VAGAS",
-          "originalPrice": "R$497,00",
-          "currentPrice": "POR APENAS R$97,00",
-          "ctaText": "Quero começar agora",
-          "checkoutUrl": "https://pay.hotmart.com/T82219591V",
-          "audience": [
-            "Para todos aqueles que querem realizar sua PRIMEIRA VENDA EM 24 HORAS.",
-            "Para quem precisa escalar suas vendas para 10K OU MAIS mensalmente.",
-            "Para todos aqueles que já se sentiram frustrados por não conseguirem realizar vendas no digital com outro método."
-          ],
-          "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs"
-        },
-        "testimonials": [
-          {
-            "name": "Junior",
-            "result": "Fez mais de 2 salários mínimos em 7 dias",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Junior"
-          },
-          {
-            "name": "Aline",
-            "result": "Primeira venda em menos de 24 horas e mais de R$ 4.000 em poucos dias",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Aline"
-          },
-          {
-            "name": "João",
-            "result": "Quase 2 salários mínimos em 7 dias com PDF!",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Jo%C3%A3o"
-          }
-        ],
-        "benefits": [
-          {
-            "text": "Aprenda do ZERO ao AVANÇADO como fazer suas primeiras vendas no digital.",
-            "highlight": ["ZERO", "AVANÇADO"]
-          },
-          {
-            "text": "4 Produtos (PDFs) PRONTOS e VALIDADOS com toda a estrutura montada, basta você replicar rapidamente.",
-            "highlight": ["4 Produtos (PDFs) PRONTOS", "VALIDADOS"]
-          },
-          {
-            "text": "Todos os criativos e anúncios prontos.",
-            "highlight": ["criativos e anúncios prontos"]
-          },
-          {
-            "text": "O QUIZZ COMPLETO (Funil de Venda).",
-            "highlight": ["QUIZZ COMPLETO"]
-          },
-          {
-            "text": "Contato DIRETO comigo no WhatsApp.",
-            "highlight": ["DIRETO"]
-          },
-          {
-            "text": "FACEBOOK ADS - Do BÁSICO até sua ESCALA (10k mês).",
-            "highlight": ["FACEBOOK ADS", "BÁSICO", "ESCALA"]
-          },
-          {
-            "text": "+ de 25 VIDEO AULAS te ensinando tudo como desenvolver novos PDFs para o futuro.",
-            "highlight": ["25 VIDEO AULAS"]
-          },
-          {
-            "text": "Total de 47 aulas gravadas para que você possa assistir quantas vezes for necessário.",
-            "highlight": ["47 aulas gravadas"]
-          },
-          {
-            "text": "Acompanhamento da sua evolução durante 1 ANO.",
-            "highlight": ["Acompanhamento", "1 ANO"]
-          }
-        ],
-        "bonuses": [
-          {
-            "text": "BÔNUS 01 - Venda com TIKTOK sem gastar nem R$1 (NADA).",
-            "highlight": ["BÔNUS 01", "TIKTOK", "sem gastar nem R$1"]
-          },
-          {
-            "text": "BÔNUS 02 - Recuperação de Vendas Automáticas (Aumente seu faturamento em 20%).",
-            "highlight": ["BÔNUS 02", "Recuperação de Vendas Automáticas", "20%"]
-          }
-        ]
-      },
-      "intermediario": {
-        "title": "Você está pronto para escalar seus resultados",
-        "description": "Você já tem alguma experiência, mas precisa de um método mais eficiente para aumentar suas vendas e alcançar a marca de 10k por mês.",
-        "image": "https://via.placeholder.com/600x400?text=Perfil+Intermedi%C3%A1rio",
-        "ctaButtons": {
-          "primary": {
-            "text": "Quero escalar agora",
-            "url": "https://pay.hotmart.com/T82219591V"
-          },
-          "secondary": {
-            "text": "Preciso pensar",
-            "url": "https://pay.hotmart.com/T82219591V?off=vk39l4m3"
-          }
-        },
-        "progressCard": {
-          "title": "Escale suas vendas rapidamente!",
-          "benefits": [
-            "Aumente seu <span class='highlight'>FATURAMENTO ATUAL</span> com métodos validados.",
-            "Aprenda a <span class='highlight'>ESCALAR COM TRÁFEGO PAGO</span> de forma lucrativa.",
-            "Tenha <span class='highlight'>ACESSO A MODELOS</span> que já funcionam e podem ser aplicados hoje mesmo!"
-          ],
-          "timeline": {
-            "stages": ["Hoje", "24hs", "7 dias", "30 dias"],
-            "percentages": ["20%", "50%", "70%", "100%"],
-            "descriptions": ["Você está aqui...", "Primeiros resultados", "Início de escala", "10k mês"],
-            "currentProgress": 50
-          }
-        },
-        "product": {
-          "name": "Máquina de Vender PDFs",
-          "description": "Método comprovado para escalar suas vendas de produtos digitais sem precisar de VSL ou páginas de vendas complexas.",
-          "offerTitle": "OFERTA EXCLUSIVA",
-          "originalPrice": "R$497,00",
-          "currentPrice": "POR APENAS R$97,00",
-          "ctaText": "Quero escalar agora",
-          "checkoutUrl": "https://pay.hotmart.com/T82219591V",
-          "audience": [
-            "Para quem já vende online mas quer aumentar seu faturamento.",
-            "Para quem precisa de um método mais eficiente de vendas.",
-            "Para quem quer escalar para 10k ou mais mensalmente."
-          ],
-          "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs"
-        },
-        "testimonials": [
-          {
-            "name": "Junior",
-            "result": "Fez mais de 2 salários mínimos em 7 dias",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Junior"
-          },
-          {
-            "name": "Aline",
-            "result": "Primeira venda em menos de 24 horas e mais de R$ 4.000 em poucos dias",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Aline"
-          },
-          {
-            "name": "João",
-            "result": "Quase 2 salários mínimos em 7 dias com PDF!",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Jo%C3%A3o"
-          }
-        ],
-        "benefits": [
-          {
-            "text": "Aprenda do ZERO ao AVANÇADO como fazer suas primeiras vendas no digital.",
-            "highlight": ["ZERO", "AVANÇADO"]
-          },
-          {
-            "text": "4 Produtos (PDFs) PRONTOS e VALIDADOS com toda a estrutura montada, basta você replicar rapidamente.",
-            "highlight": ["4 Produtos (PDFs) PRONTOS", "VALIDADOS"]
-          },
-          {
-            "text": "Todos os criativos e anúncios prontos.",
-            "highlight": ["criativos e anúncios prontos"]
-          },
-          {
-            "text": "O QUIZZ COMPLETO (Funil de Venda).",
-            "highlight": ["QUIZZ COMPLETO"]
-          },
-          {
-            "text": "Contato DIRETO comigo no WhatsApp.",
-            "highlight": ["DIRETO"]
-          },
-          {
-            "text": "FACEBOOK ADS - Do BÁSICO até sua ESCALA (10k mês).",
-            "highlight": ["FACEBOOK ADS", "BÁSICO", "ESCALA"]
-          },
-          {
-            "text": "+ de 25 VIDEO AULAS te ensinando tudo como desenvolver novos PDFs para o futuro.",
-            "highlight": ["25 VIDEO AULAS"]
-          },
-          {
-            "text": "Total de 47 aulas gravadas para que você possa assistir quantas vezes for necessário.",
-            "highlight": ["47 aulas gravadas"]
-          },
-          {
-            "text": "Acompanhamento da sua evolução durante 1 ANO.",
-            "highlight": ["Acompanhamento", "1 ANO"]
-          }
-        ],
-        "bonuses": [
-          {
-            "text": "BÔNUS 01 - Venda com TIKTOK sem gastar nem R$1 (NADA).",
-            "highlight": ["BÔNUS 01", "TIKTOK", "sem gastar nem R$1"]
-          },
-          {
-            "text": "BÔNUS 02 - Recuperação de Vendas Automáticas (Aumente seu faturamento em 20%).",
-            "highlight": ["BÔNUS 02", "Recuperação de Vendas Automáticas", "20%"]
-          }
-        ]
-      },
-      "avancado": {
-        "title": "Você está pronto para otimizar seus resultados",
-        "description": "Como produtor experiente, você vai se beneficiar de um sistema mais eficiente que reduz custos e aumenta suas conversões.",
-        "image": "https://via.placeholder.com/600x400?text=Perfil+Avan%C3%A7ado",
-        "ctaButtons": {
-          "primary": {
-            "text": "Quero otimizar meus resultados",
-            "url": "https://pay.hotmart.com/T82219591V"
-          },
-          "secondary": {
-            "text": "Preciso pensar",
-            "url": "https://pay.hotmart.com/T82219591V?off=vk39l4m3"
-          }
-        },
-        "progressCard": {
-          "title": "Otimize suas vendas!",
-          "benefits": [
-            "Conheça <span class='highlight'>MÉTODOS AVANÇADOS</span> para aumentar suas conversões.",
-            "<span class='highlight'>REDUZA CUSTOS</span> e aumente sua margem de lucro.",
-            "Aprenda a <span class='highlight'>AUTOMATIZAR SEU PROCESSO</span> para escalar ainda mais!"
-          ],
-          "timeline": {
-            "stages": ["Hoje", "24hs", "7 dias", "30 dias"],
-            "percentages": ["20%", "50%", "70%", "100%"],
-            "descriptions": ["Você está aqui...", "Primeiros resultados", "Início de escala", "10k mês"],
-            "currentProgress": 70
-          }
-        },
-        "product": {
-          "name": "Máquina de Vender PDFs",
-          "description": "Otimize seu funil de vendas com um método inovador que elimina a necessidade de VSLs e páginas de vendas complexas.",
-          "offerTitle": "PARA PROFISSIONAIS",
-          "originalPrice": "R$497,00",
-          "currentPrice": "POR APENAS R$97,00",
-          "ctaText": "Quero otimizar meus resultados",
-          "checkoutUrl": "https://pay.hotmart.com/T82219591V",
-          "audience": [
-            "Para produtores digitais que já têm resultados consistentes.",
-            "Para quem quer otimizar seu funil de vendas e aumentar conversões.",
-            "Para quem busca métodos avançados para escalar ainda mais."
-          ],
-          "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs"
-        },
-        "testimonials": [
-          {
-            "name": "Junior",
-            "result": "Fez mais de 2 salários mínimos em 7 dias",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Junior"
-          },
-          {
-            "name": "Aline",
-            "result": "Primeira venda em menos de 24 horas e mais de R$ 4.000 em poucos dias",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Aline"
-          },
-          {
-            "name": "João",
-            "result": "Quase 2 salários mínimos em 7 dias com PDF!",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Jo%C3%A3o"
-          }
-        ],
-        "benefits": [
-          {
-            "text": "Aprenda do ZERO ao AVANÇADO como fazer suas primeiras vendas no digital.",
-            "highlight": ["ZERO", "AVANÇADO"]
-          },
-          {
-            "text": "4 Produtos (PDFs) PRONTOS e VALIDADOS com toda a estrutura montada, basta você replicar rapidamente.",
-            "highlight": ["4 Produtos (PDFs) PRONTOS", "VALIDADOS"]
-          },
-          {
-            "text": "Todos os criativos e anúncios prontos.",
-            "highlight": ["criativos e anúncios prontos"]
-          },
-          {
-            "text": "O QUIZZ COMPLETO (Funil de Venda).",
-            "highlight": ["QUIZZ COMPLETO"]
-          },
-          {
-            "text": "Contato DIRETO comigo no WhatsApp.",
-            "highlight": ["DIRETO"]
-          },
-          {
-            "text": "FACEBOOK ADS - Do BÁSICO até sua ESCALA (10k mês).",
-            "highlight": ["FACEBOOK ADS", "BÁSICO", "ESCALA"]
-          },
-          {
-            "text": "+ de 25 VIDEO AULAS te ensinando tudo como desenvolver novos PDFs para o futuro.",
-            "highlight": ["25 VIDEO AULAS"]
-          },
-          {
-            "text": "Total de 47 aulas gravadas para que você possa assistir quantas vezes for necessário.",
-            "highlight": ["47 aulas gravadas"]
-          },
-          {
-            "text": "Acompanhamento da sua evolução durante 1 ANO.",
-            "highlight": ["Acompanhamento", "1 ANO"]
-          }
-        ],
-        "bonuses": [
-          {
-            "text": "BÔNUS 01 - Venda com TIKTOK sem gastar nem R$1 (NADA).",
-            "highlight": ["BÔNUS 01", "TIKTOK", "sem gastar nem R$1"]
-          },
-          {
-            "text": "BÔNUS 02 - Recuperação de Vendas Automáticas (Aumente seu faturamento em 20%).",
-            "highlight": ["BÔNUS 02", "Recuperação de Vendas Automáticas", "20%"]
-          }
-        ]
-      },
-      "interessado": {
-        "title": "Você está pronto para conhecer o método",
-        "description": "Vamos te mostrar como vender PDFs de forma eficiente usando quizzes como ferramenta de conversão.",
-        "image": "https://via.placeholder.com/600x400?text=Interessado",
-        "ctaButtons": {
-          "primary": {
-            "text": "Quero conhecer agora",
-            "url": "https://pay.hotmart.com/T82219591V"
-          },
-          "secondary": {
-            "text": "Preciso pensar",
-            "url": "https://pay.hotmart.com/T82219591V?off=vk39l4m3"
-          }
-        },
-        "progressCard": {
-          "title": "Conheça o método revolucionário!",
-          "benefits": [
-            "Descubra como <span class='highlight'>VENDER SEM VSL</span> ou páginas de vendas complexas.",
-            "Aprenda a criar <span class='highlight'>QUIZZES QUE CONVERTEM</span> em vendas reais.",
-            "Acesse <span class='highlight'>PRODUTOS PRONTOS</span> para começar a vender hoje mesmo!"
-          ],
-          "timeline": {
-            "stages": ["Hoje", "24hs", "7 dias", "30 dias"],
-            "percentages": ["20%", "50%", "70%", "100%"],
-            "descriptions": ["Você está aqui...", "Primeiros resultados", "Início de escala", "10k mês"],
-            "currentProgress": 20
-          }
-        },
-        "product": {
-          "name": "Máquina de Vender PDFs",
-          "description": "Método completo para vender PDFs utilizando quizzes interativos como ferramenta de conversão, sem a necessidade de VSLs.",
-          "offerTitle": "OFERTA ESPECIAL",
-          "originalPrice": "R$497,00",
-          "currentPrice": "POR APENAS R$97,00",
-          "ctaText": "Quero conhecer agora",
-          "checkoutUrl": "https://pay.hotmart.com/T82219591V",
-          "audience": [
-            "Para quem quer conhecer um método eficiente de vendas online.",
-            "Para quem quer eliminar a necessidade de criar VSLs complexos.",
-            "Para quem busca um sistema completo para vender produtos digitais."
-          ],
-          "image": "https://via.placeholder.com/300x200?text=M%C3%A1quina+de+Vender+PDFs"
-        },
-        "testimonials": [
-          {
-            "name": "Junior",
-            "result": "Fez mais de 2 salários mínimos em 7 dias",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Junior"
-          },
-          {
-            "name": "Aline",
-            "result": "Primeira venda em menos de 24 horas e mais de R$ 4.000 em poucos dias",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Aline"
-          },
-          {
-            "name": "João",
-            "result": "Quase 2 salários mínimos em 7 dias com PDF!",
-            "video": "https://via.placeholder.com/600x400?text=Depoimento+Jo%C3%A3o"
-          }
-        ],
-        "benefits": [
-          {
-            "text": "Aprenda do ZERO ao AVANÇADO como fazer suas primeiras vendas no digital.",
-            "highlight": ["ZERO", "AVANÇADO"]
-          },
-          {
-            "text": "4 Produtos (PDFs) PRONTOS e VALIDADOS com toda a estrutura montada, basta você replicar rapidamente.",
-            "highlight": ["4 Produtos (PDFs) PRONTOS", "VALIDADOS"]
-          },
-          {
-            "text": "Todos os criativos e anúncios prontos.",
-            "highlight": ["criativos e anúncios prontos"]
-          },
-          {
-            "text": "O QUIZZ COMPLETO (Funil de Venda).",
-            "highlight": ["QUIZZ COMPLETO"]
-          },
-          {
-            "text": "Contato DIRETO comigo no WhatsApp.",
-            "highlight": ["DIRETO"]
-          },
-          {
-            "text": "FACEBOOK ADS - Do BÁSICO até sua ESCALA (10k mês).",
-            "highlight": ["FACEBOOK ADS", "BÁSICO", "ESCALA"]
-          },
-          {
-            "text": "+ de 25 VIDEO AULAS te ensinando tudo como desenvolver novos PDFs para o futuro.",
-            "highlight": ["25 VIDEO AULAS"]
-          },
-          {
-            "text": "Total de 47 aulas gravadas para que você possa assistir quantas vezes for necessário.",
-            "highlight": ["47 aulas gravadas"]
-          },
-          {
-            "text": "Acompanhamento da sua evolução durante 1 ANO.",
-            "highlight": ["Acompanhamento", "1 ANO"]
-          }
-        ],
-        "bonuses": [
-          {
-            "text": "BÔNUS 01 - Venda com TIKTOK sem gastar nem R$1 (NADA).",
-            "highlight": ["BÔNUS 01", "TIKTOK", "sem gastar nem R$1"]
-          },
-          {
-            "text": "BÔNUS 02 - Recuperação de Vendas Automáticas (Aumente seu faturamento em 20%).",
-            "highlight": ["BÔNUS 02", "Recuperação de Vendas Automáticas", "20%"]
-          }
-        ]
-      },
-      "desinteressado": {
-        "title": "Você pode estar perdendo uma oportunidade",
-        "description": "Mesmo não tendo interesse inicial, muitos dos nossos alunos que estavam céticos conseguiram resultados surpreendentes.",
-        "image": "https://via.placeholder.com/600x400?text=Reconsidere",
-        "ctaButtons": {
-          "primary": {
-            "text": "Reconsiderar agora",
-            "url": "https://pay.hotmart.com/T82219591V"
-          },
-          "secondary": {
-            "text": "Continuo desinteressado",
-            "url": "https://pay.hotmart.com/T82219591V?off=vk39l4
