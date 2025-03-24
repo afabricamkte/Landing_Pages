@@ -3,143 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz | AFÁBRICA</title>
-    <!-- Importando as fontes Source Serif Pro e Neue Montreal (ou equivalente) -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <title>MÁQUINA DE VENDER PDFs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Cores da AFÁBRICA */
-            --primary-color: #010d36;      /* Azul escuro */
-            --secondary-color: #dfd7c0;    /* Bege claro */
-            --tertiary-color: #fef9ef;     /* Branco/creme */
-            
-            /* Cores derivadas para UI */
-            --accent-color: #dfd7c0;
-            --text-color: #fef9ef;
-            --button-color: #dfd7c0;
-            --button-hover: #c8c2ad;
-            --button-active: #b5af9b;
+            --primary-color: #010d36;
+            --secondary-color: #1e1e2e;
+            --accent-color: #3498db;
+            --text-color: #ffffff;
+            --button-color: #2980b9;
+            --button-hover: #3498db;
+            --button-active: #1c6ea4;
             --success-color: #22c55e;
             --warning-color: #e74c3c;
+            --card-bg: #1a1a2e;
+            --progress-bg: #3498db;
+            --cta-color: #27ae60;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif; /* Substituto para Neue Montreal */
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background-color: var(--primary-color);
+            background-color: #000;
             color: var(--text-color);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Source Serif Pro', serif;
-            font-weight: 600;
-        }
-
         #app {
-            max-width: 800px;
+            max-width: 500px;
             width: 100%;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0 0;
         }
 
-        .header h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            font-family: 'Source Serif Pro', serif;
-            color: var(--secondary-color);
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            font-weight: 700;
         }
 
         .progress-container {
             width: 100%;
-            height: 8px;
-            background: rgba(223, 215, 192, 0.2);
-            border-radius: 4px;
+            height: 5px;
+            background: rgba(52, 152, 219, 0.2);
             margin-bottom: 30px;
         }
 
         .progress-bar {
             height: 100%;
-            background: var(--secondary-color);
-            border-radius: 4px;
+            background: var(--progress-bg);
             transition: width 0.5s ease;
         }
 
         .quiz-container {
-            background-color: rgba(223, 215, 192, 0.05);
-            border: 1px solid rgba(223, 215, 192, 0.2);
-            border-radius: 10px;
-            padding: 30px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 20px;
+        }
+
+        .question-container {
+            margin-bottom: 20px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
 
-        .question-container {
-            margin-bottom: 30px;
-            flex-grow: 1;
-        }
-
         .question {
             font-size: 24px;
-            font-weight: 600;
-            font-family: 'Source Serif Pro', serif;
+            font-weight: 700;
             text-align: center;
             margin-bottom: 30px;
-            color: var(--text-color);
+            line-height: 1.3;
         }
 
-        .video-container {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .video-container video, .video-container iframe {
-            width: 100%;
-            border-radius: 8px;
-            max-height: 300px;
-            object-fit: cover;
-        }
-
-        .image-container {
-            width: 100%;
-            margin-bottom: 20px;
+        .subquestion {
+            font-size: 16px;
             text-align: center;
-        }
-
-        .image-container img {
-            max-width: 100%;
-            max-height: 300px;
-            border-radius: 8px;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .options-container {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         .option {
-            background-color: rgba(223, 215, 192, 0.1);
-            border: 2px solid rgba(223, 215, 192, 0.2);
-            border-radius: 10px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
             padding: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -149,18 +126,15 @@
         }
 
         .option:hover {
-            background-color: rgba(223, 215, 192, 0.15);
-            transform: translateY(-2px);
+            background-color: rgba(26, 26, 46, 0.8);
         }
 
         .option.selected {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-            color: var(--primary-color);
+            background-color: var(--accent-color);
         }
 
         .option-emoji {
-            font-size: 24px;
+            font-size: 28px;
             min-width: 40px;
             display: flex;
             align-items: center;
@@ -170,33 +144,13 @@
         .option-text {
             flex-grow: 1;
             font-weight: 500;
-        }
-
-        .action-button {
-            background-color: var(--button-color);
-            color: var(--primary-color);
-            border: none;
-            border-radius: 8px;
-            padding: 15px 30px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        .action-button:hover {
-            background-color: var(--button-hover);
-        }
-
-        .action-button:active {
-            background-color: var(--button-active);
+            line-height: 1.3;
         }
 
         .thumbs-container {
             display: flex;
-            gap: 15px;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         .thumbs-option {
@@ -204,176 +158,317 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: rgba(223, 215, 192, 0.1);
-            border: 2px solid rgba(223, 215, 192, 0.2);
-            border-radius: 10px;
-            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px 15px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .thumbs-option:hover {
-            background-color: rgba(223, 215, 192, 0.15);
-            transform: translateY(-2px);
+            background-color: rgba(26, 26, 46, 0.8);
         }
 
         .thumbs-option.selected {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-            color: var(--primary-color);
+            background-color: var(--accent-color);
         }
 
         .thumbs-icon {
-            font-size: 32px;
+            font-size: 36px;
             margin-bottom: 10px;
         }
 
         .thumbs-text {
-            font-weight: 500;
+            font-weight: 600;
             text-align: center;
+        }
+
+        .grid-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .grid-option {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .grid-option:hover {
+            background-color: rgba(26, 26, 46, 0.8);
+        }
+
+        .grid-option.selected {
+            background-color: var(--accent-color);
+        }
+
+        .grid-emoji {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .grid-text {
+            font-weight: 600;
+        }
+
+        .action-button {
+            background-color: var(--button-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .action-button:hover {
+            background-color: var(--button-hover);
         }
 
         .result-container {
             text-align: center;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex-grow: 1;
+            width: 100%;
         }
 
         .result-title {
-            font-size: 32px;
-            margin-bottom: 20px;
-            color: var(--secondary-color);
-            font-family: 'Source Serif Pro', serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+            text-align: center;
         }
 
         .result-description {
-            font-size: 18px;
-            margin-bottom: 30px;
-            line-height: 1.6;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .chart-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .chart-column {
+            width: 80%;
+            background-color: #2c2c44;
+            border-radius: 3px;
+            position: relative;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+
+        .chart-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: #000;
+            border-radius: 3px;
+            transition: height 1s ease;
+        }
+
+        .chart-label {
+            font-size: 14px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .chart-sublabel {
+            font-size: 12px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 2px;
+        }
+
+        .benefit-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .benefit-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         .benefit-list {
             text-align: left;
-            margin-bottom: 30px;
-            width: 100%;
+            margin-bottom: 20px;
         }
 
         .benefit-item {
             display: flex;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             line-height: 1.4;
+            align-items: flex-start;
         }
 
-        .benefit-icon {
-            color: var(--secondary-color);
+        .benefit-item:last-child {
+            margin-bottom: 0;
         }
 
-        .testimonials {
-            width: 100%;
-            margin-top: 30px;
+        .benefit-check {
+            color: var(--success-color);
+            font-size: 18px;
+            margin-top: 2px;
+        }
+
+        .benefit-text {
+            flex: 1;
+        }
+
+        .benefit-highlight {
+            color: #4cd137;
+            font-weight: 700;
         }
 
         .testimonial {
-            background-color: rgba(223, 215, 192, 0.1);
-            border-radius: 10px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
-        }
-
-        .testimonial-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .testimonial-image {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 15px;
-            background-color: #555;
+            text-align: left;
         }
 
         .testimonial-name {
-            font-weight: 600;
-            font-size: 18px;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
         }
 
         .testimonial-result {
-            font-size: 14px;
-            color: #aaa;
+            font-size: 16px;
+            margin-bottom: 15px;
         }
 
-        .testimonial-text {
-            font-size: 16px;
+        .testimonial-video {
+            width: 100%;
+            height: 200px;
+            background-color: #1a1a2e;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .video-play {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
         }
 
         .price-container {
-            background-color: rgba(223, 215, 192, 0.1);
-            border: 1px solid rgba(223, 215, 192, 0.2);
-            border-radius: 10px;
-            padding: 25px;
-            margin: 30px 0;
+            background-color: #1a2b4e;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
             text-align: center;
-            width: 100%;
         }
 
         .price-title {
             text-transform: uppercase;
-            font-size: 18px;
-            margin-bottom: 15px;
-            font-family: 'Source Serif Pro', serif;
-            color: var(--secondary-color);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
         }
 
         .price-original {
             text-decoration: line-through;
-            color: #aaa;
-            font-size: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
             margin-bottom: 5px;
         }
 
         .price-current {
             font-size: 36px;
             font-weight: 700;
-            color: var(--secondary-color);
-            margin-bottom: 15px;
+            margin-bottom: 0px;
+            font-family: 'Playfair Display', serif;
         }
 
         .cta-button {
-            background-color: var(--secondary-color);
-            color: var(--primary-color);
+            background-color: var(--cta-color);
+            color: white;
             border: none;
             border-radius: 8px;
-            padding: 20px 30px;
+            padding: 16px;
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             width: 100%;
-            margin-top: 20px;
-            text-decoration: none;
-            display: inline-block;
             text-align: center;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 20px;
         }
 
         .cta-button:hover {
-            background-color: var(--button-hover);
+            background-color: #2ecc71;
             transform: translateY(-2px);
         }
 
-        .audience-list {
-            text-align: left;
-            width: 100%;
-            margin-top: 20px;
+        .guarantee-box {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .guarantee-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .guarantee-text {
+            font-size: 14px;
+            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .input-container {
-            margin-top: 30px;
+            margin: 20px 0;
             width: 100%;
         }
 
@@ -381,11 +476,11 @@
             width: 100%;
             padding: 15px;
             border-radius: 8px;
-            border: 2px solid rgba(223, 215, 192, 0.2);
-            background-color: rgba(223, 215, 192, 0.1);
+            border: none;
+            background-color: var(--card-bg);
             color: white;
             font-size: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .input-field::placeholder {
@@ -394,103 +489,24 @@
 
         .input-field:focus {
             outline: none;
-            border-color: var(--secondary-color);
-        }
-
-        .chart-container {
-            margin-top: 20px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-        }
-
-        .chart-bar {
-            flex: 1;
-            margin: 0 5px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .chart-column {
-            width: 100%;
-            background-color: rgba(223, 215, 192, 0.1);
-            border-radius: 5px;
-            margin-bottom: 10px;
-            position: relative;
-            height: 150px;
-        }
-
-        .chart-fill {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            background-color: var(--secondary-color);
-            border-radius: 5px;
-            transition: height 1s ease;
-        }
-
-        .chart-label {
-            font-size: 14px;
-            text-align: center;
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .quiz-container {
-                padding: 20px;
-            }
-
-            .question {
-                font-size: 20px;
-            }
-
-            .option {
-                padding: 12px;
-            }
-
-            .option-emoji {
-                font-size: 20px;
-            }
-
-            .thumbs-icon {
-                font-size: 28px;
-            }
-
-            .result-title {
-                font-size: 26px;
-            }
-
-            .result-description {
-                font-size: 16px;
-            }
-
-            .price-current {
-                font-size: 28px;
-            }
-
-            .cta-button {
-                padding: 15px 25px;
-                font-size: 16px;
-            }
+            border: 1px solid var(--accent-color);
         }
 
         .loading {
             text-align: center;
             padding: 40px;
             font-size: 18px;
-            color: var(--secondary-color);
+            color: rgba(255, 255, 255, 0.7);
         }
     </style>
 </head>
 <body>
     <div id="app">
         <div class="header">
-            <h1 id="header-title">AFÁBRICA</h1>
-        </div>
-        <div class="progress-container">
-            <div class="progress-bar" id="progress" style="width: 0%"></div>
+            <div class="logo">MÁQUINA DE<br>VENDER PDFs</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress" style="width: 0%"></div>
+            </div>
         </div>
         <div class="quiz-container" id="quiz-content">
             <!-- Quiz content will be loaded here -->
@@ -543,18 +559,19 @@
                 answers = [];
                 userName = "";
                 
-                document.getElementById('header-title').textContent = quizData.title || 'AFÁBRICA';
+                document.querySelector('.logo').innerHTML = 'MÁQUINA DE<br>VENDER PDFs';
                 
-                // Define as cores personalizadas
+                // Define as cores personalizadas se fornecidas nos dados do quiz
                 if (quizData.primaryColor) {
-                    document.documentElement.style.setProperty('--primary-color', quizData.primaryColor);
+                    document.documentElement.style.setProperty('--accent-color', quizData.primaryColor);
+                    document.documentElement.style.setProperty('--button-color', quizData.primaryColor);
+                    document.documentElement.style.setProperty('--button-hover', adjustColor(quizData.primaryColor, -10));
+                    document.documentElement.style.setProperty('--button-active', adjustColor(quizData.primaryColor, -20));
+                    document.documentElement.style.setProperty('--progress-bg', quizData.primaryColor);
                 }
                 
                 if (quizData.secondaryColor) {
-                    document.documentElement.style.setProperty('--secondary-color', quizData.secondaryColor);
-                    document.documentElement.style.setProperty('--button-color', quizData.secondaryColor);
-                    document.documentElement.style.setProperty('--button-hover', adjustColor(quizData.secondaryColor, -20));
-                    document.documentElement.style.setProperty('--button-active', adjustColor(quizData.secondaryColor, -40));
+                    document.documentElement.style.setProperty('--cta-color', quizData.secondaryColor);
                 }
                 
                 // Verifica se há perguntas
@@ -601,6 +618,7 @@
                             questionHTML = `
                                 <div class="question-container">
                                     <div class="question">${question.question}</div>
+                                    <div class="subquestion">Já ficou ultrapassado...</div>
                                     <div class="thumbs-container">
                                         <div class="thumbs-option" data-index="0">
                                             <div class="thumbs-icon">👍</div>
@@ -700,12 +718,10 @@
                                 // Armazena a resposta
                                 answers[currentQuestion] = index;
                                 
-                                // Mostra o botão de próximo
-                                document.getElementById('quiz-content').innerHTML += `
-                                    <button class="action-button" id="next-button">Próximo</button>
-                                `;
-                                
-                                document.getElementById('next-button').addEventListener('click', nextQuestion);
+                                // Mostra o botão de próximo automaticamente
+                                setTimeout(() => {
+                                    nextQuestion();
+                                }, 500);
                             });
                         });
                     }
@@ -730,7 +746,7 @@
                     <div class="question-container">
                         <div class="question">Qual o seu nome?</div>
                         <div class="input-container">
-                            <input type="text" id="user-name" class="input-field" placeholder="Digite o seu primeiro nome">
+                            <input type="text" id="user-name" class="input-field" placeholder="Digite seu primeiro nome">
                         </div>
                         <button class="action-button" id="submit-name">Continuar</button>
                     </div>
@@ -780,117 +796,180 @@
                 
                 const resultsHTML = `
                     <div class="result-container">
-                        <h2 class="result-title">${personalizedTitle}</h2>
-                        <p class="result-description">${results.description}</p>
+                        <div class="question">${personalizedTitle}</div>
+                        <div class="subquestion">Só depende de você...</div>
                         
-                        ${results.chartEnabled ? `
+                        <div class="benefit-card">
+                            <div class="benefit-list">
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">Colha seus <span class="benefit-highlight">PRIMEIROS RESULTADOS</span> e receba <span class="benefit-highlight">100% DAS COMISSÕES</span>.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">Você <span class="benefit-highlight">NÃO SERÁ AFILIADO</span>, os produtos serão <span class="benefit-highlight">100% SEUS</span>.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">O conteúdo estará <span class="benefit-highlight">100% LIBERADO</span> em sua área de membros, aplique <span class="benefit-highlight">TUDO HOJE!</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="chart-container">
                             <div class="chart-bar">
                                 <div class="chart-column">
-                                    <div class="chart-fill" style="height: 20%"></div>
+                                    <div class="chart-fill" style="height: 20%; background-color: #3498db;"></div>
                                 </div>
                                 <div class="chart-label">Hoje</div>
+                                <div class="chart-sublabel">Você está aqui...</div>
                             </div>
                             <div class="chart-bar">
                                 <div class="chart-column">
-                                    <div class="chart-fill" style="height: 50%"></div>
+                                    <div class="chart-fill" style="height: 50%; background-color: #3498db;"></div>
                                 </div>
                                 <div class="chart-label">24hs</div>
+                                <div class="chart-sublabel">Primeiros resultados</div>
                             </div>
                             <div class="chart-bar">
                                 <div class="chart-column">
-                                    <div class="chart-fill" style="height: 75%"></div>
+                                    <div class="chart-fill" style="height: 70%; background-color: #3498db;"></div>
                                 </div>
                                 <div class="chart-label">7 dias</div>
+                                <div class="chart-sublabel">Início de escala</div>
                             </div>
                             <div class="chart-bar">
                                 <div class="chart-column">
-                                    <div class="chart-fill" style="height: 100%"></div>
+                                    <div class="chart-fill" style="height: 100%; background-color: #3498db;"></div>
                                 </div>
                                 <div class="chart-label">30 dias</div>
+                                <div class="chart-sublabel">10k mês</div>
                             </div>
                         </div>
-                        ` : ''}
                         
-                        ${results.defaultBenefits ? `
-                        <div class="benefit-list">
-                            <div class="benefit-item">
-                                <div class="benefit-icon">✓</div>
-                                <div>Colha seus PRIMEIROS RESULTADOS e receba 100% DAS SUAS COMISSÕES.</div>
-                            </div>
-                            <div class="benefit-item">
-                                <div class="benefit-icon">✓</div>
-                                <div>Você NÃO SERÁ AFILIADO, os produtos serão 100% SEUS.</div>
-                            </div>
-                            <div class="benefit-item">
-                                <div class="benefit-icon">✓</div>
-                                <div>O conteúdo estará 100% LIBERADO em sua área de membros, aplique TUDO HOJE!</div>
-                            </div>
-                        </div>
-                        ` : ''}
-                        
-                        ${results.benefits && results.benefits.length > 0 ? `
-                        <div class="benefit-list">
-                            ${results.benefits.map(benefit => `
-                                <div class="benefit-item">
-                                    <div class="benefit-icon">✓</div>
-                                    <div>${benefit}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                        ` : ''}
-                        
-                        ${results.bonuses && results.bonuses.length > 0 ? `
-                            <h3 style="margin-top: 30px; margin-bottom: 15px; font-family: 'Source Serif Pro', serif; color: var(--secondary-color);">BÔNUS ADICIONAIS</h3>
+                        <div class="benefit-card" style="margin-top: 15px;">
+                            <div class="benefit-title">QUAIS BENEFÍCIOS VOU TER:</div>
                             <div class="benefit-list">
-                                ${results.bonuses.map(bonus => `
-                                    <div class="benefit-item">
-                                        <div class="benefit-icon">✓</div>
-                                        <div>${bonus}</div>
-                                    </div>
-                                `).join('')}
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">Aprenda do <span class="benefit-highlight">ZERO</span> ao <span class="benefit-highlight">AVANÇADO</span> como fazer suas <span class="benefit-highlight">primeiras vendas no digital</span>.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text"><span class="benefit-highlight">4 Produtos (PDFs) PRONTOS</span> e <span class="benefit-highlight">VALIDADOS</span> com toda a estrutura <span class="benefit-highlight">montada, basta você replicar rapidamente</span>.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">Todos os <span class="benefit-highlight">criativos</span> e <span class="benefit-highlight">anúncios prontos</span>.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">O <span class="benefit-highlight">QUIZZ COMPLETO</span> (Funil de Venda).</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">Contato <span class="benefit-highlight">DIRETO</span> comigo no WhatsApp.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text"><span class="benefit-highlight">FACEBOOK ADS</span> - Do <span class="benefit-highlight">BÁSICO</span> até sua <span class="benefit-highlight">ESCALA</span> (10k mês).</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">+ de <span class="benefit-highlight">25 VIDEO AULAS</span> te ensinando tudo como <span class="benefit-highlight">desenvolver novos PDFs</span> para o futuro.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">Total de <span class="benefit-highlight">47 aulas gravadas</span> para que você possa <span class="benefit-highlight">assistir quantas vezes for necessário</span>.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text"><span class="benefit-highlight">Acompanhamento</span> da sua evolução durante <span class="benefit-highlight">1 ANO</span>.</div>
+                                </div>
                             </div>
-                        ` : ''}
+                        </div>
                         
-                        ${results.priceOriginal && results.priceDiscount ? `
+                        <div class="benefit-card">
+                            <div class="benefit-title">BÔNUS ADICIONAIS</div>
+                            <div class="benefit-list">
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text"><span class="benefit-highlight">BÔNUS 1</span> - Venda com <span class="benefit-highlight">TIKTOK</span> sem gastar nem <span class="benefit-highlight">R$1 (NADA)</span>.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text"><span class="benefit-highlight">BÔNUS 2</span> - Recuperação de Vendas Automáticas (<span class="benefit-highlight">Aumente</span> seu faturamento em <span class="benefit-highlight">20%</span>).</div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="price-container">
                             <div class="price-title">ÚLTIMAS VAGAS</div>
-                            <div class="price-original">DE: ${results.priceOriginal}</div>
-                            <div class="price-current">POR APENAS ${results.priceDiscount}</div>
+                            <div class="price-original">DE: R$497,00</div>
+                            <div class="price-current">POR APENAS R$97,00</div>
                         </div>
-                        ` : ''}
                         
-                        <a href="${results.ctaLink}" class="cta-button">${results.ctaText}</a>
+                        <a href="${results.ctaLink || '#'}" class="cta-button">Quero começar agora</a>
                         
-                        ${results.audience && results.audience.length > 0 ? `
-                            <div class="audience-list">
-                                <h3 style="margin-bottom: 15px; font-family: 'Source Serif Pro', serif; color: var(--secondary-color);">Para quem é o produto?</h3>
-                                ${results.audience.map(audience => `
-                                    <div class="benefit-item">
-                                        <div class="benefit-icon">✓</div>
-                                        <div>${audience}</div>
-                                    </div>
-                                `).join('')}
+                        <div class="benefit-card">
+                            <div class="benefit-title">Para quem é o MVP?</div>
+                            <div class="benefit-list">
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">Para todos aqueles que querem realizar sua <span class="benefit-highlight">PRIMEIRA VENDA EM 24 HORAS</span>.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">Para quem precisa escalar suas vendas para <span class="benefit-highlight">10K OU MAIS</span> mensalmente.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">Para todos aqueles que já se sentiram frustrados por não conseguirem realizar vendas no digital com outro método.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">Para todos aqueles que <span class="benefit-highlight">NÃO</span> querem gastar dinheiro com <span class="benefit-highlight">VSL, PÁGINAS DE VENDA, DESIGNER, FAZER X1 NO WHATSAPP</span> ou contratar alguma ferramenta cara.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">Para todos aqueles que <span class="benefit-highlight">NÃO</span> querem aparecer para realizar vendas.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">Para todos aqueles que <span class="benefit-highlight">NÃO</span> querem ser afiliados.</div>
+                                </div>
+                                <div class="benefit-item">
+                                    <div class="benefit-check">✓</div>
+                                    <div class="benefit-text">Para todos aqueles que <span class="benefit-highlight">NÃO</span> querem perder tempo desenvolvendo produto.</div>
+                                </div>
                             </div>
-                        ` : ''}
+                        </div>
+                        
+                        <div class="guarantee-box">
+                            <div class="guarantee-title">Teste Seguro</div>
+                            <div class="guarantee-text">
+                                Desfrute de todo o conteúdo.<br>
+                                Teste e se surpreenda, mas caso não goste, eu devolvo seu dinheiro todo.
+                            </div>
+                        </div>
+                        
+                        <a href="${results.ctaLink || '#'}" class="cta-button">Quero começar agora</a>
                     </div>
                 `;
                 
                 document.getElementById('quiz-content').innerHTML = resultsHTML;
                 
-                // Anima o gráfico se ele estiver habilitado
-                if (results.chartEnabled) {
-                    setTimeout(() => {
-                        const chartFills = document.querySelectorAll('.chart-fill');
-                        chartFills.forEach(fill => {
-                            const height = fill.style.height;
-                            fill.style.height = '0%';
-                            setTimeout(() => {
-                                fill.style.height = height;
-                            }, 100);
-                        });
-                    }, 500);
-                }
+                // Anima o gráfico
+                setTimeout(() => {
+                    const chartFills = document.querySelectorAll('.chart-fill');
+                    chartFills.forEach(fill => {
+                        const height = fill.style.height;
+                        fill.style.height = '0%';
+                        setTimeout(() => {
+                            fill.style.height = height;
+                        }, 100);
+                    });
+                }, 300);
                 
                 // Registra a conclusão do quiz (você pode adicionar um endpoint para isso)
                 saveQuizCompletion();
@@ -930,7 +1009,7 @@
                 
                 console.log('Quiz concluído:', quizData);
                 
-                // Exemplo de como enviar para um servidor (descomentado)
+                // Exemplo de como enviar para um servidor (comentado)
                 /*
                 fetch('/api/quiz-completions', {
                     method: 'POST',
