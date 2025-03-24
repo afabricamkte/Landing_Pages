@@ -9,12 +9,16 @@
     <style>
         :root {
             --primary-color: #4f2d7f;
-            --secondary-color: #f0ad4e;
+            --secondary-color: #00c853;
+            --dark-bg: #1a1a1a;
+            --card-bg: #212529;
+            --text-color: #ffffff;
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
             min-height: 100vh;
         }
         
@@ -22,9 +26,8 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background-color: white;
+            background-color: var(--dark-bg);
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             margin-top: 20px;
         }
         
@@ -42,15 +45,28 @@
             margin-bottom: 20px;
         }
         
+        .progress {
+            height: 8px;
+            background-color: #2a2a2a;
+            border-radius: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background-color: #0d6efd;
+            border-radius: 30px;
+        }
+        
         .question-container {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
         
         .question-text {
-            font-size: 1.3em;
+            font-size: 1.5em;
             font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--primary-color);
+            margin-bottom: 20px;
+            color: var(--text-color);
+            text-align: center;
         }
         
         .media-container {
@@ -71,56 +87,93 @@
             border: none;
         }
         
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 576px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
         .option-btn {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            background-color: white;
-            border: 2px solid #e1e1e1;
-            border-radius: 8px;
-            text-align: left;
+            padding: 20px 15px;
+            background-color: var(--card-bg);
+            border: 2px solid #30363d;
+            border-radius: 12px;
+            text-align: center;
             transition: all 0.3s;
             position: relative;
             font-weight: 500;
+            color: var(--text-color);
+            min-height: 120px;
         }
         
         .option-btn:hover {
-            border-color: var(--primary-color);
-            background-color: #f9f6ff;
+            border-color: var(--secondary-color);
+            background-color: #252a2e;
         }
         
         .option-btn.selected {
-            border-color: var(--primary-color);
-            background-color: #f0ebff;
+            border-color: var(--secondary-color);
+            background-color: #252a2e;
         }
         
-        .option-btn i {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
+        .option-emoji {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .option-text {
+            font-weight: 600;
+        }
+        
+        .option-highlight {
+            color: var(--secondary-color);
+            font-weight: bold;
         }
         
         .navigation-buttons {
             display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
+            justify-content: center;
+            margin-top: 30px;
         }
         
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        .btn-primary:hover {
-            background-color: #3d2162;
-            border-color: #3d2162;
-        }
-        
-        .btn-warning {
+        .btn-primary, .btn-next {
             background-color: var(--secondary-color);
             border-color: var(--secondary-color);
+            color: #000;
+            font-weight: bold;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .btn-primary:hover, .btn-next:hover {
+            background-color: #00b34a;
+            border-color: #00b34a;
+            color: #000;
+        }
+        
+        .btn-outline-secondary {
+            border-color: #5a5a5a;
+            color: #fff;
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: #3a3a3a;
+            border-color: #5a5a5a;
         }
         
         .result-container {
@@ -129,25 +182,35 @@
         }
         
         .result-container h2 {
-            color: var(--primary-color);
+            color: var(--text-color);
             margin-bottom: 20px;
         }
         
         .result-container p {
             font-size: 1.1em;
             margin-bottom: 20px;
+            color: var(--text-color);
+        }
+        
+        .progress-label {
+            font-size: 0.85rem;
+            color: #aaa;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
         }
         
         .product-recommendation {
             margin-top: 30px;
             padding: 20px;
             border-radius: 10px;
-            background-color: #f9f6ff;
-            border: 1px solid #e0d2f9;
+            background-color: var(--card-bg);
+            border: 1px solid #30363d;
+            color: var(--text-color);
         }
         
         .product-recommendation h3 {
-            color: var(--primary-color);
+            color: var(--text-color);
             margin-bottom: 15px;
         }
         
@@ -161,6 +224,110 @@
             margin-bottom: 20px;
         }
         
+        .testimonial-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+            border: 1px solid #30363d;
+        }
+        
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .testimonial-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .testimonial-result {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        .testimonial-video {
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+            aspect-ratio: 16/9;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .testimonial-video img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .play-button {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-color: rgba(0,0,0,0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .progress-step {
+            width: 100%;
+            background-color: #30363d;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .progress-value {
+            background-color: var(--secondary-color);
+            height: 8px;
+            border-radius: 4px;
+        }
+        
+        .benefits-list {
+            text-align: left;
+            margin: 20px 0;
+        }
+        
+        .benefits-list li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .benefits-list .check-icon {
+            color: var(--secondary-color);
+            margin-right: 10px;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .highlight {
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+        
+        .input-field {
+            background-color: var(--card-bg);
+            border: 1px solid #30363d;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
         /* Responsividade */
         @media (max-width: 768px) {
             .quiz-container {
@@ -169,7 +336,7 @@
             }
             
             .question-text {
-                font-size: 1.1em;
+                font-size: 1.3em;
             }
             
             .media-container iframe {
@@ -182,8 +349,8 @@
     <div class="container">
         <div id="quiz-selection" class="quiz-container my-5">
             <div class="quiz-header">
-                <h1>Escolha um Quiz</h1>
-                <p>Selecione um dos quizzes disponíveis abaixo:</p>
+                <h1>MÁQUINA DE VENDER PDFs</h1>
+                <p>O método definitivo para vender todos os dias e escalar seus resultados</p>
             </div>
             <div id="quiz-list" class="row">
                 <!-- Os quizzes disponíveis serão carregados aqui -->
@@ -191,7 +358,7 @@
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Carregando...</span>
                     </div>
-                    <p>Carregando quizzes disponíveis...</p>
+                    <p>Carregando...</p>
                 </div>
             </div>
         </div>
@@ -199,17 +366,12 @@
         <div id="quiz-interface" class="quiz-container my-5" style="display: none;">
             <div class="quiz-header">
                 <img id="quiz-logo" src="" alt="Logo do Quiz">
-                <h1 id="quiz-title">Quiz Interativo</h1>
-                <p id="quiz-description">Descubra o resultado que mais combina com você!</p>
+                <h1 id="quiz-title">MÁQUINA DE VENDER PDFs</h1>
             </div>
             
             <div class="progress-container">
-                <div class="progress" style="height: 10px;">
-                    <div id="progress-bar" class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-                <div class="d-flex justify-content-between mt-2">
-                    <span id="current-question">Pergunta 1</span>
-                    <span id="total-questions">de 5</span>
+                <div class="progress">
+                    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
             
@@ -222,35 +384,406 @@
                     <!-- Mídia da pergunta (imagem ou vídeo) será inserida aqui -->
                 </div>
                 
-                <div id="options-container">
+                <div id="options-container" class="options-grid">
                     <!-- Opções de resposta serão inseridas aqui -->
                 </div>
             </div>
             
             <div class="navigation-buttons">
-                <button id="prev-btn" class="btn btn-outline-secondary" disabled>Anterior</button>
-                <button id="next-btn" class="btn btn-primary">Próxima</button>
+                <button id="next-btn" class="btn btn-next">Próximo</button>
+            </div>
+        </div>
+        
+        <div id="info-collection" class="quiz-container" style="display: none;">
+            <div class="quiz-header">
+                <h1>MÁQUINA DE VENDER PDFs</h1>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 90%;" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+            
+            <div class="question-text">
+                Me fala seu nome aqui abaixo...
+            </div>
+            
+            <input type="text" id="user-name" class="input-field" placeholder="Digite o seu primeiro nome">
+            
+            <div class="navigation-buttons">
+                <button id="continue-btn" class="btn btn-next">Continuar</button>
             </div>
         </div>
         
         <div id="result-container" class="quiz-container result-container" style="display: none;">
-            <h2>Seu Resultado</h2>
-            <div id="result-content">
-                <!-- Conteúdo do resultado será inserido aqui -->
+            <div class="quiz-header">
+                <h1>MÁQUINA DE VENDER PDFs</h1>
             </div>
             
-            <div id="product-recommendation" class="product-recommendation">
-                <h3>Recomendação de Produto</h3>
-                <div id="product-content">
-                    <!-- Informações do produto recomendado serão inseridas aqui -->
+            <div id="user-greeting" class="question-text">
+                <span id="name-placeholder">Olá</span>, você está pronto para começar a vender seus PDFs hoje mesmo?
+            </div>
+            <p>Só depende de você...</p>
+            
+            <div class="options-grid mb-4">
+                <button class="option-btn" id="ready-btn">
+                    <div class="option-emoji">👍</div>
+                    <div class="option-text">100% pronto</div>
+                </button>
+                <button class="option-btn" id="not-ready-btn">
+                    <div class="option-emoji">👎</div>
+                    <div class="option-text">Não sei</div>
+                </button>
+            </div>
+            
+            <h3 class="mt-4 mb-3">O que você pode esperar...</h3>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div>
+                        <div class="testimonial-name">Primeira venda em 24 horas!</div>
+                    </div>
                 </div>
-                <a id="product-link" href="#" class="btn btn-warning mt-3">Conhecer o Produto</a>
+                <ul class="benefits-list list-unstyled">
+                    <li>
+                        <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                        <span>Colha seus <span class="highlight">PRIMEIROS RESULTADOS</span> e receba 100% DAS COMISSÕES.</span>
+                    </li>
+                    <li>
+                        <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                        <span>Você <span class="highlight">NÃO SERÁ AFILIADO</span>, os produtos serão 100% SEUS.</span>
+                    </li>
+                    <li>
+                        <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                        <span>O conteúdo estará <span class="highlight">100% LIBERADO</span> em sua área de membros, aplique TUDO HOJE!</span>
+                    </li>
+                </ul>
+                
+                <div class="text-center mt-4">
+                    <div class="d-flex justify-content-between mb-1">
+                        <div>Hoje</div>
+                        <div>24hs</div>
+                        <div>7 dias</div>
+                        <div>30 dias</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="progress-value" style="width: 20%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <div>20%</div>
+                        <div>50%</div>
+                        <div>70%</div>
+                        <div>100%</div>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted">
+                        <div>Você está aqui...</div>
+                        <div>Primeiros resultados</div>
+                        <div>Início de escala</div>
+                        <div>10k mês</div>
+                    </div>
+                </div>
             </div>
             
-            <button id="restart-btn" class="btn btn-outline-primary mt-4">Refazer o Quiz</button>
-            <button id="return-btn" class="btn btn-outline-secondary mt-4 ms-2">Voltar para Lista de Quizzes</button>
+            <h3 class="mt-4 mb-3">Depoimentos</h3>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div>
+                        <div class="testimonial-name">Junior</div>
+                        <div class="testimonial-result">Fez mais de 2 salários mínimos em 7 dias</div>
+                    </div>
+                </div>
+                <div class="testimonial-video">
+                    <img src="https://via.placeholder.com/600x400?text=Depoimento+Junior" alt="Depoimento">
+                    <div class="play-button">
+                        <i class="fas fa-play text-white"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div>
+                        <div class="testimonial-name">Aline</div>
+                        <div class="testimonial-result">Primeira venda em menos de 24 horas e mais de R$ 4.000 em poucos dias</div>
+                    </div>
+                </div>
+                <div class="testimonial-video">
+                    <img src="https://via.placeholder.com/600x400?text=Depoimento+Aline" alt="Depoimento">
+                    <div class="play-button">
+                        <i class="fas fa-play text-white"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 class="mt-4 mb-3">Benefícios que você vai ter:</h3>
+            
+            <ul class="benefits-list list-unstyled">
+                <li>
+                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                    <span>Aprenda do <span class="highlight">ZERO</span> ao <span class="highlight">AVANÇADO</span> como fazer suas primeiras vendas no digital.</span>
+                </li>
+                <li>
+                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                    <span><span class="highlight">4 Produtos (PDFs) PRONTOS</span> e VALIDADOS com toda a estrutura montada, basta você replicar rapidamente.</span>
+                </li>
+                <li>
+                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                    <span>Todos os <span class="highlight">criativos e anúncios prontos</span>.</span>
+                </li>
+                <li>
+                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                    <span>O <span class="highlight">QUIZZ COMPLETO</span> (Funil de Venda).</span>
+                </li>
+                <li>
+                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                    <span>Contato <span class="highlight">DIRETO</span> comigo no WhatsApp.</span>
+                </li>
+                <li>
+                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                    <span><span class="highlight">FACEBOOK ADS</span> - Do BÁSICO até sua ESCALA (10k mês).</span>
+                </li>
+                <li>
+                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                    <span>+ de <span class="highlight">25 VIDEO AULAS</span> te ensinando tudo como desenvolver novos PDFs para o futuro.</span>
+                </li>
+                <li>
+                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                    <span>Total de <span class="highlight">47 aulas gravadas</span> para que você possa assistir quantas vezes for necessário.</span>
+                </li>
+                <li>
+                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                    <span><span class="highlight">Acompanhamento da sua evolução</span> durante 1 ANO.</span>
+                </li>
+            </ul>
+            
+            <h3 class="mt-4 mb-3">Bônus adicionais</h3>
+            
+            <ul class="benefits-list list-unstyled">
+                <li>
+                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                    <span><span class="highlight">BÔNUS 02</span> - Recuperação de Vendas Automáticas (Aumente seu faturamento em 20%).</span>
+                </li>
+            </ul>
+            
+            <div class="price-card text-center my-4 p-4" style="border: 2px solid #1e4e8c; border-radius: 10px; background-color: #0d2240;">
+                <h4 class="mb-3">ÚLTIMAS VAGAS</h4>
+                <p class="mb-1">DE: <span style="text-decoration: line-through;">R$497,00</span></p>
+                <h2 class="my-3">POR APENAS R$97,00</h2>
+                <a href="#" id="cta-button" class="btn btn-next btn-lg d-block mb-3">Quero começar agora</a>
+                
+                <div class="text-start mt-4">
+                    <h4 class="mb-3">Para quem é o MVP?</h4>
+                    <ul class="benefits-list list-unstyled">
+                        <li>
+                            <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                            <span>Para todos aqueles que querem realizar sua PRIMEIRA VENDA EM 24 HORAS.</span>
+                        </li>
+                        <li>
+                            <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                            <span>Para quem precisa escalar suas vendas para 10K OU MAIS mensalmente.</span>
+                        </li>
+                        <li>
+                            <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                            <span>Para todos aqueles que já se sentiram frustrados por não conseguirem realizar vendas no digital com outro método.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Variáveis globais
+        let quizzes = [];
+        let currentQuiz = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let userName = "";
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadQuizzes();
+            
+            // Event listeners
+            document.getElementById('next-btn').addEventListener('click', nextQuestion);
+            document.getElementById('continue-btn').addEventListener('click', function() {
+                userName = document.getElementById('user-name').value.trim();
+                if (userName) {
+                    showResults();
+                } else {
+                    alert('Por favor, digite seu nome para continuar.');
+                }
+            });
+            
+            document.getElementById('ready-btn').addEventListener('click', function() {
+                window.location.href = "https://pay.hotmart.com/XXXXXXX"; // URL de compra
+            });
+            
+            document.getElementById('not-ready-btn').addEventListener('click', function() {
+                window.location.href = "https://pay.hotmart.com/XXXXXXX"; // URL de compra alternativa
+            });
+            
+            document.getElementById('cta-button').addEventListener('click', function() {
+                window.location.href = "https://pay.hotmart.com/XXXXXXX"; // URL de compra principal
+            });
+        });
+        
+        // Carregar quizzes disponíveis
+        async function loadQuizzes() {
+            try {
+                const response = await fetch('quizzes.json');
+                quizzes = await response.json();
+                startQuiz('quiz1'); // Inicia automaticamente o primeiro quiz
+            } catch (error) {
+                console.error('Erro ao carregar quizzes:', error);
+                document.getElementById('quiz-list').innerHTML = `
+                    <div class="col-12 text-center">
+                        <p class="text-danger">Não foi possível carregar os quizzes. Tente novamente mais tarde.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Iniciar um quiz específico
+        function startQuiz(quizId) {
+            currentQuiz = quizzes.find(quiz => quiz.id === quizId);
+            
+            if (!currentQuiz) {
+                alert('Quiz não encontrado.');
+                return;
+            }
+            
+            // Resetar o estado
+            currentQuestionIndex = 0;
+            userAnswers = Array(currentQuiz.questions.length).fill(null);
+            
+            // Mostrar a interface do quiz e esconder a seleção
+            document.getElementById('quiz-selection').style.display = 'none';
+            document.getElementById('quiz-interface').style.display = 'block';
+            document.getElementById('info-collection').style.display = 'none';
+            document.getElementById('result-container').style.display = 'none';
+            
+            // Carregar a primeira pergunta
+            displayQuestion();
+        }
+        
+        // Exibir a pergunta atual
+        function displayQuestion() {
+            const question = currentQuiz.questions[currentQuestionIndex];
+            const questionTextElement = document.getElementById('question-text');
+            const mediaContainerElement = document.getElementById('media-container');
+            const optionsContainerElement = document.getElementById('options-container');
+            
+            // Atualizar progresso
+            const progressPercentage = ((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+            
+            // Atualizar texto da pergunta
+            questionTextElement.textContent = question.text;
+            
+            // Atualizar mídia (se houver)
+            if (question.media) {
+                if (question.mediaType === 'image') {
+                    mediaContainerElement.innerHTML = `<img src="${question.media}" alt="Imagem da pergunta">`;
+                } else if (question.mediaType === 'video') {
+                    mediaContainerElement.innerHTML = `<iframe src="${question.media}" allowfullscreen></iframe>`;
+                }
+                mediaContainerElement.style.display = 'block';
+            } else {
+                mediaContainerElement.style.display = 'none';
+            }
+            
+            // Atualizar opções
+            let optionsHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const isSelected = userAnswers[currentQuestionIndex] === index;
+                const emojiElement = option.emoji ? `<div class="option-emoji">${option.emoji}</div>` : '';
+                
+                // Processar texto para destacar palavras específicas
+                let processedText = option.text;
+                if (option.highlight) {
+                    option.highlight.forEach(word => {
+                        processedText = processedText.replace(word, `<span class="option-highlight">${word}</span>`);
+                    });
+                }
+                
+                optionsHTML += `
+                    <button class="option-btn ${isSelected ? 'selected' : ''}" data-index="${index}">
+                        ${emojiElement}
+                        <div class="option-text">${processedText}</div>
+                    </button>
+                `;
+            });
+            
+            optionsContainerElement.innerHTML = optionsHTML;
+            
+            // Adicionar event listeners para as opções
+            document.querySelectorAll('.option-btn').forEach(button => {
+                button.addEventListener('click', handleOptionSelection);
+            });
+            
+            // Atualizar botão de próximo
+            const nextBtn = document.getElementById('next-btn');
+            if (currentQuestionIndex === currentQuiz.questions.length - 1) {
+                nextBtn.textContent = 'Ver Resultados';
+            } else {
+                nextBtn.textContent = 'Próximo';
+            }
+        }
+        
+        // Lidar com a seleção de opção
+        function handleOptionSelection(event) {
+            const selectedIndex = parseInt(event.currentTarget.dataset.index);
+            userAnswers[currentQuestionIndex] = selectedIndex;
+            
+            // Atualizar visualmente as opções
+            document.querySelectorAll('.option-btn').forEach(button => {
+                button.classList.remove('selected');
+            });
+            
+            event.currentTarget.classList.add('selected');
+        }
+        
+        // Ir para a próxima pergunta
+        function nextQuestion() {
+            // Verificar se o usuário selecionou uma opção
+            if (userAnswers[currentQuestionIndex] === null) {
+                alert('Por favor, selecione uma opção para continuar.');
+                return;
+            }
+            
+            if (currentQuestionIndex < currentQuiz.questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else {
+                // Mostrar tela de coleta de informações
+                document.getElementById('quiz-interface').style.display = 'none';
+                document.getElementById('info-collection').style.display = 'block';
+            }
+        }
+        
+        // Mostrar o resultado
+        function showResults() {
+            // Personalizar a saudação com o nome do usuário
+            document.getElementById('name-placeholder').textContent = userName;
+            
+            // Mostrar container de resultado
+            document.getElementById('quiz-interface').style.display = 'none';
+            document.getElementById('info-collection').style.display = 'none';
+            document.getElementById('result-container').style.display = 'block';
+            
+            // Scroll para o topo
+            window.scrollTo(0, 0);
+        }
+    </script>NUS 01</span> - Venda com TIKTOK sem gastar nem R$1 (NADA).</span>
+                </li>
+                <li>
+                    <span class="check-icon"><i class="fas fa-check-circle"></i></span>
+                    <span><span class="highlight">BÔ
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
