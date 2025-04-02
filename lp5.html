@@ -133,7 +133,8 @@
         }
         
         .logo {
-            max-width: 180px;
+            max-width: 100px; /* Reduz o tamanho da logo no header */
+            height: auto; /* Mantém a proporção da imagem */
         }
         
         .nav-menu {
@@ -217,12 +218,11 @@
         }
 
         .hero-img {
-            position: absolute;
-            top: 100px;
-            right: -80px;
-            max-width: 600px;
-            z-index: 2;
-            animation: float 6s ease-in-out infinite;
+            max-width: 300px; /* Ajuste o tamanho da imagem ao lado do texto */
+            height: auto; /* Mantém a proporção da imagem */
+            position: relative; /* Remove posicionamento absoluto */
+            margin: 20px auto 0; /* Centraliza a imagem abaixo do texto */
+            display: block; /* Garante que a imagem seja exibida como bloco */
         }
         
         @keyframes float {
