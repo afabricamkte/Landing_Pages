@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Fábrica Marketing e Eventos</title>
+    <link rel="icon" href="images/logo_nova_com_fundo.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #010d36;
+            --secondary-color: #dfd7c0;
+            --accent-color: #27ae60;
+            --text-color: #333333;
+            --light-bg: #f9f9f9;
+            --white: #ffffff;
+            --light-gray: #f0f0f0;
+            --border-color: #e0e0e0;
+            --highlight: #ffc107;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        h1, h2, h3, h4, h5 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 20px;
+        }
+        
+        img {
+            max-width: 100%;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            background-color: #239d55;
+        }
+        
+        .btn-lg {
+            padding: 16px 36px;
+            font-size: 1.2rem;
+        }
+        
+        .btn-secondary {
+            background-color: var(--primary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #132056;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid white;
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            max-width: 300px; /* Reduz o tamanho da logo no header */
+            height: auto; /* Mantém a proporção da imagem */
+        }
+        
+        .nav-menu {
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-list {
+            display: flex;
+            list-style: none;
+            margin-right: 20px;
+        }
+        
+        .nav-item {
+            margin: 0 15px;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--accent-color);
+        }
+        
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #192c63 100%);
+            color: white;
+            padding: 180px 0 120px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero .container {
+            display: flex; /* Ativa o layout flexbox */
+            align-items: center; /* Alinha verticalmente o conteúdo */
+            justify-content: space-between; /* Espaça o texto e a imagem */
+            flex-wrap: wrap; /* Permite que o conteúdo se ajuste em telas menores */
+        }
+        
+        .hero-content {
+            max-width: 40%; /* Limita o texto a 50% da largura */
+        }
+
+
+        .hero-img {
+            max-width: 40%; /* Ajusta a largura da imagem */
+            height: auto; /* Mantém a proporção da imagem */
+            margin-left: 20px; /* Adiciona espaçamento entre o texto e a imagem */
+        }
+
+        .hero-shape {
+            position: absolute;
+            bottom: -50px;
+            right: -150px;
+            width: 600px;
+            height: 600px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 5;
+            max-width: 650px;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+        
+        .hero-heading {
+            margin-bottom: 30px;
+        }
+        
+        .hero-description {
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        .hero-img {
+            max-width: 650px; /* Ajuste o tamanho conforme necessário */
+            height: auto; /* Mantém a proporção da imagem */
+        }
+
+        .hero-img {
+            max-width: 500px; /* Ajuste o tamanho da imagem ao lado do texto */
+            height: auto; /* Mantém a proporção da imagem */
+            position: relative; /* Remove posicionamento absoluto */
+            margin: 40px auto 0; /* Centraliza a imagem abaixo do texto */
+            display: block; /* Garante que a imagem seja exibida como bloco */
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background-color: var(--light-bg);
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-subtitle {
+            color: var(--accent-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature-description {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        /* Types of Events */
+        .event-types {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .event-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .event-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .event-img {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .event-content {
+            padding: 30px;
+        }
+        
+        .event-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .event-description {
+            margin-bottom: 20px;
+            color: #666;
+        }
+        
+        /* Process Section */
+        .process {
+            padding: 100px 0;
+            background-color: var(--light-bg);
+        }
+        
+        .steps-container {
+            display: flex; /* Ativa o layout flexbox */
+            justify-content: space-between; /* Espaça os itens horizontalmente */
+            flex-wrap: wrap; /* Permite que os itens quebrem linha no mobile */
+            margin-top: 50px;
+            position: relative;
+        }
+
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            top: 13%;
+            left: 10%;
+            right: 10%;
+            height: 5px;
+            background-color: var(--light-gray);
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .step {
+            flex: 0 0 calc(20% - 20px); /* Cada item ocupa 20% da largura no desktop */
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            margin-bottom: 40px;
+        }
+
+        .step-number {
+            width: 70px;
+            height: 70px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .step-description {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        /* Showcase Section */
+        .showcase {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #192c63 100%);
+            color: white;
+        }
+        
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-top: 50px;
+        }
+        
+        .showcase-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .showcase-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .showcase-img {
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .showcase-content {
+            padding: 30px;
+        }
+        
+        .showcase-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .showcase-date {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .showcase-description {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .testimonial-card {
+            background-color: var(--light-bg);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .testimonial-content {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: #444;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .testimonial-content:before {
+            content: "";
+            font-size: 4rem;
+            color: var(--accent-color);
+            opacity: 0.3;
+            position: absolute;
+            top: -30px;
+            left: -10px;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+        
+        .author-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .author-title {
+            font-size: 0.85rem;
+            color: #777;
+        }
+        
+        /* Pricing */
+        .pricing {
+            padding: 100px 0;
+            background-color: var(--light-bg);
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .pricing-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .pricing-card.featured {
+            border: 2px solid var(--accent-color);
+            position: relative;
+        }
+        
+        .pricing-card.featured::before {
+            content: 'Mais Popular';
+            position: absolute;
+            top: 15px;
+            right: -30px;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 5px 30px;
+            transform: rotate(45deg);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .pricing-header {
+            padding: 30px;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .pricing-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .pricing-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .price .currency {
+            font-size: 1.5rem;
+            vertical-align: super;
+        }
+        
+        .price-duration {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .pricing-features {
+            padding: 30px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .feature-list li {
+            padding: 10px 0;
+            color: #555;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .feature-list li::before {
+            content: "✓";
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+        }
+        
+        /* FAQ */
+        .faq {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .faq-item {
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            background-color: var(--light-bg);
+        }
+        
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: var(--light-bg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-question h3 {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .faq-toggle {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-answer p {
+            padding: 0 0 20px;
+        }
+        
+        .faq-item.open .faq-question {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .faq-item.open .faq-toggle {
+            transform: rotate(180deg);
+        }
+        
+        .faq-item.open .faq-answer {
+            max-height: 1000px;
+        }
+        
+        /* CTA */
+        .cta {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #192c63 100%);
+            color: white;
+        }
+        
+        .cta-heading {
+            font-size: 2.8rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .cta-description {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 80px 0 30px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .footer-branding {
+            margin-bottom: 20px;
+        }
+        
+        .footer-logo {
+            max-width: 180px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-description {
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        
+        .social-links {
+            display: flex;
+        }
+        
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+        
+        .footer-heading {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-family: 'Poppins', sans-serif;
+            color: white;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            h1 {
+                font-size: 3rem;
+            }
+            
+            h2 {
+                font-size: 2.2rem;
+            }
+            
+            .hero {
+                padding: 150px 0 100px;
+            }
+            
+            .hero-content {
+                max-width: 550px;
+            }
+            
+            /*.hero-img {
+                max-width: 450px;
+                right: -150px;
+            }*/
+            
+            .features-grid,
+            .event-grid,
+            .testimonial-grid,
+            .pricing-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .showcase-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .steps-container::before {
+                display: none;
+            }
+            
+            .step {
+                flex: 0 0 calc(33.33% - 20px);
+                margin-bottom: 40px;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .header-container {
+                padding: 15px;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .nav-menu.active {
+                display: block;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: white;
+                padding: 20px;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+            
+            .nav-menu.active .nav-list {
+                flex-direction: column;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .nav-menu.active .nav-item {
+                margin: 10px 0;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .hero-content {
+                max-width: 100%;
+                text-align: center;
+            }
+            
+            .hero-img {
+                display: none;
+            }
+            
+            .features-grid,
+            .event-grid,
+            .testimonial-grid,
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .step {
+                flex: 0 0 100%;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .cta-heading {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-container">
+                <img src="images/logo_nova_com_fundo_cumprida.png" alt="A Fábrica Mkt & E" class="logo">
+                <div class="nav-menu">
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="#event-types" class="nav-link">Tipos de Eventos</a></li>
+                        <li class="nav-item"><a href="#process" class="nav-link">Como Trabalhamos</a></li>
+                        <!--<li class="nav-item"><a href="#pricing" class="nav-link">Pacotes</a></li>-->
+                        <li class="nav-item"><a href="#faq" class="nav-link">Perguntas Frequentes</a></li>
+                    </ul>
+                    <a href="#contato" class="btn">Fale Conosco</a>
+                </div>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-shape"></div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-subtitle">Especialistas em Eventos para o Mercado Digital</div>
+                <h1 class="hero-heading">Transforme Sua Estratégia Através de Eventos Presenciais de Alto Impacto</h1>
+                <p class="hero-description">Nosso Método: Eventos de Alto Impacto, coloca a sua marca em outro nível, conectam pessoas e geram resultados concretos para o seu negócio digital.</p>
+                <a href="#contato" class="btn btn-lg">Quero um Evento de Alto Impacto</a>
+            </div>
+            <img src="images/Equipe.png" alt="Eventos de Alto Impacto" class="hero-img">
+        </div>
+    </section>
+
+    <!-- Features Section 
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Por Que Nos Escolher</div>
+                <h2>Excelência em Cada Detalhe</h2>
+                <p>Combinamos criatividade, estratégia e execução impecável para criar experiências inesquecíveis</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon"><i class="fas fa-chart-line"></i></span>
+                    <h3 class="feature-title">Foco em Resultados</h3>
+                    <p class="feature-description">Eventos estrategicamente planejados para atingir seus objetivos de negócio e gerar ROI mensurável.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon"><i class="fas fa-cogs"></i></span>
+                    <h3 class="feature-title">Execução Impecável</h3>
+                    <p class="feature-description">Gerenciamento completo de todos os aspectos do seu evento, garantindo que cada detalhe seja perfeito.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon"><i class="fas fa-users"></i></span>
+                    <h3 class="feature-title">Experiência Personalizada</h3>
+                    <p class="feature-description">Criamos jornadas únicas para seus convidados, alinhadas com os valores e objetivos da sua marca.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon"><i class="fas fa-bolt"></i></span>
+                    <h3 class="feature-title">Inovação Constante</h3>
+                    <p class="feature-description">Incorporamos as últimas tendências e tecnologias para criar eventos que surpreendem e encantam.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon"><i class="fas fa-comments"></i></span>
+                    <h3 class="feature-title">Comunicação Transparente</h3>
+                    <p class="feature-description">Mantemos você informado em cada etapa do processo, com relatórios claros e atualizações constantes.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon"><i class="fas fa-handshake"></i></span>
+                    <h3 class="feature-title">Parceiros de Confiança</h3>
+                    <p class="feature-description">Trabalhamos com uma rede de fornecedores premium, cuidadosamente selecionados para garantir qualidade.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    -->
+    <!-- Types of Events -->
+    <section class="event-types" id="event-types">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Especialidades</div>
+                <h2>Tipos de Eventos que Produzimos</h2>
+                <p>Soluções personalizadas para cada necessidade do mercado digital</p>
+            </div>
+            <div class="event-grid">
+                <div class="event-card">
+                    <div class="event-img" style="background-image: url('images/lancamento_de_produtos.webp');"></div>
+                    <div class="event-content">
+                        <h3 class="event-title">Lançamentos de Produtos</h3>
+                        <p class="event-description">Eventos de alto impacto para apresentar novos produtos ou serviços ao mercado, gerando vendas, engajamento e reconhecimento.</p>
+                        <a href="#contato" class="btn">Saiba Mais</a>
+                    </div>
+                </div>
+                <div class="event-card">
+                    <div class="event-img" style="background-image: url('images/summits-corporativos.webp');"></div>
+                    <div class="event-content">
+                        <h3 class="event-title">Conferências e Summits</h3>
+                        <p class="event-description">Eventos de grande porte com múltiplos palestrantes, painéis e atividades paralelas para compartilhar conhecimento.</p>
+                        <a href="#contato" class="btn">Saiba Mais</a>
+                    </div>
+                </div>
+                <div class="event-card">
+                    <div class="event-img" style="background-image: url('images/workshop_treinamentos.webp');"></div>
+                    <div class="event-content">
+                        <h3 class="event-title">Workshops e Treinamentos</h3>
+                        <p class="event-description">Experiências de aprendizado imersivas e práticas, focadas em resultados e desenvolvimento de habilidades.</p>
+                        <a href="#contato" class="btn">Saiba Mais</a>
+                    </div>
+                </div>
+                <div class="event-card">
+                    <div class="event-img" style="background-image: url('images/networking.webp');"></div>
+                    <div class="event-content">
+                        <h3 class="event-title">Eventos de Networking</h3>
+                        <p class="event-description">Encontros estratégicos para conectar profissionais, parceiros e clientes, fortalecendo relacionamentos, marcas e negócios.</p>
+                        <a href="#contato" class="btn">Saiba Mais</a>
+                    </div>
+                </div>
+                <div class="event-card">
+                    <div class="event-img" style="background-image: url('images/masterminds.webp');"></div>
+                    <div class="event-content">
+                        <h3 class="event-title">Mastermind's</h3>
+                        <p class="event-description">Experiências imersivas para empresários de alta performance, combinando estratégia, aprendizado, fortalecimento de cultura e experiências de alto nível.</p>
+                        <a href="#contato" class="btn">Saiba Mais</a>
+                    </div>
+                </div>
+                <div class="event-card">
+                    <div class="event-img" style="background-image: url('images/eventos_hibridos.webp');"></div>
+                    <div class="event-content">
+                        <h3 class="event-title">Eventos Híbridos</h3>
+                        <p class="event-description">Combinação perfeita entre experiências presenciais e digitais, ampliando o alcance e o impacto.</p>
+                        <a href="#contato" class="btn">Saiba Mais</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section 
+    <section class="process" id="process">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Método: Produção de Alto Impacto</div>
+                <h2>Como Trabalhamos</h2>
+                <p>Um processo estruturado para garantir o sucesso do seu evento</p>
+            </div>
+            <div class="steps-container">
+
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Briefing Estratégico</h3>
+                    <p class="step-description">Entendemos profundamente seus objetivos, público e expectativas para o evento.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Planejamento</h3>
+                    <p class="step-description">Desenvolvemos o conceito, cronograma, orçamento e plano de execução detalhado.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Produção</h3>
+                    <p class="step-description">Coordenamos fornecedores, logística e todos os elementos necessários para o evento.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">Execução</h3>
+                    <p class="step-description">Gerenciamos cada detalhe no dia do evento para garantir uma experiência perfeita.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <h3 class="step-title">Avaliação</h3>
+                    <p class="step-description">Analisamos resultados, coletamos feedbacks e entregamos relatórios detalhados.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    -->
+    <!-- Showcase Section 
+    <section class="showcase" id="cases">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Portfólio</div>
+                <h2>Eventos de Sucesso</h2>
+                <p>Conheça alguns dos eventos de altíssimo impacto que produzimos</p>
+            </div>
+            <div class="showcase-grid">
+                <div class="showcase-item">
+                    <div class="showcase-img" style="background-image: url('images/life_happens.webp');"></div>
+                    <div class="showcase-content">
+                        <span class="showcase-date">Março 2025</span>
+                        <h3 class="showcase-title">Life Happens - First Edition</h3>
+                        <p class="showcase-description">Workshop realizado por Túlio Coutto, o 4º fotógrafo brasileiro 
+                            a ser destaque na revista VOGUE, este workshop foi inteiramente prático e repleto de momentos 
+                            especiais. Além das atividades principais, os participantes com ingresso Black tiveram acesso 
+                            exclusivo ao pré-evento <i>Life Happens - In Private</i>, uma experiência única e imersiva. Para fechar 
+                            com chave de ouro, promovemos um happy hour descontraído, perfeito para networking e troca de 
+                            ideias entre os participantes.</p>
+                    </div>
+                </div>
+                <div class="showcase-item">
+                    <div class="showcase-img" style="background-image: url('images/mais_controle.webp');"></div>
+                    <div class="showcase-content">
+                        <span class="showcase-date">Fevereiro 2025</span>
+                        <h3 class="showcase-title">A Nova Gestão de Obras - SP Edition</h3>
+                        <p class="showcase-description">Evento exclusivo para 200 participantes do nicho de engenharia
+                             apresentando uma nova forma de se gerir obras de maneira eficiente e bem organizada através
+                             de um SaaS para Construção Civil, o Mais Controle. Este evento contou com palestrantes de altíssimo nível, como
+                             Israel Grado.</p>
+                    </div>
+                </div>
+                <div class="showcase-item">
+                    <div class="showcase-img" style="background-image: url('images/Ellit_by_Grado_2024.webp');"></div>
+                    <div class="showcase-content">
+                        <span class="showcase-date">Novembro 2024</span>
+                        <h3 class="showcase-title">Ellit. by Grado - 2ª Edição</h3>
+                        <p class="showcase-description">No evento Ellit by Grado, empresários da construção
+                             civil descobriram como o Método Ellit pode transformar a gestão de suas obras. 
+                             Com estratégias práticas e resultados comprovados, o método ensina como reduzir 
+                             desperdícios, otimizar processos e aumentar a lucratividade. Foi uma oportunidade 
+                             única para aprender diretamente com Israel Grado e dar o próximo passo rumo à 
+                             excelência na construção civil.</p>
+                    </div>
+                </div>
+                <div class="showcase-item">
+                    <div class="showcase-img" style="background-image: url('images/gericlass_xperience.webp');"></div>
+                    <div class="showcase-content">
+                        <span class="showcase-date">Novembro 2024</span>
+                        <h3 class="showcase-title">GeriClass Xperience</h3>
+                        <p class="showcase-description">Os participantes do GeriClass Xperience vivenciaram uma 
+                            experiência verdadeiramente transformadora, com acesso a um conteúdo de altíssimo 
+                            nível. Durante o evento, foram apresentados insights práticos e estratégias 
+                            valiosas para montar e escalar um consultório de sucesso focado no manejo de 
+                            pacientes idosos. Além disso, momentos exclusivos de networking permitiram a troca
+                             de experiências e a construção de conexões profissionais.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    -->
+    <!-- Testimonials -->
+    <section class="testimonials" id="depoimentos">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Depoimentos</div>
+                <h2>O Que Nossos Clientes Dizem</h2>
+                <p>Histórias de sucesso de empresas que transformaram suas estratégias com nossos eventos</p>
+            </div>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                       "O trabalho de vocês é incrível. Nosso evento ainda nem aconteceu e já posso dizer que estou muito feliz com o trabalho que estão fazendo.
+                        O bom é que tenho a experiência do cliente e do parceiro, a entrega de vocês é realmente diferente!
+                        Inclusive, recomendo demais!
+                        Nosso evento de 200 pessoas e foi incrível, a Suli e a galera dela são muito profissionais!"
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="images/pedro_franco.png" alt="Pedro Franco">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">Pedro Franco</div>
+                            <div class="author-title">CEO, Franco Marketing Jurídico</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Eu não podia deixar de agradecer mais uma vez o time dA Fábrica por realizar toda a experiência do nosso evento. 
+                        Vocês não tem noção do trampo que é fazer um evento como esse. Pensar em todos os detalhes de água, entrada do microfone, 
+                        som, luz, palco, lá fora... E tudo aconteceu com perfeição porque a gente fez esse evento com A Fábrica. Ano que vem já temos a 
+                        data do evento, e novamente A Fábrica tá criando toda a experiência do nosso aluno aqui no nosso evento!"
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="images/israel_grado.png" alt="Israel Grado">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">Israel Grado</div>
+                            <div class="author-title">CEO, Agevale Incorporadora</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "A gente já trabalhou com muitas empresas, inclusive de eventos presenciais, mas o que vocês 
+                        fazem e entregam, é diferenciado. Sempre indico e vou indicar, são muito bons no 
+                        que fazem, sem dúvidas 👏🏻."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="images/adriano.png" alt="Adriano Costa">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">Adriano Costa</div>
+                            <div class="author-title">Estrategísta de Marketing Digital</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Vocês são incríveis. Obrigado por dedicarem parte da vida de vocês para realizar os nossos sonhos! 
+                        Que Deus abençoe a volta de vocês e vamos marcar o próximo evento!"
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="images/danilo.png" alt="Danilo Neves">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">Danilo Neves</div>
+                            <div class="author-title">Especialista em Dir. Bancário</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Suli, passando para agradecer tamanha entrega e cuidado com cada detalhe.
+                        Amei tê-los aqui comigo. Vocês moram no meu coração e nem pagam aluguel. 
+                        Tudo saiu 100% do meu jeito. Que sentimento incrível. Minha ficha ainda não caiu, 
+                        está caindo aos poucos."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="images/gabriela_pereira.png" alt="Danilo Neves">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">Gabriela Pereira</div>
+                            <div class="author-title">CEO, Gabriela Pereira Advocacia</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Queria que vocês soubessem o quanto somos gratos por termos tirado esse projeto do papel com vocês, 
+                        nossa primeira experiência com evento presencial foi péssima, muito desorganizada, e o evento foi tenso do início ao fim. 
+                        Mas aí vocês vieram e mostraram pra gente que um evento pode ser leve, extremamente organizado e sem preocupações 
+                        desnecessárias. Sempre falo pra todo mundo que o time da Fábrica foi impecável e muito competente, cada sugestão, cada detalhe, 
+                        cada vírgulazinha do que seria falado no palco vocês estavam atentos para que o evento não saísse do eixo.❤️"
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="images/carol_farias.png" alt="Danilo Neves">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">Carol Farias</div>
+                            <div class="author-title">Estrategísta de Marketing Digital</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <!--
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Investimento</div>
+                <h2>Nossos Pacotes</h2>
+                <p>Soluções flexíveis para atender às necessidades de eventos de todos os portes</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-title">Essencial</h3>
+                        <div class="pricing-subtitle">Para eventos de pequeno porte</div>
+                        <div class="price"><span class="currency">R$</span>15<span class="cents">.000</span></div>
+                        <div class="price-duration">a partir de</div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul class="feature-list">
+                            <li>Até 50 participantes</li>
+                            <li>Planejamento estratégico</li>
+                            <li>Coordenação no dia do evento</li>
+                            <li>Gestão de 5 fornecedores</li>
+                            <li>Relatório pós-evento</li>
+                            <li>Suporte por e-mail e telefone</li>
+                        </ul>
+                        <a href="#contato" class="btn">Solicitar Proposta</a>
+                    </div>
+                </div>
+                <div class="pricing-card featured">
+                    <div class="pricing-header">
+                        <h3 class="pricing-title">Premium</h3>
+                        <div class="pricing-subtitle">Para eventos de médio porte</div>
+                        <div class="price"><span class="currency">R$</span>35<span class="cents">.000</span></div>
+                        <div class="price-duration">a partir de</div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul class="feature-list">
+                            <li>Até 150 participantes</li>
+                            <li>Planejamento estratégico avançado</li>
+                            <li>Equipe completa no dia</li>
+                            <li>Gestão de 10 fornecedores</li>
+                            <li>Conteúdo fotográfico e videográfico</li>
+                            <li>App personalizado para o evento</li>
+                            <li>Relatório detalhado de ROI</li>
+                            <li>Suporte prioritário</li>
+                        </ul>
+                        <a href="#contato" class="btn">Solicitar Proposta</a>
+                    </div>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-title">Enterprise</h3>
+                        <div class="pricing-subtitle">Para eventos de grande porte</div>
+                        <div class="price"><span class="currency">R$</span>80<span class="cents">.000</span></div>
+                        <div class="price-duration">a partir de</div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul class="feature-list">
+                            <li>Mais de 150 participantes</li>
+                            <li>Planejamento estratégico completo</li>
+                            <li>Equipe dedicada antes e durante</li>
+                            <li>Gestão ilimitada de fornecedores</li>
+                            <li>Produção de conteúdo premium</li>
+                            <li>Tecnologia avançada para engajamento</li>
+                            <li>Análise de dados e impacto de negócio</li>
+                            <li>Gerente de conta exclusivo</li>
+                        </ul>
+                        <a href="#contato" class="btn">Solicitar Proposta</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    -->
+
+    <!-- FAQ 
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Dúvidas Frequentes</div>
+                <h2>Perguntas e Respostas</h2>
+                <p>Tudo o que você precisa saber sobre nossos serviços de produção de eventos</p>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Quanto tempo antes devo contratar para produzir meu evento?</h3>
+                        <span class="faq-toggle"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Recomendamos que eventos de médio e grande porte sejam planejados com pelo menos 3 meses de antecedência para garantir a disponibilidade de locais e fornecedores de qualidade. Para eventos menores, um prazo de 1 a 2 meses pode ser suficiente. Contudo, já realizamos eventos com prazos mais curtos em situações especiais.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Vocês trabalham com eventos em outras cidades ou estados?</h3>
+                        <span class="faq-toggle"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Sim, temos experiência na produção de eventos em todo o Brasil e também internacionais. Nossa equipe está preparada para gerenciar a logística necessária, independentemente da localização. Contamos com uma rede de parceiros e fornecedores de confiança em diversas regiões.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>É possível mensurar o retorno sobre investimento do evento?</h3>
+                        <span class="faq-toggle"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutamente! Estabelecemos métricas claras de sucesso logo no início do planejamento e implementamos ferramentas de acompanhamento durante todo o evento. Após a conclusão, entregamos um relatório detalhado com análise quantitativa e qualitativa dos resultados, demonstrando o ROI e o impacto para o seu negócio.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Vocês trabalham com eventos híbridos (presencial + online)?</h3>
+                        <span class="faq-toggle"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Sim, somos especialistas em eventos híbridos que combinam experiências presenciais e digitais. Utilizamos plataformas de streaming de alta qualidade, ferramentas de interação em tempo real e estratégias para engajar tanto o público presencial quanto o online, criando uma experiência integrada e impactante.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Como vocês lidam com imprevistos durante o evento?</h3>
+                        <span class="faq-toggle"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Nossa equipe é treinada para gerenciar crises e imprevistos com agilidade e discrição. Trabalhamos com planos de contingência para todas as áreas críticas e mantemos uma equipe de prontidão durante todo o evento. Além disso, sempre temos soluções alternativas preparadas para os principais pontos de risco identificados no planejamento.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    -->
+    <!-- CTA -->
+    <section class="cta" id="contato">
+        <div class="container">
+            <h2 class="cta-heading">Pronto para Transformar sua Estratégia com Eventos de Alto Impacto?</h2>
+            <p class="cta-description">Entre em contato hoje mesmo e fale com um de nossos estrategistas para receber uma proposta personalizada para o seu próximo evento de sucesso.</p>
+            <a href="https://wa.me/556191258571?text=Quero fazer meu evento com A Fábrica Marketing e Eventos." class="btn btn-lg" target="_blank">Quero falar com o estrategista</a>
+            <p style="margin-top: 20px; opacity: 0.8;">Ou envie um e-mail para <a href="mailto:contato@afabricamkte.com.br" style="color: white; text-decoration: underline;">contato@afabricamkte.com.br</a></p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <div class="footer-branding">
+                        <p class="footer-description">Especialistas em produção de eventos para o mercado digital. Transformando ideias em experiências memoráveis desde 2018.</p>
+                    </div>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://instagram.com/afabrica__" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-heading">Serviços</h4>
+                    <ul class="footer-links">
+                        <li><a href="#event-types">Tipos de Eventos</a></li>
+                        <!--<li><a href="#process">Processo Criativo</a></li>-->
+                        <li><a href="#depoimentos">Depoimentosa></li>
+                        <!--<li><a href="#faq">FAQ</a></li>-->
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-heading">Empresa</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://afabricamkte.com.br">Sobre Nós</a></li>
+                        <!--<li><a href="#">Equipe</a></li>-->
+                        <!--<li><a href="#cases">Cases</a></li>-->
+                        <!--<li><a href="#">Blog</a></li>-->
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-heading">Contato</h4>
+                    <ul class="footer-links">
+                        <li><a href="mailto:eventos@afabricamkte.com.br">contato@afabricamkte.com.br</a></li>
+                        <li><a href="https://wa.me/556191258571">(61) 9 9125-8571</a></li>
+                        <li><a href="#">Brasília, DF</a></li>
+                        <li><a href="#">CNPJ: 48.801.191/0001-17</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 A Fábrica Marketing e Eventos. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle mobile menu
+        document.querySelector('.mobile-menu').addEventListener('click', function() {
+            document.querySelector('.nav-menu').classList.toggle('active');
+        });
+        
+        // FAQ toggle
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const faqItem = question.parentElement;
+                faqItem.classList.toggle('open');
+            });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const target = document.querySelector(targetId);
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>
