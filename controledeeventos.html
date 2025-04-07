@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Eventos</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --danger-color: #e74a3b;
+            --warning-color: #f6c23e;
+            --dark-color: #5a5c69;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f8f9fc;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-color) 10%, #224abe 100%);
+            color: white;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 999;
+            transition: all 0.3s;
+            width: 250px;
+        }
+        
+        .sidebar-brand {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 800;
+            padding: 2rem 1rem;
+        }
+        
+        .sidebar-item {
+            padding: 0.8rem 1.5rem;
+            margin: 0.2rem 0;
+            border-radius: 0.35rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-item i {
+            margin-right: 0.8rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .content {
+            margin-left: 250px;
+            padding: 2rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            background-color: #f8f9fc;
+            border-bottom: 1px solid #e3e6f0;
+            padding: 1rem 1.25rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+        
+        .form-control, .form-select {
+            border-radius: 0.35rem;
+            padding: 0.8rem 1rem;
+            border: 1px solid #d1d3e2;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #4262c5;
+            border-color: #4262c5;
+        }
+        
+        .btn-success {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #17a673;
+            border-color: #17a673;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+        
+        .btn-danger:hover {
+            background-color: #d93b2b;
+            border-color: #d93b2b;
+        }
+        
+        .info-card {
+            border-left: 0.25rem solid var(--primary-color);
+        }
+        
+        .info-card.success {
+            border-left-color: var(--secondary-color);
+        }
+        
+        .info-card.warning {
+            border-left-color: var(--warning-color);
+        }
+        
+        .info-card.danger {
+            border-left-color: var(--danger-color);
+        }
+        
+        .result-card {
+            display: none;
+        }
+        
+        .dashboard-item {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+        
+        .dashboard-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #666;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .event-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .event-table th, .event-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .event-table th {
+            background-color: #f8f9fc;
+            color: var(--dark-color);
+            font-weight: 700;
+        }
+        
+        .event-table tr:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .section-divider {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e3e6f0;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: -250px;
+            }
+            
+            .sidebar.active {
+                margin-left: 0;
+            }
+            
+            .content {
+                margin-left: 0;
+            }
+            
+            .content.active {
+                margin-left: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-calendar-check"></i>
+            <span class="ms-2">Gestão de Eventos</span>
+        </div>
+        <div class="sidebar-item active" data-page="cadastro">
+            <i class="fas fa-plus-circle"></i>
+            <span>Novo Evento</span>
+        </div>
+        <div class="sidebar-item" data-page="dashboard">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+        </div>
+        <div class="sidebar-item" data-page="lista">
+            <i class="fas fa-list"></i>
+            <span>Lista de Eventos</span>
+        </div>
+        <div class="sidebar-item" data-page="configuracoes">
+            <i class="fas fa-cog"></i>
+            <span>Configurações</span>
+        </div>
+    </div>
+    
+    <div class="content">
+        <!-- Cadastro de Evento -->
+        <div class="page" id="cadastro">
+            <h2 class="mb-4">Cadastro de Novo Evento</h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card info-card">
+                        <div class="card-body">
+                            <div class="dashboard-item">Total do Evento</div>
+                            <div class="dashboard-value" id="dashboard-total">R$ 0,00</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card info-card success">
+                        <div class="card-body">
+                            <div class="dashboard-item">Lucro Estimado</div>
+                            <div class="dashboard-value" id="dashboard-lucro">R$ 0,00</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card info-card warning">
+                        <div class="card-body">
+                            <div class="dashboard-item">Total de Custos</div>
+                            <div class="dashboard-value" id="dashboard-custos">R$ 0,00</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card info-card danger">
+                        <div class="card-body">
+                            <div class="dashboard-item">Margem de Lucro</div>
+                            <div class="dashboard-value" id="dashboard-margem">0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    Informações do Cliente e Evento
+                </div>
+                <div class="card-body">
+                    <form id="eventoForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="nome_cliente" class="form-label">Nome do Cliente</label>
+                                <input type="text" class="form-control" id="nome_cliente" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email_cliente" class="form-label">Email do Cliente</label>
+                                <input type="email" class="form-control" id="email_cliente" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="telefone_cliente" class="form-label">Telefone</label>
+                                <input type="tel" class="form-control" id="telefone_cliente" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="data_evento" class="form-label">Data do Evento</label>
+                                <input type="date" class="form-control" id="data_evento" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="horario_evento" class="form-label">Horário</label>
+                                <input type="time" class="form-control" id="horario_evento" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="tipo_evento" class="form-label">Tipo de Evento</label>
+                                <select class="form-select" id="tipo_evento" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="Casamento">Casamento</option>
+                                    <option value="Aniversário">Aniversário</option>
+                                    <option value="Corporativo">Corporativo</option>
+                                    <option value="Formatura">Formatura</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="qtd_convidados" class="form-label">Quantidade de Convidados</label>
+                                <input type="number" class="form-control" id="qtd_convidados" min="1" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="local_evento" class="form-label">Local do Evento</label>
+                                <input type="text" class="form-control" id="local_evento" required>
+                            </div>
+                        </div>
+                        
+                        <h5 class="section-divider">Serviços Incluídos</h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input servico-check" type="checkbox" id="buffet" data-tipo="buffet">
+                                    <label class="form-check-label" for="buffet">
+                                        Buffet
+                                    </label>
+                                </div>
+                                <div class="servico-detalhes" id="buffet-detalhes" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="buffet_valor_pessoa" class="form-label">Valor por Pessoa</label>
+                                        <input type="number" class="form-control calc-item" id="buffet_valor_pessoa" min="0" step="0.01" data-calc="buffet">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="buffet_tipo" class="form-label">Tipo de Buffet</label>
+                                        <select class="form-select" id="buffet_tipo">
+                                            <option value="Completo">Completo</option>
+                                            <option value="Coquetel">Coquetel</option>
+                                            <option value="Coffee Break">Coffee Break</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input servico-check" type="checkbox" id="bebidas" data-tipo="bebidas">
+                                    <label class="form-check-label" for="bebidas">
+                                        Bebidas
+                                    </label>
+                                </div>
+                                <div class="servico-detalhes" id="bebidas-detalhes" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="bebidas_valor_pessoa" class="form-label">Valor por Pessoa</label>
+                                        <input type="number" class="form-control calc-item" id="bebidas_valor_pessoa" min="0" step="0.01" data-calc="bebidas">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="bebidas_alcoolicas" class="form-label">Inclui Alcoólicas?</label>
+                                        <select class="form-select" id="bebidas_alcoolicas">
+                                            <option value="Sim">Sim</option>
+                                            <option value="Não">Não</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input servico-check" type="checkbox" id="decoracao" data-tipo="decoracao">
+                                    <label class="form-check-label" for="decoracao">
+                                        Decoração
+                                    </label>
+                                </div>
+                                <div class="servico-detalhes" id="decoracao-detalhes" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="decoracao_valor" class="form-label">Valor Total</label>
+                                        <input type="number" class="form-control calc-item" id="decoracao_valor" min="0" step="0.01" data-calc="decoracao">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="decoracao_tema" class="form-label">Tema/Estilo</label>
+                                        <input type="text" class="form-control" id="decoracao_tema">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input servico-check" type="checkbox" id="som_iluminacao" data-tipo="som">
+                                    <label class="form-check-label" for="som_iluminacao">
+                                        Som e Iluminação
+                                    </label>
+                                </div>
+                                <div class="servico-detalhes" id="som-detalhes" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="som_valor" class="form-label">Valor Total</label>
+                                        <input type="number" class="form-control calc-item" id="som_valor" min="0" step="0.01" data-calc="som">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="som_tipo" class="form-label">Tipo</label>
+                                        <select class="form-select" id="som_tipo">
+                                            <option value="DJ">DJ</option>
+                                            <option value="Banda">Banda</option>
+                                            <option value="Apenas Equipamento">Apenas Equipamento</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input servico-check" type="checkbox" id="foto_video" data-tipo="foto">
+                                    <label class="form-check-label" for="foto_video">
+                                        Foto e Vídeo
+                                    </label>
+                                </div>
+                                <div class="servico-detalhes" id="foto-detalhes" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="foto_valor" class="form-label">Valor Total</label>
+                                        <input type="number" class="form-control calc-item" id="foto_valor" min="0" step="0.01" data-calc="foto">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="foto_tipo" class="form-label">Tipo</label>
+                                        <select class="form-select" id="foto_tipo">
+                                            <option value="Apenas Fotografia">Apenas Fotografia</option>
+                                            <option value="Fotografia e Vídeo">Fotografia e Vídeo</option>
+                                            <option value="Fotografia, Vídeo e Drone">Fotografia, Vídeo e Drone</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input servico-check" type="checkbox" id="cerimonia" data-tipo="cerimonia">
+                                    <label class="form-check-label" for="cerimonia">
+                                        Cerimônia
+                                    </label>
+                                </div>
+                                <div class="servico-detalhes" id="cerimonia-detalhes" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="cerimonia_valor" class="form-label">Valor Total</label>
+                                        <input type="number" class="form-control calc-item" id="cerimonia_valor" min="0" step="0.01" data-calc="cerimonia">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="cerimonia_tipo" class="form-label">Tipo</label>
+                                        <select class="form-select" id="cerimonia_tipo">
+                                            <option value="Religiosa">Religiosa</option>
+                                            <option value="Civil">Civil</option>
+                                            <option value="Simbólica">Simbólica</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h5 class="section-divider">Custos Adicionais</h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="custos-adicionais">
+                                        <thead>
+                                            <tr>
+                                                <th>Descrição</th>
+                                                <th>Valor</th>
+                                                <th style="width: 100px;">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <input type="text" class="form-control" name="descricao_custo[]" placeholder="Descrição">
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control calc-item custo-adicional" name="valor_custo[]" min="0" step="0.01" data-calc="adicional">
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-danger remover-custo">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <button type="button" class="btn btn-sm btn-primary" id="adicionar-custo">
+                                                        <i class="fas fa-plus"></i> Adicionar
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h5 class="section-divider">Informações Financeiras</h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="forma_pagamento" class="form-label">Forma de Pagamento</label>
+                                <select class="form-select" id="forma_pagamento" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="À Vista">À Vista</option>
+                                    <option value="Parcelado">Parcelado</option>
+                                    <option value="Misto">Misto</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="parcelas" class="form-label">Parcelas</label>
+                                <input type="number" class="form-control" id="parcelas" min="1" value="1">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="desconto" class="form-label">Desconto (%)</label>
+                                <input type="number" class="form-control calc-item" id="desconto" min="0" max="100" step="0.1" value="0" data-calc="desconto">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="observacoes" class="form-label">Observações</label>
+                                <textarea class="form-control" id="observacoes" rows="3"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="card info-card">
+                                    <div class="card-body">
+                                        <div class="dashboard-item">Total do Evento</div>
+                                        <div class="dashboard-value" id="total-evento">R$ 0,00</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card info-card warning">
+                                    <div class="card-body">
+                                        <div class="dashboard-item">Total de Custos</div>
+                                        <div class="dashboard-value" id="total-custos">R$ 0,00</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card info-card success">
+                                    <div class="card-body">
+                                        <div class="dashboard-item">Lucro Estimado</div>
+                                        <div class="dashboard-value" id="lucro-estimado">R$ 0,00</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-secondary me-md-2">Limpar</button>
+                            <button type="submit" class="btn btn-primary">Salvar Evento</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard -->
+        <div class="page" id="dashboard" style="display: none;">
+            <h2 class="mb-4">Dashboard</h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card info-card">
+                        <div class="card-body">
+                            <div class="dashboard-item">Total de Eventos</div>
+                            <div class="dashboard-value">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card info-card success">
+                        <div class="card-body">
+                            <div class="dashboard-item">Receita Total</div>
+                            <div class="dashboard-value">R$ 0,00</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card info-card warning">
+                        <div class="card-body">
+                            <div class="dashboard-item">Custo Total</div>
+                            <div class="dashboard-value">R$ 0,00</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card info-card danger">
+                        <div class="card-body">
+                            <div class="dashboard-item">Lucro Total</div>
+                            <div class="dashboard-value">R$ 0,00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            Eventos por Mês
+                        </div>
+                        <div class="card-body">
+                            <canvas id="eventosChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            Tipos de Eventos
+                        </div>
+                        <div class="card-body">
+                            <canvas id="tiposChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            Próximos Eventos
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Cliente</th>
+                                            <th>Tipo</th>
+                                            <th>Valor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="proximos-eventos-body">
+                                        <tr>
+                                            <td colspan="4" class="text-center">Nenhum evento próximo.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            Serviços mais Solicitados
+                        </div>
+                        <div class="card-body">
+                            <canvas id="servicosChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Lista de Eventos -->
+        <div class="page" id="lista" style="display: none;">
+            <h2 class="mb-4">Lista de Eventos</h2>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="m-0">Eventos Cadastrados</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Buscar evento..." id="busca-evento">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="tabela-eventos">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Cliente</th>
+                                    <th>Tipo de Evento</th>
+                                    <th>Local</th>
+                                    <th>Convidados</th>
+                                    <th>Valor Total</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="eventos-body">
+                                <tr>
+                                    <td colspan="7" class="text-center">Nenhum evento cadastrado.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Próximo</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Configurações -->
+        <div class="page" id="configuracoes" style="display: none;">
+            <h2 class="mb-4">Configurações</h2>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    Configuração da Planilha Google Sheets
+                </div>
+                <div class="card-body">
+                    <form id="configForm">
+                        <div class="mb-3">
+                            <label for="sheet_id" class="form-label">ID da Planilha Google Sheets</label>
+                            <input type="text" class="form-control" id="sheet_id" placeholder="Insira o ID da sua planilha" required>
+                            <div class="form-text">Exemplo: 13xXkpNH04XepMZj0B97RFPNNzgE3mSS9Qzb1zMahehc</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="sheet_nome" class="form-label">Nome da Aba</label>
+                            <input type="text" class="form-control" id="sheet_nome" placeholder="Ex: Eventos" value="Eventos" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="usar_app_script" checked>
+                                <label class="form-check-label" for="usar_app_script">
+                                    Usar Google Apps Script para conexão
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3" id="app_script_section">
+                            <label for="app_script_url" class="form-label">URL do Google Apps Script</label>
+                            <input type="url" class="form-control" id="app_script_url" placeholder="https://script.google.com/macros/s/.../exec">
+                            <div class="form-text">Cole aqui a URL do App Script publicado como aplicativo da web.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-primary" id="btn-testar-conexao">Testar Conexão</button>
+                        </div>
+                        
+                        <div class="alert alert-info mt-3">
+                            <h5>Como configurar a integração:</h5>
+                            <ol>
+                                <li>Crie uma planilha no Google Sheets</li>
+                                <li>Copie o ID da planilha (está na URL entre /d/ e /edit)</li>
+                                <li>Cole o ID acima</li>
+                                <li>Se desejar usar o Google Apps Script para uma conexão mais segura, configure conforme o tutorial abaixo</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="alert alert-warning mt-3">
+                            <h5>Código Google Apps Script:</h5>
+                            <p>Crie um novo projeto Apps Script no Google e cole o código abaixo:</p>
+                            <pre class="bg-light p-3 mt-2" style="max-height: 200px; overflow-y: auto;">
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({
+    'result': 'success',
+    'message': 'Conexão bem sucedida!'
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  try {
+    var params = JSON.parse(e.postData.contents);
+    var spreadsheetId = params.spreadsheetId;
+    var sheetName = params.sheetName;
+    var data = params.data;
+    
+    var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+    var sheet = spreadsheet.getSheetByName(sheetName);
+    
+    if (!sheet) {
+      sheet = spreadsheet.insertSheet(sheetName);
+    }
+    
+    // Adicionar cabeçalhos caso a planilha esteja vazia
+    if (sheet.getLastRow() === 0) {
+      var headers = Object.keys(data);
+      sheet.appendRow(headers);
+    }
+    
+    // Adicionar dados
+    var values = Object.values(data);
+    sheet.appendRow(values);
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      'result': 'success',
+      'message': 'Dados salvos com sucesso!'
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+  } catch(error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      'result': 'error',
+      'message': error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+                            </pre>
+                            <p>Após colar o código, publique como Aplicativo da Web e cole a URL gerada no campo acima.</p>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary">Salvar Configurações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading" style="display: none;">
+        <div>
+            <i class="fas fa-spinner fa-spin me-2"></i>
+            Carregando...
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script>
+        // Variáveis globais
+        let configData = {
+            sheetId: '',
+            sheetName: 'Eventos',
+            appScriptUrl: '',
+            usarAppScript: true
+        };
+        
+        // Carregar configurações do localStorage
+        function carregarConfiguracoes() {
+            const config = localStorage.getItem('eventoConfig');
+            if (config) {
+                configData = JSON.parse(config);
+                $('#sheet_id').val(configData.sheetId);
+                $('#sheet_nome').val(configData.sheetName);
+                $('#app_script_url').val(configData.appScriptUrl);
+                $('#usar_app_script').prop('checked', configData.usarAppScript);
+                
+                if (!configData.usarAppScript) {
+                    $('#app_script_section').hide();
+                }
+            }
+        }
+        
+        // Salvar configurações no localStorage
+        function salvarConfiguracoes() {
+            configData = {
+                sheetId: $('#sheet_id').val().trim(),
+                sheetName: $('#sheet_nome').val().trim(),
+                appScriptUrl: $('#app_script_url').val().trim(),
+                usarAppScript: $('#usar_app_script').prop('checked')
+            };
+            
+            localStorage.setItem('eventoConfig', JSON.stringify(configData));
+            
+            exibirMensagem('Configurações salvas com sucesso!', 'success');
+        }
+        
+        // Testar conexão com o Google Sheets
+        function testarConexao() {
+            const sheetId = $('#sheet_id').val().trim();
+            const sheetName = $('#sheet_nome').val().trim();
+            const appScriptUrl = $('#app_script_url').val().trim();
+            const usarAppScript = $('#usar_app_script').prop('checked');
+            
+            if (!sheetId) {
+                exibirMensagem('Informe o ID da planilha!', 'danger');
+                return;
+            }
+            
+            if (usarAppScript && !appScriptUrl) {
+                exibirMensagem('Informe a URL do Apps Script!', 'danger');
+                return;
+            }
+            
+            mostrarLoading();
+            
+            if (usarAppScript) {
+                // Testar conexão via Apps Script
+                fetch(appScriptUrl + '?action=test')
+                    .then(response => response.json())
+                    .then(data => {
+                        esconderLoading();
+                        if (data.result === 'success') {
+                            exibirMensagem('Conexão bem sucedida!', 'success');
+                        } else {
+                            exibirMensagem('Falha na conexão: ' + data.message, 'danger');
+                        }
+                    })
+                    .catch(error => {
+                        esconderLoading();
+                        exibirMensagem('Erro ao conectar: ' + error, 'danger');
+                    });
+            } else {
+                // Simular teste de conexão para demonstração
+                setTimeout(() => {
+                    esconderLoading();
+                    exibirMensagem('Conexão simulada bem sucedida!', 'success');
+                }, 1500);
+            }
+        }
+        
+        // Exibir mensagem temporária
+        function exibirMensagem(mensagem, tipo) {
+            // Verificar se já existe uma mensagem
+            if ($('.mensagem-temporaria').length > 0) {
+                $('.mensagem-temporaria').remove();
+            }
+            
+            const alertDiv = $('<div>').addClass('alert alert-' + tipo + ' alert-dismissible fade show mensagem-temporaria')
+                .append(mensagem)
+                .append('<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>');
+            
+            // Adicionar a mensagem no topo da página atual
+            $('.page:visible').prepend(alertDiv);
+            
+            // Remover a mensagem após 5 segundos
+            setTimeout(() => {
+                alertDiv.alert('close');
+            }, 5000);
+        }
+        
+        // Mostrar/esconder loading
+        function mostrarLoading() {
+            $('.loading').show();
+        }
+        
+        function esconderLoading() {
+            $('.loading').hide();
+        }
+        
+        // Salvar evento no Google Sheets
+        function salvarEvento(evento) {
+            if (!configData.sheetId) {
+                exibirMensagem('Configure a integração com o Google Sheets primeiro!', 'warning');
+                
+                // Mudar para a página de configurações
+                $('.page').hide();
+                $('#configuracoes').show();
+                $('.sidebar-item').removeClass('active');
+                $('.sidebar-item[data-page="configuracoes"]').addClass('active');
+                
+                return false;
+            }
+            
+            mostrarLoading();
+            
+            if (configData.usarAppScript && configData.appScriptUrl) {
+                // Salvar via Google Apps Script
+                fetch(configData.appScriptUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        spreadsheetId: configData.sheetId,
+                        sheetName: configData.sheetName,
+                        data: evento
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    esconderLoading();
+                    if (data.result === 'success') {
+                        exibirMensagem('Evento salvo com sucesso!', 'success');
+                        limparFormulario();
+                    } else {
+                        exibirMensagem('Falha ao salvar evento: ' + data.message, 'danger');
+                    }
+                })
+                .catch(error => {
+                    esconderLoading();
+                    exibirMensagem('Erro ao salvar evento: ' + error, 'danger');
+                });
+            } else {
+                // Simulação para demonstração
+                setTimeout(() => {
+                    esconderLoading();
+                    exibirMensagem('Evento salvo com sucesso (simulação)!', 'success');
+                    limparFormulario();
+                    
+                    // Armazenar no localStorage para demonstração
+                    const eventosAnteriores = JSON.parse(localStorage.getItem('eventos') || '[]');
+                    eventosAnteriores.push(evento);
+                    localStorage.setItem('eventos', JSON.stringify(eventosAnteriores));
+                    
+                    // Atualizar lista de eventos se estiver visível
+                    if ($('#lista').is(':visible')) {
+                        carregarEventosLocal();
+                    }
+                    
+                }, 1500);
+            }
+            
+            return true;
+        }
+        
+        // Limpar formulário
+        function limparFormulario() {
+            $('#eventoForm')[0].reset();
+            $('.servico-detalhes').hide();
+            atualizarCalculos();
+        }
+        
+        // Calcular valores do evento
+        function atualizarCalculos() {
+            let totalEvento = 0;
+            let totalCustos = 0;
+            
+            const qtdConvidados = parseInt($('#qtd_convidados').val()) || 0;
+            
+            // Calcular valores de buffet
+            if ($('#buffet').prop('checked')) {
+                const valorPessoa = parseFloat($('#buffet_valor_pessoa').val()) || 0;
+                totalEvento += valorPessoa * qtdConvidados;
+            }
+            
+            // Calcular valores de bebidas
+            if ($('#bebidas').prop('checked')) {
+                const valorPessoa = parseFloat($('#bebidas_valor_pessoa').val()) || 0;
+                totalEvento += valorPessoa * qtdConvidados;
+            }
+            
+            // Calcular valores de decoração
+            if ($('#decoracao').prop('checked')) {
+                const valor = parseFloat($('#decoracao_valor').val()) || 0;
+                totalEvento += valor;
+            }
+            
+            // Calcular valores de som e iluminação
+            if ($('#som_iluminacao').prop('checked')) {
+                const valor = parseFloat($('#som_valor').val()) || 0;
+                totalEvento += valor;
+            }
+            
+            // Calcular valores de foto e vídeo
+            if ($('#foto_video').prop('checked')) {
+                const valor = parseFloat($('#foto_valor').val()) || 0;
+                totalEvento += valor;
+            }
+            
+            // Calcular valores de cerimônia
+            if ($('#cerimonia').prop('checked')) {
+                const valor = parseFloat($('#cerimonia_valor').val()) || 0;
+                totalEvento += valor;
+            }
+            
+            // Calcular custos adicionais
+            $('.custo-adicional').each(function() {
+                const valor = parseFloat($(this).val()) || 0;
+                totalCustos += valor;
+            });
+            
+            // Aplicar desconto
+            const desconto = parseFloat($('#desconto').val()) || 0;
+            const valorDesconto = totalEvento * (desconto / 100);
+            const totalComDesconto = totalEvento - valorDesconto;
+            
+            // Calcular lucro estimado
+            const lucroEstimado = totalComDesconto - totalCustos;
+            
+            // Calcular margem de lucro
+            let margemLucro = 0;
+            if (totalComDesconto > 0) {
+                margemLucro = (lucroEstimado / totalComDesconto) * 100;
+            }
+            
+            // Atualizar valores na tela
+            $('#total-evento').text('R$ ' + totalComDesconto.toFixed(2));
+            $('#total-custos').text('R$ ' + totalCustos.toFixed(2));
+            $('#lucro-estimado').text('R$ ' + lucroEstimado.toFixed(2));
+            
+            // Atualizar dashboard
+            $('#dashboard-total').text('R$ ' + totalComDesconto.toFixed(2));
+            $('#dashboard-custos').text('R$ ' + totalCustos.toFixed(2));
+            $('#dashboard-lucro').text('R$ ' + lucroEstimado.toFixed(2));
+            $('#dashboard-margem').text(margemLucro.toFixed(2) + '%');
+        }
+        
+        // Inicializar gráficos do dashboard
+        function inicializarGraficos() {
+            // Gráfico de eventos por mês
+            const ctxEventos = document.getElementById('eventosChart').getContext('2d');
+            const eventosChart = new Chart(ctxEventos, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                    datasets: [{
+                        label: 'Número de Eventos',
+                        data: [2, 3, 5, 7, 4, 6, 8, 5, 9, 6, 4, 7],
+                        backgroundColor: '#4e73df'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico de tipos de eventos
+            const ctxTipos = document.getElementById('tiposChart').getContext('2d');
+            const tiposChart = new Chart(ctxTipos, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Casamento', 'Aniversário', 'Corporativo', 'Formatura', 'Outro'],
+                    datasets: [{
+                        data: [40, 25, 15, 10, 10],
+                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+            
+            // Gráfico de serviços mais solicitados
+            const ctxServicos = document.getElementById('servicosChart').getContext('2d');
+            const servicosChart = new Chart(ctxServicos, {
+                type: 'pie',
+                data: {
+                    labels: ['Buffet', 'Bebidas', 'Decoração', 'Som e Iluminação', 'Foto e Vídeo', 'Cerimônia'],
+                    datasets: [{
+                        data: [95, 90, 80, 70, 65, 50],
+                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#5a5c69']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Carregar lista de eventos (simulado a partir do localStorage)
+        function carregarEventosLocal() {
+            const eventos = JSON.parse(localStorage.getItem('eventos') || '[]');
+            const tbody = $('#eventos-body');
+            
+            if (eventos.length === 0) {
+                tbody.html('<tr><td colspan="7" class="text-center">Nenhum evento cadastrado.</td></tr>');
+                return;
+            }
+            
+            tbody.empty();
+            
+            eventos.forEach((evento, index) => {
+                const dataFormatada = new Date(evento.data_evento).toLocaleDateString('pt-BR');
+                
+                const row = `
+                    <tr>
+                        <td>${dataFormatada}</td>
+                        <td>${evento.nome_cliente}</td>
+                        <td>${evento.tipo_evento}</td>
+                        <td>${evento.local_evento}</td>
+                        <td>${evento.qtd_convidados}</td>
+                        <td>R$ ${parseFloat(evento.valor_total).toFixed(2)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary me-1" onclick="visualizarEvento(${index})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-warning me-1" onclick="editarEvento(${index})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="excluirEvento(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                
+                tbody.append(row);
+            });
+            
+            // Carregar eventos próximos no dashboard
+            if ($('#dashboard').is(':visible')) {
+                carregarProximosEventos(eventos);
+            }
+        }
+        
+        // Carregar próximos eventos no dashboard
+        function carregarProximosEventos(eventos) {
+            const hoje = new Date();
+            
+            // Filtrar eventos futuros e ordenar por data
+            const eventosFuturos = eventos.filter(evento => new Date(evento.data_evento) >= hoje)
+                .sort((a, b) => new Date(a.data_evento) - new Date(b.data_evento))
+                .slice(0, 5); // Limitar a 5 eventos
+            
+            const tbody = $('#proximos-eventos-body');
+            
+            if (eventosFuturos.length === 0) {
+                tbody.html('<tr><td colspan="4" class="text-center">Nenhum evento próximo.</td></tr>');
+                return;
+            }
+            
+            tbody.empty();
+            
+            eventosFuturos.forEach(evento => {
+                const dataFormatada = new Date(evento.data_evento).toLocaleDateString('pt-BR');
+                
+                const row = `
+                    <tr>
+                        <td>${dataFormatada}</td>
+                        <td>${evento.nome_cliente}</td>
+                        <td>${evento.tipo_evento}</td>
+                        <td>R$ ${parseFloat(evento.valor_total).toFixed(2)}</td>
+                    </tr>
+                `;
+                
+                tbody.append(row);
+            });
+        }
+        
+        // Função para obter dados do formulário
+        function obterDadosFormulario() {
+            // Coleta de valores de serviços
+            let totalEvento = 0;
+            let totalCustos = 0;
+            
+            const qtdConvidados = parseInt($('#qtd_convidados').val()) || 0;
+            
+            // Serviços incluídos
+            const servicos = [];
+            
+            // Buffet
+            if ($('#buffet').prop('checked')) {
+                const valorPessoa = parseFloat($('#buffet_valor_pessoa').val()) || 0;
+                const valorTotal = valorPessoa * qtdConvidados;
+                totalEvento += valorTotal;
+                
+                servicos.push({
+                    tipo: 'Buffet',
+                    valor_pessoa: valorPessoa,
+                    valor_total: valorTotal,
+                    detalhes: $('#buffet_tipo').val()
+                });
+            }
+            
+            // Bebidas
+            if ($('#bebidas').prop('checked')) {
+                const valorPessoa = parseFloat($('#bebidas_valor_pessoa').val()) || 0;
+                const valorTotal = valorPessoa * qtdConvidados;
+                totalEvento += valorTotal;
+                
+                servicos.push({
+                    tipo: 'Bebidas',
+                    valor_pessoa: valorPessoa,
+                    valor_total: valorTotal,
+                    detalhes: $('#bebidas_alcoolicas').val()
+                });
+            }
+            
+            // Decoração
+            if ($('#decoracao').prop('checked')) {
+                const valor = parseFloat($('#decoracao_valor').val()) || 0;
+                totalEvento += valor;
+                
+                servicos.push({
+                    tipo: 'Decoração',
+                    valor_total: valor,
+                    detalhes: $('#decoracao_tema').val()
+                });
+            }
+            
+            // Som e Iluminação
+            if ($('#som_iluminacao').prop('checked')) {
+                const valor = parseFloat($('#som_valor').val()) || 0;
+                totalEvento += valor;
+                
+                servicos.push({
+                    tipo: 'Som e Iluminação',
+                    valor_total: valor,
+                    detalhes: $('#som_tipo').val()
+                });
+            }
+            
+            // Foto e Vídeo
+            if ($('#foto_video').prop('checked')) {
+                const valor = parseFloat($('#foto_valor').val()) || 0;
+                totalEvento += valor;
+                
+                servicos.push({
+                    tipo: 'Foto e Vídeo',
+                    valor_total: valor,
+                    detalhes: $('#foto_tipo').val()
+                });
+            }
+            
+            // Cerimônia
+            if ($('#cerimonia').prop('checked')) {
+                const valor = parseFloat($('#cerimonia_valor').val()) || 0;
+                totalEvento += valor;
+                
+                servicos.push({
+                    tipo: 'Cerimônia',
+                    valor_total: valor,
+                    detalhes: $('#cerimonia_tipo').val()
+                });
+            }
+            
+            // Custos adicionais
+            const custosAdicionais = [];
+            
+            $('.custo-adicional').each(function(index) {
+                const descricao = $('input[name="descricao_custo[]"]').eq(index).val();
+                const valor = parseFloat($(this).val()) || 0;
+                
+                if (descricao && valor > 0) {
+                    custosAdicionais.push({
+                        descricao: descricao,
+                        valor: valor
+                    });
+                    
+                    totalCustos += valor;
+                }
+            });
+            
+            // Aplicar desconto
+            const desconto = parseFloat($('#desconto').val()) || 0;
+            const valorDesconto = totalEvento * (desconto / 100);
+            const totalComDesconto = totalEvento - valorDesconto;
+            
+            // Calcular lucro estimado
+            const lucroEstimado = totalComDesconto - totalCustos;
+            
+            // Calcular margem de lucro
+            let margemLucro = 0;
+            if (totalComDesconto > 0) {
+                margemLucro = (lucroEstimado / totalComDesconto) * 100;
+            }
+            
+            // Montar objeto com todos os dados do evento
+            const evento = {
+                nome_cliente: $('#nome_cliente').val(),
+                email_cliente: $('#email_cliente').val(),
+                telefone_cliente: $('#telefone_cliente').val(),
+                data_evento: $('#data_evento').val(),
+                horario_evento: $('#horario_evento').val(),
+                tipo_evento: $('#tipo_evento').val(),
+                qtd_convidados: qtdConvidados,
+                local_evento: $('#local_evento').val(),
+                servicos: servicos,
+                custos_adicionais: custosAdicionais,
+                forma_pagamento: $('#forma_pagamento').val(),
+                parcelas: parseInt($('#parcelas').val()) || 1,
+                desconto: desconto,
+                valor_desconto: valorDesconto,
+                valor_total: totalComDesconto,
+                total_custos: totalCustos,
+                lucro_estimado: lucroEstimado,
+                margem_lucro: margemLucro,
+                observacoes: $('#observacoes').val(),
+                data_cadastro: new Date().toISOString()
+            };
+            
+            return evento;
+        }
+        
+        // Quando o documento estiver pronto
+        $(document).ready(function() {
+            // Inicializar configurações
+            carregarConfiguracoes();
+            
+            // Alternar entre páginas
+            $('.sidebar-item').click(function() {
+                const page = $(this).data('page');
+                
+                $('.page').hide();
+                $('#' + page).show();
+                
+                $('.sidebar-item').removeClass('active');
+                $(this).addClass('active');
+                
+                // Inicializar gráficos se estiver na página de dashboard
+                if (page === 'dashboard') {
+                    inicializarGraficos();
+                    
+                    // Carregar eventos para o dashboard
+                    const eventos = JSON.parse(localStorage.getItem('eventos') || '[]');
+                    carregarProximosEventos(eventos);
+                }
+                
+                // Carregar lista de eventos se estiver na página de lista
+                if (page === 'lista') {
+                    carregarEventosLocal();
+                }
+            });
+            
+            // Mostrar detalhes de serviços quando checkbox for selecionado
+            $('.servico-check').change(function() {
+                const tipo = $(this).data('tipo');
+                const detalhes = $('#' + tipo + '-detalhes');
+                
+                if ($(this).prop('checked')) {
+                    detalhes.show();
+                } else {
+                    detalhes.hide();
+                }
+                
+                atualizarCalculos();
+            });
+            
+            // Adicionar nova linha de custo adicional
+            $('#adicionar-custo').click(function() {
+                const newRow = `
+                    <tr>
+                        <td>
+                            <input type="text" class="form-control" name="descricao_custo[]" placeholder="Descrição">
+                        </td>
+                        <td>
+                            <input type="number" class="form-control calc-item custo-adicional" name="valor_custo[]" min="0" step="0.01" data-calc="adicional">
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-danger remover-custo">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                
+                $('#custos-adicionais tbody').append(newRow);
+                
+                // Atualizar evento de cálculo para o novo campo
+                $('.calc-item').change(atualizarCalculos);
+                
+                // Atualizar evento de remoção para o novo botão
+                $('.remover-custo').click(function() {
+                    $(this).closest('tr').remove();
+                    atualizarCalculos();
+                });
+            });
+            
+            // Remover linha de custo adicional
+            $(document).on('click', '.remover-custo', function() {
+                $(this).closest('tr').remove();
+                atualizarCalculos();
+            });
+            
+            // Atualizar cálculos quando houver mudança nos valores
+            $('.calc-item').change(atualizarCalculos);
+            $('#qtd_convidados').change(atualizarCalculos);
+            
+            // Enviar formulário de evento
+            $('#eventoForm').submit(function(e) {
+                e.preventDefault();
+                
+                const evento = obterDadosFormulario();
+                salvarEvento(evento);
+            });
+            
+            // Formulário de configurações
+            $('#configForm').submit(function(e) {
+                e.preventDefault();
+                salvarConfiguracoes();
+            });
+            
+            // Testar conexão
+            $('#btn-testar-conexao').click(testarConexao);
+            
+            // Mostrar/esconder seção de Apps Script
+            $('#usar_app_script').change(function() {
+                if ($(this).prop('checked')) {
+                    $('#app_script_section').show();
+                } else {
+                    $('#app_script_section').hide();
+                }
+            });
+            
+            // Inicializar calculadora
+            atualizarCalculos();
+        });
+    </script>
+</body>
+</html>
