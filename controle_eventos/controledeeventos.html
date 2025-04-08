@@ -4891,6 +4891,29 @@
         // Implementar na próxima fase
         alert('Função de editar fornecedor será implementada na próxima fase.');
     }
+    // Log para depuração - remover depois
+    console.log("Script carregado!");
+
+    // Garantir que o clique nas configurações funcione
+    $(document).ready(function() {
+    // Log ao carregar a página
+    console.log("Documento pronto!");
+    
+    // Adicionar manipulador de clique específico para configurações
+    $('.sidebar-item[data-page="configuracoes"]').click(function() {
+        console.log("Clique em configurações detectado!");
+        
+        // Esconder todas as páginas
+        $('.page').hide();
+        
+        // Mostrar a página de configurações
+        $('#configuracoes').show();
+        
+        // Atualizar menu ativo
+        $('.sidebar-item').removeClass('active');
+        $(this).addClass('active');
+    });
+});
     </script>
 </body>
 </html>
