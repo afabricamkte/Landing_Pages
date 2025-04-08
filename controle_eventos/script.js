@@ -134,16 +134,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     // Se não estiver configurado, redireciona para a seção de configurações
                     document.getElementById('nav-configuracoes').click();
-            }
-            try {
-                // Add the code you want to execute here
+                }
             } catch (error) {
                 console.error('Erro ao carregar usuário do localStorage:', error);
                 mostrarSecao('login-section');
             }
-        } catch (error) {
-            console.error('Erro ao inicializar o sistema:', error);
-            mostrarSecao('login-section');
         } else {
             mostrarSecao('login-section');
         }
@@ -1799,7 +1794,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /**
      * Carrega o resumo financeiro
      */
-async function carregarResumoFinanceiro() {
+    async function carregarResumoFinanceiro() {
         if (!verificarConfiguracao()) return;
         
         try {
@@ -1867,56 +1862,55 @@ async function carregarResumoFinanceiro() {
                             }
                         });
                     });
-                }
-            } else {
-                listaPagamentosPendentes.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="text-center">Nenhum pagamento pendente.</td>
-                    </tr>
-                `;
-            }
-            
-            // Preenche a tabela de orçamento por evento
-            const listaOrcamentoEventos = document.getElementById('lista-orcamento-eventos');
-            listaOrcamentoEventos.innerHTML = '';
-            
-            if (resumo.orcamentoEventos && resumo.orcamentoEventos.length > 0) {
-                resumo.orcamentoEventos.forEach(evento => {
-                    let statusClass = 'secondary';
-                    if (evento.status === 'Dentro do orçamento') statusClass = 'success';
-                    if (evento.status === 'Acima do orçamento') statusClass = 'danger';
-                    
-                    const eventoHtml = `
+                } else {
+                    listaPagamentosPendentes.innerHTML = `
                         <tr>
-                            <td>${evento.nome}</td>
-                            <td>${formatarData(evento.data)}</td>
-                            <td>${formatarMoeda(evento.orcamentoMeta || 0)}</td>
-                            <td>${formatarMoeda(evento.totalOrcado || 0)}</td>
-                            <td>${formatarMoeda(evento.totalPago || 0)}</td>
-                            <td><span class="badge bg-${statusClass}">${evento.status}</span></td>
+                            <td colspan="6" class="text-center">Nenhum pagamento pendente.</td>
                         </tr>
                     `;
-                    
-                    listaOrcamentoEventos.insertAdjacentHTML('beforeend', eventoHtml);
-                });
+                }
+                
+                // Preenche a tabela de orçamento por evento
+                const listaOrcamentoEventos = document.getElementById('lista-orcamento-eventos');
+                listaOrcamentoEventos.innerHTML = '';
+                
+                if (resumo.orcamentoEventos && resumo.orcamentoEventos.length > 0) {
+                    resumo.orcamentoEventos.forEach(evento => {
+                        let statusClass = 'secondary';
+                        if (evento.status === 'Dentro do orçamento') statusClass = 'success';
+                        if (evento.status === 'Acima do orçamento') statusClass = 'danger';
+                        
+                        const eventoHtml = `
+                            <tr>
+                                <td>${evento.nome}</td>
+                                <td>${formatarData(evento.data)}</td>
+                                <td>${formatarMoeda(evento.orcamentoMeta || 0)}</td>
+                                <td>${formatarMoeda(evento.totalOrcado || 0)}</td>
+                                <td>${formatarMoeda(evento.totalPago || 0)}</td>
+                                <td><span class="badge bg-${statusClass}">${evento.status}</span></td>
+                            </tr>
+                        `;
+                        
+                        listaOrcamentoEventos.insertAdjacentHTML('beforeend', eventoHtml);
+                    });
+                } else {
+                    listaOrcamentoEventos.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center">Nenhum evento com orçamento cadastrado.</td>
+                        </tr>
+                    `;
+                }
             } else {
-                listaOrcamentoEventos.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="text-center">Nenhum evento com orçamento cadastrado.</td>
-                    </tr>
-                `;
+                console.error('Erro ao carregar resumo financeiro:', response.error);
+                mostrarAlerta('Erro ao carregar resumo financeiro: ' + (response.error || 'Erro desconhecido'));
             }
-        } else {
-            console.error('Erro ao carregar resumo financeiro:', response.error);
-            mostrarAlerta('Erro ao carregar resumo financeiro: ' + (response.error || 'Erro desconhecido'));
+        } catch (error) {
+            console.error('Erro ao carregar resumo financeiro:', error);
+            mostrarAlerta('Erro ao carregar resumo financeiro: ' + error.message);
+        } finally {
+            esconderSpinner();
         }
-    } catch (error) {
-        console.error('Erro ao carregar resumo financeiro:', error);
-        mostrarAlerta('Erro ao carregar resumo financeiro: ' + error.message);
-    } finally {
-        esconderSpinner();
     }
-},
 
 /**
  * Configurações
