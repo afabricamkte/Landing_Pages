@@ -9,6 +9,9 @@ class EventosAPI {
         this.scriptUrl = localStorage.getItem('scriptUrl') || '';
         this.spreadsheetId = localStorage.getItem('spreadsheetId') || '';
         this.isConfigured = !!(this.scriptUrl && this.spreadsheetId);
+        
+        // Verifica se existe o primeiro usuário (admin)
+        this.hasAdmin = !!localStorage.getItem('adminUser');
     }
 
     /**
@@ -27,7 +30,162 @@ class EventosAPI {
 
         return true;
     }
+    // Método para cadastrar o primeiro usuário como admin (sem necessidade de API)
+    async cadastrarPrimeiroUsuario(usuario) {
+        // Verifica se já existe um admin
+        if (this.hasAdmin) {
+            return {
+                success: false,
+                error: "Já existe um administrador no sistema"
+            };
+        }
+        
+        // Cria o admin localmente
+        const adminUser = {
+            ...usuario,
+            id: this.generateUUID(),
+            isAdmin: true,
+            dataCriacao: new Date().toISOString()
+        };
+        
+        // Salva o admin no localStorage
+        localStorage.setItem('adminUser', JSON.stringify(adminUser));
+        
+        // Adiciona também aos usuários
+        const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+        usuarios.push(adminUser);
+        localStorage.setItem('usuarios', JSON.stringify(usuarios));
+        
+        this.hasAdmin = true;
+        
+        return {
+            success: true,
+            message: "Administrador cadastrado com sucesso"
+        };
+    }
 
+    // Método para adicionar usuários (somente admin)
+    async adicionarUsuario(usuario, adminToken) {
+        // Verifica se quem está adicionando é admin
+        const adminUser = JSON.parse(localStorage.getItem('adminUser') || 'null');
+        if (!adminUser || adminUser.id !== adminToken) {
+            return {
+                success: false,
+                error: "Apenas o administrador pode adicionar usuários"
+            };
+        }
+        
+        // Se o sistema não está configurado, adiciona localmente
+        if (!this.isConfigured) {
+            const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+            
+            // Verifica se o email já existe
+            if (usuarios.some(u => u.email === usuario.email)) {
+                return {
+                    success: false,
+                    error: "Email já cadastrado"
+                };
+            }
+            
+            const novoUsuario = {
+                ...usuario,
+                id: this.generateUUID(),
+                isAdmin: false,
+                dataCriacao: new Date().toISOString()
+            };
+            
+            usuarios.push(novoUsuario);
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+            
+            return {
+                success: true,
+                message: "Usuário adicionado com sucesso"
+            };
+        }
+        
+        // Se o sistema está configurado, usa a API
+        return this.request('adicionarUsuario', { usuario, adminToken });
+    }
+
+    // Método para listar usuários (somente admin)
+    async listarUsuarios(adminToken) {
+        // Verifica se quem está solicitando é admin
+        const adminUser = JSON.parse(localStorage.getItem('adminUser') || 'null');
+        if (!adminUser || adminUser.id !== adminToken) {
+            return {
+                success: false,
+                error: "Apenas o administrador pode listar usuários"
+            };
+        }
+        
+        // Se o sistema não está configurado, lista do localStorage
+        if (!this.isConfigured) {
+            const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+            // Remove senhas antes de retornar
+            const usuariosSemSenha = usuarios.map(u => ({...u, senha: undefined}));
+            
+            return {
+                success: true,
+                usuarios: usuariosSemSenha
+            };
+        }
+        
+        // Se o sistema está configurado, usa a API
+        return this.request('listarUsuarios', { adminToken });
+    }
+
+    // Método para excluir usuário (somente admin)
+    async excluirUsuario(usuarioId, adminToken) {
+        // Verifica se quem está excluindo é admin
+        const adminUser = JSON.parse(localStorage.getItem('adminUser') || 'null');
+        if (!adminUser || adminUser.id !== adminToken) {
+            return {
+                success: false,
+                error: "Apenas o administrador pode excluir usuários"
+            };
+        }
+        
+        // Não permite excluir o admin
+        if (usuarioId === adminUser.id) {
+            return {
+                success: false,
+                error: "Não é possível excluir o administrador"
+            };
+        }
+        
+        // Se o sistema não está configurado, exclui do localStorage
+        if (!this.isConfigured) {
+            let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+            const indice = usuarios.findIndex(u => u.id === usuarioId);
+            
+            if (indice === -1) {
+                return {
+                    success: false,
+                    error: "Usuário não encontrado"
+                };
+            }
+            
+            // Remove o usuário
+            usuarios.splice(indice, 1);
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+            
+            return {
+                success: true,
+                message: "Usuário excluído com sucesso"
+            };
+        }
+        
+        // Se o sistema está configurado, usa a API
+        return this.request('excluirUsuario', { usuarioId, adminToken });
+    }
+
+    // Gera um UUID para IDs locais
+    generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
     /**
      * Testa a conexão com o Google Apps Script
      * @returns {Promise<boolean>} - Promise com o resultado do teste
@@ -116,9 +274,6 @@ class EventosAPI {
      * @param {Object} usuario - Dados do usuário
      * @returns {Promise<Object>} - Promise com o resultado do cadastro
      */
-    async cadastrarUsuario(usuario) {
-        return this.request('cadastrarUsuario', { usuario });
-    }
 
     // ======== EVENTOS ========
 

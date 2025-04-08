@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let fornecedores = [];
     let editandoServico = false;
     let usuarioLogado = null;
+    // Variáveis globais adicionais
+    let isAdmin = false; // Flag para controlar se o usuário é admin
     
     // Elementos do DOM frequentemente utilizados
     const spinner = document.getElementById('spinner');
@@ -125,15 +127,27 @@ document.addEventListener('DOMContentLoaded', function() {
         if (usuarioSalvo) {
             try {
                 usuarioLogado = JSON.parse(usuarioSalvo);
+                isAdmin = usuarioLogado.isAdmin || false;
+                
                 document.getElementById('usuario-logado').textContent = `Olá, ${usuarioLogado.nome}`;
+                
+                // Se for admin, mostra o item de menu de usuários
+                if (isAdmin) {
+                    document.getElementById('nav-usuarios').style.display = 'block';
+                } else {
+                    document.getElementById('nav-usuarios').style.display = 'none';
+                }
+                
                 mostrarSecao('app-section');
                 
                 // Verifica se o sistema está configurado
-                if (verificarConfiguracao()) {
+                if (!api.isConfigured && isAdmin) {
+                    // Se não estiver configurado e for admin, redireciona para configurações
+                    document.getElementById('nav-configuracoes').click();
+                } else if (api.isConfigured) {
                     carregarEventos();
                 } else {
-                    // Se não estiver configurado, redireciona para a seção de configurações
-                    document.getElementById('nav-configuracoes').click();
+                    mostrarAlerta('O sistema não está configurado. Por favor, contate o administrador.');
                 }
             } catch (error) {
                 console.error('Erro ao carregar usuário do localStorage:', error);
@@ -141,6 +155,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else {
             mostrarSecao('login-section');
+            
+            // Se não existe admin ainda, mostra a mensagem de primeiro acesso
+            if (!api.hasAdmin) {
+                document.querySelector('#login-section .primeiro-acesso').style.display = 'block';
+            } else {
+                document.querySelector('#login-section .primeiro-acesso').style.display = 'none';
+            }
         }
     }
     
@@ -165,6 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (response.success) {
                 usuarioLogado = response.usuario;
+                isAdmin = usuarioLogado.isAdmin || false;
                 
                 // Salva o usuário no localStorage
                 localStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
@@ -172,15 +194,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Atualiza o nome do usuário na interface
                 document.getElementById('usuario-logado').textContent = `Olá, ${usuarioLogado.nome}`;
                 
+                // Se for admin, mostra o item de menu de usuários
+                if (isAdmin) {
+                    document.getElementById('nav-usuarios').style.display = 'block';
+                } else {
+                    document.getElementById('nav-usuarios').style.display = 'none';
+                }
+                
                 // Redireciona para a tela principal
                 mostrarSecao('app-section');
                 
-                // Carrega os eventos se o sistema estiver configurado
-                if (verificarConfiguracao()) {
-                    carregarEventos();
-                } else {
-                    // Se não estiver configurado, redireciona para a seção de configurações
+                // Se não estiver configurado e for admin, redireciona para configurações
+                if (!api.isConfigured && isAdmin) {
                     document.getElementById('nav-configuracoes').click();
+                } else if (api.isConfigured) {
+                    carregarEventos();
                 }
             } else {
                 mensagem.innerHTML = `<div class="alert alert-danger">${response.error || 'Erro ao fazer login'}</div>`;
@@ -211,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Valida a complexidade da senha (opcional)
+        // Valida a complexidade da senha
         if (senha.length < 6) {
             mensagem.innerHTML = '<div class="alert alert-danger">A senha deve ter pelo menos 6 caracteres</div>';
             return;
@@ -219,20 +247,31 @@ document.addEventListener('DOMContentLoaded', function() {
         
         try {
             mostrarSpinner();
-            const response = await api.cadastrarUsuario({ nome, email, senha });
             
-            if (response.success) {
-                mensagem.innerHTML = '<div class="alert alert-success">Cadastro realizado com sucesso! Você já pode fazer login.</div>';
+            // Verifica se é o primeiro cadastro
+            if (!api.hasAdmin) {
+                const response = await api.cadastrarPrimeiroUsuario({ nome, email, senha });
                 
-                // Limpa o formulário após o cadastro
-                document.getElementById('cadastro-form').reset();
+                if (response.success) {
+                    mensagem.innerHTML = '<div class="alert alert-success">Administrador cadastrado com sucesso! Você já pode fazer login.</div>';
+                    
+                    // Limpa o formulário após o cadastro
+                    document.getElementById('cadastro-form').reset();
+                    
+                    // Redireciona para a tela de login após 2 segundos
+                    setTimeout(() => {
+                        document.getElementById('link-login').click();
+                    }, 2000);
+                } else {
+                    mensagem.innerHTML = `<div class="alert alert-danger">${response.error || 'Erro ao cadastrar administrador'}</div>`;
+                }
+            } else {
+                mensagem.innerHTML = '<div class="alert alert-danger">Apenas o administrador pode adicionar novos usuários</div>';
                 
                 // Redireciona para a tela de login após 2 segundos
                 setTimeout(() => {
                     document.getElementById('link-login').click();
                 }, 2000);
-            } else {
-                mensagem.innerHTML = `<div class="alert alert-danger">${response.error || 'Erro ao cadastrar usuário'}</div>`;
             }
         } catch (error) {
             mensagem.innerHTML = `<div class="alert alert-danger">${error.message || 'Erro ao cadastrar usuário'}</div>`;
@@ -2144,6 +2183,212 @@ document.querySelectorAll('#fornecedor-avaliacao i').forEach(estrela => {
             }
         });
     });
+});
+/**
+ * Carrega a lista de usuários (somente admin)
+ */
+async function carregarUsuarios() {
+    if (!isAdmin) {
+        mostrarAlerta('Acesso negado. Apenas administradores podem gerenciar usuários.');
+        return;
+    }
+    
+    try {
+        mostrarSpinner();
+        const response = await api.listarUsuarios(usuarioLogado.id);
+        
+        if (response.success) {
+            const listaUsuarios = document.getElementById('lista-usuarios');
+            listaUsuarios.innerHTML = '';
+            
+            if (response.usuarios.length > 0) {
+                response.usuarios.forEach(usuario => {
+                    const usuarioHtml = `
+                        <tr data-id="${usuario.id}">
+                            <td>${usuario.nome}</td>
+                            <td>${usuario.email}</td>
+                            <td>${usuario.isAdmin ? 'Sim' : 'Não'}</td>
+                            <td>${formatarData(usuario.dataCriacao)}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-danger btn-excluir-usuario" ${usuario.isAdmin ? 'disabled' : ''}>
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    
+                    listaUsuarios.insertAdjacentHTML('beforeend', usuarioHtml);
+                });
+                
+                // Adiciona eventos para os botões de excluir
+                document.querySelectorAll('.btn-excluir-usuario').forEach(btn => {
+                    if (!btn.disabled) {
+                        btn.addEventListener('click', function() {
+                            const usuarioId = this.closest('tr').dataset.id;
+                            const usuario = response.usuarios.find(u => u.id === usuarioId);
+                            if (usuario) {
+                                confirmarExclusaoUsuario(usuario);
+                            }
+                        });
+                    }
+                });
+                
+                // Inicializa o DataTable se existir
+                if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tabela-usuarios')) {
+                    $('#tabela-usuarios').DataTable().destroy();
+                }
+                
+                if ($.fn.DataTable) {
+                    $('#tabela-usuarios').DataTable({
+                        language: {
+                            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json'
+                        },
+                        responsive: true
+                    });
+                }
+            } else {
+                listaUsuarios.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center">Nenhum usuário cadastrado além do administrador.</td>
+                    </tr>
+                `;
+            }
+        } else {
+            mostrarAlerta('Erro ao carregar usuários: ' + (response.error || 'Erro desconhecido'));
+        }
+    } catch (error) {
+        console.error('Erro ao carregar usuários:', error);
+        mostrarAlerta('Erro ao carregar usuários: ' + error.message);
+    } finally {
+        esconderSpinner();
+    }
+}
+
+/**
+ * Abre o modal para criar um novo usuário
+ */
+function abrirModalNovoUsuario() {
+    const modalTitle = document.getElementById('modal-usuario-label');
+    const formUsuario = document.getElementById('form-usuario');
+    
+    modalTitle.textContent = 'Novo Usuário';
+    formUsuario.reset();
+    document.getElementById('usuario-id').value = '';
+    
+    // Mostra o modal
+    const modal = new bootstrap.Modal(document.getElementById('modal-usuario'));
+    modal.show();
+}
+
+/**
+ * Adiciona um novo usuário (apenas admin)
+ */
+async function adicionarNovoUsuario(event) {
+    event.preventDefault();
+    
+    if (!isAdmin) {
+        mostrarAlerta('Acesso negado. Apenas administradores podem adicionar usuários.');
+        return;
+    }
+    
+    const nome = document.getElementById('novo-usuario-nome').value;
+    const email = document.getElementById('novo-usuario-email').value;
+    const senha = document.getElementById('novo-usuario-senha').value;
+    
+    if (!nome || !email || !senha) {
+        mostrarAlerta('Preencha todos os campos obrigatórios');
+        return;
+    }
+    
+    if (senha.length < 6) {
+        mostrarAlerta('A senha deve ter pelo menos 6 caracteres');
+        return;
+    }
+    
+    try {
+        mostrarSpinner();
+        const response = await api.adicionarUsuario({ nome, email, senha }, usuarioLogado.id);
+        
+        if (response.success) {
+            // Fecha o modal
+            const modalUsuario = bootstrap.Modal.getInstance(document.getElementById('modal-usuario'));
+            modalUsuario.hide();
+            
+            mostrarAlerta('Usuário adicionado com sucesso!', 'success');
+            
+            // Recarrega a lista de usuários
+            await carregarUsuarios();
+        } else {
+            mostrarAlerta('Erro ao adicionar usuário: ' + (response.error || 'Erro desconhecido'));
+        }
+    } catch (error) {
+        console.error('Erro ao adicionar usuário:', error);
+        mostrarAlerta('Erro ao adicionar usuário: ' + error.message);
+    } finally {
+        esconderSpinner();
+    }
+}
+
+/**
+ * Confirma a exclusão de um usuário
+ */
+function confirmarExclusaoUsuario(usuario) {
+    // Confirma a exclusão
+    const modal = document.getElementById('modal-confirmacao');
+    document.getElementById('mensagem-confirmacao').textContent = `Tem certeza que deseja excluir o usuário "${usuario.nome}"?`;
+    
+    const btnConfirmar = document.getElementById('btn-confirmar-exclusao');
+    
+    // Remove qualquer listener anterior para evitar duplicação
+    const novoBtn = btnConfirmar.cloneNode(true);
+    btnConfirmar.parentNode.replaceChild(novoBtn, btnConfirmar);
+    
+    // Adiciona o listener para o botão de confirmação
+    novoBtn.addEventListener('click', async function() {
+        try {
+            mostrarSpinner();
+            const response = await api.excluirUsuario(usuario.id, usuarioLogado.id);
+            
+            if (response.success) {
+                // Fecha o modal
+                const modalConfirmacao = bootstrap.Modal.getInstance(modal);
+                modalConfirmacao.hide();
+                
+                mostrarAlerta('Usuário excluído com sucesso!', 'success');
+                
+                // Recarrega os usuários
+                await carregarUsuarios();
+            } else {
+                mostrarAlerta('Erro ao excluir usuário: ' + (response.error || 'Erro desconhecido'));
+            }
+        } catch (error) {
+            console.error('Erro ao excluir usuário:', error);
+            mostrarAlerta('Erro ao excluir usuário: ' + error.message);
+        } finally {
+            esconderSpinner();
+        }
+    });
+    
+    // Mostra o modal de confirmação
+    const modalConfirmacao = new bootstrap.Modal(modal);
+    modalConfirmacao.show();
+}
+
+// Adicionar os event listeners para gerenciamento de usuários
+document.getElementById('btn-novo-usuario').addEventListener('click', function() {
+    abrirModalNovoUsuario();
+});
+
+document.getElementById('btn-salvar-usuario').addEventListener('click', function() {
+    document.getElementById('form-usuario').dispatchEvent(new Event('submit'));
+});
+
+document.getElementById('form-usuario').addEventListener('submit', adicionarNovoUsuario);
+
+// Adiciona evento para o link de usuários no menu
+document.querySelector('#nav-usuarios').addEventListener('click', function() {
+    mostrarSecao('usuarios-section');
+    carregarUsuarios();
 });
 
 // Inicializa o sistema
