@@ -122,6 +122,14 @@ document.addEventListener('DOMContentLoaded', function() {
      * Inicializa o sistema
      */
     function inicializarSistema() {
+        // Verifica se é o primeiro acesso
+        if (api.firstAccess) {
+            // Mostra a mensagem de primeiro acesso
+            document.querySelector('.primeiro-acesso').style.display = 'block';
+            mostrarSecao('cadastro-section');
+            return;
+        }
+    
         // Verifica se o usuário está logado (através do localStorage)
         const usuarioSalvo = localStorage.getItem('usuarioLogado');
         if (usuarioSalvo) {
@@ -220,19 +228,12 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Valida a complexidade da senha
-        if (senha.length < 6) {
-            mensagem.innerHTML = '<div class="alert alert-danger">A senha deve ter pelo menos 6 caracteres</div>';
-            return;
-        }
-        
         try {
             mostrarSpinner();
-            // Note que aqui chamamos o método cadastrarPrimeiroUsuario em vez de cadastrarUsuario
             const response = await api.cadastrarPrimeiroUsuario({ nome, email, senha });
             
             if (response.success) {
-                mensagem.innerHTML = '<div class="alert alert-success">Cadastro realizado com sucesso! Você já pode fazer login.</div>';
+                mensagem.innerHTML = '<div class="alert alert-success">Administrador cadastrado com sucesso! Você já pode fazer login.</div>';
                 
                 // Limpa o formulário após o cadastro
                 document.getElementById('cadastro-form').reset();
@@ -240,6 +241,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Redireciona para a tela de login após 2 segundos
                 setTimeout(() => {
                     document.getElementById('link-login').click();
+                    
+                    // Esconde a mensagem de primeiro acesso
+                    document.querySelector('.primeiro-acesso').style.display = 'none';
                 }, 2000);
             } else {
                 mensagem.innerHTML = `<div class="alert alert-danger">${response.error || 'Erro ao cadastrar usuário'}</div>`;

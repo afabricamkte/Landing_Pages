@@ -12,6 +12,8 @@ class EventosAPI {
         
         // Verifica se existe o primeiro usuário (admin)
         this.hasAdmin = !!localStorage.getItem('adminUser');
+        // Verifica o estado inicial do sistema
+        this.checkSystemInitialState();
     }
 
     /**
@@ -30,23 +32,54 @@ class EventosAPI {
 
         return true;
     }
-    // Método para cadastrar o primeiro usuário como admin (sem necessidade de API)
+    /**
+     * Método para cadastrar o primeiro usuário como admin
+     * @param {Object} usuario - Dados do usuário admin
+     * @returns {Promise<Object>} - Resultado do cadastro
+     */
     async cadastrarPrimeiroUsuario(usuario) {
-        // Verificar se é o primeiro acesso
+        // Verifica se já existe um admin
         const adminEmail = localStorage.getItem('adminEmail');
         
-        // Se já existe um admin, não permite cadastro direto
         if (adminEmail) {
             return {
                 success: false,
-                error: "Cadastro direto não permitido. Contate o administrador."
+                error: "Já existe um administrador cadastrado."
             };
         }
         
-        // É o primeiro acesso, permite cadastrar o admin
+        // Valida os campos obrigatórios
+        if (!usuario.nome || !usuario.email || !usuario.senha) {
+            return {
+                success: false,
+                error: "Todos os campos são obrigatórios."
+            };
+        }
+        
+        // Valida a complexidade da senha
+        if (usuario.senha.length < 6) {
+            return {
+                success: false,
+                error: "A senha deve ter pelo menos 6 caracteres."
+            };
+        }
+        
+        // Salva o admin no localStorage
         localStorage.setItem('adminNome', usuario.nome);
         localStorage.setItem('adminEmail', usuario.email);
         localStorage.setItem('adminSenha', usuario.senha);
+        
+        // Cria um objeto de usuário admin completo
+        const adminUser = {
+            id: this.generateUUID(),
+            nome: usuario.nome,
+            email: usuario.email,
+            isAdmin: true,
+            dataCriacao: new Date().toISOString()
+        };
+        
+        // Salva o usuário admin no localStorage
+        localStorage.setItem('adminUser', JSON.stringify(adminUser));
         
         return {
             success: true,
@@ -168,7 +201,17 @@ class EventosAPI {
         // Se o sistema está configurado, usa a API
         return this.request('excluirUsuario', { usuarioId, adminToken });
     }
-
+    /**
+     * Verifica o estado inicial do sistema
+     */
+    checkSystemInitialState() {
+        // Verifica se é o primeiro acesso
+        const adminEmail = localStorage.getItem('adminEmail');
+        const adminSenha = localStorage.getItem('adminSenha');
+        
+        // Se não há admin configurado, define o sistema como não inicializado
+        this.firstAccess = !adminEmail || !adminSenha;
+    }
     // Gera um UUID para IDs locais
     generateUUID() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -258,6 +301,22 @@ class EventosAPI {
     async login(email, senha) {
         // Se está configurado, usa a API normal
         if (this.isConfigured) {
+            // Se não está configurado, verifica no localStorage
+            const adminEmail = localStorage.getItem('adminEmail');
+            const adminSenha = localStorage.getItem('adminSenha');
+            const adminNome = localStorage.getItem('adminNome');
+
+            if (adminEmail && adminSenha && email === adminEmail && senha === adminSenha) {
+                return {
+                    success: true,
+                    usuario: {
+                        id: 'admin',
+                        nome: adminNome || 'Administrador',
+                        email: adminEmail,
+                        isAdmin: true
+                    }
+                };
+            }
             return this.request('login', { email, senha });
         }
         
