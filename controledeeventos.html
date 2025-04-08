@@ -4608,5 +4608,289 @@
             if (appScriptUrl) $('#app_script_url').val(appScriptUrl);
         });
     </script>
+    <!-- API de Integração com Google Sheets -->
+    <script src="api.js"></script>
+    <script>
+    // Inicializar a API quando o documento estiver pronto
+    $(document).ready(function() {
+        // Inicializar a API com a URL do Apps Script (se disponível)
+        const appScriptUrl = localStorage.getItem('appScriptUrl');
+        if (appScriptUrl) {
+        API.init(appScriptUrl);
+        
+        // Carregar dados iniciais se tivermos a URL configurada
+        carregarDadosIniciais();
+        }
+        
+        // Substituir o teste de conexão simulado por uma chamada real
+        $('#btn-testar-conexao').click(async function() {
+        const sheetId = $('#sheet_id').val();
+        const appScriptUrl = $('#app_script_url').val();
+        
+        if (!appScriptUrl) {
+            alert('Por favor, preencha a URL do Apps Script.');
+            return;
+        }
+        
+        try {
+            // Inicializar a API com a nova URL
+            API.init(appScriptUrl);
+            
+            // Testar a conexão
+            const result = await API.testConnection();
+            
+            alert(`Conexão com Google Sheets realizada com sucesso! Timestamp: ${result.timestamp}`);
+            
+            // Salvar as configurações
+            localStorage.setItem('sheetId', sheetId);
+            localStorage.setItem('appScriptUrl', appScriptUrl);
+            
+            // Carregar dados após configuração bem-sucedida
+            carregarDadosIniciais();
+        } catch (error) {
+            // Erro tratado na função callApi
+        }
+        });
+        
+        // Substituir o salvamento de configurações por uma versão que usa a API
+        $('#configForm').submit(async function(e) {
+        e.preventDefault();
+        
+        const sheetId = $('#sheet_id').val();
+        const appScriptUrl = $('#app_script_url').val();
+        
+        if (!appScriptUrl) {
+            alert('Por favor, preencha a URL do Apps Script.');
+            return;
+        }
+        
+        try {
+            // Inicializar a API com a nova URL
+            API.init(appScriptUrl);
+            
+            // Testar a conexão
+            await API.testConnection();
+            
+            // Salvar as configurações
+            localStorage.setItem('sheetId', sheetId);
+            localStorage.setItem('appScriptUrl', appScriptUrl);
+            
+            alert('Configurações salvas com sucesso!');
+            
+            // Carregar dados após configuração bem-sucedida
+            carregarDadosIniciais();
+        } catch (error) {
+            // Erro tratado na função callApi
+        }
+        });
+    });
+    
+    // Função para carregar dados iniciais
+    async function carregarDadosIniciais() {
+        try {
+        // Carregar eventos
+        const eventos = await API.getEventos();
+        atualizarListaEventos(eventos);
+        
+        // Carregar fornecedores
+        const fornecedores = await API.getFornecedores();
+        atualizarListaFornecedores(fornecedores);
+        
+        } catch (error) {
+        console.error('Erro ao carregar dados iniciais:', error);
+        }
+    }
+    
+    // Função para atualizar a lista de eventos na interface
+    function atualizarListaEventos(eventos) {
+        // Limpar a tabela atual
+        const tbody = $('#eventos .table tbody');
+        tbody.empty();
+        
+        // Se não houver eventos, mostrar mensagem
+        if (!eventos || eventos.length === 0) {
+        tbody.append('<tr><td colspan="7" class="text-center">Nenhum evento cadastrado</td></tr>');
+        return;
+        }
+        
+        // Adicionar cada evento à tabela
+        eventos.forEach(evento => {
+        tbody.append(`
+            <tr class="evento-row" data-evento-id="${evento.id}">
+            <td>${evento.nome || ''}</td>
+            <td>${evento.cliente || ''}</td>
+            <td>${evento.data || ''}</td>
+            <td>${evento.local || ''}</td>
+            <td><span class="badge ${getBadgeClass(evento.status)}">${evento.status || 'Novo'}</span></td>
+            <td>R$ ${formatarValor(evento.orcamentoTotal) || '0,00'}</td>
+            <td>
+                <button class="btn btn-sm btn-primary visualizar-evento" data-evento-id="${evento.id}">
+                <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-warning editar-evento" data-evento-id="${evento.id}">
+                <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-danger excluir-evento" data-evento-id="${evento.id}">
+                <i class="fas fa-trash"></i>
+                </button>
+            </td>
+            </tr>
+        `);
+        });
+        
+        // Atualizar os event listeners
+        $('.visualizar-evento').click(function() {
+        const eventoId = $(this).data('evento-id');
+        visualizarEvento(eventoId);
+        });
+        
+        $('.editar-evento').click(function() {
+        const eventoId = $(this).data('evento-id');
+        editarEvento(eventoId);
+        });
+        
+        $('.excluir-evento').click(function() {
+        const eventoId = $(this).data('evento-id');
+        excluirEvento(eventoId);
+        });
+    }
+    
+    // Função para atualizar a lista de fornecedores na interface
+    function atualizarListaFornecedores(fornecedores) {
+        // Limpar a tabela atual
+        const tbody = $('#fornecedores .table tbody');
+        tbody.empty();
+        
+        // Se não houver fornecedores, mostrar mensagem
+        if (!fornecedores || fornecedores.length === 0) {
+        tbody.append('<tr><td colspan="6" class="text-center">Nenhum fornecedor cadastrado</td></tr>');
+        return;
+        }
+        
+        // Adicionar cada fornecedor à tabela
+        fornecedores.forEach(fornecedor => {
+        tbody.append(`
+            <tr>
+            <td>${fornecedor.nome || ''}</td>
+            <td>${fornecedor.categoria || ''}</td>
+            <td>${fornecedor.contato || ''}<br>${fornecedor.telefone || ''}<br>${fornecedor.email || ''}</td>
+            <td>${fornecedor.eventosRealizados || '0'}</td>
+            <td>${renderEstrelas(fornecedor.avaliacao || 0)}</td>
+            <td>
+                <button class="btn btn-sm btn-outline-info me-1 visualizar-fornecedor" data-fornecedor-id="${fornecedor.id}">
+                <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-warning editar-fornecedor" data-fornecedor-id="${fornecedor.id}">
+                <i class="fas fa-edit"></i>
+                </button>
+            </td>
+            </tr>
+        `);
+        });
+        
+        // Atualizar os event listeners
+        $('.visualizar-fornecedor').click(function() {
+        const fornecedorId = $(this).data('fornecedor-id');
+        visualizarFornecedor(fornecedorId);
+        });
+        
+        $('.editar-fornecedor').click(function() {
+        const fornecedorId = $(this).data('fornecedor-id');
+        editarFornecedor(fornecedorId);
+        });
+    }
+    
+    // Funções auxiliares
+    function getBadgeClass(status) {
+        switch (status) {
+        case 'Em orçamento': return 'bg-warning';
+        case 'Aprovado': return 'bg-success';
+        case 'Confirmado': return 'bg-primary';
+        case 'Cancelado': return 'bg-danger';
+        default: return 'bg-secondary';
+        }
+    }
+    
+    function formatarValor(valor) {
+        if (!valor) return '0,00';
+        return parseFloat(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    
+    function renderEstrelas(avaliacao) {
+        let html = '';
+        const intPart = Math.floor(avaliacao);
+        const hasHalf = avaliacao - intPart >= 0.5;
+        
+        for (let i = 1; i <= 5; i++) {
+        if (i <= intPart) {
+            html += '<i class="fas fa-star text-warning"></i>';
+        } else if (i === intPart + 1 && hasHalf) {
+            html += '<i class="fas fa-star-half-alt text-warning"></i>';
+        } else {
+            html += '<i class="far fa-star text-warning"></i>';
+        }
+        }
+        
+        return html;
+    }
+    
+    // Funções para manipular eventos
+    async function visualizarEvento(eventoId) {
+        try {
+        // Obter os dados do evento
+        const eventos = await API.getEventos();
+        const evento = eventos.find(e => e.id === eventoId);
+        
+        if (!evento) {
+            alert('Evento não encontrado');
+            return;
+        }
+        
+        // Exibir os dados do evento na interface
+        $('#eventos').hide();
+        $('#detalhe-evento').show();
+        $('#evento-titulo').text(evento.nome);
+        
+        // Carregar orçamentos do evento
+        const orcamentos = await API.getOrcamentos(eventoId);
+        
+        // TODO: Atualizar informações do evento na interface
+        
+        } catch (error) {
+        console.error('Erro ao visualizar evento:', error);
+        }
+    }
+    
+    function editarEvento(eventoId) {
+        // Implementar na próxima fase
+        alert('Função de editar evento será implementada na próxima fase.');
+    }
+    
+    async function excluirEvento(eventoId) {
+        if (confirm('Tem certeza que deseja excluir este evento?')) {
+        try {
+            await API.deleteEvento(eventoId);
+            alert('Evento excluído com sucesso!');
+            
+            // Recarregar a lista de eventos
+            const eventos = await API.getEventos();
+            atualizarListaEventos(eventos);
+        } catch (error) {
+            console.error('Erro ao excluir evento:', error);
+        }
+        }
+    }
+    
+    // Funções para manipular fornecedores
+    function visualizarFornecedor(fornecedorId) {
+        // Implementar na próxima fase
+        alert('Função de visualizar fornecedor será implementada na próxima fase.');
+    }
+    
+    function editarFornecedor(fornecedorId) {
+        // Implementar na próxima fase
+        alert('Função de editar fornecedor será implementada na próxima fase.');
+    }
+    </script>
 </body>
 </html>
