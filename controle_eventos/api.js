@@ -32,31 +32,21 @@ class EventosAPI {
     }
     // Método para cadastrar o primeiro usuário como admin (sem necessidade de API)
     async cadastrarPrimeiroUsuario(usuario) {
-        // Verifica se já existe um admin
-        if (this.hasAdmin) {
+        // Verificar se é o primeiro acesso
+        const adminEmail = localStorage.getItem('adminEmail');
+        
+        // Se já existe um admin, não permite cadastro direto
+        if (adminEmail) {
             return {
                 success: false,
-                error: "Já existe um administrador no sistema"
+                error: "Cadastro direto não permitido. Contate o administrador."
             };
         }
         
-        // Cria o admin localmente
-        const adminUser = {
-            ...usuario,
-            id: this.generateUUID(),
-            isAdmin: true,
-            dataCriacao: new Date().toISOString()
-        };
-        
-        // Salva o admin no localStorage
-        localStorage.setItem('adminUser', JSON.stringify(adminUser));
-        
-        // Adiciona também aos usuários
-        const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-        usuarios.push(adminUser);
-        localStorage.setItem('usuarios', JSON.stringify(usuarios));
-        
-        this.hasAdmin = true;
+        // É o primeiro acesso, permite cadastrar o admin
+        localStorage.setItem('adminNome', usuario.nome);
+        localStorage.setItem('adminEmail', usuario.email);
+        localStorage.setItem('adminSenha', usuario.senha);
         
         return {
             success: true,
@@ -266,23 +256,32 @@ class EventosAPI {
      * @returns {Promise<Object>} - Promise com o resultado da autenticação
      */
     async login(email, senha) {
-        return this.request('login', { email, senha });
-    }
-
-    /**
-     * Cadastro de novo usuário
-     * @param {Object} usuario - Dados do usuário
-     * @returns {Promise<Object>} - Promise com o resultado do cadastro
-     */
-
-    // ======== EVENTOS ========
-
-    /**
-     * Obtém todos os eventos
-     * @returns {Promise<Object>} - Promise com a lista de eventos
-     */
-    async getEventos() {
-        return this.request('getEventos');
+        // Se está configurado, usa a API normal
+        if (this.isConfigured) {
+            return this.request('login', { email, senha });
+        }
+        
+        // Se não está configurado, verifica no localStorage
+        const adminEmail = localStorage.getItem('adminEmail');
+        const adminSenha = localStorage.getItem('adminSenha');
+        const adminNome = localStorage.getItem('adminNome');
+        
+        if (adminEmail && adminSenha && email === adminEmail && senha === adminSenha) {
+            return {
+                success: true,
+                usuario: {
+                    id: 'admin',
+                    nome: adminNome || 'Administrador',
+                    email: adminEmail,
+                    isAdmin: true
+                }
+            };
+        }
+        
+        return {
+            success: false,
+            error: "Credenciais inválidas ou sistema não configurado"
+        };
     }
 
     /**

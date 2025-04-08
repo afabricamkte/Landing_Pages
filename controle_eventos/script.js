@@ -127,27 +127,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (usuarioSalvo) {
             try {
                 usuarioLogado = JSON.parse(usuarioSalvo);
-                isAdmin = usuarioLogado.isAdmin || false;
-                
                 document.getElementById('usuario-logado').textContent = `Olá, ${usuarioLogado.nome}`;
-                
-                // Se for admin, mostra o item de menu de usuários
-                if (isAdmin) {
-                    document.getElementById('nav-usuarios').style.display = 'block';
-                } else {
-                    document.getElementById('nav-usuarios').style.display = 'none';
-                }
-                
                 mostrarSecao('app-section');
                 
                 // Verifica se o sistema está configurado
-                if (!api.isConfigured && isAdmin) {
-                    // Se não estiver configurado e for admin, redireciona para configurações
-                    document.getElementById('nav-configuracoes').click();
-                } else if (api.isConfigured) {
+                if (verificarConfiguracao()) {
                     carregarEventos();
                 } else {
-                    mostrarAlerta('O sistema não está configurado. Por favor, contate o administrador.');
+                    // Se não estiver configurado, redireciona para a seção de configurações
+                    document.getElementById('nav-configuracoes').click();
                 }
             } catch (error) {
                 console.error('Erro ao carregar usuário do localStorage:', error);
@@ -155,13 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else {
             mostrarSecao('login-section');
-            
-            // Se não existe admin ainda, mostra a mensagem de primeiro acesso
-            if (!api.hasAdmin) {
-                document.querySelector('#login-section .primeiro-acesso').style.display = 'block';
-            } else {
-                document.querySelector('#login-section .primeiro-acesso').style.display = 'none';
-            }
         }
     }
     
@@ -247,31 +228,21 @@ document.addEventListener('DOMContentLoaded', function() {
         
         try {
             mostrarSpinner();
+            // Note que aqui chamamos o método cadastrarPrimeiroUsuario em vez de cadastrarUsuario
+            const response = await api.cadastrarPrimeiroUsuario({ nome, email, senha });
             
-            // Verifica se é o primeiro cadastro
-            if (!api.hasAdmin) {
-                const response = await api.cadastrarPrimeiroUsuario({ nome, email, senha });
+            if (response.success) {
+                mensagem.innerHTML = '<div class="alert alert-success">Cadastro realizado com sucesso! Você já pode fazer login.</div>';
                 
-                if (response.success) {
-                    mensagem.innerHTML = '<div class="alert alert-success">Administrador cadastrado com sucesso! Você já pode fazer login.</div>';
-                    
-                    // Limpa o formulário após o cadastro
-                    document.getElementById('cadastro-form').reset();
-                    
-                    // Redireciona para a tela de login após 2 segundos
-                    setTimeout(() => {
-                        document.getElementById('link-login').click();
-                    }, 2000);
-                } else {
-                    mensagem.innerHTML = `<div class="alert alert-danger">${response.error || 'Erro ao cadastrar administrador'}</div>`;
-                }
-            } else {
-                mensagem.innerHTML = '<div class="alert alert-danger">Apenas o administrador pode adicionar novos usuários</div>';
+                // Limpa o formulário após o cadastro
+                document.getElementById('cadastro-form').reset();
                 
                 // Redireciona para a tela de login após 2 segundos
                 setTimeout(() => {
                     document.getElementById('link-login').click();
                 }, 2000);
+            } else {
+                mensagem.innerHTML = `<div class="alert alert-danger">${response.error || 'Erro ao cadastrar usuário'}</div>`;
             }
         } catch (error) {
             mensagem.innerHTML = `<div class="alert alert-danger">${error.message || 'Erro ao cadastrar usuário'}</div>`;
