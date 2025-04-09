@@ -114,34 +114,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Substitua a função mostrarSecao por esta versão melhorada
     function mostrarSecao(id) {
-        console.log('📋 Tentando mostrar seção:', id);
+        console.log('Tentando mostrar seção:', id);
         
-        // Verificação de segurança
-        if (!document.getElementById(id)) {
-            console.error('⚠️ Seção não encontrada:', id);
-            
-            // Tentar mostrar login se a seção solicitada não existe
-            if (id !== 'login-section' && document.getElementById('login-section')) {
-                console.log('Mostrando login como fallback');
-                mostrarSecao('login-section');
-            }
-            return;
-        }
-        
-        // Esconder todas as seções
+        // Esconder todas as seções primeiro
         document.querySelectorAll('.page-section').forEach(section => {
             section.classList.remove('active-section');
-            section.style.display = 'none'; // Adiciona display none explicitamente
+            // Forçar estilo inline para garantir que está escondido
+            section.style.display = 'none';
         });
         
         // Mostrar a seção solicitada
         const secao = document.getElementById(id);
-        secao.classList.add('active-section');
-        secao.style.display = 'block'; // Adiciona display block explicitamente
-        
-        // Armazenar referência à última seção exibida
-        ultimaSecaoExibida = id;
-        console.log('✅ Seção mostrada com sucesso:', id);
+        if (secao) {
+            secao.classList.add('active-section');
+            // Forçar estilo inline para garantir que está visível
+            secao.style.display = 'block';
+            console.log('Seção mostrada com sucesso:', id);
+        } else {
+            console.error('Seção não encontrada:', id);
+        }
     }
     
     /**
