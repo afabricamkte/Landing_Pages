@@ -313,22 +313,22 @@
                 <form id="cadastro-form">
                     <div class="mb-3">
                         <label for="cadastro-nome" class="form-label">Nome completo</label>
-                        <input type="text" class="form-control" id="cadastro-nome" required>
+                        <input type="text" class="form-control" id="cadastro-nome" name="cadastro-nome" required>
                     </div>
                     <div class="mb-3">
                         <label for="cadastro-email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="cadastro-email" required>
+                        <input type="email" class="form-control" id="cadastro-email" name="cadastro-email" required>
                     </div>
                     <div class="mb-3">
                         <label for="cadastro-senha" class="form-label">Senha</label>
-                        <input type="password" class="form-control" id="cadastro-senha" required>
+                        <input type="password" class="form-control" id="cadastro-senha" name="cadastro-senha" required>
                     </div>
                     <div class="mb-3">
                         <label for="cadastro-confirma-senha" class="form-label">Confirmar senha</label>
-                        <input type="password" class="form-control" id="cadastro-confirma-senha" required>
+                        <input type="password" class="form-control" id="cadastro-confirma-senha" name="cadastro-confirma-senha" required>
                     </div>
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Cadastrar</button>
+                        <button type="submit" class="btn btn-primary" id="btn-cadastrar">Cadastrar</button>
                     </div>
                     <div class="text-center mt-3">
                         <a href="#" id="link-login" class="text-decoration-none">Já tem conta? Faça login</a>
@@ -1322,6 +1322,77 @@
               secao.classList.add('active-section');
             }
           }
+        });
+    </script>
+    <script>
+        // Script de correção direta para o cadastro
+        document.addEventListener('DOMContentLoaded', function() {
+          // Função executada quando o DOM é carregado
+          console.log('Script de correção final carregado');
+          
+          // Certifique-se de que o formulário existe
+          const form = document.getElementById('cadastro-form');
+          if (!form) {
+            console.error('Formulário de cadastro não encontrado');
+            return;
+          }
+          
+          // Garantir que todas as IDs existam e estejam corretas
+          const requiredIds = ['cadastro-nome', 'cadastro-email', 'cadastro-senha', 'cadastro-confirma-senha'];
+          const missingIds = requiredIds.filter(id => !document.getElementById(id));
+          
+          if (missingIds.length > 0) {
+            console.error('IDs ausentes:', missingIds);
+          }
+          
+          // Adicionar evento diretamente ao formulário
+          form.onsubmit = function(e) {
+            e.preventDefault();
+            console.log('Formulário submetido via onsubmit');
+            
+            const nome = document.getElementById('cadastro-nome')?.value || '';
+            const email = document.getElementById('cadastro-email')?.value || '';
+            const senha = document.getElementById('cadastro-senha')?.value || '';
+            const confirmaSenha = document.getElementById('cadastro-confirma-senha')?.value || '';
+            
+            console.log('Dados capturados:', {nome, email});
+            
+            // Validações básicas
+            if (!nome || !email || !senha || !confirmaSenha) {
+              alert('Todos os campos são obrigatórios');
+              return false;
+            }
+            
+            if (senha !== confirmaSenha) {
+              alert('As senhas não conferem');
+              return false;
+            }
+            
+            // Cadastrar diretamente no localStorage
+            localStorage.setItem('adminNome', nome);
+            localStorage.setItem('adminEmail', email);
+            localStorage.setItem('adminSenha', senha);
+            
+            const adminUser = {
+              id: 'admin-' + Date.now(),
+              nome: nome,
+              email: email,
+              isAdmin: true,
+              dataCriacao: new Date().toISOString()
+            };
+            
+            localStorage.setItem('adminUser', JSON.stringify(adminUser));
+            localStorage.setItem('usuarioLogado', JSON.stringify(adminUser));
+            
+            alert('Cadastro realizado com sucesso! Redirecionando...');
+            
+            // Redirecionar
+            setTimeout(function() {
+              window.location.reload();
+            }, 1500);
+            
+            return false;
+          };
         });
     </script>
 </body>
