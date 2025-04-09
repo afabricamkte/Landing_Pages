@@ -73,8 +73,21 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {string} tipo - Tipo de alerta (success, danger, warning, info)
      */
     function mostrarAlerta(mensagem, tipo = 'danger') {
-        document.getElementById('mensagem-alerta').textContent = mensagem;
-        document.getElementById('modal-alerta-label').textContent = tipo === 'success' ? 'Sucesso' : 'Aviso';
+        const tituloAlerta = {
+            'success': 'Sucesso',
+            'danger': 'Erro',
+            'warning': 'Atenção',
+            'info': 'Informação'
+        };
+        
+        document.getElementById('mensagem-alerta').innerHTML = mensagem;
+        document.getElementById('modal-alerta-label').textContent = tituloAlerta[tipo] || 'Aviso';
+        
+        // Adiciona classe de cor ao modal
+        const modalAlerta = document.getElementById('modal-alerta');
+        modalAlerta.classList.remove('modal-success', 'modal-danger', 'modal-warning', 'modal-info');
+        modalAlerta.classList.add(`modal-${tipo}`);
+        
         const modal = new bootstrap.Modal(document.getElementById('modal-alerta'));
         modal.show();
     }
@@ -110,10 +123,17 @@ document.addEventListener('DOMContentLoaded', function() {
      * @returns {boolean} - Verdadeiro se o sistema estiver configurado
      */
     function verificarConfiguracao() {
+        const avisoConfiguracao = document.getElementById('aviso-configuracao');
+        
         if (!api.isConfigured) {
             avisoConfiguracao.style.display = 'block';
+            avisoConfiguracao.innerHTML = `
+                <strong>Atenção!</strong> Configure o ID da planilha e a URL do Apps Script antes de começar.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            `;
             return false;
         }
+        
         avisoConfiguracao.style.display = 'none';
         return true;
     }
@@ -136,14 +156,29 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 usuarioLogado = JSON.parse(usuarioSalvo);
                 document.getElementById('usuario-logado').textContent = `Olá, ${usuarioLogado.nome}`;
+                
+                // Define a flag de admin
+                isAdmin = usuarioLogado.isAdmin || false;
+                
+                // Se for admin, mostra o item de menu de usuários
+                if (isAdmin) {
+                    document.getElementById('nav-usuarios').style.display = 'block';
+                } else {
+                    document.getElementById('nav-usuarios').style.display = 'none';
+                }
+                
                 mostrarSecao('app-section');
                 
                 // Verifica se o sistema está configurado
                 if (verificarConfiguracao()) {
                     carregarEventos();
                 } else {
-                    // Se não estiver configurado, redireciona para a seção de configurações
-                    document.getElementById('nav-configuracoes').click();
+                    // Se não estiver configurado e for admin, redireciona para a seção de configurações
+                    if (isAdmin) {
+                        document.getElementById('nav-configuracoes').click();
+                    } else {
+                        mostrarAlerta('O sistema não está configurado. Por favor, contate o administrador.', 'warning');
+                    }
                 }
             } catch (error) {
                 console.error('Erro ao carregar usuário do localStorage:', error);
@@ -154,6 +189,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    function validarFormulario(form) {
+        const campos = form.querySelectorAll('[required]');
+        let valido = true;
+        
+        campos.forEach(campo => {
+            if (!campo.value.trim()) {
+                campo.classList.add('is-invalid');
+                valido = false;
+            } else {
+                campo.classList.remove('is-invalid');
+            }
+        });
+        
+        return valido;
+    }
+
     /**
      * Funções de Autenticação
      */
@@ -1937,12 +1988,17 @@ document.addEventListener('DOMContentLoaded', function() {
 async function salvarConfiguracoes(event) {
     event.preventDefault();
     
-    const planilhaId = document.getElementById('planilha-id').value;
-    const scriptUrl = document.getElementById('script-url').value;
+    const planilhaId = document.getElementById('planilha-id').value.trim();
+    const scriptUrl = document.getElementById('script-url').value.trim();
     
-    // Validação básica
-    if (!planilhaId || !scriptUrl) {
-        mostrarAlerta('Preencha todos os campos obrigatórios');
+    // Validação melhorada
+    if (!planilhaId) {
+        mostrarAlerta('Preencha o ID da planilha Google Sheets');
+        return;
+    }
+    
+    if (!scriptUrl) {
+        mostrarAlerta('Preencha a URL do Google Apps Script');
         return;
     }
     
@@ -1951,10 +2007,16 @@ async function salvarConfiguracoes(event) {
         const configurado = api.saveConfig(scriptUrl, planilhaId);
         
         if (configurado) {
-            mostrarAlerta('Configurações salvas com sucesso!', 'success');
+            mostrarAlerta('Configurações salvas com sucesso! O sistema está pronto para uso.', 'success');
             verificarConfiguracao();
+            
+            // Atualiza o aviso de configuração
+            if (verificarConfiguracao()) {
+                // Se configurado com sucesso, podemos carregar os eventos
+                carregarEventos();
+            }
         } else {
-            mostrarAlerta('Erro ao salvar configurações');
+            mostrarAlerta('Erro ao salvar configurações. Verifique os dados inseridos.');
         }
     } catch (error) {
         console.error('Erro ao salvar configurações:', error);
@@ -1968,12 +2030,17 @@ async function salvarConfiguracoes(event) {
  * Testa a conexão com o Google Apps Script
  */
 async function testarConexao() {
-    const planilhaId = document.getElementById('planilha-id').value;
-    const scriptUrl = document.getElementById('script-url').value;
+    const planilhaId = document.getElementById('planilha-id').value.trim();
+    const scriptUrl = document.getElementById('script-url').value.trim();
     
-    // Validação básica
-    if (!planilhaId || !scriptUrl) {
-        mostrarAlerta('Preencha todos os campos antes de testar a conexão');
+    // Validação melhorada
+    if (!planilhaId) {
+        mostrarAlerta('Preencha o ID da planilha Google Sheets antes de testar');
+        return;
+    }
+    
+    if (!scriptUrl) {
+        mostrarAlerta('Preencha a URL do Google Apps Script antes de testar');
         return;
     }
     
@@ -1981,18 +2048,24 @@ async function testarConexao() {
         mostrarSpinner();
         
         // Salva temporariamente as configurações para o teste
-        api.saveConfig(scriptUrl, planilhaId);
+        const tempConfig = api.saveConfig(scriptUrl, planilhaId);
+        
+        if (!tempConfig) {
+            mostrarAlerta('Erro ao salvar configurações temporárias');
+            esconderSpinner();
+            return;
+        }
         
         const resultado = await api.testConnection();
         
         if (resultado) {
-            mostrarAlerta('Conexão estabelecida com sucesso!', 'success');
+            mostrarAlerta('Conexão estabelecida com sucesso! O sistema está pronto para uso.', 'success');
         } else {
-            mostrarAlerta('Falha ao estabelecer conexão. Verifique o ID da planilha e a URL do script.');
+            mostrarAlerta('Falha ao estabelecer conexão. Verifique:<br>1. O ID da planilha está correto<br>2. A URL do script está correta<br>3. O script está publicado como aplicativo web<br>4. As permissões do script estão configuradas corretamente', 'warning');
         }
     } catch (error) {
         console.error('Erro ao testar conexão:', error);
-        mostrarAlerta('Erro ao testar conexão: ' + error.message);
+        mostrarAlerta('Erro ao testar conexão: ' + error.message + '<br>Verifique se o script foi publicado como aplicativo web com as permissões corretas.', 'danger');
     } finally {
         esconderSpinner();
     }

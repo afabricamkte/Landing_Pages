@@ -299,25 +299,36 @@ class EventosAPI {
      * @returns {Promise<Object>} - Promise com o resultado da autenticação
      */
     async login(email, senha) {
-        // Se está configurado, usa a API normal
+        // Se está configurado, usa a API
         if (this.isConfigured) {
-            // Se não está configurado, verifica no localStorage
-            const adminEmail = localStorage.getItem('adminEmail');
-            const adminSenha = localStorage.getItem('adminSenha');
-            const adminNome = localStorage.getItem('adminNome');
-
-            if (adminEmail && adminSenha && email === adminEmail && senha === adminSenha) {
+            try {
+                const response = await this.request('login', { email, senha });
+                return response;
+            } catch (error) {
+                console.error('Erro ao realizar login com API:', error);
+                
+                // Fallback para localStorage se a API falhar
+                const adminEmail = localStorage.getItem('adminEmail');
+                const adminSenha = localStorage.getItem('adminSenha');
+                const adminNome = localStorage.getItem('adminNome');
+                
+                if (adminEmail && adminSenha && email === adminEmail && senha === adminSenha) {
+                    return {
+                        success: true,
+                        usuario: {
+                            id: 'admin',
+                            nome: adminNome || 'Administrador',
+                            email: adminEmail,
+                            isAdmin: true
+                        }
+                    };
+                }
+                
                 return {
-                    success: true,
-                    usuario: {
-                        id: 'admin',
-                        nome: adminNome || 'Administrador',
-                        email: adminEmail,
-                        isAdmin: true
-                    }
+                    success: false,
+                    error: "Erro ao conectar com o servidor: " + error.message
                 };
             }
-            return this.request('login', { email, senha });
         }
         
         // Se não está configurado, verifica no localStorage
