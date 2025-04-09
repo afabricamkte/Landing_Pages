@@ -19,7 +19,7 @@ import uiController from '../ui/ui-controller.js';
 import components from '../ui/components.js';
 
 // Importa utilitários
-import helpers from './utils/helpers.js';
+import helpers from '../utils/helpers.js';
 import formatters from '../utils/formatters.js';
 
 /**
