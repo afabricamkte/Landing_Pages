@@ -20,6 +20,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const spinner = document.getElementById('spinner');
     const avisoConfiguracao = document.getElementById('aviso-configuracao');
     
+    // Adicione no início do arquivo, antes das funções
+    console.log('Versão do script: 1.0.1');
+    console.log('Inicializando... Verificando localStorage:');
+    console.log('- adminEmail:', !!localStorage.getItem('adminEmail'));
+    console.log('- scriptUrl:', localStorage.getItem('scriptUrl'));
+    console.log('- spreadsheetId:', localStorage.getItem('spreadsheetId'));
     /**
      * Funções de utilidade
      */
@@ -102,6 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function esconderTodasSecoes() {
         document.querySelectorAll('.page-section').forEach(section => {
             section.classList.remove('active-section');
+            section.style.display = 'none';
         });
     }
     
@@ -147,15 +154,25 @@ document.addEventListener('DOMContentLoaded', function() {
     function inicializarSistema() {
         console.log('🚀 Inicializando sistema...');
         
-        // A verificação inicial agora é gerenciada pelo módulo Auth
-        // Continua com outras inicializações específicas do sistema, se necessário
-        
-        // Verificação de configuração
-        if (api.isConfigured) {
-            // Carrega os dados iniciais se estiver na seção principal
-            if (document.getElementById('app-section').classList.contains('active-section')) {
-                carregarEventos();
+        // Verifica se é o primeiro acesso
+        if (localStorage.getItem('adminEmail')) {
+            // Não é primeiro acesso, verifica se tem usuário logado
+            if (Auth.getCurrentUser()) {
+                // Verificação de configuração
+                if (api.isConfigured) {
+                    // Carrega os dados iniciais
+                    carregarEventos();
+                } else if (Auth.isUserAdmin()) {
+                    // Se for admin e não configurou, mostra tela de configuração
+                    Auth.UI.mostrarSecao('configuracoes-section');
+                }
+            } else {
+                // Não está logado, mostra login
+                Auth.UI.mostrarSecao('login-section');
             }
+        } else {
+            // É primeiro acesso, mostra cadastro
+            Auth.UI.mostrarSecao('cadastro-section');
         }
     }
     

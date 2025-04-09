@@ -35,11 +35,21 @@ const Auth = (function() {
         // Adiciona event listeners para os formulários e links
         setupEventListeners();
         
-        // Verifica se existe um usuário logado
-        checkLoggedInUser();
-        
-        // Verifica se é o primeiro acesso ao sistema
-        checkFirstAccess();
+        // Verifica o estado do sistema
+        if (localStorage.getItem('adminEmail')) {
+            // Verifica se existe um usuário logado
+            if (checkLoggedInUser()) {
+                UI.mostrarSecao('app-section');
+            } else {
+                UI.mostrarSecao('login-section');
+            }
+        } else {
+            // É primeiro acesso
+            UI.mostrarSecao('cadastro-section');
+            if (elements.primeiroAcesso) {
+                elements.primeiroAcesso.style.display = 'block';
+            }
+        }
         
         console.log('✅ Módulo de autenticação inicializado');
     }

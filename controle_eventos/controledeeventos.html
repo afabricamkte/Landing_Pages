@@ -215,6 +215,22 @@
         }
     </style>
     <style>
+        .page-section {
+            display: none !important;
+        }
+        
+        .active-section {
+            display: block !important;
+        }
+        
+        /* Garantir que login e cadastro funcionem corretamente */
+        #login-section.active-section,
+        #cadastro-section.active-section {
+            display: block !important;
+            visibility: visible !important;
+        }
+    </style>
+    <style>
         /* Adicione este CSS ao seu estilo existente */
         .page-section {
           display: none !important;
