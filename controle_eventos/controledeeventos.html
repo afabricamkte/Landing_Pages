@@ -1210,85 +1210,131 @@
         });
     </script>
     <script>
-        // Resolver problema do formulário de cadastro
+        // Script para resolver o problema de primeiro cadastro
         document.addEventListener('DOMContentLoaded', function() {
-          // Garantir que o formulário de cadastro seja processado
-          document.getElementById('cadastro-form').addEventListener('submit', function(e) {
+          console.log('Script de correção de cadastro carregado');
+          
+          // Remover qualquer listener existente para o formulário de cadastro
+          const formCadastro = document.getElementById('cadastro-form');
+          const cloneForm = formCadastro.cloneNode(true);
+          formCadastro.parentNode.replaceChild(cloneForm, formCadastro);
+          
+          // Adicionar novo listener diretamente no botão de submit
+          cloneForm.querySelector('button[type="submit"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Botão de cadastro clicado');
+            processarCadastroPrimeiroUsuario();
+          });
+          
+          // Também adicionar listener no evento submit do formulário
+          cloneForm.addEventListener('submit', function(e) {
             e.preventDefault();
             console.log('Formulário de cadastro submetido');
-            
-            // Capturar valores
+            processarCadastroPrimeiroUsuario();
+          });
+          
+          // Função que processa o cadastro diretamente
+          function processarCadastroPrimeiroUsuario() {
+            // Capturar valores do formulário
             const nome = document.getElementById('cadastro-nome').value;
             const email = document.getElementById('cadastro-email').value;
             const senha = document.getElementById('cadastro-senha').value;
             const confirmaSenha = document.getElementById('cadastro-confirma-senha').value;
             
-            console.log('Dados do formulário:', { nome, email });
+            console.log('Dados do cadastro:', { nome, email });
             
-            // Verificar senhas
-            if (senha !== confirmaSenha) {
-              document.getElementById('cadastro-mensagem').innerHTML = 
-                '<div class="alert alert-danger">As senhas não conferem</div>';
+            // Validações
+            if (!nome || !email || !senha || !confirmaSenha) {
+              mostrarMensagemCadastro('Todos os campos são obrigatórios', 'danger');
               return;
             }
             
-            // Chamar função do script.js - se ela falhar, tenta cadastrar diretamente
-            try {
-              // Tenta usar a função do script principal
-              if (typeof cadastrarUsuario === 'function') {
-                const event = { preventDefault: () => {} };
-                cadastrarUsuario(event);
-              } else {
-                // Fallback caso a função não esteja disponível
-                realizarCadastroFallback(nome, email, senha);
-              }
-            } catch (error) {
-              console.error('Erro ao tentar cadastrar:', error);
-              realizarCadastroFallback(nome, email, senha);
+            if (senha !== confirmaSenha) {
+              mostrarMensagemCadastro('As senhas não conferem', 'danger');
+              return;
             }
-          });
-          
-          // Função alternativa para cadastro
-          function realizarCadastroFallback(nome, email, senha) {
-            console.log('Usando método alternativo de cadastro');
             
-            // Salvando admin no localStorage (método alternativo)
-            localStorage.setItem('adminNome', nome);
-            localStorage.setItem('adminEmail', email);
-            localStorage.setItem('adminSenha', senha);
+            if (senha.length < 6) {
+              mostrarMensagemCadastro('A senha deve ter pelo menos 6 caracteres', 'danger');
+              return;
+            }
             
-            // Cria objeto usuário
-            const adminUser = {
-              id: 'admin-' + Date.now(),
-              nome: nome,
-              email: email,
-              isAdmin: true,
-              dataCriacao: new Date().toISOString()
-            };
-            
-            // Salva usuário
-            localStorage.setItem('adminUser', JSON.stringify(adminUser));
-            localStorage.setItem('usuarioLogado', JSON.stringify(adminUser));
-            
-            // Mostra mensagem de sucesso
-            document.getElementById('cadastro-mensagem').innerHTML = 
-              '<div class="alert alert-success">Administrador cadastrado com sucesso! Redirecionando...</div>';
-            
-            // Redireciona após 2 segundos
-            setTimeout(function() {
-              // Muda para a tela principal
-              document.querySelectorAll('.page-section').forEach(s => {
-                s.style.display = 'none';
-                s.classList.remove('active-section');
-              });
-              document.getElementById('app-section').style.display = 'block';
-              document.getElementById('app-section').classList.add('active-section');
+            // Implementação direta do cadastro do primeiro usuário
+            try {
+              // Salvar admin no localStorage
+              localStorage.setItem('adminNome', nome);
+              localStorage.setItem('adminEmail', email);
+              localStorage.setItem('adminSenha', senha);
               
-              // Atualiza nome do usuário
-              document.getElementById('usuario-logado').textContent = `Olá, ${nome}`;
-            }, 2000);
+              // Criar objeto de usuário admin
+              const adminUser = {
+                id: 'admin-' + Date.now(),
+                nome: nome,
+                email: email,
+                isAdmin: true,
+                dataCriacao: new Date().toISOString()
+              };
+              
+              // Salvar usuário admin
+              localStorage.setItem('adminUser', JSON.stringify(adminUser));
+              localStorage.setItem('usuarioLogado', JSON.stringify(adminUser));
+              
+              // Mensagem de sucesso
+              mostrarMensagemCadastro('Administrador cadastrado com sucesso! Redirecionando...', 'success');
+              
+              // Redireciona após 2 segundos
+              setTimeout(function() {
+                // Configurar a API (se necessário)
+                if (window.api && typeof window.api.checkSystemInitialState === 'function') {
+                  window.api.checkSystemInitialState();
+                }
+                
+                // Ocultar mensagem de primeiro acesso
+                const primeiroAcesso = document.querySelector('.primeiro-acesso');
+                if (primeiroAcesso) primeiroAcesso.style.display = 'none';
+                
+                // Atualiza o nome do usuário na barra superior
+                document.getElementById('usuario-logado').textContent = `Olá, ${nome}`;
+                
+                // Mostrar a seção do app
+                document.querySelectorAll('.page-section').forEach(s => {
+                  s.style.display = 'none';
+                  s.classList.remove('active-section');
+                });
+                document.getElementById('app-section').style.display = 'block';
+                document.getElementById('app-section').classList.add('active-section');
+                
+                // Habilitar menu de usuários para o admin
+                document.getElementById('nav-usuarios').style.display = 'block';
+                
+                // Verificar configurações
+                if (window.api && window.api.isConfigured) {
+                  // Se já estiver configurado, mostrar eventos
+                  if (typeof carregarEventos === 'function') {
+                    carregarEventos();
+                  }
+                } else {
+                  // Se não estiver configurado, ir para a página de configurações
+                  document.querySelectorAll('.page-section').forEach(s => {
+                    s.style.display = 'none';
+                    s.classList.remove('active-section');
+                  });
+                  document.getElementById('configuracoes-section').style.display = 'block';
+                  document.getElementById('configuracoes-section').classList.add('active-section');
+                }
+              }, 2000);
+            } catch (error) {
+              console.error('Erro no cadastro:', error);
+              mostrarMensagemCadastro('Erro ao cadastrar: ' + error.message, 'danger');
+            }
+          }
+          
+          // Função para mostrar mensagens no formulário
+          function mostrarMensagemCadastro(mensagem, tipo) {
+            const mensagemElement = document.getElementById('cadastro-mensagem');
+            mensagemElement.innerHTML = `<div class="alert alert-${tipo}">${mensagem}</div>`;
           }
         });
-      </script>
+    </script>
 </body>
 </html>
