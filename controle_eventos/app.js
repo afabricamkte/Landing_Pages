@@ -4,23 +4,23 @@
  */
 
 // Importa os módulos centrais
-import state from '../core/state.js';
-import router from '../core/router.js';
-import storage from '../core/storage.js';
+import state from './core/state.js';
+import router from './core/router.js';
+import storage from './core/storage.js';
 
 // Importa serviços
-import authService from '../services/auth.service.js';
-import eventService from '../services/event.service.js';
-import budgetService from '../services/budget.service.js';
-import providerService from '../services/provider.service.js';
+import authService from './services/auth.service.js';
+import eventService from './services/event.service.js';
+import budgetService from './services/budget.service.js';
+import providerService from './services/provider.service.js';
 
 // Importa os módulos de UI
-import uiController from '../ui/ui-controller.js';
-import components from '../ui/components.js';
+import uiController from './ui/ui-controller.js';
+import components from './ui/components.js';
 
 // Importa utilitários
-import helpers from '../utils/helpers.js';
-import formatters from '../utils/formatters.js';
+import helpers from './utils/helpers.js';
+import formatters from './utils/formatters.js';
 
 /**
  * Inicialização da aplicação
