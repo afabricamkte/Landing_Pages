@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <base href="./">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Gestão de Orçamentos para Eventos</title>
@@ -208,6 +209,23 @@
             overflow: visible !important;
         }
     </style>
+    <script type="importmap">
+        {
+          "imports": {
+            "/core/state.js": "./core/state.js",
+            "/core/router.js": "./core/router.js",
+            "/core/storage.js": "./core/storage.js",
+            "/services/auth.service.js": "./services/auth.service.js",
+            "/services/event.service.js": "./services/event.service.js",
+            "/services/budget.service.js": "./services/budget.service.js",
+            "/services/provider.service.js": "./services/provider.service.js",
+            "/ui/components.js": "./ui/components.js",
+            "/ui/ui-controller.js": "./ui/ui-controller.js",
+            "/utils/formatters.js": "./utils/formatters.js",
+            "/utils/helpers.js": "./utils/helpers.js"
+          }
+        }
+    </script>
 </head>
 <body>
     <!-- Spinner de Carregamento -->
@@ -1041,6 +1059,8 @@
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
     
     <!-- Módulos da aplicação (tipo módulo ES) -->
-    <script type="module" src="./app.js"></script>
+    <script type="module">
+        import './app.js';
+    </script>
 </body>
 </html>
