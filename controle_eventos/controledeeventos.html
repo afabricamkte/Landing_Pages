@@ -199,9 +199,43 @@
             background-color: #0dcaf0;
             color: white;
         }
+
+        /* Garantir visibilidade correta das seções */
+        .page-section {
+            display: none !important;
+        }
+
+        .active-section {
+            display: block !important;
+        }
+
+        /* Garante que o login está sempre visível se nenhuma seção estiver ativa */
+        #app-section:not(.active-section) ~ #login-section {
+            display: block !important;
+        }
     </style>
 </head>
 <body>
+    <script>
+        console.log('🔍 Iniciando carregamento da página');
+        
+        // Capturar estados de exibição das seções
+        document.addEventListener('DOMContentLoaded', function() {
+          console.log('✅ DOM carregado');
+          
+          // Verificar seções visíveis a cada 500ms nos primeiros segundos
+          let contador = 0;
+          const intervalo = setInterval(function() {
+            const secoes = document.querySelectorAll('.page-section');
+            const secaoAtiva = document.querySelector('.active-section');
+            
+            console.log(`Verificação #${contador+1}: Seção ativa:`, secaoAtiva ? secaoAtiva.id : 'nenhuma');
+            
+            contador++;
+            if (contador >= 6) clearInterval(intervalo);
+          }, 500);
+        });
+    </script>
     <!-- Spinner de Carregamento -->
     <div class="spinner-overlay" id="spinner" style="display: none;">
         <div class="spinner-border text-light" role="status">

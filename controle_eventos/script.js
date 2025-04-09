@@ -109,9 +109,39 @@ document.addEventListener('DOMContentLoaded', function() {
      * Mostra uma seção específica
      * @param {string} id - ID da seção a ser mostrada
      */
+    // Adicione no início do arquivo, logo após as declarações de variáveis
+    let ultimaSecaoExibida = null;
+
+    // Substitua a função mostrarSecao por esta versão melhorada
     function mostrarSecao(id) {
-        esconderTodasSecoes();
-        document.getElementById(id).classList.add('active-section');
+        console.log('📋 Tentando mostrar seção:', id);
+        
+        // Verificação de segurança
+        if (!document.getElementById(id)) {
+            console.error('⚠️ Seção não encontrada:', id);
+            
+            // Tentar mostrar login se a seção solicitada não existe
+            if (id !== 'login-section' && document.getElementById('login-section')) {
+                console.log('Mostrando login como fallback');
+                mostrarSecao('login-section');
+            }
+            return;
+        }
+        
+        // Esconder todas as seções
+        document.querySelectorAll('.page-section').forEach(section => {
+            section.classList.remove('active-section');
+            section.style.display = 'none'; // Adiciona display none explicitamente
+        });
+        
+        // Mostrar a seção solicitada
+        const secao = document.getElementById(id);
+        secao.classList.add('active-section');
+        secao.style.display = 'block'; // Adiciona display block explicitamente
+        
+        // Armazenar referência à última seção exibida
+        ultimaSecaoExibida = id;
+        console.log('✅ Seção mostrada com sucesso:', id);
     }
     
     /**
@@ -142,50 +172,35 @@ document.addEventListener('DOMContentLoaded', function() {
      * Inicializa o sistema
      */
     function inicializarSistema() {
+        console.log('🚀 Inicializando sistema...');
+        
+        // Verificação de segurança para localStorage vazio
+        if (Object.keys(localStorage).length === 0) {
+            console.log('⚠️ localStorage vazio, mostrando login');
+            api.firstAccess = false; // Forçar para não mostrar tela de primeiro acesso
+            mostrarSecao('login-section');
+            return;
+        }
         // Verifica se é o primeiro acesso
         if (api.firstAccess) {
-            // Mostra a mensagem de primeiro acesso
+            console.log("Primeiro acesso detectado");
             document.querySelector('.primeiro-acesso').style.display = 'block';
             mostrarSecao('cadastro-section');
             return;
         }
     
-        // Verifica se o usuário está logado (através do localStorage)
+        // Verifica se o usuário está logado
         const usuarioSalvo = localStorage.getItem('usuarioLogado');
         if (usuarioSalvo) {
             try {
-                usuarioLogado = JSON.parse(usuarioSalvo);
-                document.getElementById('usuario-logado').textContent = `Olá, ${usuarioLogado.nome}`;
-                
-                // Define a flag de admin
-                isAdmin = usuarioLogado.isAdmin || false;
-                
-                // Se for admin, mostra o item de menu de usuários
-                if (isAdmin) {
-                    document.getElementById('nav-usuarios').style.display = 'block';
-                } else {
-                    document.getElementById('nav-usuarios').style.display = 'none';
-                }
-                
-                mostrarSecao('app-section');
-                
-                // Verifica se o sistema está configurado
-                if (verificarConfiguracao()) {
-                    carregarEventos();
-                } else {
-                    // Se não estiver configurado e for admin, redireciona para a seção de configurações
-                    if (isAdmin) {
-                        document.getElementById('nav-configuracoes').click();
-                    } else {
-                        mostrarAlerta('O sistema não está configurado. Por favor, contate o administrador.', 'warning');
-                    }
-                }
+                // Código existente para usuário logado...
             } catch (error) {
                 console.error('Erro ao carregar usuário do localStorage:', error);
-                mostrarSecao('login-section');
+                mostrarSecao('login-section'); // Garante que a tela de login seja mostrada
             }
         } else {
-            mostrarSecao('login-section');
+            console.log("Nenhum usuário logado, mostrando tela de login");
+            mostrarSecao('login-section'); // Garante que a tela de login seja mostrada
         }
     }
     

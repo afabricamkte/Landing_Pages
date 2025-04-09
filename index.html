@@ -14,7 +14,20 @@
   <meta property="og:url" content="https://afabricamkte.com.br">
   <link rel="canonical" href="https://afabricamkte.com.br">
   <link rel="icon" type="image/svg+xml" href="images/logo_nova_com_fundo.svg">
-
+  <script>
+    // Script para diagnóstico da inicialização
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Página carregada');
+        
+        // Verificar se as seções existem
+        const loginSection = document.getElementById('login-section');
+        console.log('Seção de login encontrada:', !!loginSection);
+        
+        // Verificar localStorage
+        console.log('localStorage disponível:', !!window.localStorage);
+        console.log('Itens no localStorage:', Object.keys(localStorage).length);
+    });
+    </script>
   <style>
     :root {
       --primary: #010d36;
