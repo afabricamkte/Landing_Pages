@@ -1167,7 +1167,235 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- API Script -->
     <script src="api.js"></script>
-    <script src="auth.js"></script>
+    <!-- Main Script -->
     <script src="script.js"></script>
+    <script>
+        // Script para garantir visibilidade das seções
+        document.addEventListener('DOMContentLoaded', function() {
+          // Corrija links entre login e cadastro
+          document.getElementById('link-cadastro').addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // Previne propagação do evento
+            console.log('Link cadastro clicado - forçando exibição da seção de cadastro');
+            
+            // Forçar visibilidade
+            document.querySelectorAll('.page-section').forEach(s => {
+              s.style.display = 'none';
+              s.classList.remove('active-section');
+            });
+            
+            // Forçar exibição da seção de cadastro
+            const cadastroSection = document.getElementById('cadastro-section');
+            cadastroSection.style.display = 'block';
+            cadastroSection.classList.add('active-section');
+          });
+          
+          // Corrija retorno para login
+          document.getElementById('link-login').addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // Previne propagação do evento
+            console.log('Link login clicado - forçando exibição da seção de login');
+            
+            // Forçar visibilidade
+            document.querySelectorAll('.page-section').forEach(s => {
+              s.style.display = 'none';
+              s.classList.remove('active-section');
+            });
+            
+            // Forçar exibição da seção de login
+            const loginSection = document.getElementById('login-section');
+            loginSection.style.display = 'block';
+            loginSection.classList.add('active-section');
+          });
+        });
+    </script>
+    <script>
+        // Script para resolver problemas de submit no cadastro
+        document.addEventListener('DOMContentLoaded', function() {
+          console.log('🔧 Correção de formulário de cadastro carregada');
+          
+          // Consertar os erros de ID e label
+          const formInputs = document.querySelectorAll('#cadastro-form input, #cadastro-form select, #cadastro-form textarea');
+          formInputs.forEach(input => {
+            // Garantir que todos os campos tenham ID e name
+            if (!input.id) {
+              input.id = 'field-' + Math.random().toString(36).substring(2, 9);
+            }
+            if (!input.name) {
+              input.name = input.id;
+            }
+            
+            // Consertar labels associados
+            const label = input.previousElementSibling;
+            if (label && label.tagName === 'LABEL' && label.getAttribute('for') !== input.id) {
+              label.setAttribute('for', input.id);
+            }
+          });
+          
+          // Acionar a função de cadastro quando o botão for clicado
+          const cadastroBtn = document.querySelector('#cadastro-form button[type="submit"]');
+          if (cadastroBtn) {
+            cadastroBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+              console.log('🔘 Botão de cadastro clicado diretamente');
+              fazerCadastro();
+            });
+          }
+          
+          // Também garantir que o formulário seja processado no evento submit
+          const cadastroForm = document.getElementById('cadastro-form');
+          if (cadastroForm) {
+            cadastroForm.addEventListener('submit', function(e) {
+              e.preventDefault();
+              console.log('📝 Formulário de cadastro submetido');
+              fazerCadastro();
+            });
+          }
+          
+          function fazerCadastro() {
+            const nome = document.getElementById('cadastro-nome').value;
+            const email = document.getElementById('cadastro-email').value;
+            const senha = document.getElementById('cadastro-senha').value;
+            const confirmaSenha = document.getElementById('cadastro-confirma-senha').value;
+            
+            console.log('🔄 Processando cadastro para:', nome, email);
+            
+            // Validação
+            if (!nome || !email || !senha || !confirmaSenha) {
+              mostrarMensagem('Todos os campos são obrigatórios', 'danger');
+              return;
+            }
+            
+            if (senha !== confirmaSenha) {
+              mostrarMensagem('As senhas não conferem', 'danger');
+              return;
+            }
+            
+            // Salvar no localStorage
+            localStorage.setItem('adminNome', nome);
+            localStorage.setItem('adminEmail', email);
+            localStorage.setItem('adminSenha', senha);
+            
+            // Criar objeto de admin
+            const adminUser = {
+              id: 'admin-' + Date.now(),
+              nome: nome,
+              email: email,
+              isAdmin: true,
+              dataCriacao: new Date().toISOString()
+            };
+            
+            // Salvar usuário
+            localStorage.setItem('adminUser', JSON.stringify(adminUser));
+            localStorage.setItem('usuarioLogado', JSON.stringify(adminUser));
+            
+            mostrarMensagem('Cadastro realizado com sucesso! Redirecionando...', 'success');
+            
+            // Redirecionar após 2 segundos
+            setTimeout(function() {
+              mostrarSecaoDiretamente('app-section');
+              document.getElementById('usuario-logado').textContent = 'Olá, ' + nome;
+            }, 2000);
+          }
+          
+          function mostrarMensagem(texto, tipo) {
+            const mensagemDiv = document.getElementById('cadastro-mensagem');
+            if (mensagemDiv) {
+              mensagemDiv.innerHTML = `<div class="alert alert-${tipo}">${texto}</div>`;
+            } else {
+              console.error('Elemento de mensagem não encontrado');
+              alert(texto);
+            }
+          }
+          
+          function mostrarSecaoDiretamente(id) {
+            // Esconder todas as seções
+            document.querySelectorAll('.page-section').forEach(s => {
+              s.style.display = 'none';
+              s.classList.remove('active-section');
+            });
+            
+            // Mostrar a seção solicitada
+            const secao = document.getElementById(id);
+            if (secao) {
+              secao.style.display = 'block';
+              secao.classList.add('active-section');
+            }
+          }
+        });
+    </script>
+    <script>
+        // Script de correção direta para o cadastro
+        document.addEventListener('DOMContentLoaded', function() {
+          // Função executada quando o DOM é carregado
+          console.log('Script de correção final carregado');
+          
+          // Certifique-se de que o formulário existe
+          const form = document.getElementById('cadastro-form');
+          if (!form) {
+            console.error('Formulário de cadastro não encontrado');
+            return;
+          }
+          
+          // Garantir que todas as IDs existam e estejam corretas
+          const requiredIds = ['cadastro-nome', 'cadastro-email', 'cadastro-senha', 'cadastro-confirma-senha'];
+          const missingIds = requiredIds.filter(id => !document.getElementById(id));
+          
+          if (missingIds.length > 0) {
+            console.error('IDs ausentes:', missingIds);
+          }
+          
+          // Adicionar evento diretamente ao formulário
+          form.onsubmit = function(e) {
+            e.preventDefault();
+            console.log('Formulário submetido via onsubmit');
+            
+            const nome = document.getElementById('cadastro-nome')?.value || '';
+            const email = document.getElementById('cadastro-email')?.value || '';
+            const senha = document.getElementById('cadastro-senha')?.value || '';
+            const confirmaSenha = document.getElementById('cadastro-confirma-senha')?.value || '';
+            
+            console.log('Dados capturados:', {nome, email});
+            
+            // Validações básicas
+            if (!nome || !email || !senha || !confirmaSenha) {
+              alert('Todos os campos são obrigatórios');
+              return false;
+            }
+            
+            if (senha !== confirmaSenha) {
+              alert('As senhas não conferem');
+              return false;
+            }
+            
+            // Cadastrar diretamente no localStorage
+            localStorage.setItem('adminNome', nome);
+            localStorage.setItem('adminEmail', email);
+            localStorage.setItem('adminSenha', senha);
+            
+            const adminUser = {
+              id: 'admin-' + Date.now(),
+              nome: nome,
+              email: email,
+              isAdmin: true,
+              dataCriacao: new Date().toISOString()
+            };
+            
+            localStorage.setItem('adminUser', JSON.stringify(adminUser));
+            localStorage.setItem('usuarioLogado', JSON.stringify(adminUser));
+            
+            alert('Cadastro realizado com sucesso! Redirecionando...');
+            
+            // Redirecionar
+            setTimeout(function() {
+              window.location.reload();
+            }, 1500);
+            
+            return false;
+          };
+        });
+    </script>
+    <script src="script.js"></script>
+    <script src="cadastro-fix.js"></script>
 </body>
 </html>

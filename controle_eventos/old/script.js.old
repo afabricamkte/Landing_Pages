@@ -112,9 +112,27 @@ document.addEventListener('DOMContentLoaded', function() {
     // Adicione no início do arquivo, logo após as declarações de variáveis
     let ultimaSecaoExibida = null;
 
+    // Substitua a função mostrarSecao por esta versão melhorada
     function mostrarSecao(id) {
-        // Redireciona para a função no módulo Auth
-        Auth.UI.mostrarSecao(id);
+        console.log('Tentando mostrar seção:', id);
+        
+        // Esconder todas as seções primeiro
+        document.querySelectorAll('.page-section').forEach(section => {
+            section.classList.remove('active-section');
+            // Forçar estilo inline para garantir que está escondido
+            section.style.display = 'none';
+        });
+        
+        // Mostrar a seção solicitada
+        const secao = document.getElementById(id);
+        if (secao) {
+            secao.classList.add('active-section');
+            // Forçar estilo inline para garantir que está visível
+            secao.style.display = 'block';
+            console.log('Seção mostrada com sucesso:', id);
+        } else {
+            console.error('Seção não encontrada:', id);
+        }
     }
     
     /**
@@ -147,15 +165,33 @@ document.addEventListener('DOMContentLoaded', function() {
     function inicializarSistema() {
         console.log('🚀 Inicializando sistema...');
         
-        // A verificação inicial agora é gerenciada pelo módulo Auth
-        // Continua com outras inicializações específicas do sistema, se necessário
-        
-        // Verificação de configuração
-        if (api.isConfigured) {
-            // Carrega os dados iniciais se estiver na seção principal
-            if (document.getElementById('app-section').classList.contains('active-section')) {
-                carregarEventos();
+        // Verificação de segurança para localStorage vazio
+        if (Object.keys(localStorage).length === 0) {
+            console.log('⚠️ localStorage vazio, mostrando login');
+            api.firstAccess = false; // Forçar para não mostrar tela de primeiro acesso
+            mostrarSecao('login-section');
+            return;
+        }
+        // Verifica se é o primeiro acesso
+        if (api.firstAccess) {
+            console.log("Primeiro acesso detectado");
+            document.querySelector('.primeiro-acesso').style.display = 'block';
+            mostrarSecao('cadastro-section');
+            return;
+        }
+    
+        // Verifica se o usuário está logado
+        const usuarioSalvo = localStorage.getItem('usuarioLogado');
+        if (usuarioSalvo) {
+            try {
+                // Código existente para usuário logado...
+            } catch (error) {
+                console.error('Erro ao carregar usuário do localStorage:', error);
+                mostrarSecao('login-section'); // Garante que a tela de login seja mostrada
             }
+        } else {
+            console.log("Nenhum usuário logado, mostrando tela de login");
+            mostrarSecao('login-section'); // Garante que a tela de login seja mostrada
         }
     }
     
@@ -183,26 +219,109 @@ document.addEventListener('DOMContentLoaded', function() {
      * Realiza o login do usuário
      * @param {Event} event - Evento de submit do formulário
      */
-    function fazerLogin(event) {
-        // Esta função agora é tratada pelo módulo Auth
-        console.warn('A função fazerLogin foi movida para o módulo Auth');
+    async function fazerLogin(event) {
+        event.preventDefault();
+        
+        const email = document.getElementById('login-email').value;
+        const senha = document.getElementById('login-senha').value;
+        const mensagem = document.getElementById('login-mensagem');
+        
+        try {
+            mostrarSpinner();
+            const response = await api.login(email, senha);
+            
+            if (response.success) {
+                usuarioLogado = response.usuario;
+                isAdmin = usuarioLogado.isAdmin || false;
+                
+                // Salva o usuário no localStorage
+                localStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
+                
+                // Atualiza o nome do usuário na interface
+                document.getElementById('usuario-logado').textContent = `Olá, ${usuarioLogado.nome}`;
+                
+                // Se for admin, mostra o item de menu de usuários
+                if (isAdmin) {
+                    document.getElementById('nav-usuarios').style.display = 'block';
+                } else {
+                    document.getElementById('nav-usuarios').style.display = 'none';
+                }
+                
+                // Redireciona para a tela principal
+                mostrarSecao('app-section');
+                
+                // Se não estiver configurado e for admin, redireciona para configurações
+                if (!api.isConfigured && isAdmin) {
+                    document.getElementById('nav-configuracoes').click();
+                } else if (api.isConfigured) {
+                    carregarEventos();
+                }
+            } else {
+                mensagem.innerHTML = `<div class="alert alert-danger">${response.error || 'Erro ao fazer login'}</div>`;
+            }
+        } catch (error) {
+            mensagem.innerHTML = `<div class="alert alert-danger">${error.message || 'Erro ao fazer login'}</div>`;
+        } finally {
+            esconderSpinner();
+        }
     }
     
     /**
      * Realiza o cadastro de um novo usuário
      * @param {Event} event - Evento de submit do formulário
      */
-    function cadastrarUsuario(event) {
-        // Esta função agora é tratada pelo módulo Auth
-        console.warn('A função cadastrarUsuario foi movida para o módulo Auth');
+    async function cadastrarUsuario(event) {
+        event.preventDefault();
+        
+        const nome = document.getElementById('cadastro-nome').value;
+        const email = document.getElementById('cadastro-email').value;
+        const senha = document.getElementById('cadastro-senha').value;
+        const confirmaSenha = document.getElementById('cadastro-confirma-senha').value;
+        const mensagem = document.getElementById('cadastro-mensagem');
+        
+        // Valida as senhas
+        if (senha !== confirmaSenha) {
+            mensagem.innerHTML = '<div class="alert alert-danger">As senhas não conferem</div>';
+            return;
+        }
+        
+        try {
+            mostrarSpinner();
+            const response = await api.cadastrarPrimeiroUsuario({ nome, email, senha });
+            
+            if (response.success) {
+                mensagem.innerHTML = '<div class="alert alert-success">Administrador cadastrado com sucesso! Você já pode fazer login.</div>';
+                
+                // Limpa o formulário após o cadastro
+                document.getElementById('cadastro-form').reset();
+                
+                // Redireciona para a tela de login após 2 segundos
+                setTimeout(() => {
+                    document.getElementById('link-login').click();
+                    
+                    // Esconde a mensagem de primeiro acesso
+                    document.querySelector('.primeiro-acesso').style.display = 'none';
+                }, 2000);
+            } else {
+                mensagem.innerHTML = `<div class="alert alert-danger">${response.error || 'Erro ao cadastrar usuário'}</div>`;
+            }
+        } catch (error) {
+            mensagem.innerHTML = `<div class="alert alert-danger">${error.message || 'Erro ao cadastrar usuário'}</div>`;
+        } finally {
+            esconderSpinner();
+        }
     }
     
     /**
      * Realiza o logout do usuário
      */
     function fazerLogout() {
-        // Redireciona para a função no módulo Auth
-        Auth.logout();
+        // Remove o usuário do localStorage
+        localStorage.removeItem('usuarioLogado');
+        usuarioLogado = null;
+        
+        // Redireciona para a tela de login
+        mostrarSecao('login-section');
     }
     
     /**
@@ -1864,486 +1983,468 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    /**
-     * Configurações
-     */
+/**
+ * Configurações
+ */
 
-    /**
-     * Salva as configurações do sistema
-     * @param {Event} event - Evento de submit do formulário
-     */
-    async function salvarConfiguracoes(event) {
-        event.preventDefault();
-        
-        const planilhaId = document.getElementById('planilha-id').value.trim();
-        const scriptUrl = document.getElementById('script-url').value.trim();
-        
-        // Validação melhorada
-        if (!planilhaId) {
-            mostrarAlerta('Preencha o ID da planilha Google Sheets');
-            return;
-        }
-        
-        if (!scriptUrl) {
-            mostrarAlerta('Preencha a URL do Google Apps Script');
-            return;
-        }
-        
-        try {
-            mostrarSpinner();
-            const configurado = api.saveConfig(scriptUrl, planilhaId);
-            
-            if (configurado) {
-                mostrarAlerta('Configurações salvas com sucesso! O sistema está pronto para uso.', 'success');
-                verificarConfiguracao();
-                
-                // Atualiza o aviso de configuração
-                if (verificarConfiguracao()) {
-                    // Se configurado com sucesso, podemos carregar os eventos
-                    carregarEventos();
-                }
-            } else {
-                mostrarAlerta('Erro ao salvar configurações. Verifique os dados inseridos.');
-            }
-        } catch (error) {
-            console.error('Erro ao salvar configurações:', error);
-            mostrarAlerta('Erro ao salvar configurações: ' + error.message);
-        } finally {
-            esconderSpinner();
-        }
+/**
+ * Salva as configurações do sistema
+ * @param {Event} event - Evento de submit do formulário
+ */
+async function salvarConfiguracoes(event) {
+    event.preventDefault();
+    
+    const planilhaId = document.getElementById('planilha-id').value.trim();
+    const scriptUrl = document.getElementById('script-url').value.trim();
+    
+    // Validação melhorada
+    if (!planilhaId) {
+        mostrarAlerta('Preencha o ID da planilha Google Sheets');
+        return;
     }
-
-    /**
-     * Testa a conexão com o Google Apps Script
-     */
-    async function testarConexao() {
-        const planilhaId = document.getElementById('planilha-id').value.trim();
-        const scriptUrl = document.getElementById('script-url').value.trim();
-        
-        // Validação melhorada
-        if (!planilhaId) {
-            mostrarAlerta('Preencha o ID da planilha Google Sheets antes de testar');
-            return;
-        }
-        
-        if (!scriptUrl) {
-            mostrarAlerta('Preencha a URL do Google Apps Script antes de testar');
-            return;
-        }
-        
-        try {
-            mostrarSpinner();
-            
-            // Salva temporariamente as configurações para o teste
-            const tempConfig = api.saveConfig(scriptUrl, planilhaId);
-            
-            if (!tempConfig) {
-                mostrarAlerta('Erro ao salvar configurações temporárias');
-                esconderSpinner();
-                return;
-            }
-            
-            const resultado = await api.testConnection();
-            
-            if (resultado) {
-                mostrarAlerta('Conexão estabelecida com sucesso! O sistema está pronto para uso.', 'success');
-            } else {
-                mostrarAlerta('Falha ao estabelecer conexão. Verifique:<br>1. O ID da planilha está correto<br>2. A URL do script está correta<br>3. O script está publicado como aplicativo web<br>4. As permissões do script estão configuradas corretamente', 'warning');
-            }
-        } catch (error) {
-            console.error('Erro ao testar conexão:', error);
-            mostrarAlerta('Erro ao testar conexão: ' + error.message + '<br>Verifique se o script foi publicado como aplicativo web com as permissões corretas.', 'danger');
-        } finally {
-            esconderSpinner();
-        }
+    
+    if (!scriptUrl) {
+        mostrarAlerta('Preencha a URL do Google Apps Script');
+        return;
     }
+    
+    try {
+        mostrarSpinner();
+        const configurado = api.saveConfig(scriptUrl, planilhaId);
+        
+        if (configurado) {
+            mostrarAlerta('Configurações salvas com sucesso! O sistema está pronto para uso.', 'success');
+            verificarConfiguracao();
+            
+            // Atualiza o aviso de configuração
+            if (verificarConfiguracao()) {
+                // Se configurado com sucesso, podemos carregar os eventos
+                carregarEventos();
+            }
+        } else {
+            mostrarAlerta('Erro ao salvar configurações. Verifique os dados inseridos.');
+        }
+    } catch (error) {
+        console.error('Erro ao salvar configurações:', error);
+        mostrarAlerta('Erro ao salvar configurações: ' + error.message);
+    } finally {
+        esconderSpinner();
+    }
+}
 
-    /**
-     * Carrega a lista de usuários (somente admin)
-     */
-    async function carregarUsuarios() {
-        // Verifica se o usuário atual é administrador
-        if (!Auth.isUserAdmin()) {
-            Auth.showMessage(document.getElementById('usuarios-mensagem') || document, 
-                           'Acesso negado. Apenas administradores podem gerenciar usuários.', 
-                           'danger');
+/**
+ * Testa a conexão com o Google Apps Script
+ */
+async function testarConexao() {
+    const planilhaId = document.getElementById('planilha-id').value.trim();
+    const scriptUrl = document.getElementById('script-url').value.trim();
+    
+    // Validação melhorada
+    if (!planilhaId) {
+        mostrarAlerta('Preencha o ID da planilha Google Sheets antes de testar');
+        return;
+    }
+    
+    if (!scriptUrl) {
+        mostrarAlerta('Preencha a URL do Google Apps Script antes de testar');
+        return;
+    }
+    
+    try {
+        mostrarSpinner();
+        
+        // Salva temporariamente as configurações para o teste
+        const tempConfig = api.saveConfig(scriptUrl, planilhaId);
+        
+        if (!tempConfig) {
+            mostrarAlerta('Erro ao salvar configurações temporárias');
+            esconderSpinner();
             return;
         }
         
-        try {
-            Auth.UI.mostrarSpinner();
-            const currentUser = Auth.getCurrentUser();
+        const resultado = await api.testConnection();
+        
+        if (resultado) {
+            mostrarAlerta('Conexão estabelecida com sucesso! O sistema está pronto para uso.', 'success');
+        } else {
+            mostrarAlerta('Falha ao estabelecer conexão. Verifique:<br>1. O ID da planilha está correto<br>2. A URL do script está correta<br>3. O script está publicado como aplicativo web<br>4. As permissões do script estão configuradas corretamente', 'warning');
+        }
+    } catch (error) {
+        console.error('Erro ao testar conexão:', error);
+        mostrarAlerta('Erro ao testar conexão: ' + error.message + '<br>Verifique se o script foi publicado como aplicativo web com as permissões corretas.', 'danger');
+    } finally {
+        esconderSpinner();
+    }
+}
+
+/**
+ * Eventos de navegação
+ */
+
+// Eventos de link da navbar
+document.getElementById('nav-eventos').addEventListener('click', function() {
+    mostrarSecao('eventos-section');
+    carregarEventos();
+});
+
+document.getElementById('nav-fornecedores').addEventListener('click', function() {
+    mostrarSecao('fornecedores-section');
+    carregarFornecedores();
+});
+
+document.getElementById('nav-financeiro').addEventListener('click', function() {
+    mostrarSecao('financeiro-section');
+    carregarResumoFinanceiro();
+});
+
+document.getElementById('nav-configuracoes').addEventListener('click', function() {
+    mostrarSecao('configuracoes-section');
+    
+    // Preenche o formulário com as configurações atuais
+    document.getElementById('planilha-id').value = api.spreadsheetId;
+    document.getElementById('script-url').value = api.scriptUrl;
+});
+
+// Botões de navegação
+document.getElementById('btn-novo-evento').addEventListener('click', function() {
+    mostrarSecao('novo-evento-section');
+});
+
+document.getElementById('btn-primeiro-evento').addEventListener('click', function() {
+    mostrarSecao('novo-evento-section');
+});
+
+document.getElementById('btn-voltar-eventos').addEventListener('click', function() {
+    mostrarSecao('eventos-section');
+});
+
+document.getElementById('btn-cancelar-evento').addEventListener('click', function() {
+    document.getElementById('form-novo-evento').reset();
+    mostrarSecao('eventos-section');
+});
+
+document.getElementById('btn-voltar-detalhes').addEventListener('click', function() {
+    mostrarSecao('eventos-section');
+});
+
+// Navegação de autenticação
+document.getElementById('link-cadastro').addEventListener('click', function(e) {
+    e.preventDefault();
+    mostrarSecao('cadastro-section');
+});
+
+document.getElementById('link-login').addEventListener('click', function(e) {
+    e.preventDefault();
+    mostrarSecao('login-section');
+});
+
+document.getElementById('btn-logout').addEventListener('click', fazerLogout);
+
+// Botão de excluir evento
+document.getElementById('btn-excluir-evento').addEventListener('click', excluirEvento);
+
+// Botões para adicionar serviço
+document.getElementById('btn-adicionar-servico').addEventListener('click', function() {
+    adicionarServico('servicos-container');
+});
+
+document.getElementById('btn-adicionar-servico-edit').addEventListener('click', adicionarServicoEdit);
+
+// Botão para salvar serviços
+document.getElementById('btn-salvar-servicos').addEventListener('click', salvarServicos);
+
+// Botões de modais
+document.getElementById('btn-novo-fornecedor').addEventListener('click', function() {
+    abrirModalFornecedor();
+});
+
+document.getElementById('btn-adicionar-orcamento').addEventListener('click', function() {
+    abrirModalOrcamento();
+});
+
+document.getElementById('btn-adicionar-pagamento').addEventListener('click', function() {
+    abrirModalPagamento();
+});
+
+document.getElementById('btn-adicionar-anexo').addEventListener('click', abrirModalAnexo);
+
+// Botões de salvar
+document.getElementById('btn-salvar-fornecedor').addEventListener('click', salvarFornecedor);
+document.getElementById('btn-salvar-orcamento').addEventListener('click', salvarOrcamento);
+document.getElementById('btn-salvar-pagamento').addEventListener('click', salvarPagamento);
+document.getElementById('btn-salvar-anexo').addEventListener('click', salvarAnexo);
+
+// Form submits
+document.getElementById('login-form').addEventListener('submit', fazerLogin);
+document.getElementById('cadastro-form').addEventListener('submit', cadastrarUsuario);
+document.getElementById('form-novo-evento').addEventListener('submit', criarEvento);
+document.getElementById('form-edicao-evento').addEventListener('submit', atualizarEvento);
+document.getElementById('form-configuracoes').addEventListener('submit', salvarConfiguracoes);
+
+// Botão de testar conexão
+document.getElementById('btn-teste-conexao').addEventListener('click', testarConexao);
+
+// Eventos para avaliação de fornecedores (estrelas)
+document.querySelectorAll('#fornecedor-avaliacao i').forEach(estrela => {
+    estrela.addEventListener('mouseenter', function() {
+        const rating = parseInt(this.dataset.rating);
+        
+        // Destaca todas as estrelas até a atual
+        document.querySelectorAll('#fornecedor-avaliacao i').forEach(e => {
+            const eRating = parseInt(e.dataset.rating);
             
-            if (!currentUser) {
-                throw new Error('Usuário não autenticado');
+            if (eRating <= rating) {
+                e.classList.remove('bi-star');
+                e.classList.add('bi-star-fill');
+            } else {
+                e.classList.remove('bi-star-fill');
+                e.classList.add('bi-star');
             }
+        });
+    });
+    
+    estrela.addEventListener('mouseleave', function() {
+        const selectedRating = parseInt(document.getElementById('fornecedor-rating-value').value) || 0;
+        
+        // Restaura as estrelas com base na avaliação selecionada
+        document.querySelectorAll('#fornecedor-avaliacao i').forEach(e => {
+            const eRating = parseInt(e.dataset.rating);
             
-            const response = await api.listarUsuarios(currentUser.id);
+            if (eRating <= selectedRating) {
+                e.classList.remove('bi-star');
+                e.classList.add('bi-star-fill');
+                e.classList.add('active');
+            } else {
+                e.classList.remove('bi-star-fill');
+                e.classList.add('bi-star');
+                e.classList.remove('active');
+            }
+        });
+    });
+    
+    estrela.addEventListener('click', function() {
+        const rating = parseInt(this.dataset.rating);
+        document.getElementById('fornecedor-rating-value').value = rating;
+        
+        // Atualiza as classes para mostrar a avaliação selecionada
+        document.querySelectorAll('#fornecedor-avaliacao i').forEach(e => {
+            const eRating = parseInt(e.dataset.rating);
             
-            if (response.success) {
-                const listaUsuarios = document.getElementById('lista-usuarios');
-                listaUsuarios.innerHTML = '';
-                
-                if (response.usuarios && response.usuarios.length > 0) {
-                    response.usuarios.forEach(usuario => {
-                        const usuarioHtml = `
-                            <tr data-id="${usuario.id}">
-                                <td>${usuario.nome}</td>
-                                <td>${usuario.email}</td>
-                                <td>${usuario.isAdmin ? 'Sim' : 'Não'}</td>
-                                <td>${formatarData(usuario.dataCriacao)}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-danger btn-excluir-usuario" ${usuario.isAdmin ? 'disabled' : ''}>
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                        
-                        listaUsuarios.insertAdjacentHTML('beforeend', usuarioHtml);
-                    });
-                    
-                    // Adiciona eventos para os botões de excluir
-                    document.querySelectorAll('.btn-excluir-usuario').forEach(btn => {
-                        if (!btn.disabled) {
-                            btn.addEventListener('click', function() {
-                                const usuarioId = this.closest('tr').dataset.id;
-                                const usuario = response.usuarios.find(u => u.id === usuarioId);
-                                if (usuario) {
-                                    confirmarExclusaoUsuario(usuario);
-                                }
-                            });
-                        }
-                    });
-                    
-                    // Inicializa o DataTable se existir
-                    if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tabela-usuarios')) {
-                        $('#tabela-usuarios').DataTable().destroy();
-                    }
-                    
-                    if ($.fn.DataTable) {
-                        $('#tabela-usuarios').DataTable({
-                            language: {
-                                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json'
-                            },
-                            responsive: true
-                        });
-                    }
-                } else {
-                    listaUsuarios.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="text-center">Nenhum usuário cadastrado além do administrador.</td>
+            if (eRating <= rating) {
+                e.classList.add('active');
+            } else {
+                e.classList.remove('active');
+            }
+        });
+    });
+});
+/**
+ * Carrega a lista de usuários (somente admin)
+ */
+async function carregarUsuarios() {
+    if (!isAdmin) {
+        mostrarAlerta('Acesso negado. Apenas administradores podem gerenciar usuários.');
+        return;
+    }
+    
+    try {
+        mostrarSpinner();
+        const response = await api.listarUsuarios(usuarioLogado.id);
+        
+        if (response.success) {
+            const listaUsuarios = document.getElementById('lista-usuarios');
+            listaUsuarios.innerHTML = '';
+            
+            if (response.usuarios.length > 0) {
+                response.usuarios.forEach(usuario => {
+                    const usuarioHtml = `
+                        <tr data-id="${usuario.id}">
+                            <td>${usuario.nome}</td>
+                            <td>${usuario.email}</td>
+                            <td>${usuario.isAdmin ? 'Sim' : 'Não'}</td>
+                            <td>${formatarData(usuario.dataCriacao)}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-danger btn-excluir-usuario" ${usuario.isAdmin ? 'disabled' : ''}>
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
                         </tr>
                     `;
+                    
+                    listaUsuarios.insertAdjacentHTML('beforeend', usuarioHtml);
+                });
+                
+                // Adiciona eventos para os botões de excluir
+                document.querySelectorAll('.btn-excluir-usuario').forEach(btn => {
+                    if (!btn.disabled) {
+                        btn.addEventListener('click', function() {
+                            const usuarioId = this.closest('tr').dataset.id;
+                            const usuario = response.usuarios.find(u => u.id === usuarioId);
+                            if (usuario) {
+                                confirmarExclusaoUsuario(usuario);
+                            }
+                        });
+                    }
+                });
+                
+                // Inicializa o DataTable se existir
+                if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tabela-usuarios')) {
+                    $('#tabela-usuarios').DataTable().destroy();
+                }
+                
+                if ($.fn.DataTable) {
+                    $('#tabela-usuarios').DataTable({
+                        language: {
+                            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json'
+                        },
+                        responsive: true
+                    });
                 }
             } else {
-                Auth.showMessage(document.getElementById('usuarios-mensagem') || document,
-                               'Erro ao carregar usuários: ' + (response.error || 'Erro desconhecido'),
-                               'danger');
+                listaUsuarios.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center">Nenhum usuário cadastrado além do administrador.</td>
+                    </tr>
+                `;
             }
-        } catch (error) {
-            console.error('Erro ao carregar usuários:', error);
-            Auth.showMessage(document.getElementById('usuarios-mensagem') || document,
-                           'Erro ao carregar usuários: ' + error.message,
-                           'danger');
-        } finally {
-            Auth.UI.esconderSpinner();
+        } else {
+            mostrarAlerta('Erro ao carregar usuários: ' + (response.error || 'Erro desconhecido'));
         }
+    } catch (error) {
+        console.error('Erro ao carregar usuários:', error);
+        mostrarAlerta('Erro ao carregar usuários: ' + error.message);
+    } finally {
+        esconderSpinner();
     }
+}
 
-    /**
-     * Abre o modal para criar um novo usuário
-     */
-    function abrirModalNovoUsuario() {
-        const modalTitle = document.getElementById('modal-usuario-label');
-        const formUsuario = document.getElementById('form-usuario');
-        
-        modalTitle.textContent = 'Novo Usuário';
-        formUsuario.reset();
-        document.getElementById('usuario-id').value = '';
-        
-        // Mostra o modal
-        const modal = new bootstrap.Modal(document.getElementById('modal-usuario'));
-        modal.show();
+/**
+ * Abre o modal para criar um novo usuário
+ */
+function abrirModalNovoUsuario() {
+    const modalTitle = document.getElementById('modal-usuario-label');
+    const formUsuario = document.getElementById('form-usuario');
+    
+    modalTitle.textContent = 'Novo Usuário';
+    formUsuario.reset();
+    document.getElementById('usuario-id').value = '';
+    
+    // Mostra o modal
+    const modal = new bootstrap.Modal(document.getElementById('modal-usuario'));
+    modal.show();
+}
+
+/**
+ * Adiciona um novo usuário (apenas admin)
+ */
+async function adicionarNovoUsuario(event) {
+    event.preventDefault();
+    
+    if (!isAdmin) {
+        mostrarAlerta('Acesso negado. Apenas administradores podem adicionar usuários.');
+        return;
     }
+    
+    const nome = document.getElementById('novo-usuario-nome').value;
+    const email = document.getElementById('novo-usuario-email').value;
+    const senha = document.getElementById('novo-usuario-senha').value;
+    
+    if (!nome || !email || !senha) {
+        mostrarAlerta('Preencha todos os campos obrigatórios');
+        return;
+    }
+    
+    if (senha.length < 6) {
+        mostrarAlerta('A senha deve ter pelo menos 6 caracteres');
+        return;
+    }
+    
+    try {
+        mostrarSpinner();
+        const response = await api.adicionarUsuario({ nome, email, senha }, usuarioLogado.id);
+        
+        if (response.success) {
+            // Fecha o modal
+            const modalUsuario = bootstrap.Modal.getInstance(document.getElementById('modal-usuario'));
+            modalUsuario.hide();
+            
+            mostrarAlerta('Usuário adicionado com sucesso!', 'success');
+            
+            // Recarrega a lista de usuários
+            await carregarUsuarios();
+        } else {
+            mostrarAlerta('Erro ao adicionar usuário: ' + (response.error || 'Erro desconhecido'));
+        }
+    } catch (error) {
+        console.error('Erro ao adicionar usuário:', error);
+        mostrarAlerta('Erro ao adicionar usuário: ' + error.message);
+    } finally {
+        esconderSpinner();
+    }
+}
 
-    /**
-     * Adiciona um novo usuário (apenas admin)
-     */
-    async function adicionarNovoUsuario(event) {
-        event.preventDefault();
-        
-        if (!Auth.isUserAdmin()) {
-            mostrarAlerta('Acesso negado. Apenas administradores podem adicionar usuários.');
-            return;
-        }
-        
-        const nome = document.getElementById('novo-usuario-nome').value;
-        const email = document.getElementById('novo-usuario-email').value;
-        const senha = document.getElementById('novo-usuario-senha').value;
-        
-        if (!nome || !email || !senha) {
-            mostrarAlerta('Preencha todos os campos obrigatórios');
-            return;
-        }
-        
-        if (senha.length < 6) {
-            mostrarAlerta('A senha deve ter pelo menos 6 caracteres');
-            return;
-        }
-        
+/**
+ * Confirma a exclusão de um usuário
+ */
+function confirmarExclusaoUsuario(usuario) {
+    // Confirma a exclusão
+    const modal = document.getElementById('modal-confirmacao');
+    document.getElementById('mensagem-confirmacao').textContent = `Tem certeza que deseja excluir o usuário "${usuario.nome}"?`;
+    
+    const btnConfirmar = document.getElementById('btn-confirmar-exclusao');
+    
+    // Remove qualquer listener anterior para evitar duplicação
+    const novoBtn = btnConfirmar.cloneNode(true);
+    btnConfirmar.parentNode.replaceChild(novoBtn, btnConfirmar);
+    
+    // Adiciona o listener para o botão de confirmação
+    novoBtn.addEventListener('click', async function() {
         try {
             mostrarSpinner();
-            const currentUser = Auth.getCurrentUser();
-            
-            if (!currentUser) {
-                throw new Error('Usuário não autenticado');
-            }
-            
-            const response = await api.adicionarUsuario({ nome, email, senha }, currentUser.id);
+            const response = await api.excluirUsuario(usuario.id, usuarioLogado.id);
             
             if (response.success) {
                 // Fecha o modal
-                const modalUsuario = bootstrap.Modal.getInstance(document.getElementById('modal-usuario'));
-                modalUsuario.hide();
+                const modalConfirmacao = bootstrap.Modal.getInstance(modal);
+                modalConfirmacao.hide();
                 
-                mostrarAlerta('Usuário adicionado com sucesso!', 'success');
+                mostrarAlerta('Usuário excluído com sucesso!', 'success');
                 
-                // Recarrega a lista de usuários
+                // Recarrega os usuários
                 await carregarUsuarios();
             } else {
-                mostrarAlerta('Erro ao adicionar usuário: ' + (response.error || 'Erro desconhecido'));
+                mostrarAlerta('Erro ao excluir usuário: ' + (response.error || 'Erro desconhecido'));
             }
         } catch (error) {
-            console.error('Erro ao adicionar usuário:', error);
-            mostrarAlerta('Erro ao adicionar usuário: ' + error.message);
+            console.error('Erro ao excluir usuário:', error);
+            mostrarAlerta('Erro ao excluir usuário: ' + error.message);
         } finally {
             esconderSpinner();
         }
-    }
-
-    /**
-     * Confirma a exclusão de um usuário
-     */
-    function confirmarExclusaoUsuario(usuario) {
-        // Confirma a exclusão
-        const modal = document.getElementById('modal-confirmacao');
-        document.getElementById('mensagem-confirmacao').textContent = `Tem certeza que deseja excluir o usuário "${usuario.nome}"?`;
-        
-        const btnConfirmar = document.getElementById('btn-confirmar-exclusao');
-        
-        // Remove qualquer listener anterior para evitar duplicação
-        const novoBtn = btnConfirmar.cloneNode(true);
-        btnConfirmar.parentNode.replaceChild(novoBtn, btnConfirmar);
-        
-        // Adiciona o listener para o botão de confirmação
-        novoBtn.addEventListener('click', async function() {
-            try {
-                mostrarSpinner();
-                const currentUser = Auth.getCurrentUser();
-                
-                if (!currentUser) {
-                    throw new Error('Usuário não autenticado');
-                }
-                
-                const response = await api.excluirUsuario(usuario.id, currentUser.id);
-                
-                if (response.success) {
-                    // Fecha o modal
-                    const modalConfirmacao = bootstrap.Modal.getInstance(modal);
-                    modalConfirmacao.hide();
-                    
-                    mostrarAlerta('Usuário excluído com sucesso!', 'success');
-                    
-                    // Recarrega os usuários
-                    await carregarUsuarios();
-                } else {
-                    mostrarAlerta('Erro ao excluir usuário: ' + (response.error || 'Erro desconhecido'));
-                }
-            } catch (error) {
-                console.error('Erro ao excluir usuário:', error);
-                mostrarAlerta('Erro ao excluir usuário: ' + error.message);
-            } finally {
-                esconderSpinner();
-            }
-        });
-        
-        // Mostra o modal de confirmação
-        const modalConfirmacao = new bootstrap.Modal(modal);
-        modalConfirmacao.show();
-    }
-
-    /**
-     * Eventos de navegação
-     */
-    document.addEventListener('DOMContentLoaded', function() {
-        // O módulo Auth já cuida da navegação entre login e cadastro
-        
-        // Event listeners existentes para navegação dentro do app
-        document.getElementById('nav-eventos').addEventListener('click', function() {
-            Auth.UI.mostrarSecao('eventos-section');
-            carregarEventos();
-        });
-        
-        document.getElementById('nav-fornecedores').addEventListener('click', function() {
-            Auth.UI.mostrarSecao('fornecedores-section');
-            carregarFornecedores();
-        });
-        
-        document.getElementById('nav-financeiro').addEventListener('click', function() {
-            Auth.UI.mostrarSecao('financeiro-section');
-            carregarResumoFinanceiro();
-        });
-        
-        document.getElementById('nav-configuracoes').addEventListener('click', function() {
-            Auth.UI.mostrarSecao('configuracoes-section');
-            
-            // Preenche o formulário com as configurações atuais
-            document.getElementById('planilha-id').value = api.spreadsheetId;
-            document.getElementById('script-url').value = api.scriptUrl;
-        });
-        
-        // Botões de navegação
-        document.getElementById('btn-novo-evento').addEventListener('click', function() {
-            Auth.UI.mostrarSecao('novo-evento-section');
-        });
-        
-        document.getElementById('btn-primeiro-evento').addEventListener('click', function() {
-            Auth.UI.mostrarSecao('novo-evento-section');
-        });
-        
-        document.getElementById('btn-voltar-eventos').addEventListener('click', function() {
-            Auth.UI.mostrarSecao('eventos-section');
-        });
-        
-        document.getElementById('btn-cancelar-evento').addEventListener('click', function() {
-            document.getElementById('form-novo-evento').reset();
-            Auth.UI.mostrarSecao('eventos-section');
-        });
-        
-        document.getElementById('btn-voltar-detalhes').addEventListener('click', function() {
-            Auth.UI.mostrarSecao('eventos-section');
-        });
-        
-        // Botão de excluir evento
-        document.getElementById('btn-excluir-evento').addEventListener('click', excluirEvento);
-        
-        // Botões para adicionar serviço
-        document.getElementById('btn-adicionar-servico').addEventListener('click', function() {
-            adicionarServico('servicos-container');
-        });
-        
-        document.getElementById('btn-adicionar-servico-edit').addEventListener('click', adicionarServicoEdit);
-        
-        // Botão para salvar serviços
-        document.getElementById('btn-salvar-servicos').addEventListener('click', salvarServicos);
-        
-        // Botões de modais
-        document.getElementById('btn-novo-fornecedor').addEventListener('click', function() {
-            abrirModalFornecedor();
-        });
-        
-        document.getElementById('btn-adicionar-orcamento').addEventListener('click', function() {
-            abrirModalOrcamento();
-        });
-        
-        document.getElementById('btn-adicionar-pagamento').addEventListener('click', function() {
-            abrirModalPagamento();
-        });
-        
-        document.getElementById('btn-adicionar-anexo').addEventListener('click', abrirModalAnexo);
-        
-        // Botões de salvar
-        document.getElementById('btn-salvar-fornecedor').addEventListener('click', salvarFornecedor);
-        document.getElementById('btn-salvar-orcamento').addEventListener('click', salvarOrcamento);
-        document.getElementById('btn-salvar-pagamento').addEventListener('click', salvarPagamento);
-        document.getElementById('btn-salvar-anexo').addEventListener('click', salvarAnexo);
-        
-        // Form submits
-        document.getElementById('form-novo-evento').addEventListener('submit', criarEvento);
-        document.getElementById('form-edicao-evento').addEventListener('submit', atualizarEvento);
-        document.getElementById('form-configuracoes').addEventListener('submit', salvarConfiguracoes);
-        
-        // Botão de testar conexão
-        document.getElementById('btn-teste-conexao').addEventListener('click', testarConexao);
-        
-        // Eventos para avaliação de fornecedores (estrelas)
-        document.querySelectorAll('#fornecedor-avaliacao i').forEach(estrela => {
-            estrela.addEventListener('mouseenter', function() {
-                const rating = parseInt(this.dataset.rating);
-                
-                // Destaca todas as estrelas até a atual
-                document.querySelectorAll('#fornecedor-avaliacao i').forEach(e => {
-                    const eRating = parseInt(e.dataset.rating);
-                    
-                    if (eRating <= rating) {
-                        e.classList.remove('bi-star');
-                        e.classList.add('bi-star-fill');
-                    } else {
-                        e.classList.remove('bi-star-fill');
-                        e.classList.add('bi-star');
-                    }
-                });
-            });
-            
-            estrela.addEventListener('mouseleave', function() {
-                const selectedRating = parseInt(document.getElementById('fornecedor-rating-value').value) || 0;
-                
-                // Restaura as estrelas com base na avaliação selecionada
-                document.querySelectorAll('#fornecedor-avaliacao i').forEach(e => {
-                    const eRating = parseInt(e.dataset.rating);
-                    
-                    if (eRating <= selectedRating) {
-                        e.classList.remove('bi-star');
-                        e.classList.add('bi-star-fill');
-                        e.classList.add('active');
-                    } else {
-                        e.classList.remove('bi-star-fill');
-                        e.classList.add('bi-star');
-                        e.classList.remove('active');
-                    }
-                });
-            });
-            
-            estrela.addEventListener('click', function() {
-                const rating = parseInt(this.dataset.rating);
-                document.getElementById('fornecedor-rating-value').value = rating;
-                
-                // Atualiza as classes para mostrar a avaliação selecionada
-                document.querySelectorAll('#fornecedor-avaliacao i').forEach(e => {
-                    const eRating = parseInt(e.dataset.rating);
-                    
-                    if (eRating <= rating) {
-                        e.classList.add('active');
-                    } else {
-                        e.classList.remove('active');
-                    }
-                });
-            });
-        });
-        
-        // Adicionar os event listeners para gerenciamento de usuários
-        document.getElementById('btn-novo-usuario').addEventListener('click', function() {
-            abrirModalNovoUsuario();
-        });
-        
-        document.getElementById('btn-salvar-usuario').addEventListener('click', function() {
-            document.getElementById('form-usuario').dispatchEvent(new Event('submit'));
-        });
-        
-        document.getElementById('form-usuario').addEventListener('submit', adicionarNovoUsuario);
-        
-        // Adiciona evento para o link de usuários no menu
-        document.querySelector('#nav-usuarios').addEventListener('click', function() {
-            Auth.UI.mostrarSecao('usuarios-section');
-            carregarUsuarios();
-        });
-        
-        // Funções de utilitário compartilhadas
-        window.mostrarSpinner = Auth.UI.mostrarSpinner;
-        window.esconderSpinner = Auth.UI.esconderSpinner;
-        
-        // Inicializa o sistema após a autenticação
-        inicializarSistema();
     });
+    
+    // Mostra o modal de confirmação
+    const modalConfirmacao = new bootstrap.Modal(modal);
+    modalConfirmacao.show();
+}
+
+// Adicionar os event listeners para gerenciamento de usuários
+document.getElementById('btn-novo-usuario').addEventListener('click', function() {
+    abrirModalNovoUsuario();
+});
+
+document.getElementById('btn-salvar-usuario').addEventListener('click', function() {
+    document.getElementById('form-usuario').dispatchEvent(new Event('submit'));
+});
+
+document.getElementById('form-usuario').addEventListener('submit', adicionarNovoUsuario);
+
+// Adiciona evento para o link de usuários no menu
+document.querySelector('#nav-usuarios').addEventListener('click', function() {
+    mostrarSecao('usuarios-section');
+    carregarUsuarios();
+});
+
+// Inicializa o sistema
+inicializarSistema();
 });
