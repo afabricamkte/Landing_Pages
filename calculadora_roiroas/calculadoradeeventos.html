@@ -6,7 +6,7 @@
     <meta name="description" content="Calculadora de ROI para Eventos - A Fábrica Marketing e Eventos">
     <meta name="author" content="A Fábrica Marketing e Eventos">
     <title>Calculadora de ROI para Eventos | A Fábrica</title>
-    <link rel="icon" href="images/logo_nova_com_fundo.png" type="image/svg+xml">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -638,7 +638,6 @@
 <body>
     <!-- Página de Captura -->
     <div id="capture-page" class="capture-container">
-        <img src="images/logo_fundo_novo.png" alt="A Fábrica Mkt & E" class="logo">
         <div class="header">
             <h1>Calculadora de ROI para Eventos</h1>
             <p class="brand-text">Descubra o verdadeiro potencial financeiro dos seus eventos</p>
@@ -686,7 +685,6 @@
     <!-- Página da Calculadora -->
     <div id="calculator-page" class="container">
         <div class="header">
-            <img src="images/logo_nova_com_fundo_cumprida.png" alt="Logo A Fábrica" class="logo">
             <h1>Calculadora de ROI para Eventos</h1>
             <p class="brand-text">Oferecimento: <strong>A Fábrica - Marketing e Eventos</strong></p>
         </div>
@@ -942,7 +940,7 @@
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcld4iU90YS2g9MQvbc5PmXReE7lCQgk6lpKYriUI6h184iFY757xEwpGCwUOlrAks/exec";
         
         // SUBSTITUA ESTE NÚMERO pelo seu número do WhatsApp com código do país
-        const WHATSAPP_NUMBER = "5561991258571";
+        //const WHATSAPP_NUMBER = "5561991258571";
 
         // Contador para IDs únicos
         let categoryCounter = 0;
@@ -982,11 +980,11 @@
                     // assumimos que a operação foi bem-sucedida
                     
                     // Cria o link para WhatsApp
-                    const message = `Olá! Acabei de utilizar a Calculadora de ROI da A Fábrica. Meu nome é ${name}, meu e-mail é ${email}.`;
-                    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+                    //const message = `Olá! Acabei de utilizar a Calculadora de ROI e ROAS de eventos da A Fábrica. Eu sou ${name}, meu e-mail é ${email}.`;
+                    //const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
                     
                     // Abre o WhatsApp em uma nova aba
-                    window.open(whatsappUrl, '_blank');
+                   // window.open(whatsappUrl, '_blank');
                     
                     // Exibe mensagem de sucesso
                     document.getElementById("statusMessage").className = "status-message success";
