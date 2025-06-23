@@ -130,6 +130,14 @@
             box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
 
+        .btn-edit {
+            background: linear-gradient(45deg, #ffc107, #e0a800);
+        }
+
+        .btn-edit:hover {
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+        }
+
         .btn-danger {
             background: linear-gradient(45deg, #dc3545, #c82333);
         }
@@ -146,6 +154,14 @@
 
         .btn-export:hover {
             box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #6c757d, #5a6268);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
         }
 
         .table-container {
@@ -178,6 +194,10 @@
             background: #f8f9fa;
         }
 
+        .editing {
+            background: #fff3cd !important;
+        }
+
         .alert {
             padding: 15px;
             margin: 20px 0;
@@ -185,6 +205,24 @@
             border-left: 4px solid #007bff;
             background: #e7f3ff;
             color: #004085;
+        }
+
+        .alert-success {
+            border-left-color: #28a745;
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .alert-warning {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .alert-danger {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+            color: #721c24;
         }
 
         .summary-cards {
@@ -221,6 +259,108 @@
             margin: 20px 0;
         }
 
+        .upload-area {
+            border: 2px dashed #007bff;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+            background: #f8f9ff;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            background: #e7f3ff;
+            border-color: #0056b3;
+        }
+
+        .upload-area.dragover {
+            background: #cce7ff;
+            border-color: #0056b3;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .cardapio-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tamanho-group {
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tamanho-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .pizza-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .pizza-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .pizza-ingredients {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .pizza-prices {
+            text-align: right;
+        }
+
+        .price-direto {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .price-ifood {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -233,6 +373,16 @@
             .header h1 {
                 font-size: 2em;
             }
+
+            .pizza-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .pizza-prices {
+                text-align: left;
+                margin-top: 10px;
+            }
         }
     </style>
 </head>
@@ -244,17 +394,64 @@
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="showTab('custos-base')">Custos Base</button>
+            <button class="tab active" onclick="showTab('import-export')">Import/Export</button>
+            <button class="tab" onclick="showTab('custos-base')">Custos Base</button>
             <button class="tab" onclick="showTab('receitas')">Receitas das Pizzas</button>
             <button class="tab" onclick="showTab('operacionais')">Custos Operacionais</button>
             <button class="tab" onclick="showTab('delivery-direto')">Delivery Direto</button>
             <button class="tab" onclick="showTab('ifood')">iFood</button>
             <button class="tab" onclick="showTab('comparativo')">Comparativo</button>
-            <button class="tab" onclick="showTab('exportar')">Exportar</button>
+            <button class="tab" onclick="showTab('cardapio')">Cardápio</button>
+        </div>
+
+        <!-- Aba Import/Export -->
+        <div id="import-export" class="tab-content active">
+            <h2>📂 Importar e Exportar Dados</h2>
+            
+            <div class="upload-area" onclick="document.getElementById('file-upload').click()">
+                <div>
+                    <h3>📁 Importar Arquivo XLSX</h3>
+                    <p>Clique aqui ou arraste um arquivo .xlsx para carregar dados históricos</p>
+                    <input type="file" id="file-upload" class="file-input" accept=".xlsx,.xls" onchange="importarArquivo(event)">
+                </div>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processando arquivo...</p>
+            </div>
+
+            <div id="import-feedback"></div>
+
+            <div class="export-section">
+                <h3>📤 Exportar Planilha Completa</h3>
+                <div class="alert">
+                    <strong>Arquivo incluirá:</strong> Custos base, receitas, cardápio, análises de preços, 
+                    configurações e dados técnicos completos para reimportação.
+                </div>
+                
+                <button class="btn btn-export" onclick="exportarPlanilhaCompleta()">📊 Baixar Planilha Completa (.xlsx)</button>
+                
+                <div style="margin-top: 30px;">
+                    <h4>📋 Como importar no Google Sheets:</h4>
+                    <ol style="text-align: left; max-width: 600px; margin: 20px auto;">
+                        <li>Acesse <strong>sheets.google.com</strong></li>
+                        <li>Clique em <strong>"Arquivo" → "Importar"</strong></li>
+                        <li>Selecione <strong>"Upload"</strong> e escolha o arquivo baixado</li>
+                        <li>Escolha <strong>"Substituir planilha"</strong> ou <strong>"Criar nova planilha"</strong></li>
+                        <li>Clique em <strong>"Importar dados"</strong></li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="alert alert-warning">
+                <strong>💾 Auto-backup:</strong> Seus dados são salvos automaticamente no navegador. 
+                Para maior segurança, exporte regularmente seus dados.
+            </div>
         </div>
 
         <!-- Aba Custos Base -->
-        <div id="custos-base" class="tab-content active">
+        <div id="custos-base" class="tab-content">
             <h2>📋 Custos Base dos Ingredientes</h2>
             <div class="form-group">
                 <div class="form-row">
@@ -340,7 +537,8 @@
                 
                 <div id="lista-ingredientes-pizza"></div>
                 
-                <button class="btn" onclick="salvarPizza()">💾 Salvar Pizza</button>
+                <button class="btn" onclick="salvarPizza()" id="btn-salvar-pizza">💾 Salvar Pizza</button>
+                <button class="btn btn-secondary" onclick="cancelarEdicaoPizza()" id="btn-cancelar-pizza" style="display:none;">❌ Cancelar</button>
             </div>
             
             <div class="table-container">
@@ -366,46 +564,45 @@
                 <div class="form-row">
                     <div>
                         <label>Salários e Encargos (R$):</label>
-                        <input type="number" id="custo-salarios" step="0.01" placeholder="0.00">
+                        <input type="number" id="custo-salarios" step="0.01" placeholder="0.00" onchange="calcularCustosOperacionais()">
                     </div>
                     <div>
                         <label>Aluguel (R$):</label>
-                        <input type="number" id="custo-aluguel" step="0.01" placeholder="0.00">
+                        <input type="number" id="custo-aluguel" step="0.01" placeholder="0.00" onchange="calcularCustosOperacionais()">
                     </div>
                     <div>
                         <label>Energia Elétrica (R$):</label>
-                        <input type="number" id="custo-energia" step="0.01" placeholder="0.00">
+                        <input type="number" id="custo-energia" step="0.01" placeholder="0.00" onchange="calcularCustosOperacionais()">
                     </div>
                     <div>
                         <label>Gás (R$):</label>
-                        <input type="number" id="custo-gas" step="0.01" placeholder="0.00">
+                        <input type="number" id="custo-gas" step="0.01" placeholder="0.00" onchange="calcularCustosOperacionais()">
                     </div>
                     <div>
                         <label>Telefone/Internet (R$):</label>
-                        <input type="number" id="custo-telefone" step="0.01" placeholder="0.00">
+                        <input type="number" id="custo-telefone" step="0.01" placeholder="0.00" onchange="calcularCustosOperacionais()">
                     </div>
                     <div>
                         <label>Marketing (R$):</label>
-                        <input type="number" id="custo-marketing" step="0.01" placeholder="0.00">
+                        <input type="number" id="custo-marketing" step="0.01" placeholder="0.00" onchange="calcularCustosOperacionais()">
                     </div>
                     <div>
                         <label>Manutenção (R$):</label>
-                        <input type="number" id="custo-manutencao" step="0.01" placeholder="0.00">
+                        <input type="number" id="custo-manutencao" step="0.01" placeholder="0.00" onchange="calcularCustosOperacionais()">
                     </div>
                     <div>
                         <label>Outros Custos (R$):</label>
-                        <input type="number" id="custo-outros" step="0.01" placeholder="0.00">
+                        <input type="number" id="custo-outros" step="0.01" placeholder="0.00" onchange="calcularCustosOperacionais()">
                     </div>
                     <div>
                         <label>Pizzas Vendidas/Mês:</label>
-                        <input type="number" id="pizzas-mes" placeholder="Ex: 1000">
+                        <input type="number" id="pizzas-mes" placeholder="Ex: 1000" onchange="calcularCustosOperacionais()">
                     </div>
                     <div>
                         <label>Impostos (%):</label>
-                        <input type="number" id="impostos" step="0.01" placeholder="Ex: 15.5">
+                        <input type="number" id="impostos" step="0.01" placeholder="Ex: 15.5" onchange="calcularCustosOperacionais()">
                     </div>
                 </div>
-                <button class="btn" onclick="calcularCustosOperacionais()">📊 Calcular Custos</button>
             </div>
             
             <div class="summary-cards">
@@ -449,6 +646,7 @@
                             <th>Taxa Entrega</th>
                             <th>Preço Final</th>
                             <th>Lucro</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -485,6 +683,7 @@
                             <th>Preço iFood</th>
                             <th>Lucro Líquido</th>
                             <th>Margem Real (%)</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -516,27 +715,19 @@
             </div>
         </div>
 
-        <!-- Aba Exportar -->
-        <div id="exportar" class="tab-content">
-            <h2>📤 Exportar para Google Sheets</h2>
-            <div class="export-section">
-                <div class="alert">
-                    <strong>Como usar:</strong> Clique no botão abaixo para baixar um arquivo Excel (.xlsx) com todas as suas planilhas organizadas. 
-                    Depois, você pode importar este arquivo diretamente no Google Sheets.
-                </div>
-                
-                <button class="btn btn-export" onclick="exportarPlanilha()">📊 Baixar Planilha Completa (.xlsx)</button>
-                
-                <div style="margin-top: 30px;">
-                    <h3>📋 Passos para importar no Google Sheets:</h3>
-                    <ol style="text-align: left; max-width: 600px; margin: 20px auto;">
-                        <li>Acesse <strong>sheets.google.com</strong></li>
-                        <li>Clique em <strong>"Arquivo" → "Importar"</strong></li>
-                        <li>Selecione <strong>"Upload"</strong> e escolha o arquivo baixado</li>
-                        <li>Escolha <strong>"Substituir planilha"</strong> ou <strong>"Criar nova planilha"</strong></li>
-                        <li>Clique em <strong>"Importar dados"</strong></li>
-                    </ol>
-                </div>
+        <!-- Aba Cardápio -->
+        <div id="cardapio" class="tab-content">
+            <h2>📋 Cardápio de Pizzas</h2>
+            <div class="alert">
+                <strong>💡 Dica:</strong> Este cardápio é gerado automaticamente com base nas suas receitas e preços calculados. 
+                Use este formato para apresentar aos clientes.
+            </div>
+            
+            <button class="btn" onclick="gerarCardapio()">🔄 Atualizar Cardápio</button>
+            <button class="btn btn-export" onclick="imprimirCardapio()">🖨️ Imprimir Cardápio</button>
+            
+            <div class="cardapio-section" id="cardapio-display">
+                <!-- Cardápio será gerado aqui -->
             </div>
         </div>
     </div>
@@ -562,6 +753,37 @@
         let precosDirecto = [];
         let precosIfood = [];
         let ingredientesPizzaAtual = [];
+        let editandoPizza = null;
+        let historico = [];
+
+        // Configuração de drag and drop
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.querySelector('.upload-area');
+            
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    importarArquivo({ target: { files: files } });
+                }
+            });
+
+            // Auto-save
+            setInterval(salvarLocal, 30000); // Auto-save a cada 30 segundos
+            carregarLocal(); // Carregar dados salvos ao iniciar
+        });
 
         // Funções de navegação
         function showTab(tabName) {
@@ -574,6 +796,253 @@
             
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
+        }
+
+        // Funções de auto-save
+        function salvarLocal() {
+            const dados = {
+                ingredientes,
+                pizzas,
+                custosOperacionais,
+                precosDirecto,
+                precosIfood,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('pizzaria_dados', JSON.stringify(dados));
+        }
+
+        function carregarLocal() {
+            const dados = localStorage.getItem('pizzaria_dados');
+            if (dados) {
+                try {
+                    const parsed = JSON.parse(dados);
+                    ingredientes = parsed.ingredientes || [];
+                    pizzas = parsed.pizzas || [];
+                    custosOperacionais = parsed.custosOperacionais || custosOperacionais;
+                    precosDirecto = parsed.precosDirecto || [];
+                    precosIfood = parsed.precosIfood || [];
+                    
+                    atualizarTodasTabelas();
+                    mostrarFeedback('Dados carregados do backup local', 'success');
+                } catch (e) {
+                    console.error('Erro ao carregar dados locais:', e);
+                }
+            }
+        }
+
+        // Funções de importação
+        function importarArquivo(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.name.match(/\.(xlsx|xls)$/)) {
+                mostrarFeedback('Por favor, selecione um arquivo Excel (.xlsx ou .xls)', 'danger');
+                return;
+            }
+
+            mostrarLoading(true);
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const workbook = XLSX.read(e.target.result, { type: 'binary' });
+                    processarArquivoImportado(workbook);
+                } catch (error) {
+                    mostrarFeedback('Erro ao processar arquivo: ' + error.message, 'danger');
+                    mostrarLoading(false);
+                }
+            };
+            
+            reader.readAsBinaryString(file);
+        }
+
+        function processarArquivoImportado(workbook) {
+            try {
+                // Resetar dados antes de importar
+                const backup = {
+                    ingredientes: [...ingredientes],
+                    pizzas: [...pizzas],
+                    custosOperacionais: {...custosOperacionais}
+                };
+
+                // Importar ingredientes
+                if (workbook.SheetNames.includes('Custos Base')) {
+                    const sheet = workbook.Sheets['Custos Base'];
+                    const data = XLSX.utils.sheet_to_json(sheet);
+                    
+                    ingredientes = data.map((row, index) => ({
+                        id: Date.now() + index,
+                        nome: row['Ingrediente'] || row['Nome'] || '',
+                        unidade: row['Unidade'] || 'kg',
+                        preco: parseFloat(row['Preço por Unidade'] || row['Preco'] || 0),
+                        rendimento: parseFloat(row['Rendimento por Pizza'] || row['Rendimento'] || 0),
+                        custoPorPizza: parseFloat(row['Custo por Pizza'] || row['Custo'] || 0)
+                    })).filter(ing => ing.nome);
+                }
+
+                // Importar pizzas
+                if (workbook.SheetNames.includes('Receitas das Pizzas')) {
+                    const sheet = workbook.Sheets['Receitas das Pizzas'];
+                    const data = XLSX.utils.sheet_to_json(sheet);
+                    
+                    pizzas = data.map((row, index) => {
+                        const ingredientesStr = row['Ingredientes'] || '';
+                        const ingredientesPizza = [];
+                        
+                        if (ingredientesStr) {
+                            // Parse simples dos ingredientes (formato: "nome (quantidade)")
+                            const partes = ingredientesStr.split(', ');
+                            partes.forEach(parte => {
+                                const match = parte.match(/(.+)\s*\(([0-9.]+)\)/);
+                                if (match) {
+                                    const nomeIng = match[1].trim();
+                                    const quantidade = parseFloat(match[2]);
+                                    const ingrediente = ingredientes.find(ing => ing.nome === nomeIng);
+                                    if (ingrediente) {
+                                        ingredientesPizza.push({
+                                            ingredienteId: ingrediente.id,
+                                            nome: nomeIng,
+                                            quantidade: quantidade,
+                                            custoUnitario: ingrediente.preco,
+                                            custoTotal: ingrediente.preco * quantidade
+                                        });
+                                    }
+                                }
+                            });
+                        }
+
+                        return {
+                            id: Date.now() + index + 1000,
+                            nome: row['Nome'] || '',
+                            tamanho: row['Tamanho'] || 'Média',
+                            ingredientes: ingredientesPizza,
+                            custoIngredientes: parseFloat(row['Custo Ingredientes'] || 0),
+                            custoEmbalagem: parseFloat(row['Custo Embalagem'] || 0.5),
+                            custoOperacional: parseFloat(row['Custo Operacional'] || 0),
+                            custoTotal: parseFloat(row['Custo Total'] || 0)
+                        };
+                    }).filter(pizza => pizza.nome);
+                }
+
+                // Importar custos operacionais
+                if (workbook.SheetNames.includes('Custos Operacionais')) {
+                    const sheet = workbook.Sheets['Custos Operacionais'];
+                    const data = XLSX.utils.sheet_to_json(sheet);
+                    
+                    data.forEach(row => {
+                        const item = row['Item'] || '';
+                        const valor = parseFloat(row['Valor'] || 0);
+                        
+                        switch (item) {
+                            case 'Salários e Encargos':
+                                custosOperacionais.salarios = valor;
+                                document.getElementById('custo-salarios').value = valor;
+                                break;
+                            case 'Aluguel':
+                                custosOperacionais.aluguel = valor;
+                                document.getElementById('custo-aluguel').value = valor;
+                                break;
+                            case 'Energia Elétrica':
+                                custosOperacionais.energia = valor;
+                                document.getElementById('custo-energia').value = valor;
+                                break;
+                            case 'Gás':
+                                custosOperacionais.gas = valor;
+                                document.getElementById('custo-gas').value = valor;
+                                break;
+                            case 'Telefone/Internet':
+                                custosOperacionais.telefone = valor;
+                                document.getElementById('custo-telefone').value = valor;
+                                break;
+                            case 'Marketing':
+                                custosOperacionais.marketing = valor;
+                                document.getElementById('custo-marketing').value = valor;
+                                break;
+                            case 'Manutenção':
+                                custosOperacionais.manutencao = valor;
+                                document.getElementById('custo-manutencao').value = valor;
+                                break;
+                            case 'Outros':
+                                custosOperacionais.outros = valor;
+                                document.getElementById('custo-outros').value = valor;
+                                break;
+                            case 'Pizzas por Mês':
+                                custosOperacionais.pizzasMes = valor;
+                                document.getElementById('pizzas-mes').value = valor;
+                                break;
+                            case 'Impostos (%)':
+                                custosOperacionais.impostos = valor;
+                                document.getElementById('impostos').value = valor;
+                                break;
+                        }
+                    });
+                }
+
+                // Importar configurações se existir
+                if (workbook.SheetNames.includes('Configurações')) {
+                    const sheet = workbook.Sheets['Configurações'];
+                    const data = XLSX.utils.sheet_to_json(sheet);
+                    
+                    data.forEach(row => {
+                        const config = row['Configuração'] || '';
+                        const valor = parseFloat(row['Valor'] || 0);
+                        
+                        switch (config) {
+                            case 'Margem Delivery Direto (%)':
+                                document.getElementById('margem-direto').value = valor;
+                                break;
+                            case 'Taxa de Entrega (R$)':
+                                document.getElementById('taxa-entrega').value = valor;
+                                break;
+                            case 'Taxa iFood (%)':
+                                document.getElementById('taxa-ifood').value = valor;
+                                break;
+                            case 'Margem iFood (%)':
+                                document.getElementById('margem-ifood').value = valor;
+                                break;
+                        }
+                    });
+                }
+
+                atualizarTodasTabelas();
+                calcularCustosOperacionais();
+                salvarLocal();
+                
+                mostrarFeedback(`Arquivo importado com sucesso! 
+                    ${ingredientes.length} ingredientes e ${pizzas.length} pizzas carregados.`, 'success');
+                
+                // Adicionar ao histórico
+                historico.push({
+                    acao: 'import',
+                    timestamp: new Date().toISOString(),
+                    detalhes: `Importação de ${ingredientes.length} ingredientes e ${pizzas.length} pizzas`
+                });
+
+            } catch (error) {
+                mostrarFeedback('Erro ao importar dados: ' + error.message, 'danger');
+            } finally {
+                mostrarLoading(false);
+            }
+        }
+
+        function mostrarLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function mostrarFeedback(mensagem, tipo = 'info') {
+            const feedback = document.getElementById('import-feedback');
+            feedback.innerHTML = `<div class="alert alert-${tipo}">${mensagem}</div>`;
+            setTimeout(() => {
+                feedback.innerHTML = '';
+            }, 5000);
+        }
+
+        function atualizarTodasTabelas() {
+            atualizarTabelaIngredientes();
+            atualizarSelectIngredientes();
+            atualizarTabelaPizzas();
+            if (precosDirecto.length > 0) atualizarTabelaDirecto();
+            if (precosIfood.length > 0) atualizarTabelaIfood();
         }
 
         // Funções de ingredientes
@@ -603,6 +1072,95 @@
             atualizarTabelaIngredientes();
             atualizarSelectIngredientes();
             limparFormularioIngrediente();
+            salvarLocal();
+        }
+
+        function editarIngrediente(id) {
+            const ingrediente = ingredientes.find(ing => ing.id === id);
+            if (!ingrediente) return;
+
+            const row = document.querySelector(`tr[data-id="${id}"]`);
+            if (!row) return;
+
+            row.classList.add('editing');
+            
+            row.innerHTML = `
+                <td><input type="text" value="${ingrediente.nome}" id="edit-nome-${id}"></td>
+                <td>
+                    <select id="edit-unidade-${id}">
+                        <option value="kg" ${ingrediente.unidade === 'kg' ? 'selected' : ''}>kg</option>
+                        <option value="g" ${ingrediente.unidade === 'g' ? 'selected' : ''}>g</option>
+                        <option value="l" ${ingrediente.unidade === 'l' ? 'selected' : ''}>l</option>
+                        <option value="ml" ${ingrediente.unidade === 'ml' ? 'selected' : ''}>ml</option>
+                        <option value="unidade" ${ingrediente.unidade === 'unidade' ? 'selected' : ''}>unidade</option>
+                    </select>
+                </td>
+                <td><input type="number" value="${ingrediente.preco}" step="0.01" id="edit-preco-${id}"></td>
+                <td><input type="number" value="${ingrediente.rendimento}" step="0.001" id="edit-rendimento-${id}"></td>
+                <td id="edit-custo-${id}">R$ ${ingrediente.custoPorPizza.toFixed(3)}</td>
+                <td>
+                    <button class="btn" onclick="salvarEdicaoIngrediente(${id})">💾</button>
+                    <button class="btn btn-secondary" onclick="cancelarEdicaoIngrediente(${id})">❌</button>
+                </td>
+            `;
+
+            // Auto-calcular custo ao mudar preço ou rendimento
+            const precoInput = document.getElementById(`edit-preco-${id}`);
+            const rendimentoInput = document.getElementById(`edit-rendimento-${id}`);
+            const custoDisplay = document.getElementById(`edit-custo-${id}`);
+
+            function atualizarCusto() {
+                const preco = parseFloat(precoInput.value) || 0;
+                const rendimento = parseFloat(rendimentoInput.value) || 0;
+                const custo = preco * rendimento;
+                custoDisplay.textContent = `R$ ${custo.toFixed(3)}`;
+            }
+
+            precoInput.addEventListener('input', atualizarCusto);
+            rendimentoInput.addEventListener('input', atualizarCusto);
+        }
+
+        function salvarEdicaoIngrediente(id) {
+            const nome = document.getElementById(`edit-nome-${id}`).value;
+            const unidade = document.getElementById(`edit-unidade-${id}`).value;
+            const preco = parseFloat(document.getElementById(`edit-preco-${id}`).value);
+            const rendimento = parseFloat(document.getElementById(`edit-rendimento-${id}`).value);
+
+            if (!nome || !preco || !rendimento) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+
+            const ingrediente = ingredientes.find(ing => ing.id === id);
+            if (ingrediente) {
+                ingrediente.nome = nome;
+                ingrediente.unidade = unidade;
+                ingrediente.preco = preco;
+                ingrediente.rendimento = rendimento;
+                ingrediente.custoPorPizza = preco * rendimento;
+
+                atualizarTabelaIngredientes();
+                atualizarSelectIngredientes();
+                salvarLocal();
+
+                // Recalcular custos das pizzas que usam este ingrediente
+                pizzas.forEach(pizza => {
+                    pizza.ingredientes.forEach(ing => {
+                        if (ing.ingredienteId === id) {
+                            ing.nome = nome;
+                            ing.custoUnitario = preco;
+                            ing.custoTotal = preco * ing.quantidade;
+                        }
+                    });
+                    pizza.custoIngredientes = pizza.ingredientes.reduce((total, ing) => total + ing.custoTotal, 0);
+                    pizza.custoTotal = pizza.custoIngredientes + pizza.custoEmbalagem + pizza.custoOperacional;
+                });
+                atualizarTabelaPizzas();
+            }
+        }
+
+        function cancelarEdicaoIngrediente(id) {
+            atualizarTabelaIngredientes();
         }
 
         function atualizarTabelaIngredientes() {
@@ -611,6 +1169,7 @@
 
             ingredientes.forEach(ing => {
                 const row = tbody.insertRow();
+                row.setAttribute('data-id', ing.id);
                 row.innerHTML = `
                     <td>${ing.nome}</td>
                     <td>${ing.unidade}</td>
@@ -618,6 +1177,7 @@
                     <td>${ing.rendimento.toFixed(3)}</td>
                     <td>R$ ${ing.custoPorPizza.toFixed(3)}</td>
                     <td>
+                        <button class="btn btn-edit" onclick="editarIngrediente(${ing.id})">✏️</button>
                         <button class="btn btn-danger" onclick="removerIngrediente(${ing.id})">🗑️</button>
                     </td>
                 `;
@@ -643,9 +1203,12 @@
         }
 
         function removerIngrediente(id) {
-            ingredientes = ingredientes.filter(ing => ing.id !== id);
-            atualizarTabelaIngredientes();
-            atualizarSelectIngredientes();
+            if (confirm('Tem certeza que deseja remover este ingrediente?')) {
+                ingredientes = ingredientes.filter(ing => ing.id !== id);
+                atualizarTabelaIngredientes();
+                atualizarSelectIngredientes();
+                salvarLocal();
+            }
         }
 
         // Funções de pizzas
@@ -703,6 +1266,32 @@
             atualizarListaIngredientesPizza();
         }
 
+        function editarPizza(id) {
+            const pizza = pizzas.find(p => p.id === id);
+            if (!pizza) return;
+
+            editandoPizza = id;
+            
+            document.getElementById('pizza-nome').value = pizza.nome;
+            document.getElementById('pizza-tamanho').value = pizza.tamanho;
+            ingredientesPizzaAtual = [...pizza.ingredientes];
+            
+            atualizarListaIngredientesPizza();
+            
+            document.getElementById('btn-salvar-pizza').textContent = '💾 Atualizar Pizza';
+            document.getElementById('btn-cancelar-pizza').style.display = 'inline-block';
+            
+            // Scroll para o formulário
+            document.getElementById('receitas').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelarEdicaoPizza() {
+            editandoPizza = null;
+            limparFormularioPizza();
+            document.getElementById('btn-salvar-pizza').textContent = '💾 Salvar Pizza';
+            document.getElementById('btn-cancelar-pizza').style.display = 'none';
+        }
+
         function salvarPizza() {
             const nome = document.getElementById('pizza-nome').value;
             const tamanho = document.getElementById('pizza-tamanho').value;
@@ -713,23 +1302,40 @@
             }
 
             const custoIngredientes = ingredientesPizzaAtual.reduce((total, ing) => total + ing.custoTotal, 0);
-            const custoEmbalagem = 0.50; // Custo fixo da embalagem
+            const custoEmbalagem = 0.50;
             const custoTotal = custoIngredientes + custoEmbalagem + custosOperacionais.custoPorPizza;
 
-            const pizza = {
-                id: Date.now(),
-                nome,
-                tamanho,
-                ingredientes: [...ingredientesPizzaAtual],
-                custoIngredientes,
-                custoEmbalagem,
-                custoOperacional: custosOperacionais.custoPorPizza,
-                custoTotal
-            };
+            if (editandoPizza) {
+                // Atualizar pizza existente
+                const pizza = pizzas.find(p => p.id === editandoPizza);
+                if (pizza) {
+                    pizza.nome = nome;
+                    pizza.tamanho = tamanho;
+                    pizza.ingredientes = [...ingredientesPizzaAtual];
+                    pizza.custoIngredientes = custoIngredientes;
+                    pizza.custoEmbalagem = custoEmbalagem;
+                    pizza.custoOperacional = custosOperacionais.custoPorPizza;
+                    pizza.custoTotal = custoTotal;
+                }
+                cancelarEdicaoPizza();
+            } else {
+                // Criar nova pizza
+                const pizza = {
+                    id: Date.now(),
+                    nome,
+                    tamanho,
+                    ingredientes: [...ingredientesPizzaAtual],
+                    custoIngredientes,
+                    custoEmbalagem,
+                    custoOperacional: custosOperacionais.custoPorPizza,
+                    custoTotal
+                };
+                pizzas.push(pizza);
+                limparFormularioPizza();
+            }
 
-            pizzas.push(pizza);
             atualizarTabelaPizzas();
-            limparFormularioPizza();
+            salvarLocal();
         }
 
         function atualizarTabelaPizzas() {
@@ -745,6 +1351,7 @@
                     <td>${ingredientesStr}</td>
                     <td>R$ ${pizza.custoTotal.toFixed(2)}</td>
                     <td>
+                        <button class="btn btn-edit" onclick="editarPizza(${pizza.id})">✏️</button>
                         <button class="btn btn-danger" onclick="removerPizza(${pizza.id})">🗑️</button>
                     </td>
                 `;
@@ -758,8 +1365,11 @@
         }
 
         function removerPizza(id) {
-            pizzas = pizzas.filter(pizza => pizza.id !== id);
-            atualizarTabelaPizzas();
+            if (confirm('Tem certeza que deseja remover esta pizza?')) {
+                pizzas = pizzas.filter(pizza => pizza.id !== id);
+                atualizarTabelaPizzas();
+                salvarLocal();
+            }
         }
 
         // Funções de custos operacionais
@@ -790,6 +1400,7 @@
                 pizza.custoTotal = pizza.custoIngredientes + pizza.custoEmbalagem + pizza.custoOperacional;
             });
             atualizarTabelaPizzas();
+            salvarLocal();
         }
 
         // Funções de precificação
@@ -804,6 +1415,7 @@
                 const lucro = precoFinal - pizza.custoTotal;
 
                 return {
+                    id: pizza.id,
                     pizza: pizza.nome,
                     tamanho: pizza.tamanho,
                     custoTotal: pizza.custoTotal,
@@ -816,6 +1428,47 @@
             });
 
             atualizarTabelaDirecto();
+            salvarLocal();
+        }
+
+        function editarPrecoDirecto(id) {
+            const item = precosDirecto.find(p => p.id === id);
+            if (!item) return;
+
+            const row = document.querySelector(`#tabela-direto tr[data-id="${id}"]`);
+            if (!row) return;
+
+            row.classList.add('editing');
+            
+            const margemCell = row.cells[3];
+            const taxaCell = row.cells[5];
+            
+            margemCell.innerHTML = `<input type="number" value="${item.margem}" step="0.01" id="edit-margem-direto-${id}">`;
+            taxaCell.innerHTML = `<input type="number" value="${item.taxaEntrega}" step="0.01" id="edit-taxa-entrega-${id}">`;
+            
+            const actionsCell = row.cells[8];
+            actionsCell.innerHTML = `
+                <button class="btn" onclick="salvarEdicaoPrecoDirecto(${id})">💾</button>
+                <button class="btn btn-secondary" onclick="calcularPrecosDirecto()">❌</button>
+            `;
+        }
+
+        function salvarEdicaoPrecoDirecto(id) {
+            const novaMargem = parseFloat(document.getElementById(`edit-margem-direto-${id}`).value);
+            const novaTaxa = parseFloat(document.getElementById(`edit-taxa-entrega-${id}`).value);
+            
+            const item = precosDirecto.find(p => p.id === id);
+            if (item) {
+                const margemDecimal = novaMargem / 100;
+                item.margem = novaMargem;
+                item.taxaEntrega = novaTaxa;
+                item.precoBase = item.custoTotal * (1 + margemDecimal);
+                item.precoFinal = item.precoBase + novaTaxa;
+                item.lucro = item.precoFinal - item.custoTotal;
+                
+                atualizarTabelaDirecto();
+                salvarLocal();
+            }
         }
 
         function atualizarTabelaDirecto() {
@@ -824,6 +1477,7 @@
 
             precosDirecto.forEach(item => {
                 const row = tbody.insertRow();
+                row.setAttribute('data-id', item.id);
                 row.innerHTML = `
                     <td>${item.pizza}</td>
                     <td>${item.tamanho}</td>
@@ -833,6 +1487,9 @@
                     <td>R$ ${item.taxaEntrega.toFixed(2)}</td>
                     <td>R$ ${item.precoFinal.toFixed(2)}</td>
                     <td>R$ ${item.lucro.toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editarPrecoDirecto(${item.id})">✏️</button>
+                    </td>
                 `;
             });
         }
@@ -845,12 +1502,12 @@
                 const taxaDecimal = taxaIfood / 100;
                 const margemDecimal = margem / 100;
                 
-                // Preço = (Custo / (1 - Taxa)) * (1 + Margem)
                 const precoIfood = (pizza.custoTotal / (1 - taxaDecimal)) * (1 + margemDecimal);
                 const lucroLiquido = precoIfood - pizza.custoTotal - (precoIfood * taxaDecimal);
                 const margemReal = (lucroLiquido / precoIfood) * 100;
 
                 return {
+                    id: pizza.id,
                     pizza: pizza.nome,
                     tamanho: pizza.tamanho,
                     custoTotal: pizza.custoTotal,
@@ -863,6 +1520,49 @@
             });
 
             atualizarTabelaIfood();
+            salvarLocal();
+        }
+
+        function editarPrecoIfood(id) {
+            const item = precosIfood.find(p => p.id === id);
+            if (!item) return;
+
+            const row = document.querySelector(`#tabela-ifood tr[data-id="${id}"]`);
+            if (!row) return;
+
+            row.classList.add('editing');
+            
+            const taxaCell = row.cells[3];
+            const margemCell = row.cells[4];
+            
+            taxaCell.innerHTML = `<input type="number" value="${item.taxaIfood}" step="0.01" id="edit-taxa-ifood-${id}">`;
+            margemCell.innerHTML = `<input type="number" value="${item.margem}" step="0.01" id="edit-margem-ifood-${id}">`;
+            
+            const actionsCell = row.cells[8];
+            actionsCell.innerHTML = `
+                <button class="btn" onclick="salvarEdicaoPrecoIfood(${id})">💾</button>
+                <button class="btn btn-secondary" onclick="calcularPrecosIfood()">❌</button>
+            `;
+        }
+
+        function salvarEdicaoPrecoIfood(id) {
+            const novaTaxa = parseFloat(document.getElementById(`edit-taxa-ifood-${id}`).value);
+            const novaMargem = parseFloat(document.getElementById(`edit-margem-ifood-${id}`).value);
+            
+            const item = precosIfood.find(p => p.id === id);
+            if (item) {
+                const taxaDecimal = novaTaxa / 100;
+                const margemDecimal = novaMargem / 100;
+                
+                item.taxaIfood = novaTaxa;
+                item.margem = novaMargem;
+                item.precoIfood = (item.custoTotal / (1 - taxaDecimal)) * (1 + margemDecimal);
+                item.lucroLiquido = item.precoIfood - item.custoTotal - (item.precoIfood * taxaDecimal);
+                item.margemReal = (item.lucroLiquido / item.precoIfood) * 100;
+                
+                atualizarTabelaIfood();
+                salvarLocal();
+            }
         }
 
         function atualizarTabelaIfood() {
@@ -871,6 +1571,7 @@
 
             precosIfood.forEach(item => {
                 const row = tbody.insertRow();
+                row.setAttribute('data-id', item.id);
                 row.innerHTML = `
                     <td>${item.pizza}</td>
                     <td>${item.tamanho}</td>
@@ -880,6 +1581,9 @@
                     <td>R$ ${item.precoIfood.toFixed(2)}</td>
                     <td>R$ ${item.lucroLiquido.toFixed(2)}</td>
                     <td>${item.margemReal.toFixed(1)}%</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editarPrecoIfood(${item.id})">✏️</button>
+                    </td>
                 `;
             });
         }
@@ -911,11 +1615,89 @@
             });
         }
 
-        // Função de exportação
-        function exportarPlanilha() {
+        // Funções do cardápio
+        function gerarCardapio() {
+            const cardapioDisplay = document.getElementById('cardapio-display');
+            
+            if (pizzas.length === 0) {
+                cardapioDisplay.innerHTML = '<div class="alert alert-warning">Nenhuma pizza cadastrada ainda.</div>';
+                return;
+            }
+
+            const tamanhos = ['Pequena', 'Média', 'Grande', 'Família'];
+            let cardapioHTML = '<div style="text-align: center; margin-bottom: 30px;"><h1>🍕 CARDÁPIO DE PIZZAS</h1></div>';
+
+            tamanhos.forEach(tamanho => {
+                const pizzasDoTamanho = pizzas.filter(pizza => pizza.tamanho === tamanho);
+                
+                if (pizzasDoTamanho.length > 0) {
+                    cardapioHTML += `<div class="tamanho-group">`;
+                    cardapioHTML += `<div class="tamanho-title">PIZZA ${tamanho.toUpperCase()}</div>`;
+                    
+                    pizzasDoTamanho.forEach(pizza => {
+                        const precoDirecto = precosDirecto.find(p => p.pizza === pizza.nome && p.tamanho === pizza.tamanho);
+                        const precoIfood = precosIfood.find(p => p.pizza === pizza.nome && p.tamanho === pizza.tamanho);
+                        
+                        const ingredientesStr = pizza.ingredientes.map(ing => ing.nome).join(', ');
+                        
+                        cardapioHTML += `
+                            <div class="pizza-item">
+                                <div>
+                                    <div class="pizza-name">${pizza.nome}</div>
+                                    <div class="pizza-ingredients">${ingredientesStr}</div>
+                                </div>
+                                <div class="pizza-prices">
+                                    ${precoDirecto ? `<div class="price-direto">Delivery: R$ ${precoDirecto.precoFinal.toFixed(2)}</div>` : ''}
+                                    ${precoIfood ? `<div class="price-ifood">iFood: R$ ${precoIfood.precoIfood.toFixed(2)}</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    cardapioHTML += `</div>`;
+                }
+            });
+
+            cardapioDisplay.innerHTML = cardapioHTML;
+        }
+
+        function imprimirCardapio() {
+            const cardapioContent = document.getElementById('cardapio-display').innerHTML;
+            const printWindow = window.open('', '_blank');
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Cardápio de Pizzas</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .tamanho-group { margin-bottom: 30px; page-break-inside: avoid; }
+                        .tamanho-title { font-size: 1.5em; font-weight: bold; color: #007bff; margin-bottom: 15px; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+                        .pizza-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+                        .pizza-name { font-weight: 600; color: #333; }
+                        .pizza-ingredients { font-size: 0.9em; color: #666; margin-top: 5px; }
+                        .pizza-prices { text-align: right; }
+                        .price-direto { color: #28a745; font-weight: bold; }
+                        .price-ifood { color: #007bff; font-weight: bold; }
+                        @media print { .no-print { display: none; } }
+                    </style>
+                </head>
+                <body>
+                    ${cardapioContent}
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Função de exportação completa
+        function exportarPlanilhaCompleta() {
             const wb = XLSX.utils.book_new();
 
-            // Aba 1: Custos Base
+            // 1. Aba Custos Base
             const wsIngredientes = XLSX.utils.json_to_sheet(ingredientes.map(ing => ({
                 'Ingrediente': ing.nome,
                 'Unidade': ing.unidade,
@@ -925,7 +1707,7 @@
             })));
             XLSX.utils.book_append_sheet(wb, wsIngredientes, 'Custos Base');
 
-            // Aba 2: Receitas das Pizzas
+            // 2. Aba Receitas das Pizzas
             const wsPizzas = XLSX.utils.json_to_sheet(pizzas.map(pizza => ({
                 'Nome': pizza.nome,
                 'Tamanho': pizza.tamanho,
@@ -937,7 +1719,7 @@
             })));
             XLSX.utils.book_append_sheet(wb, wsPizzas, 'Receitas das Pizzas');
 
-            // Aba 3: Custos Operacionais
+            // 3. Aba Custos Operacionais
             const wsCustos = XLSX.utils.json_to_sheet([
                 { 'Item': 'Salários e Encargos', 'Valor': custosOperacionais.salarios },
                 { 'Item': 'Aluguel', 'Valor': custosOperacionais.aluguel },
@@ -954,7 +1736,7 @@
             ]);
             XLSX.utils.book_append_sheet(wb, wsCustos, 'Custos Operacionais');
 
-            // Aba 4: Delivery Direto
+            // 4. Aba Delivery Direto
             if (precosDirecto.length > 0) {
                 const wsDirecto = XLSX.utils.json_to_sheet(precosDirecto.map(item => ({
                     'Pizza': item.pizza,
@@ -969,7 +1751,7 @@
                 XLSX.utils.book_append_sheet(wb, wsDirecto, 'Delivery Direto');
             }
 
-            // Aba 5: iFood
+            // 5. Aba iFood
             if (precosIfood.length > 0) {
                 const wsIfood = XLSX.utils.json_to_sheet(precosIfood.map(item => ({
                     'Pizza': item.pizza,
@@ -984,7 +1766,7 @@
                 XLSX.utils.book_append_sheet(wb, wsIfood, 'iFood');
             }
 
-            // Gerar comparativo para exportação
+            // 6. Aba Comparativo
             const comparativo = [];
             pizzas.forEach(pizza => {
                 const precoDirectoItem = precosDirecto.find(p => p.pizza === pizza.nome && p.tamanho === pizza.tamanho);
@@ -1012,33 +1794,101 @@
                 XLSX.utils.book_append_sheet(wb, wsComparativo, 'Comparativo');
             }
 
-            // Baixar arquivo
-            XLSX.writeFile(wb, 'Planilha_Precificacao_Pizzas.xlsx');
-        }
-
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', function() {
-            // Adicionar alguns ingredientes exemplo
-            const ingredientesExemplo = [
-                { nome: 'Massa', unidade: 'kg', preco: 8.00, rendimento: 0.15 },
-                { nome: 'Molho de Tomate', unidade: 'kg', preco: 4.50, rendimento: 0.08 },
-                { nome: 'Queijo Mussarela', unidade: 'kg', preco: 28.00, rendimento: 0.12 },
-                { nome: 'Embalagem', unidade: 'unidade', preco: 0.50, rendimento: 1 }
-            ];
-
-            ingredientesExemplo.forEach(ing => {
-                ingredientes.push({
-                    id: Date.now() + Math.random(),
-                    nome: ing.nome,
-                    unidade: ing.unidade,
-                    preco: ing.preco,
-                    rendimento: ing.rendimento,
-                    custoPorPizza: ing.preco * ing.rendimento
-                });
+            // 7. Aba Cardápio
+            const cardapioData = [];
+            const tamanhos = ['Pequena', 'Média', 'Grande', 'Família'];
+            
+            tamanhos.forEach(tamanho => {
+                const pizzasDoTamanho = pizzas.filter(pizza => pizza.tamanho === tamanho);
+                
+                if (pizzasDoTamanho.length > 0) {
+                    cardapioData.push({
+                        'Tamanho': tamanho.toUpperCase(),
+                        'Pizza': '',
+                        'Ingredientes': '',
+                        'Preço Delivery': '',
+                        'Preço iFood': ''
+                    });
+                    
+                    pizzasDoTamanho.forEach(pizza => {
+                        const precoDirecto = precosDirecto.find(p => p.pizza === pizza.nome && p.tamanho === pizza.tamanho);
+                        const precoIfood = precosIfood.find(p => p.pizza === pizza.nome && p.tamanho === pizza.tamanho);
+                        
+                        cardapioData.push({
+                            'Tamanho': '',
+                            'Pizza': pizza.nome,
+                            'Ingredientes': pizza.ingredientes.map(ing => ing.nome).join(', '),
+                            'Preço Delivery': precoDirecto ? `R$ ${precoDirecto.precoFinal.toFixed(2)}` : '',
+                            'Preço iFood': precoIfood ? `R$ ${precoIfood.precoIfood.toFixed(2)}` : ''
+                        });
+                    });
+                }
             });
 
-            atualizarTabelaIngredientes();
-            atualizarSelectIngredientes();
+            const wsCardapio = XLSX.utils.json_to_sheet(cardapioData);
+            XLSX.utils.book_append_sheet(wb, wsCardapio, 'Cardápio');
+
+            // 8. Aba Configurações (para reimport)
+            const wsConfiguracoes = XLSX.utils.json_to_sheet([
+                { 'Configuração': 'Margem Delivery Direto (%)', 'Valor': document.getElementById('margem-direto').value || 150 },
+                { 'Configuração': 'Taxa de Entrega (R$)', 'Valor': document.getElementById('taxa-entrega').value || 5.00 },
+                { 'Configuração': 'Taxa iFood (%)', 'Valor': document.getElementById('taxa-ifood').value || 27 },
+                { 'Configuração': 'Margem iFood (%)', 'Valor': document.getElementById('margem-ifood').value || 150 },
+                { 'Configuração': 'Data Exportação', 'Valor': new Date().toLocaleString('pt-BR') },
+                { 'Configuração': 'Versão Sistema', 'Valor': 'v2.0' }
+            ]);
+            XLSX.utils.book_append_sheet(wb, wsConfiguracoes, 'Configurações');
+
+            // 9. Aba Histórico
+            if (historico.length > 0) {
+                const wsHistorico = XLSX.utils.json_to_sheet(historico.map(item => ({
+                    'Data/Hora': new Date(item.timestamp).toLocaleString('pt-BR'),
+                    'Ação': item.acao,
+                    'Detalhes': item.detalhes
+                })));
+                XLSX.utils.book_append_sheet(wb, wsHistorico, 'Histórico');
+            }
+
+            // Adicionar ao histórico
+            historico.push({
+                acao: 'export',
+                timestamp: new Date().toISOString(),
+                detalhes: `Exportação completa com ${ingredientes.length} ingredientes e ${pizzas.length} pizzas`
+            });
+
+            // Baixar arquivo
+            const nomeArquivo = `Planilha_Precificacao_Pizzas_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, nomeArquivo);
+            
+            mostrarFeedback('Planilha exportada com sucesso!', 'success');
+            salvarLocal();
+        }
+
+        // Inicialização com dados de exemplo
+        document.addEventListener('DOMContentLoaded', function() {
+            if (ingredientes.length === 0) {
+                const ingredientesExemplo = [
+                    { nome: 'Massa', unidade: 'kg', preco: 8.00, rendimento: 0.15 },
+                    { nome: 'Molho de Tomate', unidade: 'kg', preco: 4.50, rendimento: 0.08 },
+                    { nome: 'Queijo Mussarela', unidade: 'kg', preco: 28.00, rendimento: 0.12 },
+                    { nome: 'Embalagem', unidade: 'unidade', preco: 0.50, rendimento: 1 }
+                ];
+
+                ingredientesExemplo.forEach(ing => {
+                    ingredientes.push({
+                        id: Date.now() + Math.random(),
+                        nome: ing.nome,
+                        unidade: ing.unidade,
+                        preco: ing.preco,
+                        rendimento: ing.rendimento,
+                        custoPorPizza: ing.preco * ing.rendimento
+                    });
+                });
+
+                atualizarTabelaIngredientes();
+                atualizarSelectIngredientes();
+                salvarLocal();
+            }
         });
     </script>
 </body>
