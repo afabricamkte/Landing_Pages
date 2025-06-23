@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planilha de Precificação de Pizzas</title>
+    <title>Planilha de Precificação de Pizzas - Pro</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -20,7 +21,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -56,11 +57,22 @@
             font-weight: 500;
             transition: all 0.3s ease;
             white-space: nowrap;
+            position: relative;
         }
 
         .tab.active {
             background: #007bff;
             color: white;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #0056b3;
         }
 
         .tab:hover {
@@ -80,6 +92,44 @@
             display: block;
         }
 
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .kpi-card h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .kpi-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .kpi-card .change {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
@@ -89,6 +139,34 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-bottom: 15px;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
         }
 
         label {
@@ -110,6 +188,12 @@
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .auto-fill {
+            background: #e7f3ff !important;
+            border-color: #007bff !important;
         }
 
         .btn {
@@ -123,6 +207,23 @@
             font-weight: 600;
             transition: all 0.3s ease;
             margin: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn:hover {
@@ -164,9 +265,19 @@
             box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
         }
 
+        .btn-calculator {
+            background: linear-gradient(45deg, #17a2b8, #138496);
+        }
+
+        .btn-calculator:hover {
+            box-shadow: 0 5px 15px rgba(23, 162, 184, 0.3);
+        }
+
         .table-container {
             overflow-x: auto;
             margin: 20px 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         table {
@@ -175,7 +286,6 @@
             background: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         th, td {
@@ -188,6 +298,9 @@
             background: #f8f9fa;
             font-weight: 600;
             color: #495057;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         tr:hover {
@@ -198,6 +311,18 @@
             background: #fff3cd !important;
         }
 
+        .high-cost {
+            background: #f8d7da !important;
+        }
+
+        .low-margin {
+            background: #f8d7da !important;
+        }
+
+        .high-margin {
+            background: #d4edda !important;
+        }
+
         .alert {
             padding: 15px;
             margin: 20px 0;
@@ -205,6 +330,12 @@
             border-left: 4px solid #007bff;
             background: #e7f3ff;
             color: #004085;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .alert-success {
@@ -225,6 +356,24 @@
             color: #721c24;
         }
 
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -239,6 +388,11 @@
             border-radius: 12px;
             text-align: center;
             box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
         }
 
         .card h3 {
@@ -277,10 +431,98 @@
         .upload-area.dragover {
             background: #cce7ff;
             border-color: #0056b3;
+            transform: scale(1.02);
         }
 
         .file-input {
             display: none;
+        }
+
+        .calculator-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .calculator-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .scenario-simulator {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .filters-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-item {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .cardapio-section {
@@ -340,25 +582,75 @@
             font-weight: bold;
         }
 
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
+        .abc-analysis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
         }
 
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #007bff;
-            border-radius: 50%;
+        .abc-item {
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .abc-a {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .abc-b {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+
+        .abc-c {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+
+        .suggestions {
+            background: #e7f3ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .suggestion-icon {
             width: 40px;
             height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .suggestion-icon.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .suggestion-icon.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .suggestion-icon.info {
+            background: #e7f3ff;
+            color: #004085;
         }
 
         @media (max-width: 768px) {
@@ -383,18 +675,27 @@
                 text-align: left;
                 margin-top: 10px;
             }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-container {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🍕 Planilha de Precificação de Pizzas</h1>
-            <p>Sistema completo para delivery direto e iFood</p>
+            <h1>🍕 Sistema de Precificação de Pizzas - Pro</h1>
+            <p>Gestão completa com análises avançadas e indicadores de performance</p>
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="showTab('import-export')">Import/Export</button>
+            <button class="tab active" onclick="showTab('dashboard')">Dashboard</button>
+            <button class="tab" onclick="showTab('import-export')">Import/Export</button>
             <button class="tab" onclick="showTab('custos-base')">Custos Base</button>
             <button class="tab" onclick="showTab('receitas')">Receitas das Pizzas</button>
             <button class="tab" onclick="showTab('operacionais')">Custos Operacionais</button>
@@ -402,10 +703,66 @@
             <button class="tab" onclick="showTab('ifood')">iFood</button>
             <button class="tab" onclick="showTab('comparativo')">Comparativo</button>
             <button class="tab" onclick="showTab('cardapio')">Cardápio</button>
+            <button class="tab" onclick="showTab('analises')">Análises</button>
+        </div>
+
+        <!-- Aba Dashboard -->
+        <div id="dashboard" class="tab-content active">
+            <h2>📊 Dashboard - Visão Geral</h2>
+            
+            <div class="quick-actions">
+                <button class="btn btn-calculator" onclick="abrirCalculadora()">🧮 Calculadora Rápida</button>
+                <button class="btn" onclick="calcularTodosProdutos()">⚡ Recalcular Tudo</button>
+                <button class="btn btn-export" onclick="exportarRelatorio()">📊 Relatório Completo</button>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="kpi-card">
+                    <h3>Total de Ingredientes</h3>
+                    <div class="value" id="kpi-ingredientes">0</div>
+                    <div class="change">Cadastrados no sistema</div>
+                </div>
+                <div class="kpi-card">
+                    <h3>Total de Pizzas</h3>
+                    <div class="value" id="kpi-pizzas">0</div>
+                    <div class="change">Receitas criadas</div>
+                </div>
+                <div class="kpi-card">
+                    <h3>Margem Média Delivery</h3>
+                    <div class="value" id="kpi-margem-delivery">0%</div>
+                    <div class="change">Baseada nos preços atuais</div>
+                </div>
+                <div class="kpi-card">
+                    <h3>Margem Média iFood</h3>
+                    <div class="value" id="kpi-margem-ifood">0%</div>
+                    <div class="change">Após taxas da plataforma</div>
+                </div>
+                <div class="kpi-card">
+                    <h3>Custo Médio por Pizza</h3>
+                    <div class="value" id="kpi-custo-medio">R$ 0,00</div>
+                    <div class="change">Incluindo operacionais</div>
+                </div>
+                <div class="kpi-card">
+                    <h3>Pizza Mais Lucrativa</h3>
+                    <div class="value" id="kpi-pizza-lucrativa">-</div>
+                    <div class="change">Maior margem de lucro</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="margemChart"></canvas>
+            </div>
+
+            <div class="suggestions" id="suggestions-container">
+                <h3>💡 Sugestões Inteligentes</h3>
+                <div id="suggestions-list">
+                    <!-- Sugestões serão geradas aqui -->
+                </div>
+            </div>
         </div>
 
         <!-- Aba Import/Export -->
-        <div id="import-export" class="tab-content active">
+        <div id="import-export" class="tab-content">
             <h2>📂 Importar e Exportar Dados</h2>
             
             <div class="upload-area" onclick="document.getElementById('file-upload').click()">
@@ -453,6 +810,12 @@
         <!-- Aba Custos Base -->
         <div id="custos-base" class="tab-content">
             <h2>📋 Custos Base dos Ingredientes</h2>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" id="search-ingredientes" placeholder="🔍 Buscar ingredientes..." onkeyup="filtrarIngredientes()">
+                <span class="search-icon">🔍</span>
+            </div>
+
             <div class="form-group">
                 <div class="form-row">
                     <div>
@@ -474,8 +837,8 @@
                         <input type="number" id="ingrediente-preco" step="0.01" placeholder="0.00">
                     </div>
                     <div>
-                        <label>Rendimento por Pizza:</label>
-                        <input type="number" id="ingrediente-rendimento" step="0.001" placeholder="Ex: 0.15">
+                        <label>Quantidade por Pizza (padrão):</label>
+                        <input type="number" id="ingrediente-quantidade" step="0.001" placeholder="Ex: 0.15" title="Quantidade padrão que será sugerida ao criar receitas">
                     </div>
                 </div>
                 <button class="btn" onclick="adicionarIngrediente()">➕ Adicionar Ingrediente</button>
@@ -488,7 +851,7 @@
                             <th>Ingrediente</th>
                             <th>Unidade</th>
                             <th>Preço/Unidade</th>
-                            <th>Rendimento/Pizza</th>
+                            <th>Qtd/Pizza Padrão</th>
                             <th>Custo/Pizza</th>
                             <th>Ações</th>
                         </tr>
@@ -501,6 +864,12 @@
         <!-- Aba Receitas -->
         <div id="receitas" class="tab-content">
             <h2>🍕 Receitas das Pizzas</h2>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" id="search-pizzas" placeholder="🔍 Buscar pizzas..." onkeyup="filtrarPizzas()">
+                <span class="search-icon">🔍</span>
+            </div>
+
             <div class="form-group">
                 <div class="form-row">
                     <div>
@@ -523,7 +892,9 @@
                     <div class="form-row">
                         <div>
                             <label>Ingrediente:</label>
-                            <select id="select-ingrediente"></select>
+                            <select id="select-ingrediente" onchange="preencherQuantidadePadrao()">
+                                <option value="">Selecione um ingrediente</option>
+                            </select>
                         </div>
                         <div>
                             <label>Quantidade:</label>
@@ -615,6 +986,22 @@
                     <div class="value" id="custo-por-pizza">R$ 0,00</div>
                 </div>
             </div>
+
+            <div class="scenario-simulator">
+                <h3>🎯 Simulador de Cenários</h3>
+                <div class="form-row">
+                    <div>
+                        <label>Meta de Lucro Mensal (R$):</label>
+                        <input type="number" id="meta-lucro" step="0.01" placeholder="Ex: 15000">
+                    </div>
+                    <div>
+                        <label>Ticket Médio Desejado (R$):</label>
+                        <input type="number" id="ticket-medio" step="0.01" placeholder="Ex: 35.00">
+                    </div>
+                </div>
+                <button class="btn" onclick="simularCenario()">📊 Simular Cenário</button>
+                <div id="resultado-simulacao"></div>
+            </div>
         </div>
 
         <!-- Aba Delivery Direto -->
@@ -694,6 +1081,29 @@
         <!-- Aba Comparativo -->
         <div id="comparativo" class="tab-content">
             <h2>📊 Comparativo de Canais</h2>
+            
+            <div class="filters-container">
+                <div class="filter-item">
+                    <label>Filtrar por Tamanho:</label>
+                    <select id="filtro-tamanho" onchange="filtrarComparativo()">
+                        <option value="">Todos os tamanhos</option>
+                        <option value="Pequena">Pequena</option>
+                        <option value="Média">Média</option>
+                        <option value="Grande">Grande</option>
+                        <option value="Família">Família</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Ordenar por:</label>
+                    <select id="ordenar-por" onchange="filtrarComparativo()">
+                        <option value="nome">Nome</option>
+                        <option value="diferenca">Diferença de Lucro</option>
+                        <option value="lucro-direto">Lucro Delivery</option>
+                        <option value="lucro-ifood">Lucro iFood</option>
+                    </select>
+                </div>
+            </div>
+
             <button class="btn" onclick="gerarComparativo()">🔄 Atualizar Comparativo</button>
             
             <div class="table-container">
@@ -730,6 +1140,68 @@
                 <!-- Cardápio será gerado aqui -->
             </div>
         </div>
+
+        <!-- Aba Análises -->
+        <div id="analises" class="tab-content">
+            <h2>📈 Análises Avançadas</h2>
+            
+            <div class="abc-analysis">
+                <div class="abc-item abc-a">
+                    <h3>🟢 Categoria A - Altamente Lucrativas</h3>
+                    <div id="pizzas-categoria-a">
+                        <!-- Pizzas categoria A -->
+                    </div>
+                </div>
+                <div class="abc-item abc-b">
+                    <h3>🟡 Categoria B - Moderadamente Lucrativas</h3>
+                    <div id="pizzas-categoria-b">
+                        <!-- Pizzas categoria B -->
+                    </div>
+                </div>
+                <div class="abc-item abc-c">
+                    <h3>🔴 Categoria C - Baixa Lucratividade</h3>
+                    <div id="pizzas-categoria-c">
+                        <!-- Pizzas categoria C -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>📊 Análise de Lucratividade por Pizza</h3>
+                <canvas id="lucratividade-chart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3>📈 Comparativo de Canais</h3>
+                <canvas id="canais-chart"></canvas>
+            </div>
+
+            <button class="btn" onclick="gerarAnaliseABC()">🔄 Atualizar Análises</button>
+        </div>
+    </div>
+
+    <!-- Modal Calculadora -->
+    <div id="calculator-modal" class="calculator-modal">
+        <div class="calculator-content">
+            <h3>🧮 Calculadora Rápida</h3>
+            <div class="form-group">
+                <div class="form-row">
+                    <div>
+                        <label>Pizza:</label>
+                        <select id="calc-pizza">
+                            <option value="">Selecione uma pizza</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Quantidade:</label>
+                        <input type="number" id="calc-quantidade" placeholder="Ex: 50" min="1">
+                    </div>
+                </div>
+                <button class="btn" onclick="calcularProducao()">💰 Calcular</button>
+                <button class="btn btn-secondary" onclick="fecharCalculadora()">❌ Fechar</button>
+            </div>
+            <div id="calc-resultado"></div>
+        </div>
     </div>
 
     <script>
@@ -755,8 +1227,11 @@
         let ingredientesPizzaAtual = [];
         let editandoPizza = null;
         let historico = [];
+        let chartMargem = null;
+        let chartLucratividade = null;
+        let chartCanais = null;
 
-        // Configuração de drag and drop
+        // Configuração de drag and drop e inicialização
         document.addEventListener('DOMContentLoaded', function() {
             const uploadArea = document.querySelector('.upload-area');
             
@@ -780,10 +1255,38 @@
                 }
             });
 
+            // Atalhos de teclado
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    salvarLocal();
+                    mostrarToast('Dados salvos!', 'success');
+                }
+                if (e.key === 'Escape') {
+                    fecharCalculadora();
+                    cancelarEdicaoPizza();
+                }
+            });
+
             // Auto-save
-            setInterval(salvarLocal, 30000); // Auto-save a cada 30 segundos
-            carregarLocal(); // Carregar dados salvos ao iniciar
+            setInterval(salvarLocal, 30000);
+            carregarLocal();
+            atualizarDashboard();
         });
+
+        // Funções de toast
+        function mostrarToast(mensagem, tipo = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${tipo}`;
+            toast.textContent = mensagem;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
 
         // Funções de navegação
         function showTab(tabName) {
@@ -796,6 +1299,160 @@
             
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
+
+            if (tabName === 'dashboard') {
+                atualizarDashboard();
+            }
+            if (tabName === 'analises') {
+                setTimeout(gerarAnaliseABC, 100);
+            }
+        }
+
+        // Funções de dashboard
+        function atualizarDashboard() {
+            document.getElementById('kpi-ingredientes').textContent = ingredientes.length;
+            document.getElementById('kpi-pizzas').textContent = pizzas.length;
+            
+            if (precosDirecto.length > 0) {
+                const margemMedia = precosDirecto.reduce((acc, p) => acc + ((p.lucro / p.precoFinal) * 100), 0) / precosDirecto.length;
+                document.getElementById('kpi-margem-delivery').textContent = margemMedia.toFixed(1) + '%';
+            }
+            
+            if (precosIfood.length > 0) {
+                const margemMedia = precosIfood.reduce((acc, p) => acc + p.margemReal, 0) / precosIfood.length;
+                document.getElementById('kpi-margem-ifood').textContent = margemMedia.toFixed(1) + '%';
+            }
+            
+            if (pizzas.length > 0) {
+                const custoMedio = pizzas.reduce((acc, p) => acc + p.custoTotal, 0) / pizzas.length;
+                document.getElementById('kpi-custo-medio').textContent = `R$ ${custoMedio.toFixed(2)}`;
+                
+                // Pizza mais lucrativa
+                if (precosDirecto.length > 0) {
+                    const maisLucrativa = precosDirecto.reduce((max, p) => p.lucro > max.lucro ? p : max);
+                    document.getElementById('kpi-pizza-lucrativa').textContent = maisLucrativa.pizza;
+                }
+            }
+            
+            gerarGraficoMargem();
+            gerarSugestoes();
+        }
+
+        function gerarGraficoMargem() {
+            if (chartMargem) {
+                chartMargem.destroy();
+            }
+            
+            const ctx = document.getElementById('margemChart');
+            if (!ctx || pizzas.length === 0) return;
+            
+            const labels = pizzas.map(p => `${p.nome} (${p.tamanho})`);
+            const custosData = pizzas.map(p => p.custoTotal);
+            const precosDirectoData = precosDirecto.map(p => p ? p.precoFinal : 0);
+            const precosIfoodData = precosIfood.map(p => p ? p.precoIfood : 0);
+            
+            chartMargem = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels.slice(0, 10), // Mostrar apenas 10 primeiras
+                    datasets: [{
+                        label: 'Custo',
+                        data: custosData.slice(0, 10),
+                        backgroundColor: '#dc3545',
+                        borderColor: '#c82333',
+                        borderWidth: 1
+                    }, {
+                        label: 'Preço Delivery',
+                        data: precosDirectoData.slice(0, 10),
+                        backgroundColor: '#28a745',
+                        borderColor: '#1e7e34',
+                        borderWidth: 1
+                    }, {
+                        label: 'Preço iFood',
+                        data: precosIfoodData.slice(0, 10),
+                        backgroundColor: '#007bff',
+                        borderColor: '#0056b3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Comparativo: Custos vs Preços de Venda'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function gerarSugestoes() {
+            const container = document.getElementById('suggestions-list');
+            container.innerHTML = '';
+            
+            // Sugestão de ingredientes caros
+            const ingredientesCaros = ingredientes.filter(ing => ing.custoPorPizza > 5.0);
+            if (ingredientesCaros.length > 0) {
+                container.innerHTML += `
+                    <div class="suggestion-item">
+                        <div class="suggestion-icon warning">⚠️</div>
+                        <div>
+                            <strong>Ingredientes com alto custo:</strong> 
+                            ${ingredientesCaros.map(ing => ing.nome).join(', ')} estão custando mais de R$ 5,00 por pizza.
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Sugestão de margens baixas
+            const margensBalxas = precosDirecto.filter(p => (p.lucro / p.precoFinal) < 0.3);
+            if (margensBalxas.length > 0) {
+                container.innerHTML += `
+                    <div class="suggestion-item">
+                        <div class="suggestion-icon warning">📉</div>
+                        <div>
+                            <strong>Margens baixas:</strong> 
+                            ${margensBalxas.map(p => p.pizza).join(', ')} têm margem inferior a 30%.
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Sugestão de otimização
+            if (precosDirecto.length > 0 && precosIfood.length > 0) {
+                const melhorCanal = precosDirecto.reduce((acc, p) => {
+                    const ifoodEquiv = precosIfood.find(i => i.pizza === p.pizza);
+                    if (ifoodEquiv && p.lucro > ifoodEquiv.lucroLiquido) {
+                        acc.direto++;
+                    } else {
+                        acc.ifood++;
+                    }
+                    return acc;
+                }, { direto: 0, ifood: 0 });
+                
+                const canalRecomendado = melhorCanal.direto > melhorCanal.ifood ? 'Delivery Direto' : 'iFood';
+                container.innerHTML += `
+                    <div class="suggestion-item">
+                        <div class="suggestion-icon success">💡</div>
+                        <div>
+                            <strong>Foque no ${canalRecomendado}:</strong> 
+                            Este canal oferece melhor lucratividade para a maioria das suas pizzas.
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         // Funções de auto-save
@@ -823,9 +1480,91 @@
                     precosIfood = parsed.precosIfood || [];
                     
                     atualizarTodasTabelas();
+                    preencherCustosOperacionais();
                     mostrarFeedback('Dados carregados do backup local', 'success');
                 } catch (e) {
                     console.error('Erro ao carregar dados locais:', e);
+                }
+            } else {
+                // Inicializar com dados de exemplo
+                inicializarDadosExemplo();
+            }
+        }
+
+        function inicializarDadosExemplo() {
+            const ingredientesExemplo = [
+                { nome: 'Massa', unidade: 'kg', preco: 8.00, quantidadePadrao: 0.15 },
+                { nome: 'Molho de Tomate', unidade: 'kg', preco: 4.50, quantidadePadrao: 0.08 },
+                { nome: 'Queijo Mussarela', unidade: 'kg', preco: 28.00, quantidadePadrao: 0.12 },
+                { nome: 'Calabresa', unidade: 'kg', preco: 22.00, quantidadePadrao: 0.10 },
+                { nome: 'Presunto', unidade: 'kg', preco: 18.00, quantidadePadrao: 0.08 },
+                { nome: 'Cebola', unidade: 'kg', preco: 4.00, quantidadePadrao: 0.05 },
+                { nome: 'Embalagem', unidade: 'unidade', preco: 0.50, quantidadePadrao: 1 }
+            ];
+
+            ingredientesExemplo.forEach(ing => {
+                ingredientes.push({
+                    id: Date.now() + Math.random(),
+                    nome: ing.nome,
+                    unidade: ing.unidade,
+                    preco: ing.preco,
+                    quantidadePadrao: ing.quantidadePadrao,
+                    custoPorPizza: ing.preco * ing.quantidadePadrao
+                });
+            });
+
+            atualizarTabelaIngredientes();
+            atualizarSelectIngredientes();
+            salvarLocal();
+        }
+
+        // Funções de busca e filtros
+        function filtrarIngredientes() {
+            const busca = document.getElementById('search-ingredientes').value.toLowerCase();
+            const tbody = document.querySelector('#tabela-ingredientes tbody');
+            const rows = tbody.querySelectorAll('tr');
+            
+            rows.forEach(row => {
+                const texto = row.textContent.toLowerCase();
+                row.style.display = texto.includes(busca) ? '' : 'none';
+            });
+        }
+
+        function filtrarPizzas() {
+            const busca = document.getElementById('search-pizzas').value.toLowerCase();
+            const tbody = document.querySelector('#tabela-pizzas tbody');
+            const rows = tbody.querySelectorAll('tr');
+            
+            rows.forEach(row => {
+                const texto = row.textContent.toLowerCase();
+                row.style.display = texto.includes(busca) ? '' : 'none';
+            });
+        }
+
+        function filtrarComparativo() {
+            const tamanho = document.getElementById('filtro-tamanho').value;
+            const ordenacao = document.getElementById('ordenar-por').value;
+            
+            gerarComparativo(tamanho, ordenacao);
+        }
+
+        // Função para preencher quantidade padrão
+        function preencherQuantidadePadrao() {
+            const selectIngrediente = document.getElementById('select-ingrediente');
+            const inputQuantidade = document.getElementById('quantidade-ingrediente');
+            
+            if (selectIngrediente.value) {
+                const ingredienteId = parseInt(selectIngrediente.value);
+                const ingrediente = ingredientes.find(ing => ing.id === ingredienteId);
+                
+                if (ingrediente && ingrediente.quantidadePadrao) {
+                    inputQuantidade.value = ingrediente.quantidadePadrao.toFixed(3);
+                    inputQuantidade.classList.add('auto-fill');
+                    
+                    // Remover destaque após 2 segundos
+                    setTimeout(() => {
+                        inputQuantidade.classList.remove('auto-fill');
+                    }, 2000);
                 }
             }
         }
@@ -858,13 +1597,6 @@
 
         function processarArquivoImportado(workbook) {
             try {
-                // Resetar dados antes de importar
-                const backup = {
-                    ingredientes: [...ingredientes],
-                    pizzas: [...pizzas],
-                    custosOperacionais: {...custosOperacionais}
-                };
-
                 // Importar ingredientes
                 if (workbook.SheetNames.includes('Custos Base')) {
                     const sheet = workbook.Sheets['Custos Base'];
@@ -875,12 +1607,12 @@
                         nome: row['Ingrediente'] || row['Nome'] || '',
                         unidade: row['Unidade'] || 'kg',
                         preco: parseFloat(row['Preço por Unidade'] || row['Preco'] || 0),
-                        rendimento: parseFloat(row['Rendimento por Pizza'] || row['Rendimento'] || 0),
+                        quantidadePadrao: parseFloat(row['Qtd/Pizza Padrão'] || row['Quantidade por Pizza'] || row['Rendimento por Pizza'] || 0),
                         custoPorPizza: parseFloat(row['Custo por Pizza'] || row['Custo'] || 0)
                     })).filter(ing => ing.nome);
                 }
 
-                // Importar pizzas
+                // Importar pizzas (código similar ao anterior, mas adaptado)
                 if (workbook.SheetNames.includes('Receitas das Pizzas')) {
                     const sheet = workbook.Sheets['Receitas das Pizzas'];
                     const data = XLSX.utils.sheet_to_json(sheet);
@@ -890,7 +1622,6 @@
                         const ingredientesPizza = [];
                         
                         if (ingredientesStr) {
-                            // Parse simples dos ingredientes (formato: "nome (quantidade)")
                             const partes = ingredientesStr.split(', ');
                             partes.forEach(parte => {
                                 const match = parte.match(/(.+)\s*\(([0-9.]+)\)/);
@@ -924,7 +1655,7 @@
                     }).filter(pizza => pizza.nome);
                 }
 
-                // Importar custos operacionais
+                // Importar custos operacionais (código anterior)
                 if (workbook.SheetNames.includes('Custos Operacionais')) {
                     const sheet = workbook.Sheets['Custos Operacionais'];
                     const data = XLSX.utils.sheet_to_json(sheet);
@@ -936,82 +1667,46 @@
                         switch (item) {
                             case 'Salários e Encargos':
                                 custosOperacionais.salarios = valor;
-                                document.getElementById('custo-salarios').value = valor;
                                 break;
                             case 'Aluguel':
                                 custosOperacionais.aluguel = valor;
-                                document.getElementById('custo-aluguel').value = valor;
                                 break;
                             case 'Energia Elétrica':
                                 custosOperacionais.energia = valor;
-                                document.getElementById('custo-energia').value = valor;
                                 break;
                             case 'Gás':
                                 custosOperacionais.gas = valor;
-                                document.getElementById('custo-gas').value = valor;
                                 break;
                             case 'Telefone/Internet':
                                 custosOperacionais.telefone = valor;
-                                document.getElementById('custo-telefone').value = valor;
                                 break;
                             case 'Marketing':
                                 custosOperacionais.marketing = valor;
-                                document.getElementById('custo-marketing').value = valor;
                                 break;
                             case 'Manutenção':
                                 custosOperacionais.manutencao = valor;
-                                document.getElementById('custo-manutencao').value = valor;
                                 break;
                             case 'Outros':
                                 custosOperacionais.outros = valor;
-                                document.getElementById('custo-outros').value = valor;
                                 break;
                             case 'Pizzas por Mês':
                                 custosOperacionais.pizzasMes = valor;
-                                document.getElementById('pizzas-mes').value = valor;
                                 break;
                             case 'Impostos (%)':
                                 custosOperacionais.impostos = valor;
-                                document.getElementById('impostos').value = valor;
-                                break;
-                        }
-                    });
-                }
-
-                // Importar configurações se existir
-                if (workbook.SheetNames.includes('Configurações')) {
-                    const sheet = workbook.Sheets['Configurações'];
-                    const data = XLSX.utils.sheet_to_json(sheet);
-                    
-                    data.forEach(row => {
-                        const config = row['Configuração'] || '';
-                        const valor = parseFloat(row['Valor'] || 0);
-                        
-                        switch (config) {
-                            case 'Margem Delivery Direto (%)':
-                                document.getElementById('margem-direto').value = valor;
-                                break;
-                            case 'Taxa de Entrega (R$)':
-                                document.getElementById('taxa-entrega').value = valor;
-                                break;
-                            case 'Taxa iFood (%)':
-                                document.getElementById('taxa-ifood').value = valor;
-                                break;
-                            case 'Margem iFood (%)':
-                                document.getElementById('margem-ifood').value = valor;
                                 break;
                         }
                     });
                 }
 
                 atualizarTodasTabelas();
+                preencherCustosOperacionais();
                 calcularCustosOperacionais();
                 salvarLocal();
                 
                 mostrarFeedback(`Arquivo importado com sucesso! 
                     ${ingredientes.length} ingredientes e ${pizzas.length} pizzas carregados.`, 'success');
                 
-                // Adicionar ao histórico
                 historico.push({
                     acao: 'import',
                     timestamp: new Date().toISOString(),
@@ -1023,6 +1718,19 @@
             } finally {
                 mostrarLoading(false);
             }
+        }
+
+        function preencherCustosOperacionais() {
+            document.getElementById('custo-salarios').value = custosOperacionais.salarios || 0;
+            document.getElementById('custo-aluguel').value = custosOperacionais.aluguel || 0;
+            document.getElementById('custo-energia').value = custosOperacionais.energia || 0;
+            document.getElementById('custo-gas').value = custosOperacionais.gas || 0;
+            document.getElementById('custo-telefone').value = custosOperacionais.telefone || 0;
+            document.getElementById('custo-marketing').value = custosOperacionais.marketing || 0;
+            document.getElementById('custo-manutencao').value = custosOperacionais.manutencao || 0;
+            document.getElementById('custo-outros').value = custosOperacionais.outros || 0;
+            document.getElementById('pizzas-mes').value = custosOperacionais.pizzasMes || 0;
+            document.getElementById('impostos').value = custosOperacionais.impostos || 0;
         }
 
         function mostrarLoading(show) {
@@ -1041,6 +1749,7 @@
             atualizarTabelaIngredientes();
             atualizarSelectIngredientes();
             atualizarTabelaPizzas();
+            atualizarSelectCalculadora();
             if (precosDirecto.length > 0) atualizarTabelaDirecto();
             if (precosIfood.length > 0) atualizarTabelaIfood();
         }
@@ -1050,21 +1759,21 @@
             const nome = document.getElementById('ingrediente-nome').value;
             const unidade = document.getElementById('ingrediente-unidade').value;
             const preco = parseFloat(document.getElementById('ingrediente-preco').value);
-            const rendimento = parseFloat(document.getElementById('ingrediente-rendimento').value);
+            const quantidadePadrao = parseFloat(document.getElementById('ingrediente-quantidade').value);
 
-            if (!nome || !preco || !rendimento) {
-                alert('Preencha todos os campos!');
+            if (!nome || !preco || !quantidadePadrao) {
+                mostrarToast('Preencha todos os campos!', 'warning');
                 return;
             }
 
-            const custoPorPizza = preco * rendimento;
+            const custoPorPizza = preco * quantidadePadrao;
             
             const ingrediente = {
                 id: Date.now(),
                 nome,
                 unidade,
                 preco,
-                rendimento,
+                quantidadePadrao,
                 custoPorPizza
             };
 
@@ -1073,6 +1782,7 @@
             atualizarSelectIngredientes();
             limparFormularioIngrediente();
             salvarLocal();
+            mostrarToast('Ingrediente adicionado!', 'success');
         }
 
         function editarIngrediente(id) {
@@ -1096,7 +1806,7 @@
                     </select>
                 </td>
                 <td><input type="number" value="${ingrediente.preco}" step="0.01" id="edit-preco-${id}"></td>
-                <td><input type="number" value="${ingrediente.rendimento}" step="0.001" id="edit-rendimento-${id}"></td>
+                <td><input type="number" value="${ingrediente.quantidadePadrao}" step="0.001" id="edit-quantidade-${id}"></td>
                 <td id="edit-custo-${id}">R$ ${ingrediente.custoPorPizza.toFixed(3)}</td>
                 <td>
                     <button class="btn" onclick="salvarEdicaoIngrediente(${id})">💾</button>
@@ -1104,30 +1814,30 @@
                 </td>
             `;
 
-            // Auto-calcular custo ao mudar preço ou rendimento
+            // Auto-calcular custo ao mudar preço ou quantidade
             const precoInput = document.getElementById(`edit-preco-${id}`);
-            const rendimentoInput = document.getElementById(`edit-rendimento-${id}`);
+            const quantidadeInput = document.getElementById(`edit-quantidade-${id}`);
             const custoDisplay = document.getElementById(`edit-custo-${id}`);
 
             function atualizarCusto() {
                 const preco = parseFloat(precoInput.value) || 0;
-                const rendimento = parseFloat(rendimentoInput.value) || 0;
-                const custo = preco * rendimento;
+                const quantidade = parseFloat(quantidadeInput.value) || 0;
+                const custo = preco * quantidade;
                 custoDisplay.textContent = `R$ ${custo.toFixed(3)}`;
             }
 
             precoInput.addEventListener('input', atualizarCusto);
-            rendimentoInput.addEventListener('input', atualizarCusto);
+            quantidadeInput.addEventListener('input', atualizarCusto);
         }
 
         function salvarEdicaoIngrediente(id) {
             const nome = document.getElementById(`edit-nome-${id}`).value;
             const unidade = document.getElementById(`edit-unidade-${id}`).value;
             const preco = parseFloat(document.getElementById(`edit-preco-${id}`).value);
-            const rendimento = parseFloat(document.getElementById(`edit-rendimento-${id}`).value);
+            const quantidadePadrao = parseFloat(document.getElementById(`edit-quantidade-${id}`).value);
 
-            if (!nome || !preco || !rendimento) {
-                alert('Preencha todos os campos!');
+            if (!nome || !preco || !quantidadePadrao) {
+                mostrarToast('Preencha todos os campos!', 'warning');
                 return;
             }
 
@@ -1136,12 +1846,13 @@
                 ingrediente.nome = nome;
                 ingrediente.unidade = unidade;
                 ingrediente.preco = preco;
-                ingrediente.rendimento = rendimento;
-                ingrediente.custoPorPizza = preco * rendimento;
+                ingrediente.quantidadePadrao = quantidadePadrao;
+                ingrediente.custoPorPizza = preco * quantidadePadrao;
 
                 atualizarTabelaIngredientes();
                 atualizarSelectIngredientes();
                 salvarLocal();
+                mostrarToast('Ingrediente atualizado!', 'success');
 
                 // Recalcular custos das pizzas que usam este ingrediente
                 pizzas.forEach(pizza => {
@@ -1170,15 +1881,21 @@
             ingredientes.forEach(ing => {
                 const row = tbody.insertRow();
                 row.setAttribute('data-id', ing.id);
+                
+                // Destacar ingredientes caros
+                if (ing.custoPorPizza > 5.0) {
+                    row.classList.add('high-cost');
+                }
+                
                 row.innerHTML = `
                     <td>${ing.nome}</td>
                     <td>${ing.unidade}</td>
                     <td>R$ ${ing.preco.toFixed(2)}</td>
-                    <td>${ing.rendimento.toFixed(3)}</td>
+                    <td>${ing.quantidadePadrao.toFixed(3)}</td>
                     <td>R$ ${ing.custoPorPizza.toFixed(3)}</td>
                     <td>
-                        <button class="btn btn-edit" onclick="editarIngrediente(${ing.id})">✏️</button>
-                        <button class="btn btn-danger" onclick="removerIngrediente(${ing.id})">🗑️</button>
+                        <button class="btn btn-edit" onclick="editarIngrediente(${ing.id})" title="Editar">✏️</button>
+                        <button class="btn btn-danger" onclick="removerIngrediente(${ing.id})" title="Remover">🗑️</button>
                     </td>
                 `;
             });
@@ -1196,10 +1913,22 @@
             });
         }
 
+        function atualizarSelectCalculadora() {
+            const select = document.getElementById('calc-pizza');
+            select.innerHTML = '<option value="">Selecione uma pizza</option>';
+            
+            pizzas.forEach(pizza => {
+                const option = document.createElement('option');
+                option.value = pizza.id;
+                option.textContent = `${pizza.nome} - ${pizza.tamanho}`;
+                select.appendChild(option);
+            });
+        }
+
         function limparFormularioIngrediente() {
             document.getElementById('ingrediente-nome').value = '';
             document.getElementById('ingrediente-preco').value = '';
-            document.getElementById('ingrediente-rendimento').value = '';
+            document.getElementById('ingrediente-quantidade').value = '';
         }
 
         function removerIngrediente(id) {
@@ -1208,6 +1937,7 @@
                 atualizarTabelaIngredientes();
                 atualizarSelectIngredientes();
                 salvarLocal();
+                mostrarToast('Ingrediente removido!', 'success');
             }
         }
 
@@ -1217,7 +1947,7 @@
             const quantidade = parseFloat(document.getElementById('quantidade-ingrediente').value);
 
             if (!ingredienteId || !quantidade) {
-                alert('Selecione um ingrediente e informe a quantidade!');
+                mostrarToast('Selecione um ingrediente e informe a quantidade!', 'warning');
                 return;
             }
 
@@ -1237,6 +1967,7 @@
             
             document.getElementById('select-ingrediente').value = '';
             document.getElementById('quantidade-ingrediente').value = '';
+            document.getElementById('quantidade-ingrediente').classList.remove('auto-fill');
         }
 
         function atualizarListaIngredientesPizza() {
@@ -1297,7 +2028,7 @@
             const tamanho = document.getElementById('pizza-tamanho').value;
 
             if (!nome || ingredientesPizzaAtual.length === 0) {
-                alert('Preencha o nome da pizza e adicione pelo menos um ingrediente!');
+                mostrarToast('Preencha o nome da pizza e adicione pelo menos um ingrediente!', 'warning');
                 return;
             }
 
@@ -1318,6 +2049,7 @@
                     pizza.custoTotal = custoTotal;
                 }
                 cancelarEdicaoPizza();
+                mostrarToast('Pizza atualizada!', 'success');
             } else {
                 // Criar nova pizza
                 const pizza = {
@@ -1332,9 +2064,11 @@
                 };
                 pizzas.push(pizza);
                 limparFormularioPizza();
+                mostrarToast('Pizza criada!', 'success');
             }
 
             atualizarTabelaPizzas();
+            atualizarSelectCalculadora();
             salvarLocal();
         }
 
@@ -1345,14 +2079,20 @@
             pizzas.forEach(pizza => {
                 const row = tbody.insertRow();
                 const ingredientesStr = pizza.ingredientes.map(ing => `${ing.nome} (${ing.quantidade.toFixed(3)})`).join(', ');
+                
+                // Destacar pizzas com custo alto
+                if (pizza.custoTotal > 15.0) {
+                    row.classList.add('high-cost');
+                }
+                
                 row.innerHTML = `
                     <td>${pizza.nome}</td>
                     <td>${pizza.tamanho}</td>
-                    <td>${ingredientesStr}</td>
+                    <td title="${ingredientesStr}">${ingredientesStr.length > 50 ? ingredientesStr.substring(0, 50) + '...' : ingredientesStr}</td>
                     <td>R$ ${pizza.custoTotal.toFixed(2)}</td>
                     <td>
-                        <button class="btn btn-edit" onclick="editarPizza(${pizza.id})">✏️</button>
-                        <button class="btn btn-danger" onclick="removerPizza(${pizza.id})">🗑️</button>
+                        <button class="btn btn-edit" onclick="editarPizza(${pizza.id})" title="Editar">✏️</button>
+                        <button class="btn btn-danger" onclick="removerPizza(${pizza.id})" title="Remover">🗑️</button>
                     </td>
                 `;
             });
@@ -1368,7 +2108,9 @@
             if (confirm('Tem certeza que deseja remover esta pizza?')) {
                 pizzas = pizzas.filter(pizza => pizza.id !== id);
                 atualizarTabelaPizzas();
+                atualizarSelectCalculadora();
                 salvarLocal();
+                mostrarToast('Pizza removida!', 'success');
             }
         }
 
@@ -1403,6 +2145,35 @@
             salvarLocal();
         }
 
+        // Função do simulador de cenários
+        function simularCenario() {
+            const metaLucro = parseFloat(document.getElementById('meta-lucro').value) || 0;
+            const ticketMedio = parseFloat(document.getElementById('ticket-medio').value) || 0;
+            
+            if (metaLucro === 0 || ticketMedio === 0) {
+                mostrarToast('Preencha a meta de lucro e ticket médio!', 'warning');
+                return;
+            }
+            
+            const custoMedioPizza = pizzas.length > 0 ? 
+                pizzas.reduce((acc, p) => acc + p.custoTotal, 0) / pizzas.length : 10;
+            
+            const margemNecessaria = ((ticketMedio - custoMedioPizza) / ticketMedio) * 100;
+            const pizzasNecessarias = Math.ceil(metaLucro / (ticketMedio - custoMedioPizza));
+            const receitaNecessaria = pizzasNecessarias * ticketMedio;
+            
+            const resultado = document.getElementById('resultado-simulacao');
+            resultado.innerHTML = `
+                <div class="alert alert-success">
+                    <h4>📊 Resultado da Simulação</h4>
+                    <p><strong>Pizzas necessárias:</strong> ${pizzasNecessarias} por mês</p>
+                    <p><strong>Receita necessária:</strong> R$ ${receitaNecessaria.toFixed(2)}</p>
+                    <p><strong>Margem necessária:</strong> ${margemNecessaria.toFixed(1)}%</p>
+                    <p><strong>Pizzas por dia:</strong> ${Math.ceil(pizzasNecessarias / 30)}</p>
+                </div>
+            `;
+        }
+
         // Funções de precificação
         function calcularPrecosDirecto() {
             const margem = parseFloat(document.getElementById('margem-direto').value) || 150;
@@ -1429,6 +2200,7 @@
 
             atualizarTabelaDirecto();
             salvarLocal();
+            mostrarToast('Preços delivery calculados!', 'success');
         }
 
         function editarPrecoDirecto(id) {
@@ -1448,8 +2220,8 @@
             
             const actionsCell = row.cells[8];
             actionsCell.innerHTML = `
-                <button class="btn" onclick="salvarEdicaoPrecoDirecto(${id})">💾</button>
-                <button class="btn btn-secondary" onclick="calcularPrecosDirecto()">❌</button>
+                <button class="btn" onclick="salvarEdicaoPrecoDirecto(${id})" title="Salvar">💾</button>
+                <button class="btn btn-secondary" onclick="calcularPrecosDirecto()" title="Cancelar">❌</button>
             `;
         }
 
@@ -1468,6 +2240,7 @@
                 
                 atualizarTabelaDirecto();
                 salvarLocal();
+                mostrarToast('Preço atualizado!', 'success');
             }
         }
 
@@ -1478,6 +2251,15 @@
             precosDirecto.forEach(item => {
                 const row = tbody.insertRow();
                 row.setAttribute('data-id', item.id);
+                
+                // Destacar margens baixas
+                const margemPorcentual = (item.lucro / item.precoFinal) * 100;
+                if (margemPorcentual < 30) {
+                    row.classList.add('low-margin');
+                } else if (margemPorcentual > 60) {
+                    row.classList.add('high-margin');
+                }
+                
                 row.innerHTML = `
                     <td>${item.pizza}</td>
                     <td>${item.tamanho}</td>
@@ -1486,9 +2268,9 @@
                     <td>R$ ${item.precoBase.toFixed(2)}</td>
                     <td>R$ ${item.taxaEntrega.toFixed(2)}</td>
                     <td>R$ ${item.precoFinal.toFixed(2)}</td>
-                    <td>R$ ${item.lucro.toFixed(2)}</td>
+                    <td>R$ ${item.lucro.toFixed(2)} (${margemPorcentual.toFixed(1)}%)</td>
                     <td>
-                        <button class="btn btn-edit" onclick="editarPrecoDirecto(${item.id})">✏️</button>
+                        <button class="btn btn-edit" onclick="editarPrecoDirecto(${item.id})" title="Editar">✏️</button>
                     </td>
                 `;
             });
@@ -1521,6 +2303,7 @@
 
             atualizarTabelaIfood();
             salvarLocal();
+            mostrarToast('Preços iFood calculados!', 'success');
         }
 
         function editarPrecoIfood(id) {
@@ -1540,8 +2323,8 @@
             
             const actionsCell = row.cells[8];
             actionsCell.innerHTML = `
-                <button class="btn" onclick="salvarEdicaoPrecoIfood(${id})">💾</button>
-                <button class="btn btn-secondary" onclick="calcularPrecosIfood()">❌</button>
+                <button class="btn" onclick="salvarEdicaoPrecoIfood(${id})" title="Salvar">💾</button>
+                <button class="btn btn-secondary" onclick="calcularPrecosIfood()" title="Cancelar">❌</button>
             `;
         }
 
@@ -1562,6 +2345,7 @@
                 
                 atualizarTabelaIfood();
                 salvarLocal();
+                mostrarToast('Preço iFood atualizado!', 'success');
             }
         }
 
@@ -1572,6 +2356,14 @@
             precosIfood.forEach(item => {
                 const row = tbody.insertRow();
                 row.setAttribute('data-id', item.id);
+                
+                // Destacar margens baixas/altas
+                if (item.margemReal < 20) {
+                    row.classList.add('low-margin');
+                } else if (item.margemReal > 40) {
+                    row.classList.add('high-margin');
+                }
+                
                 row.innerHTML = `
                     <td>${item.pizza}</td>
                     <td>${item.tamanho}</td>
@@ -1582,15 +2374,17 @@
                     <td>R$ ${item.lucroLiquido.toFixed(2)}</td>
                     <td>${item.margemReal.toFixed(1)}%</td>
                     <td>
-                        <button class="btn btn-edit" onclick="editarPrecoIfood(${item.id})">✏️</button>
+                        <button class="btn btn-edit" onclick="editarPrecoIfood(${item.id})" title="Editar">✏️</button>
                     </td>
                 `;
             });
         }
 
-        function gerarComparativo() {
+        function gerarComparativo(filtroTamanho = '', ordenacao = 'nome') {
             const tbody = document.querySelector('#tabela-comparativo tbody');
             tbody.innerHTML = '';
+
+            let dadosComparativo = [];
 
             pizzas.forEach(pizza => {
                 const precoDirectoItem = precosDirecto.find(p => p.pizza === pizza.nome && p.tamanho === pizza.tamanho);
@@ -1600,18 +2394,50 @@
                     const diferenca = precoDirectoItem.lucro - precoIfoodItem.lucroLiquido;
                     const melhorCanal = diferenca > 0 ? 'Delivery Direto' : 'iFood';
 
-                    const row = tbody.insertRow();
-                    row.innerHTML = `
-                        <td>${pizza.nome}</td>
-                        <td>${pizza.tamanho}</td>
-                        <td>R$ ${precoDirectoItem.precoFinal.toFixed(2)}</td>
-                        <td>R$ ${precoIfoodItem.precoIfood.toFixed(2)}</td>
-                        <td>R$ ${precoDirectoItem.lucro.toFixed(2)}</td>
-                        <td>R$ ${precoIfoodItem.lucroLiquido.toFixed(2)}</td>
-                        <td style="color: ${diferenca > 0 ? 'green' : 'red'}">R$ ${Math.abs(diferenca).toFixed(2)}</td>
-                        <td style="font-weight: bold; color: ${diferenca > 0 ? 'green' : 'blue'}">${melhorCanal}</td>
-                    `;
+                    dadosComparativo.push({
+                        pizza: pizza.nome,
+                        tamanho: pizza.tamanho,
+                        precoDirecto: precoDirectoItem.precoFinal,
+                        precoIfood: precoIfoodItem.precoIfood,
+                        lucroDirecto: precoDirectoItem.lucro,
+                        lucroIfood: precoIfoodItem.lucroLiquido,
+                        diferenca: diferenca,
+                        melhorCanal: melhorCanal
+                    });
                 }
+            });
+
+            // Filtrar por tamanho
+            if (filtroTamanho) {
+                dadosComparativo = dadosComparativo.filter(item => item.tamanho === filtroTamanho);
+            }
+
+            // Ordenar
+            dadosComparativo.sort((a, b) => {
+                switch (ordenacao) {
+                    case 'diferenca':
+                        return Math.abs(b.diferenca) - Math.abs(a.diferenca);
+                    case 'lucro-direto':
+                        return b.lucroDirecto - a.lucroDirecto;
+                    case 'lucro-ifood':
+                        return b.lucroIfood - a.lucroIfood;
+                    default:
+                        return a.pizza.localeCompare(b.pizza);
+                }
+            });
+
+            dadosComparativo.forEach(item => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${item.pizza}</td>
+                    <td>${item.tamanho}</td>
+                    <td>R$ ${item.precoDirecto.toFixed(2)}</td>
+                    <td>R$ ${item.precoIfood.toFixed(2)}</td>
+                    <td>R$ ${item.lucroDirecto.toFixed(2)}</td>
+                    <td>R$ ${item.lucroIfood.toFixed(2)}</td>
+                    <td style="color: ${item.diferenca > 0 ? 'green' : 'red'}">R$ ${Math.abs(item.diferenca).toFixed(2)}</td>
+                    <td style="font-weight: bold; color: ${item.diferenca > 0 ? 'green' : 'blue'}">${item.melhorCanal}</td>
+                `;
             });
         }
 
@@ -1625,7 +2451,12 @@
             }
 
             const tamanhos = ['Pequena', 'Média', 'Grande', 'Família'];
-            let cardapioHTML = '<div style="text-align: center; margin-bottom: 30px;"><h1>🍕 CARDÁPIO DE PIZZAS</h1></div>';
+            let cardapioHTML = `
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1>🍕 CARDÁPIO DE PIZZAS</h1>
+                    <p style="color: #666; margin-top: 10px;">Atualizado em ${new Date().toLocaleDateString('pt-BR')}</p>
+                </div>
+            `;
 
             tamanhos.forEach(tamanho => {
                 const pizzasDoTamanho = pizzas.filter(pizza => pizza.tamanho === tamanho);
@@ -1693,7 +2524,207 @@
             printWindow.print();
         }
 
-        // Função de exportação completa
+        // Funções de análises
+        function gerarAnaliseABC() {
+            if (precosDirecto.length === 0) {
+                mostrarToast('Calcule os preços primeiro!', 'warning');
+                return;
+            }
+
+            // Ordenar pizzas por lucratividade
+            const pizzasOrdenadas = [...precosDirecto].sort((a, b) => b.lucro - a.lucro);
+            
+            const total = pizzasOrdenadas.length;
+            const categoriaA = pizzasOrdenadas.slice(0, Math.ceil(total * 0.2));
+            const categoriaB = pizzasOrdenadas.slice(Math.ceil(total * 0.2), Math.ceil(total * 0.5));
+            const categoriaC = pizzasOrdenadas.slice(Math.ceil(total * 0.5));
+
+            // Atualizar HTML
+            document.getElementById('pizzas-categoria-a').innerHTML = categoriaA.map(p => 
+                `<div style="margin: 5px 0;"><strong>${p.pizza}</strong> - R$ ${p.lucro.toFixed(2)} de lucro</div>`
+            ).join('');
+
+            document.getElementById('pizzas-categoria-b').innerHTML = categoriaB.map(p => 
+                `<div style="margin: 5px 0;"><strong>${p.pizza}</strong> - R$ ${p.lucro.toFixed(2)} de lucro</div>`
+            ).join('');
+
+            document.getElementById('pizzas-categoria-c').innerHTML = categoriaC.map(p => 
+                `<div style="margin: 5px 0;"><strong>${p.pizza}</strong> - R$ ${p.lucro.toFixed(2)} de lucro</div>`
+            ).join('');
+
+            gerarGraficoLucratividade();
+            gerarGraficoCanais();
+        }
+
+        function gerarGraficoLucratividade() {
+            if (chartLucratividade) {
+                chartLucratividade.destroy();
+            }
+            
+            const ctx = document.getElementById('lucratividade-chart');
+            if (!ctx || precosDirecto.length === 0) return;
+            
+            const dados = precosDirecto.slice(0, 10).map(p => ({
+                label: `${p.pizza} (${p.tamanho})`,
+                lucro: p.lucro,
+                custo: p.custoTotal
+            }));
+            
+            chartLucratividade = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: dados.map(d => d.label),
+                    datasets: [{
+                        data: dados.map(d => d.lucro),
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                            '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF',
+                            '#4BC0C0', '#FF6384'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Distribuição de Lucratividade por Pizza'
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function gerarGraficoCanais() {
+            if (chartCanais) {
+                chartCanais.destroy();
+            }
+            
+            const ctx = document.getElementById('canais-chart');
+            if (!ctx || precosDirecto.length === 0 || precosIfood.length === 0) return;
+            
+            const labels = precosDirecto.slice(0, 8).map(p => `${p.pizza} (${p.tamanho})`);
+            const lucrosDirecto = precosDirecto.slice(0, 8).map(p => p.lucro);
+            const lucrosIfood = precosIfood.slice(0, 8).map(p => p.lucroLiquido);
+            
+            chartCanais = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Lucro Delivery Direto',
+                        data: lucrosDirecto,
+                        backgroundColor: '#28a745',
+                        borderColor: '#1e7e34',
+                        borderWidth: 1
+                    }, {
+                        label: 'Lucro iFood',
+                        data: lucrosIfood,
+                        backgroundColor: '#007bff',
+                        borderColor: '#0056b3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Comparativo de Lucros por Canal'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Funções da calculadora
+        function abrirCalculadora() {
+            if (pizzas.length === 0) {
+                mostrarToast('Cadastre algumas pizzas primeiro!', 'warning');
+                return;
+            }
+            document.getElementById('calculator-modal').style.display = 'block';
+        }
+
+        function fecharCalculadora() {
+            document.getElementById('calculator-modal').style.display = 'none';
+            document.getElementById('calc-resultado').innerHTML = '';
+        }
+
+        function calcularProducao() {
+            const pizzaId = parseInt(document.getElementById('calc-pizza').value);
+            const quantidade = parseInt(document.getElementById('calc-quantidade').value);
+            
+            if (!pizzaId || !quantidade) {
+                mostrarToast('Selecione uma pizza e informe a quantidade!', 'warning');
+                return;
+            }
+            
+            const pizza = pizzas.find(p => p.id === pizzaId);
+            const precoDirecto = precosDirecto.find(p => p.id === pizzaId);
+            const precoIfood = precosIfood.find(p => p.id === pizzaId);
+            
+            if (!pizza) return;
+            
+            const custoTotal = pizza.custoTotal * quantidade;
+            const receitaDirecto = precoDirecto ? precoDirecto.precoFinal * quantidade : 0;
+            const receitaIfood = precoIfood ? precoIfood.precoIfood * quantidade : 0;
+            const lucroDirecto = receitaDirecto - custoTotal;
+            const lucroIfood = receitaIfood - custoTotal - (receitaIfood * 0.27); // Considerando 27% de taxa
+            
+            document.getElementById('calc-resultado').innerHTML = `
+                <div class="alert alert-success">
+                    <h4>📊 Resultado para ${quantidade}x ${pizza.nome} (${pizza.tamanho})</h4>
+                    <p><strong>Custo Total:</strong> R$ ${custoTotal.toFixed(2)}</p>
+                    ${precoDirecto ? `
+                        <p><strong>Receita Delivery:</strong> R$ ${receitaDirecto.toFixed(2)}</p>
+                        <p><strong>Lucro Delivery:</strong> R$ ${lucroDirecto.toFixed(2)}</p>
+                    ` : ''}
+                    ${precoIfood ? `
+                        <p><strong>Receita iFood:</strong> R$ ${receitaIfood.toFixed(2)}</p>
+                        <p><strong>Lucro iFood:</strong> R$ ${lucroIfood.toFixed(2)}</p>
+                    ` : ''}
+                    <hr>
+                    <h5>📦 Ingredientes Necessários:</h5>
+                    ${pizza.ingredientes.map(ing => 
+                        `<p>${ing.nome}: ${(ing.quantidade * quantidade).toFixed(3)} ${ingredientes.find(i => i.id === ing.ingredienteId)?.unidade || ''}</p>`
+                    ).join('')}
+                </div>
+            `;
+        }
+
+        // Funções auxiliares
+        function calcularTodosProdutos() {
+            calcularCustosOperacionais();
+            calcularPrecosDirecto();
+            calcularPrecosIfood();
+            gerarComparativo();
+            atualizarDashboard();
+            mostrarToast('Todos os cálculos atualizados!', 'success');
+        }
+
+        function exportarRelatorio() {
+            // Esta função poderia gerar um relatório em PDF
+            // Por enquanto, vamos exportar a planilha completa
+            exportarPlanilhaCompleta();
+        }
+
+        // Função de exportação completa (mantida do código anterior com melhorias)
         function exportarPlanilhaCompleta() {
             const wb = XLSX.utils.book_new();
 
@@ -1702,7 +2733,7 @@
                 'Ingrediente': ing.nome,
                 'Unidade': ing.unidade,
                 'Preço por Unidade': ing.preco,
-                'Rendimento por Pizza': ing.rendimento,
+                'Qtd/Pizza Padrão': ing.quantidadePadrao,
                 'Custo por Pizza': ing.custoPorPizza
             })));
             XLSX.utils.book_append_sheet(wb, wsIngredientes, 'Custos Base');
@@ -1746,7 +2777,8 @@
                     'Preço Base': item.precoBase,
                     'Taxa Entrega': item.taxaEntrega,
                     'Preço Final': item.precoFinal,
-                    'Lucro': item.lucro
+                    'Lucro': item.lucro,
+                    'Margem Real (%)': ((item.lucro / item.precoFinal) * 100).toFixed(2)
                 })));
                 XLSX.utils.book_append_sheet(wb, wsDirecto, 'Delivery Direto');
             }
@@ -1828,18 +2860,43 @@
             const wsCardapio = XLSX.utils.json_to_sheet(cardapioData);
             XLSX.utils.book_append_sheet(wb, wsCardapio, 'Cardápio');
 
-            // 8. Aba Configurações (para reimport)
+            // 8. Aba Análise ABC
+            if (precosDirecto.length > 0) {
+                const pizzasOrdenadas = [...precosDirecto].sort((a, b) => b.lucro - a.lucro);
+                const total = pizzasOrdenadas.length;
+                
+                const analiseABC = pizzasOrdenadas.map((p, index) => {
+                    let categoria = 'C';
+                    if (index < Math.ceil(total * 0.2)) categoria = 'A';
+                    else if (index < Math.ceil(total * 0.5)) categoria = 'B';
+                    
+                    return {
+                        'Pizza': p.pizza,
+                        'Tamanho': p.tamanho,
+                        'Lucro': p.lucro,
+                        'Categoria ABC': categoria,
+                        'Posição': index + 1
+                    };
+                });
+                
+                const wsABC = XLSX.utils.json_to_sheet(analiseABC);
+                XLSX.utils.book_append_sheet(wb, wsABC, 'Análise ABC');
+            }
+
+            // 9. Aba Configurações
             const wsConfiguracoes = XLSX.utils.json_to_sheet([
                 { 'Configuração': 'Margem Delivery Direto (%)', 'Valor': document.getElementById('margem-direto').value || 150 },
                 { 'Configuração': 'Taxa de Entrega (R$)', 'Valor': document.getElementById('taxa-entrega').value || 5.00 },
                 { 'Configuração': 'Taxa iFood (%)', 'Valor': document.getElementById('taxa-ifood').value || 27 },
                 { 'Configuração': 'Margem iFood (%)', 'Valor': document.getElementById('margem-ifood').value || 150 },
                 { 'Configuração': 'Data Exportação', 'Valor': new Date().toLocaleString('pt-BR') },
-                { 'Configuração': 'Versão Sistema', 'Valor': 'v2.0' }
+                { 'Configuração': 'Versão Sistema', 'Valor': 'v2.0 Pro' },
+                { 'Configuração': 'Total Ingredientes', 'Valor': ingredientes.length },
+                { 'Configuração': 'Total Pizzas', 'Valor': pizzas.length }
             ]);
             XLSX.utils.book_append_sheet(wb, wsConfiguracoes, 'Configurações');
 
-            // 9. Aba Histórico
+            // 10. Aba Histórico
             if (historico.length > 0) {
                 const wsHistorico = XLSX.utils.json_to_sheet(historico.map(item => ({
                     'Data/Hora': new Date(item.timestamp).toLocaleString('pt-BR'),
@@ -1849,47 +2906,48 @@
                 XLSX.utils.book_append_sheet(wb, wsHistorico, 'Histórico');
             }
 
+            // 11. Aba Dashboard KPIs
+            const kpis = [];
+            if (precosDirecto.length > 0 && precosIfood.length > 0) {
+                const margemMediaDelivery = precosDirecto.reduce((acc, p) => acc + ((p.lucro / p.precoFinal) * 100), 0) / precosDirecto.length;
+                const margemMediaIfood = precosIfood.reduce((acc, p) => acc + p.margemReal, 0) / precosIfood.length;
+                const custoMedio = pizzas.reduce((acc, p) => acc + p.custoTotal, 0) / pizzas.length;
+                const maisLucrativa = precosDirecto.reduce((max, p) => p.lucro > max.lucro ? p : max);
+                
+                kpis.push(
+                    { 'Indicador': 'Margem Média Delivery (%)', 'Valor': margemMediaDelivery.toFixed(2) },
+                    { 'Indicador': 'Margem Média iFood (%)', 'Valor': margemMediaIfood.toFixed(2) },
+                    { 'Indicador': 'Custo Médio por Pizza (R$)', 'Valor': custoMedio.toFixed(2) },
+                    { 'Indicador': 'Pizza Mais Lucrativa', 'Valor': maisLucrativa.pizza },
+                    { 'Indicador': 'Maior Lucro (R$)', 'Valor': maisLucrativa.lucro.toFixed(2) }
+                );
+                
+                const wsKPIs = XLSX.utils.json_to_sheet(kpis);
+                XLSX.utils.book_append_sheet(wb, wsKPIs, 'Dashboard KPIs');
+            }
+
             // Adicionar ao histórico
             historico.push({
-                acao: 'export',
+                acao: 'export_completo',
                 timestamp: new Date().toISOString(),
-                detalhes: `Exportação completa com ${ingredientes.length} ingredientes e ${pizzas.length} pizzas`
+                detalhes: `Exportação completa com ${ingredientes.length} ingredientes, ${pizzas.length} pizzas e análises avançadas`
             });
 
             // Baixar arquivo
-            const nomeArquivo = `Planilha_Precificacao_Pizzas_${new Date().toISOString().split('T')[0]}.xlsx`;
+            const nomeArquivo = `Planilha_Precificacao_Pizzas_Pro_${new Date().toISOString().split('T')[0]}.xlsx`;
             XLSX.writeFile(wb, nomeArquivo);
             
-            mostrarFeedback('Planilha exportada com sucesso!', 'success');
+            mostrarFeedback('Planilha Pro exportada com sucesso!', 'success');
+            mostrarToast('Download iniciado!', 'success');
             salvarLocal();
         }
 
-        // Inicialização com dados de exemplo
-        document.addEventListener('DOMContentLoaded', function() {
-            if (ingredientes.length === 0) {
-                const ingredientesExemplo = [
-                    { nome: 'Massa', unidade: 'kg', preco: 8.00, rendimento: 0.15 },
-                    { nome: 'Molho de Tomate', unidade: 'kg', preco: 4.50, rendimento: 0.08 },
-                    { nome: 'Queijo Mussarela', unidade: 'kg', preco: 28.00, rendimento: 0.12 },
-                    { nome: 'Embalagem', unidade: 'unidade', preco: 0.50, rendimento: 1 }
-                ];
-
-                ingredientesExemplo.forEach(ing => {
-                    ingredientes.push({
-                        id: Date.now() + Math.random(),
-                        nome: ing.nome,
-                        unidade: ing.unidade,
-                        preco: ing.preco,
-                        rendimento: ing.rendimento,
-                        custoPorPizza: ing.preco * ing.rendimento
-                    });
-                });
-
-                atualizarTabelaIngredientes();
-                atualizarSelectIngredientes();
-                salvarLocal();
+        // Inicialização final
+        setTimeout(() => {
+            if (ingredientes.length > 0) {
+                atualizarDashboard();
             }
-        });
+        }, 1000);
     </script>
 </body>
 </html>
