@@ -3952,17 +3952,243 @@
         }
 
         // Função de exportação completa (implementação básica)
+        // FUNÇÃO DE EXPORTAÇÃO COMPLETA CORRIGIDA
         function exportarPlanilhaCompleta() {
-            const wb = XLSX.utils.book_new();
-
-            // Implementar todas as 13 abas conforme especificado anteriormente
-            // Por questão de espaço, mantenho a estrutura básica
-
-            const nomeArquivo = `Sistema_Pizzaria_Completo_Corrigido_${new Date().toISOString().split('T')[0]}.xlsx`;
-            XLSX.writeFile(wb, nomeArquivo);
+            mostrarLoading(true);
             
-            mostrarToast('Sistema completo exportado com correções!', 'success');
-            salvarLocal();
+            try {
+                const wb = XLSX.utils.book_new();
+
+                // 1. Aba Custos Base (com coluna custo por pizza)
+                const wsIngredientes = XLSX.utils.json_to_sheet(ingredientes.map(ing => ({
+                    'Ingrediente': ing.nome,
+                    'Unidade': ing.unidade,
+                    'Preço por Unidade': ing.preco,
+                    'Qtd/Pizza Padrão': ing.quantidadePadrao,
+                    'Custo por Pizza': ing.custoPorPizza,
+                    'Estoque Mínimo': ing.estoqueMinimo
+                })));
+                XLSX.utils.book_append_sheet(wb, wsIngredientes, 'Custos Base');
+
+                // 2. Aba Receitas das Pizzas
+                const wsPizzas = XLSX.utils.json_to_sheet(pizzas.map(pizza => ({
+                    'Nome': pizza.nome,
+                    'Tamanho': pizza.tamanho,
+                    'Ingredientes': pizza.ingredientes.map(ing => `${ing.nome} (${ing.quantidade.toFixed(3)})`).join(', '),
+                    'Custo Ingredientes': pizza.custoIngredientes,
+                    'Custo Embalagem': pizza.custoEmbalagem,
+                    'Custo Operacional': pizza.custoOperacional,
+                    'Custo Total': pizza.custoTotal
+                })));
+                XLSX.utils.book_append_sheet(wb, wsPizzas, 'Receitas das Pizzas');
+
+                // 3. Aba Controle de Estoque
+                const wsEstoque = XLSX.utils.json_to_sheet(ingredientes.map(ing => {
+                    const est = estoque[ing.id] || { quantidade: 0, ultimaEntrada: null };
+                    return {
+                        'Ingrediente': ing.nome,
+                        'Unidade': ing.unidade,
+                        'Estoque Atual': est.quantidade,
+                        'Estoque Mínimo': est.estoqueMinimo || 0,
+                        'Preço Atual': ing.preco,
+                        'Última Entrada': est.ultimaEntrada || '',
+                        'Status': est.quantidade <= 0 ? 'Sem Estoque' : est.quantidade <= est.estoqueMinimo ? 'Estoque Baixo' : 'Normal'
+                    };
+                }));
+                XLSX.utils.book_append_sheet(wb, wsEstoque, 'Controle de Estoque');
+
+                // 4. Aba Histórico de Compras
+                const wsHistoricoCompras = XLSX.utils.json_to_sheet(entradasEstoque.map(entrada => {
+                    const ingrediente = ingredientes.find(ing => ing.id === entrada.ingredienteId);
+                    return {
+                        'Data': entrada.data,
+                        'Ingrediente': ingrediente ? ingrediente.nome : 'N/A',
+                        'Quantidade': entrada.quantidade,
+                        'Preço Unitário': entrada.preco,
+                        'Custo Total': entrada.custoTotal,
+                        'Fornecedor': entrada.fornecedor || '',
+                        'Observações': entrada.observacoes || ''
+                    };
+                }));
+                XLSX.utils.book_append_sheet(wb, wsHistoricoCompras, 'Histórico de Compras');
+
+                // 5. Aba Custos Operacionais
+                const wsCustosOp = XLSX.utils.json_to_sheet([
+                    { 'Item': 'Salários e Encargos', 'Valor': custosOperacionais.salarios },
+                    { 'Item': 'Aluguel', 'Valor': custosOperacionais.aluguel },
+                    { 'Item': 'Energia Elétrica', 'Valor': custosOperacionais.energia },
+                    { 'Item': 'Gás', 'Valor': custosOperacionais.gas },
+                    { 'Item': 'Telefone/Internet', 'Valor': custosOperacionais.telefone },
+                    { 'Item': 'Marketing', 'Valor': custosOperacionais.marketing },
+                    { 'Item': 'Manutenção', 'Valor': custosOperacionais.manutencao },
+                    { 'Item': 'Outros', 'Valor': custosOperacionais.outros },
+                    { 'Item': 'Total Mensal', 'Valor': custosOperacionais.custoTotal },
+                    { 'Item': 'Pizzas por Mês', 'Valor': custosOperacionais.pizzasMes },
+                    { 'Item': 'Custo por Pizza', 'Valor': custosOperacionais.custoPorPizza },
+                    { 'Item': 'Impostos (%)', 'Valor': custosOperacionais.impostos }
+                ]);
+                XLSX.utils.book_append_sheet(wb, wsCustosOp, 'Custos Operacionais');
+
+                // 6. Aba Delivery Direto
+                const wsDelivery = XLSX.utils.json_to_sheet(precosDirecto.map(item => ({
+                    'Pizza': item.pizza,
+                    'Tamanho': item.tamanho,
+                    'Custo Total': item.custoTotal,
+                    'Margem (%)': item.margem,
+                    'Preço Base': item.precoBase,
+                    'Taxa Entrega': item.taxaEntrega,
+                    'Preço Final': item.precoFinal,
+                    'Lucro': item.lucro,
+                    'Margem Real (%)': ((item.lucro / item.precoFinal) * 100).toFixed(1)
+                })));
+                XLSX.utils.book_append_sheet(wb, wsDelivery, 'Delivery Direto');
+
+                // 7. Aba iFood
+                const wsIfood = XLSX.utils.json_to_sheet(precosIfood.map(item => ({
+                    'Pizza': item.pizza,
+                    'Tamanho': item.tamanho,
+                    'Custo Total': item.custoTotal,
+                    'Taxa iFood (%)': item.taxaIfood,
+                    'Margem (%)': item.margem,
+                    'Preço iFood': item.precoIfood,
+                    'Lucro Líquido': item.lucroLiquido,
+                    'Margem Real (%)': item.margemReal
+                })));
+                XLSX.utils.book_append_sheet(wb, wsIfood, 'iFood');
+
+                // 8. Aba Comparativo
+                const wsComparativo = XLSX.utils.json_to_sheet(pizzas.map(pizza => {
+                    const precoDirecto = precosDirecto.find(p => p.pizza === pizza.nome && p.tamanho === pizza.tamanho);
+                    const precoIfood = precosIfood.find(p => p.pizza === pizza.nome && p.tamanho === pizza.tamanho);
+                    
+                    if (precoDirecto && precoIfood) {
+                        const diferenca = precoDirecto.lucro - precoIfood.lucroLiquido;
+                        return {
+                            'Pizza': pizza.nome,
+                            'Tamanho': pizza.tamanho,
+                            'Preço Direto': precoDirecto.precoFinal,
+                            'Preço iFood': precoIfood.precoIfood,
+                            'Lucro Direto': precoDirecto.lucro,
+                            'Lucro iFood': precoIfood.lucroLiquido,
+                            'Diferença': diferenca,
+                            'Melhor Canal': diferenca > 0 ? 'Delivery Direto' : 'iFood'
+                        };
+                    }
+                    return null;
+                }).filter(Boolean));
+                XLSX.utils.book_append_sheet(wb, wsComparativo, 'Comparativo');
+
+                // 9. Aba Vendas Registradas
+                const wsVendas = XLSX.utils.json_to_sheet(vendas.map(venda => ({
+                    'Data/Hora': venda.data,
+                    'Produto': venda.produto,
+                    'Tipo': venda.tipo,
+                    'Quantidade': venda.quantidade,
+                    'Canal': venda.canal,
+                    'Preço Unitário': venda.precoUnitario,
+                    'Desconto': venda.desconto,
+                    'Valor Total': venda.valorTotal,
+                    'Custo Total': venda.custoTotal,
+                    'Lucro': venda.lucro,
+                    'Margem (%)': venda.margem,
+                    'Observações': venda.observacoes || ''
+                })));
+                XLSX.utils.book_append_sheet(wb, wsVendas, 'Vendas Registradas');
+
+                // 10. Aba Produtos Extras
+                const wsProdutosExtras = XLSX.utils.json_to_sheet(produtosExtras.map(produto => ({
+                    'Produto': produto.nome,
+                    'Categoria': produto.categoria,
+                    'Preço de Custo': produto.custo,
+                    'Preço de Venda': produto.preco,
+                    'Margem (%)': produto.margem
+                })));
+                XLSX.utils.book_append_sheet(wb, wsProdutosExtras, 'Produtos Extras');
+
+                // 11. Aba Dashboard KPIs
+                const hoje = new Date();
+                const inicioHoje = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+                const vendasHoje = vendas.filter(venda => new Date(venda.data) >= inicioHoje);
+                const faturamentoHoje = vendasHoje.reduce((acc, v) => acc + v.valorTotal, 0);
+                const lucroHoje = vendasHoje.reduce((acc, v) => acc + v.lucro, 0);
+                
+                const wsKPIs = XLSX.utils.json_to_sheet([
+                    { 'KPI': 'Total de Ingredientes', 'Valor': ingredientes.length },
+                    { 'KPI': 'Total de Pizzas', 'Valor': pizzas.length },
+                    { 'KPI': 'Faturamento Hoje', 'Valor': faturamentoHoje },
+                    { 'KPI': 'Lucro Hoje', 'Valor': lucroHoje },
+                    { 'KPI': 'Vendas Hoje', 'Valor': vendasHoje.length },
+                    { 'KPI': 'Ingredientes em Estoque', 'Valor': Object.keys(estoque).filter(id => estoque[id].quantidade > 0).length },
+                    { 'KPI': 'Alertas de Estoque', 'Valor': Object.keys(estoque).filter(id => estoque[id].quantidade <= (estoque[id].estoqueMinimo || 0)).length },
+                    { 'KPI': 'Meta Mensal', 'Valor': metaMensal },
+                    { 'KPI': 'Data Exportação', 'Valor': new Date().toISOString() }
+                ]);
+                XLSX.utils.book_append_sheet(wb, wsKPIs, 'Dashboard KPIs');
+
+                // 12. Aba Configurações
+                const wsConfiguracoes = XLSX.utils.json_to_sheet([
+                    { 'Configuração': 'Margem Delivery Direto (%)', 'Valor': document.getElementById('margem-direto')?.value || 50 },
+                    { 'Configuração': 'Taxa de Entrega (R$)', 'Valor': document.getElementById('taxa-entrega')?.value || 5 },
+                    { 'Configuração': 'Taxa iFood (%)', 'Valor': document.getElementById('taxa-ifood')?.value || 28 },
+                    { 'Configuração': 'Margem iFood (%)', 'Valor': document.getElementById('margem-ifood')?.value || 35 },
+                    { 'Configuração': 'Meta Mensal (R$)', 'Valor': metaMensal },
+                    { 'Configuração': 'Faixa Margem Alta (%)', 'Valor': document.getElementById('faixa-margem-alta')?.value || 60 },
+                    { 'Configuração': 'Faixa Margem Média Min (%)', 'Valor': document.getElementById('faixa-margem-media-min')?.value || 40 },
+                    { 'Configuração': 'Faixa Margem Média Max (%)', 'Valor': document.getElementById('faixa-margem-media-max')?.value || 60 }
+                ]);
+                XLSX.utils.book_append_sheet(wb, wsConfiguracoes, 'Configurações');
+
+                // 13. Aba Histórico de Ações
+                const wsHistorico = XLSX.utils.json_to_sheet(historico.slice(-100).map(item => ({
+                    'Data/Hora': new Date(item.timestamp).toLocaleString('pt-BR'),
+                    'Ação': item.acao,
+                    'Detalhes': item.detalhes
+                })));
+                XLSX.utils.book_append_sheet(wb, wsHistorico, 'Histórico de Ações');
+
+                // Baixar arquivo
+                const nomeArquivo = `Sistema_Pizzaria_Completo_${new Date().toISOString().split('T')[0]}.xlsx`;
+                XLSX.writeFile(wb, nomeArquivo);
+                
+                mostrarFeedback(`
+                    <div class="import-status">
+                        <h4>✅ Sistema Completo Exportado!</h4>
+                        <div class="import-detail">📊 Arquivo contém TODAS as 13 abas:</div>
+                        <div class="import-detail">• Custos Base (${ingredientes.length} ingredientes)</div>
+                        <div class="import-detail">• Receitas (${pizzas.length} pizzas)</div>
+                        <div class="import-detail">• Controle de Estoque</div>
+                        <div class="import-detail">• Histórico de Compras (${entradasEstoque.length} entradas)</div>
+                        <div class="import-detail">• Custos Operacionais</div>
+                        <div class="import-detail">• Delivery Direto (${precosDirecto.length} preços)</div>
+                        <div class="import-detail">• iFood (${precosIfood.length} preços)</div>
+                        <div class="import-detail">• Comparativo de Canais</div>
+                        <div class="import-detail">• Vendas Registradas (${vendas.length} vendas)</div>
+                        <div class="import-detail">• Produtos Extras (${produtosExtras.length} produtos)</div>
+                        <div class="import-detail">• Dashboard KPIs</div>
+                        <div class="import-detail">• Configurações</div>
+                        <div class="import-detail">• Histórico de Ações</div>
+                        <div class="import-detail" style="margin-top: 10px; color: #28a745; font-weight: bold;">
+                            🎉 DOWNLOAD INICIADO COM SUCESSO!
+                        </div>
+                    </div>
+                `, 'success');
+                
+                mostrarToast('Download do sistema completo iniciado!', 'success');
+                salvarLocal();
+
+                // Adicionar ao histórico
+                historico.push({
+                    acao: 'export_completo_corrigido',
+                    timestamp: new Date().toISOString(),
+                    detalhes: `Exportação completa: 13 abas, ${vendas.length} vendas, ${ingredientes.length} ingredientes`
+                });
+
+            } catch (error) {
+                mostrarFeedback('Erro ao exportar: ' + error.message, 'danger');
+                console.error('Erro na exportação:', error);
+            } finally {
+                mostrarLoading(false);
+            }
         }
 
         // Funções restantes de estoque e outras utilidades
