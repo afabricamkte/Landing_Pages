@@ -4319,44 +4319,365 @@
         }
 
         function processarArquivoImportadoCompleto(workbook) {
-            let feedback = '<div class="import-status"><h4>✅ Importação Completa Realizada!</h4>';
-            
-            try {
-                // Implementação básica de importação
-                if (workbook.SheetNames.includes('Custos Base')) {
-                    const sheet = workbook.Sheets['Custos Base'];
-                    const data = XLSX.utils.sheet_to_json(sheet);
+        let feedback = '<div class="import-status"><h4>✅ Importação Completa Realizada!</h4>';
+        let totalItensImportados = 0;
+        
+        try {
+            // 1. CUSTOS BASE
+            if (workbook.SheetNames.includes('Custos Base')) {
+                const sheet = workbook.Sheets['Custos Base'];
+                const data = XLSX.utils.sheet_to_json(sheet);
+                
+                ingredientes = data.map((row, index) => ({
+                    id: Date.now() + index,
+                    nome: row['Ingrediente'] || '',
+                    unidade: row['Unidade'] || 'kg',
+                    preco: parseFloat(row['Preço por Unidade'] || 0),
+                    quantidadePadrao: parseFloat(row['Qtd/Pizza Padrão'] || 0),
+                    estoqueMinimo: parseFloat(row['Estoque Mínimo'] || 0),
+                    custoPorPizza: parseFloat(row['Custo por Pizza'] || 0)
+                })).filter(ing => ing.nome);
+                
+                // Inicializar estoque para todos os ingredientes
+                ingredientes.forEach(ing => {
+                    if (!estoque[ing.id]) {
+                        estoque[ing.id] = {
+                            quantidade: 0,
+                            estoqueMinimo: ing.estoqueMinimo || 0,
+                            ultimaEntrada: ''
+                        };
+                    }
+                });
+                
+                totalItensImportados += ingredientes.length;
+                feedback += `<div class="import-detail">📦 ${ingredientes.length} ingredientes importados</div>`;
+            }
+
+            // 2. RECEITAS DAS PIZZAS
+            if (workbook.SheetNames.includes('Receitas das Pizzas')) {
+                const sheet = workbook.Sheets['Receitas das Pizzas'];
+                const data = XLSX.utils.sheet_to_json(sheet);
+                
+                pizzas = data.map((row, index) => {
+                    // Parser melhorado para ingredientes
+                    const ingredientesStr = row['Ingredientes'] || '';
+                    const ingredientesPizza = [];
                     
-                    ingredientes = data.map((row, index) => ({
-                        id: Date.now() + index,
-                        nome: row['Ingrediente'] || '',
-                        unidade: row['Unidade'] || 'kg',
-                        preco: parseFloat(row['Preço por Unidade'] || 0),
-                        quantidadePadrao: parseFloat(row['Qtd/Pizza Padrão'] || 0),
-                        estoqueMinimo: parseFloat(row['Estoque Mínimo'] || 0),
-                        custoPorPizza: parseFloat(row['Custo por Pizza'] || 0)
-                    })).filter(ing => ing.nome);
+                    if (ingredientesStr) {
+                        const regex = /([^,()]+)\s*\(([0-9.]+)\)/g;
+                        let match;
+                        
+                        while ((match = regex.exec(ingredientesStr)) !== null) {
+                            const nomeIng = match[1].trim();
+                            const quantidade = parseFloat(match[2]);
+                            
+                            const ingrediente = ingredientes.find(ing => ing.nome === nomeIng);
+                            if (ingrediente) {
+                                ingredientesPizza.push({
+                                    ingredienteId: ingrediente.id,
+                                    nome: nomeIng,
+                                    quantidade: quantidade,
+                                    custoUnitario: ingrediente.preco,
+                                    custoTotal: ingrediente.preco * quantidade
+                                });
+                            }
+                        }
+                    }
+
+                    return {
+                        id: Date.now() + index + 1000,
+                        nome: row['Nome'] || '',
+                        tamanho: row['Tamanho'] || 'Grande',
+                        ingredientes: ingredientesPizza,
+                        custoIngredientes: parseFloat(row['Custo Ingredientes'] || 0),
+                        custoEmbalagem: parseFloat(row['Custo Embalagem'] || 0.5),
+                        custoOperacional: parseFloat(row['Custo Operacional'] || 0),
+                        custoTotal: parseFloat(row['Custo Total'] || 0)
+                    };
+                }).filter(pizza => pizza.nome);
+                
+                totalItensImportados += pizzas.length;
+                feedback += `<div class="import-detail">🍕 ${pizzas.length} pizzas importadas com receitas</div>`;
+            }
+
+            // 3. CONTROLE DE ESTOQUE
+            if (workbook.SheetNames.includes('Controle de Estoque')) {
+                const sheet = workbook.Sheets['Controle de Estoque'];
+                const data = XLSX.utils.sheet_to_json(sheet);
+                
+                data.forEach(row => {
+                    const ingrediente = ingredientes.find(ing => ing.nome === row['Ingrediente']);
+                    if (ingrediente) {
+                        estoque[ingrediente.id] = {
+                            quantidade: parseFloat(row['Estoque Atual'] || 0),
+                            estoqueMinimo: parseFloat(row['Estoque Mínimo'] || 0),
+                            ultimaEntrada: row['Última Entrada'] || ''
+                        };
+                    }
+                });
+                
+                feedback += `<div class="import-detail">📦 ${Object.keys(estoque).length} estoques sincronizados</div>`;
+            }
+
+            // 4. HISTÓRICO DE COMPRAS
+            if (workbook.SheetNames.includes('Histórico de Compras')) {
+                const sheet = workbook.Sheets['Histórico de Compras'];
+                const data = XLSX.utils.sheet_to_json(sheet);
+                
+                entradasEstoque = data.map((row, index) => {
+                    const ingrediente = ingredientes.find(ing => ing.nome === row['Ingrediente']);
+                    return {
+                        id: Date.now() + index + 2000,
+                        ingredienteId: ingrediente ? ingrediente.id : null,
+                        quantidade: parseFloat(row['Quantidade'] || 0),
+                        preco: parseFloat(row['Preço Unitário'] || 0),
+                        data: row['Data'] || '',
+                        fornecedor: row['Fornecedor'] || '',
+                        observacoes: row['Observações'] || '',
+                        custoTotal: parseFloat(row['Custo Total'] || 0)
+                    };
+                }).filter(entrada => entrada.ingredienteId);
+                
+                feedback += `<div class="import-detail">📋 ${entradasEstoque.length} entradas de compras importadas</div>`;
+            }
+
+            // 5. CUSTOS OPERACIONAIS
+            if (workbook.SheetNames.includes('Custos Operacionais')) {
+                const sheet = workbook.Sheets['Custos Operacionais'];
+                const data = XLSX.utils.sheet_to_json(sheet);
+                
+                data.forEach(row => {
+                    const item = row['Item'];
+                    const valor = parseFloat(row['Valor'] || 0);
                     
-                    feedback += `<div class="import-detail">📦 ${ingredientes.length} ingredientes importados</div>`;
+                    switch (item) {
+                        case 'Salários e Encargos': custosOperacionais.salarios = valor; break;
+                        case 'Aluguel': custosOperacionais.aluguel = valor; break;
+                        case 'Energia Elétrica': custosOperacionais.energia = valor; break;
+                        case 'Gás': custosOperacionais.gas = valor; break;
+                        case 'Água e Esgoto': custosOperacionais.agua = valor; break;
+                        case 'Telefone/Internet': custosOperacionais.telefone = valor; break;
+                        case 'Marketing/Publicidade': custosOperacionais.marketing = valor; break;
+                        case 'Manutenção/Limpeza': custosOperacionais.manutencao = valor; break;
+                        case 'Seguro': custosOperacionais.seguro = valor; break;
+                        case 'Contador/Contabilidade': custosOperacionais.contador = valor; break;
+                        case 'Licenças/Taxas': custosOperacionais.licencas = valor; break;
+                        case 'Depreciação Equipamentos': custosOperacionais.depreciacao = valor; break;
+                        case 'Combustível Entrega': custosOperacionais.combustivel = valor; break;
+                        case 'Material de Limpeza': custosOperacionais.limpeza = valor; break;
+                        case 'Uniformes/EPIs': custosOperacionais.uniformes = valor; break;
+                        case 'Outros': custosOperacionais.outros = valor; break;
+                        case 'Pizzas por Mês': custosOperacionais.pizzasMes = valor; break;
+                        case 'Impostos (%)': custosOperacionais.impostos = valor; break;
+                        case 'Total Mensal': custosOperacionais.custoTotal = valor; break;
+                        case 'Custo por Pizza': custosOperacionais.custoPorPizza = valor; break;
+                    }
+                });
+                
+                feedback += `<div class="import-detail">🏪 Custos operacionais importados (15 categorias)</div>`;
+            }
+
+            // 6. DELIVERY DIRETO
+            if (workbook.SheetNames.includes('Delivery Direto')) {
+                const sheet = workbook.Sheets['Delivery Direto'];
+                const data = XLSX.utils.sheet_to_json(sheet);
+                
+                precosDirecto = data.map((row, index) => {
+                    const pizza = pizzas.find(p => p.nome === row['Pizza'] && p.tamanho === row['Tamanho']);
+                    return {
+                        id: pizza ? pizza.id : Date.now() + index + 3000,
+                        pizza: row['Pizza'] || '',
+                        tamanho: row['Tamanho'] || '',
+                        custoTotal: parseFloat(row['Custo Total'] || 0),
+                        margem: parseFloat(row['Margem (%)'] || 0),
+                        precoBase: parseFloat(row['Preço Base'] || 0),
+                        taxaEntrega: parseFloat(row['Taxa Entrega'] || 0),
+                        precoFinal: parseFloat(row['Preço Final'] || 0),
+                        lucro: parseFloat(row['Lucro'] || 0)
+                    };
+                }).filter(item => item.pizza);
+                
+                feedback += `<div class="import-detail">🛵 ${precosDirecto.length} preços delivery importados</div>`;
+            }
+
+            // 7. IFOOD
+            if (workbook.SheetNames.includes('iFood')) {
+                const sheet = workbook.Sheets['iFood'];
+                const data = XLSX.utils.sheet_to_json(sheet);
+                
+                precosIfood = data.map((row, index) => {
+                    const pizza = pizzas.find(p => p.nome === row['Pizza'] && p.tamanho === row['Tamanho']);
+                    return {
+                        id: pizza ? pizza.id : Date.now() + index + 4000,
+                        pizza: row['Pizza'] || '',
+                        tamanho: row['Tamanho'] || '',
+                        custoTotal: parseFloat(row['Custo Total'] || 0),
+                        taxaIfood: parseFloat(row['Taxa iFood (%)'] || 0),
+                        margem: parseFloat(row['Margem (%)'] || 0),
+                        precoIfood: parseFloat(row['Preço iFood'] || 0),
+                        lucroLiquido: parseFloat(row['Lucro Líquido'] || 0),
+                        margemReal: parseFloat(row['Margem Real (%)'] || 0)
+                    };
+                }).filter(item => item.pizza);
+                
+                feedback += `<div class="import-detail">📱 ${precosIfood.length} preços iFood importados</div>`;
+            }
+
+            // 8. VENDAS REGISTRADAS
+            if (workbook.SheetNames.includes('Vendas Registradas')) {
+                const sheet = workbook.Sheets['Vendas Registradas'];
+                const data = XLSX.utils.sheet_to_json(sheet);
+                
+                vendas = data.map((row, index) => ({
+                    id: Date.now() + index + 5000,
+                    data: row['Data/Hora'] || '',
+                    produto: row['Produto'] || '',
+                    tipo: row['Tipo'] || '',
+                    quantidade: parseInt(row['Quantidade'] || 0),
+                    canal: row['Canal'] || '',
+                    precoUnitario: parseFloat(row['Preço Unitário'] || 0),
+                    desconto: parseFloat(row['Desconto'] || 0),
+                    valorTotal: parseFloat(row['Valor Total'] || 0),
+                    custoTotal: parseFloat(row['Custo Total'] || 0),
+                    lucro: parseFloat(row['Lucro'] || 0),
+                    margem: parseFloat(row['Margem (%)'] || 0),
+                    observacoes: row['Observações'] || ''
+                })).filter(venda => venda.produto);
+                
+                feedback += `<div class="import-detail">💰 ${vendas.length} vendas importadas</div>`;
+            }
+
+            // 9. PRODUTOS EXTRAS
+            if (workbook.SheetNames.includes('Produtos Extras')) {
+                const sheet = workbook.Sheets['Produtos Extras'];
+                const data = XLSX.utils.sheet_to_json(sheet);
+                
+                produtosExtras = data.map((row, index) => ({
+                    id: Date.now() + index + 6000,
+                    nome: row['Produto'] || '',
+                    categoria: row['Categoria'] || '',
+                    custo: parseFloat(row['Preço de Custo'] || 0),
+                    preco: parseFloat(row['Preço de Venda'] || 0),
+                    margem: parseFloat(row['Margem (%)'] || 0)
+                })).filter(produto => produto.nome);
+                
+                feedback += `<div class="import-detail">🍷 ${produtosExtras.length} produtos extras importados</div>`;
+            }
+
+            // 10. DASHBOARD KPIS
+            if (workbook.SheetNames.includes('Dashboard KPIs')) {
+                const sheet = workbook.Sheets['Dashboard KPIs'];
+                const data = XLSX.utils.sheet_to_json(sheet);
+                
+                const metaItem = data.find(row => row['KPI'] === 'Meta Mensal');
+                if (metaItem) {
+                    metaMensal = parseFloat(metaItem['Valor'] || 0);
                 }
                 
-                atualizarTodasTabelas();
-                salvarLocal();
-                atualizarDashboard();
-                
-                feedback += '<div class="import-detail" style="margin-top: 15px; font-weight: bold; color: #28a745;">✅ Importação realizada com sucesso!</div>';
-                feedback += '</div>';
-                
-                mostrarFeedback(feedback, 'success');
-                mostrarToast('Arquivo importado com sucesso!', 'success');
-                
-            } catch (error) {
-                mostrarFeedback('Erro ao importar dados: ' + error.message, 'danger');
-                console.error('Erro detalhado:', error);
-            } finally {
-                mostrarLoading(false);
+                feedback += `<div class="import-detail">📊 KPIs do dashboard importados</div>`;
             }
+
+            // 11. CONFIGURAÇÕES
+            if (workbook.SheetNames.includes('Configurações')) {
+                const sheet = workbook.Sheets['Configurações'];
+                const data = XLSX.utils.sheet_to_json(sheet);
+                
+                data.forEach(row => {
+                    const config = row['Configuração'];
+                    const valor = row['Valor'];
+                    
+                    switch (config) {
+                        case 'Margem Delivery Direto (%)':
+                            if (document.getElementById('margem-direto')) {
+                                document.getElementById('margem-direto').value = valor || 150;
+                            }
+                            break;
+                        case 'Taxa de Entrega (R$)':
+                            if (document.getElementById('taxa-entrega')) {
+                                document.getElementById('taxa-entrega').value = valor || 5;
+                            }
+                            break;
+                        case 'Taxa iFood (%)':
+                            if (document.getElementById('taxa-ifood')) {
+                                document.getElementById('taxa-ifood').value = valor || 27;
+                            }
+                            break;
+                        case 'Margem iFood (%)':
+                            if (document.getElementById('margem-ifood')) {
+                                document.getElementById('margem-ifood').value = valor || 150;
+                            }
+                            break;
+                        case 'Meta Mensal (R$)':
+                            metaMensal = parseFloat(valor || 0);
+                            break;
+                    }
+                });
+                
+                feedback += `<div class="import-detail">⚙️ Configurações restauradas</div>`;
+            }
+
+            // VALIDAR E CORRIGIR INCONSISTÊNCIAS
+            validarConsistenciaDados();
+
+            // ATUALIZAR TODAS AS INTERFACES
+            atualizarTodasTabelas();
+            preencherCustosOperacionais();
+            
+            if (precosDirecto.length > 0) atualizarTabelaDirecto();
+            if (precosIfood.length > 0) atualizarTabelaIfood();
+            if (metaMensal > 0) {
+                if (document.getElementById('meta-mensal')) {
+                    document.getElementById('meta-mensal').value = metaMensal;
+                }
+                atualizarMetaMensal();
+            }
+            
+            // Atualizar comparativo e cardápio
+            if (precosDirecto.length > 0 && precosIfood.length > 0) {
+                gerarComparativo();
+            }
+            gerarCardapio();
+            calcularFaixasPorMargem();
+            
+            salvarLocal();
+            atualizarDashboard();
+            
+            feedback += `<div class="import-detail" style="margin-top: 15px; font-weight: bold; color: #28a745;">
+                ✅ IMPORTAÇÃO 100% COMPLETA!<br>
+                • ${ingredientes.length} ingredientes com estoque sincronizado<br>
+                • ${pizzas.length} pizzas com receitas completas<br>
+                • Custos operacionais (15 categorias)<br>
+                • ${precosDirecto.length} preços delivery<br>
+                • ${precosIfood.length} preços iFood<br>
+                • ${vendas.length} vendas registradas<br>
+                • ${produtosExtras.length} produtos extras<br>
+                • Comparativo e análises geradas<br>
+                • Sistema totalmente funcional!
+            </div>`;
+            feedback += '</div>';
+            
+            mostrarFeedback(feedback, 'success');
+            mostrarToast('TODAS as abas importadas com sucesso!', 'success');
+            
+            // Adicionar ao histórico
+            historico.push({
+                acao: 'import_completo_corrigido',
+                timestamp: new Date().toISOString(),
+                detalhes: `Importação completa: ${ingredientes.length} ingredientes, ${pizzas.length} pizzas, ${precosDirecto.length} preços delivery, ${precosIfood.length} preços iFood, ${vendas.length} vendas`
+            });
+
+            // Recalcular tudo após importação
+            setTimeout(() => {
+                calcularTodosProdutos();
+            }, 1000);
+            
+        } catch (error) {
+            mostrarFeedback('Erro ao importar dados: ' + error.message, 'danger');
+            console.error('Erro detalhado:', error);
+        } finally {
+            mostrarLoading(false);
         }
+    }
 
         function atualizarTodasTabelas() {
             atualizarTabelaIngredientes();
