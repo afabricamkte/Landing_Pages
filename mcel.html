@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Fluxograma Interativo - Método de Evento Lucrativo (MCL)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      background: #f8fafc;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 99vw;
+      margin: 0 auto;
+      padding: 18px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      color: #232323;
+      margin-bottom: 18px;
+      font-weight: bold;
+    }
+    .fluxo {
+      display: flex;
+      overflow-x: auto;
+      gap: 28px;
+      padding: 24px 8px 24px 8px;
+      align-items: flex-start;
+    }
+    .step {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px #0001;
+      min-width: 280px;
+      max-width: 320px;
+      padding: 22px 20px 12px 20px;
+      position: relative;
+      transition: box-shadow .3s;
+      border-top: 6px solid #4f8ef7;
+      flex-shrink: 0;
+      cursor: pointer;
+      outline: none;
+    }
+    .step.active, .step:focus {
+      box-shadow: 0 8px 24px #0070f333;
+      border-top: 6px solid #16a34a;
+    }
+    .step-title {
+      font-size: 1.15rem;
+      font-weight: bold;
+      color: #2563eb;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-title span {
+      font-size: 1.2em;
+    }
+    .step-content {
+      font-size: 1em;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    .expand {
+      background: #f4f8fb;
+      border-radius: 10px;
+      margin: 10px 0 0 0;
+      padding: 12px;
+      font-size: 0.97em;
+      box-shadow: 0 1px 4px #0001;
+      display: none;
+      color: #222;
+    }
+    .step.active .expand {
+      display: block;
+      animation: fadeIn .3s;
+    }
+    .step .stat {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #166534;
+      font-size: 0.97em;
+      margin: 7px 0 0 0;
+      font-weight: 500;
+    }
+    .arrow {
+      position: absolute;
+      right: -32px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      fill: #4f8ef7;
+      opacity: 0.60;
+    }
+    @media (max-width: 800px) {
+      h1 { font-size: 1.07rem; }
+      .fluxo { gap: 12px; padding: 14px 0 30px 0;}
+      .step { min-width: 220px; max-width: 95vw; font-size: 0.98em;}
+      .step-title { font-size: 0.99em; }
+      .arrow { right: -22px; width: 16px; height: 16px;}
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(.97);}
+      to { opacity: 1; transform: scale(1);}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Fluxograma Interativo<br>Método de Construção de Evento Lucrativo (MCL)</h1>
+    <div class="fluxo" id="fluxo">
+      
+      <!-- 1 -->
+      <div class="step" tabindex="0">
+        <div class="step-title"><span>1️⃣</span>Definição do Objetivo Principal</div>
+        <div class="step-content">Deixe claro o foco do evento e identifique resultados colaterais relevantes.</div>
+        <div class="expand">
+          <ul>
+            <li><b>Determinar meta central</b> (ex: vendas, engajamento, autoridade).</li>
+            <li><b>Listar resultados colaterais</b> (ex: percepção de valor, aumento de LTV).</li>
+            <li><b>Exemplo:</b> Evento para vender high ticket → elevação do valor percebido.</li>
+          </ul>
+          <div class="stat">📊 <b>Estatística:</b> 84% das empresas que definem objetivos claros para eventos têm ROI superior a 30%.<br>
+          <small>(Fonte: EventMB, 2023)</small></div>
+        </div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M6 12h12l-6 6M18 12l-6-6"/></svg>
+      </div>
+      
+      <!-- 2 -->
+      <div class="step" tabindex="0">
+        <div class="step-title"><span>2️⃣</span>Produto e Entregáveis</div>
+        <div class="step-content">Detalhe o que será entregue e os resultados esperados para cliente e vendedor.</div>
+        <div class="expand">
+          <ul>
+            <li>Analise <b>custos e formatos</b> (gravado, ao vivo, individual, grupo).</li>
+            <li>Mapeie as <b>vitórias para o consumidor</b> (dinheiro, gestão, organização).</li>
+            <li>Mapeie as <b>vitórias para o vendedor</b> (satisfação, financeiro, status).</li>
+            <li>Considere <b>viabilidade de escala</b> (grupo vs individual).</li>
+          </ul>
+          <div class="stat">🎯 <b>Dado:</b> 57% dos eventos online/híbridos entregam maior LTV para empresas.<br>
+          <small>(Fonte: Statista, 2024)</small></div>
+        </div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M6 12h12l-6 6M18 12l-6-6"/></svg>
+      </div>
+      
+      <!-- 3 -->
+      <div class="step" tabindex="0">
+        <div class="step-title"><span>3️⃣</span>Dimensionamento da Entrega</div>
+        <div class="step-content">Planeje entregas desafiadoras e que gerem resultado real ao cliente.</div>
+        <div class="expand">
+          <ul>
+            <li>Entrega deve ser <b>desconfortável (desafiadora)</b> para gerar transformação.</li>
+            <li>Foco sempre em gerar resultado concreto para o comprador.</li>
+            <li>Defina se há <b>entregas individuais ou em grupo</b>.</li>
+          </ul>
+          <div class="stat">🚀 <b>Insight:</b> 72% dos compradores de eventos buscam “transformação prática” em vez de só conteúdo.<br>
+          <small>(Fonte: Sebrae/Ampro, 2023)</small></div>
+        </div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M6 12h12l-6 6M18 12l-6-6"/></svg>
+      </div>
+      
+      <!-- 4 -->
+      <div class="step" tabindex="0">
+        <div class="step-title"><span>4️⃣</span>Orçamento</div>
+        <div class="step-content">Ajuste o orçamento ao objetivo e viabilidade financeira real.</div>
+        <div class="expand">
+          <ul>
+            <li>Mapeie <b>todos os custos</b> (local, kits, brindes, alimentação, tecnologia).</li>
+            <li>Planeje <b>fontes de receita</b>: ingressos, patrocínios, incentivos fiscais, parcerias.</li>
+            <li>Faça <b>ajustes conforme viabilidade</b> (corte, amplie ou realoque recursos).</li>
+          </ul>
+          <div class="stat">💰 <b>Fato:</b> 65% dos eventos de sucesso têm orçamento definido antes da comercialização.<br>
+          <small>(Fonte: EventMB, 2023)</small></div>
+        </div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M6 12h12l-6 6M18 12l-6-6"/></svg>
+      </div>
+      
+      <!-- 5 -->
+      <div class="step" tabindex="0">
+        <div class="step-title"><span>5️⃣</span>Local, Experiências, Conteúdo e Duração</div>
+        <div class="step-content">Escolha local, experiências e alinhe o conteúdo ao objetivo central.</div>
+        <div class="expand">
+          <ul>
+            <li>Local deve <b>reduzir objeções</b> (deslocamento, hospedagem, custo).</li>
+            <li>Pense em <b>experiências memoráveis</b>: coffee, dinâmicas, networking, brindes.</li>
+            <li>Alinhe <b>conteúdo ao pitch</b> e à promessa.</li>
+            <li>Defina <b>duração ideal</b> (1 a 4 dias) conforme estratégia de engajamento.</li>
+          </ul>
+          <div class="stat">📈 <b>Dado:</b> 60% dos públicos preferem eventos híbridos e experiências personalizadas.<br>
+          <small>(Fonte: RockContent, 2024)</small></div>
+        </div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M6 12h12l-6 6M18 12l-6-6"/></svg>
+      </div>
+      
+      <!-- 6 -->
+      <div class="step" tabindex="0">
+        <div class="step-title"><span>6️⃣</span>Pontos Decisivos (PD0~PD10)</div>
+        <div class="step-content">Siga o fluxo dos 11 pontos decisivos do evento para máxima conversão.</div>
+        <div class="expand">
+          <ol>
+            <li><b>PD0:</b> Decisão de fazer o evento</li>
+            <li><b>PD1:</b> Promessa ao público</li>
+            <li><b>PD2:</b> Aquecimento e distribuição de conteúdo (grupos, lives, pesquisas)</li>
+            <li><b>PD3:</b> Evento começa, conteúdo aprofundado</li>
+            <li><b>PD4:</b> Entrega de vitória macro</li>
+            <li><b>PD5:</b> Demonstração dos próximos passos (pré-pitch)</li>
+            <li><b>PD6:</b> Pitch/oferta exclusiva</li>
+            <li><b>PD7:</b> Break estratégico para segmentar interessados</li>
+            <li><b>PD8:</b> “Cereja do bolo”, reforço de oportunidade</li>
+            <li><b>PD9:</b> Repetição do pitch, provas sociais</li>
+            <li><b>PD10:</b> Onboarding e início da entrega</li>
+          </ol>
+          <div class="stat">⚡ <b>Dado:</b> 70% dos leads aquecidos por jornadas (pré-evento) convertem mais rápido.<br>
+          <small>(Fonte: RD Station, 2024)</small></div>
+        </div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M6 12h12l-6 6M18 12l-6-6"/></svg>
+      </div>
+      
+      <!-- 7 -->
+      <div class="step" tabindex="0">
+        <div class="step-title"><span>7️⃣</span>Precificação e Ingressos</div>
+        <div class="step-content">Precifique com base nos custos e use estratégias de lotes, cashback e garantias.</div>
+        <div class="expand">
+          <ul>
+            <li>Mapeie <b>custo per capita</b> real.</li>
+            <li>Defina <b>categorias de ingresso</b> (único, múltiplos, auto ticket).</li>
+            <li>Escolha <b>venda direta ou lotes</b> (virada por tempo ou quantidade).</li>
+            <li>Ofereça <b>cashback no produto</b> e <b>garantia condicional</b>.</li>
+          </ul>
+          <div class="stat">🎟️ <b>Dado:</b> 54% dos eventos que usam lotes vendem 40% mais rápido.<br>
+          <small>(Fonte: Sympla, 2024)</small></div>
+        </div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M6 12h12l-6 6M18 12l-6-6"/></svg>
+      </div>
+      
+      <!-- 8 -->
+      <div class="step" tabindex="0">
+        <div class="step-title"><span>8️⃣</span>Definição Universal (DU)</div>
+        <div class="step-content">Decida se o ingresso cobre investimento ou gera lucro — ou se o produto é o principal gerador.</div>
+        <div class="expand">
+          <ul>
+            <li>Defina se <b>evento é fonte principal de receita</b> ou isca para venda de produto.</li>
+            <li>Ajuste estratégia conforme <b>capacidade financeira</b>.</li>
+            <li>Foque em <b>quantidade x qualidade do público</b>.</li>
+          </ul>
+          <div class="stat">🔍 <b>Dado:</b> 78% dos eventos lucrativos têm clareza sobre sua fonte de lucro principal.<br>
+          <small>(Fonte: Ampro, 2023)</small></div>
+        </div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M6 12h12l-6 6M18 12l-6-6"/></svg>
+      </div>
+
+      <!-- 9 -->
+      <div class="step" tabindex="0">
+        <div class="step-title"><span>9️⃣</span>Pós-Evento</div>
+        <div class="step-content">Realize onboarding, garanta entregas e mensure resultados para o próximo ciclo.</div>
+        <div class="expand">
+          <ul>
+            <li>Faça <b>onboarding imediato</b> com tarefas claras.</li>
+            <li>Utilize <b>garantias bem estruturadas</b> para reduzir cancelamentos.</li>
+            <li><b>Análise de resultados</b> e preparação para o próximo evento.</li>
+          </ul>
+          <div class="stat">⭐ <b>Estatística:</b> 64% dos clientes que recebem onboarding detalhado têm churn 30% menor.<br>
+          <small>(Fonte: Customer Success Brasil, 2024)</small></div>
+        </div>
+      </div>
+
+    </div>
+    <p style="margin:24px 0 8px 0; color:#444; font-size:15px; text-align:center;">
+      <em>Clique/tap em cada etapa para expandir tópicos e estatísticas.<br>
+      <b>Dica:</b> Use em tela cheia ou projete no Google Workspace para apresentação dinâmica.</em>
+    </p>
+  </div>
+  <script>
+    // Interatividade: expande apenas um step por vez
+    const steps = document.querySelectorAll('.step');
+    steps.forEach((step, idx) => {
+      step.addEventListener('click', () => {
+        steps.forEach((s,i) => { if(i!==idx) s.classList.remove('active'); });
+        step.classList.toggle('active');
+      });
+      step.addEventListener('keypress', (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          step.click();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
