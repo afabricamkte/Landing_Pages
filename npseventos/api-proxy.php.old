@@ -1,0 +1,24 @@
+<?php
+// Proxy simples para o Apps Script EXEC
+$TARGET = 'https://script.google.com/macros/s/AKfycby-f0CFipbtA0j5p8fKjZveZ-nyUMf9ILKaCB5KdRA/exec';
+
+$method = $_SERVER['REQUEST_METHOD'];
+$query  = $_SERVER['QUERY_STRING'] ?? '';
+$url    = $TARGET . (strlen($query) ? ('?' . $query) : '');
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+if ($method === 'POST') {
+  $body = file_get_contents('php://input');
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: text/plain; charset=UTF-8']);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+}
+$out  = curl_exec($ch);
+$code = curl_getinfo($ch, CURLINFO_HTTP_CODE) ?: 200;
+$err  = curl_error($ch);
+curl_close($ch);
+
+header('Content-Type: application/json');
+http_response_code($code);
+echo $out !== false ? $out : json_encode(['ok'=>false,'error'=>'proxy_failed','detail'=>$err]);
