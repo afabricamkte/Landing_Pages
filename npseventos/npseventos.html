@@ -1,0 +1,1671 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NPS Eventos — Admin e Formulário</title>
+  <meta name="color-scheme" content="light dark">
+  <style>
+    :root{
+      --bg: #0b0c0f;
+      --card: #12141a;
+      --muted: #1a1f2a;
+      --text: #e6e8f0;
+      --subtext: #aab0c0;
+      --brand: #ff5a3c; /* personalizável por pesquisa */
+      --ok: #16c67a;
+      --warn: #f5a524;
+      --bad: #ef4444;
+      --border: #2a2f3a;
+      --focus: 0 0 0 3px rgba(255,90,60,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font: 15px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text); background:linear-gradient(180deg,#0b0c0f 0,#0e1116 100%); background-attachment:fixed;
+    }
+    a{color:var(--brand); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{max-width:1024px; margin:0 auto; padding:16px}
+    header.app{
+      position:sticky; top:0; z-index:10; backdrop-filter:saturate(140%) blur(10px);
+      background:rgba(11,12,15,.7); border-bottom:1px solid var(--border)
+    }
+    .row{display:flex; gap:12px; flex-wrap:wrap}
+    .spacer{flex:1}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+      border:1px solid var(--border); border-radius:14px; padding:16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .muted{color:var(--subtext)}
+    h1,h2,h3{margin:.2em 0 .4em}
+    h1{font-size:1.6rem} h2{font-size:1.25rem} h3{font-size:1.05rem}
+    .btn{
+      appearance:none; border:1px solid var(--border); background:var(--card); color:var(--text);
+      padding:10px 14px; border-radius:10px; cursor:pointer;
+    }
+    .btn.primary{border-color:transparent; background:var(--brand); color:#0b0c0f; font-weight:700}
+    .btn.ghost{background:transparent}
+    .btn.warn{background:var(--warn); color:#0b0c0f; border-color:transparent}
+    .btn.bad{background:var(--bad); color:white; border-color:transparent}
+    .btn.ok{background:var(--ok); color:#0b0c0f; border-color:transparent}
+    .btn.small{padding:6px 10px; font-size:.9rem}
+    .btn:focus{outline: none; box-shadow: var(--focus)}
+    .grid{display:grid; gap:12px}
+    @media(min-width:800px){ .grid.cols-2{grid-template-columns:1fr 1fr} .grid.cols-3{grid-template-columns:repeat(3,1fr)} }
+    label{display:block; margin:.2rem 0 .3rem}
+    input[type="text"], input[type="number"], input[type="email"], input[type="url"], select, textarea{
+      width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--card); color:var(--text)
+    }
+    textarea{min-height:90px; resize:vertical}
+    fieldset{border:1px dashed var(--border); padding:12px; border-radius:12px; margin:10px 0}
+    legend{padding:0 6px; color:var(--subtext)}
+    .scale{display:flex; gap:6px; flex-wrap:wrap}
+    .scale .pill{
+      padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:var(--card); cursor:pointer;
+      min-width:36px; text-align:center
+    }
+    .scale .pill[aria-checked="true"]{background:var(--brand); color:#0b0c0f; border-color:transparent; font-weight:700}
+    .chip{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background:var(--card)}
+    .tags{display:flex; flex-wrap:wrap; gap:8px}
+    .toolbar{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .status{padding:4px 8px; border-radius:999px; font-weight:600}
+    .status.draft{background:#374151; color:#fff}
+    .status.active{background:#10b981; color:#0b0c0f}
+    .status.closed{background:#6b7280; color:#fff}
+    .table{width:100%; border-collapse:collapse}
+    .table th,.table td{border-bottom:1px solid var(--border); padding:10px; text-align:left}
+    .sr-only{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
+    .notice{background: #0a1320; border:1px solid #14223b; color:#c9d8ff; padding:10px 12px; border-radius:10px}
+    .brand-accent{color:var(--brand)}
+    .logo{height:36px; width:auto; border-radius:8px; background:#fff; object-fit:contain}
+    .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; padding:2px 6px; border:1px solid var(--border); border-radius:6px; background:var(--card)}
+    .progress{height:10px; background:#1f2430; border-radius:999px; overflow:hidden}
+    .progress > span{display:block; height:100%; background:var(--brand)}
+    .right{margin-left:auto}
+    .danger{color:#ffb4b4}
+    /* Print styles (PDF) */
+    @media print {
+      header.app, .no-print{display:none !important}
+      body{background:white; color:black}
+      .card{box-shadow:none; border:1px solid #ddd}
+    }
+  </style>
+</head>
+<body>
+  <header class="app">
+    <div class="container row" id="topbar">
+      <div class="row" style="align-items:center; gap:10px">
+        <img id="brandLogo" class="logo" alt="Logo" src="" style="display:none">
+        <strong id="brandTitle">NPS Eventos</strong>
+        <span id="surveyBadge" class="status draft" style="display:none"></span>
+      </div>
+      <div class="spacer"></div>
+      <nav class="toolbar">
+        <button class="btn small" id="lang-pt">PT</button>
+        <button class="btn small" id="lang-en">EN</button>
+        <button class="btn small" id="lang-es">ES</button>
+        <a class="btn small" id="nav-admin" href="#/admin"></a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="app"></main>
+
+  <template id="tmpl-empty">
+    <div class="card">
+      <h2>Bem-vindo</h2>
+      <p class="muted">Use o menu para acessar o Admin ou um link público de pesquisa.</p>
+    </div>
+  </template>
+
+  <script>
+  // ====== Utilidades gerais ======
+  const qs = (s, el=document) => el.querySelector(s);
+  const qsa = (s, el=document) => [...el.querySelectorAll(s)];
+  const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
+  const uid = (p="") => p + Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
+  const sleep = ms => new Promise(r=>setTimeout(r,ms));
+  const todayISO = ()=> new Date().toISOString().slice(0,10);
+  const fmtPct = n => (isFinite(n)? (n>0?"+":"")+n.toFixed(1).replace(".",",")+"%" : "—");
+
+  // Persistência
+  const LS_KEY = 'nps_app_state_v1';
+  let state = null;
+
+  const saveState = () => localStorage.setItem(LS_KEY, JSON.stringify(state));
+  const loadState = () => {
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw) {
+      try { return JSON.parse(raw) } catch(e){ console.warn("State parse error",e) }
+    }
+    return null;
+  };
+
+  // Hash router
+  const getRoute = () => {
+    const hash = location.hash.slice(1); // e.g., /admin, /s/<id>?token=...
+    if(!hash) return {path: "/", params:{}};
+    const [path, query=""] = hash.split("?");
+    const params = Object.fromEntries(new URLSearchParams(query).entries());
+    return {path, params};
+  };
+
+  // i18n
+  const I18N_UI = {
+    pt: {
+      admin: "Admin",
+      loginTitle: "Acesso do Administrador",
+      setPassword: "Defina a sua senha",
+      password: "Senha",
+      signIn: "Entrar",
+      signOut: "Sair",
+      wrongPass: "Senha incorreta.",
+      surveys: "Pesquisas",
+      newSurvey: "Nova pesquisa",
+      edit: "Editar",
+      open: "Abrir público",
+      delete: "Excluir",
+      duplicate: "Duplicar",
+      responses: "Respostas",
+      tokens: "Tokens",
+      report: "Relatório",
+      settings: "Configurações",
+      title: "Título",
+      eventDate: "Data do evento",
+      language: "Idioma padrão",
+      languagesEnabled: "Idiomas habilitados",
+      brandColor: "Cor da marca",
+      logo: "Logo (PNG/SVG)",
+      status: "Status",
+      draft: "Rascunho",
+      active: "Ativa",
+      closed: "Encerrada",
+      save: "Salvar",
+      saved: "Salvo.",
+      generate: "Gerar",
+      count: "Quantidade",
+      tokenLimitNote: "Cada token permite 1 resposta. Inclua os tokens nos links/QRs.",
+      shareLink: "Link de resposta",
+      exportCSV: "Exportar CSV",
+      exportJSON: "Exportar JSON",
+      importJSON: "Importar JSON",
+      upload: "Enviar",
+      addQuestion: "Adicionar pergunta",
+      customQuestions: "Perguntas personalizadas",
+      type: "Tipo",
+      required: "Obrigatória",
+      remove: "Remover",
+      up: "Acima",
+      down: "Abaixo",
+      webhook: "Webhook de envio (Google Apps Script, Zapier, Make, etc.)",
+      sendgridKey: "SendGrid API Key (dev)",
+      mailchimpKey: "Mailchimp API Key (dev)",
+      telegramToken: "Telegram Bot Token (dev)",
+      telegramChatId: "Telegram Chat ID (dev)",
+      whatsappNumber: "Número WhatsApp (com DDI, ex.: +55... — dev)",
+      notifOnSubmit: "Enviar notificação ao receber resposta",
+      printPDF: "Imprimir/Salvar PDF",
+      avg: "Média",
+      nps: "NPS",
+      promoters: "Promotores",
+      passives: "Neutros",
+      detractors: "Detratores",
+      resume: "Resumo",
+      qr: "QR Code",
+      copy: "Copiar",
+      copied: "Copiado!",
+      review: "Revisar",
+      submit: "Enviar",
+      submitting: "Enviando...",
+      submitted: "Resposta enviada. Obrigado!",
+      alreadyAnswered: "Este link já foi utilizado.",
+      invalidLink: "Link inválido ou pesquisa inativa.",
+      form: "Formulário",
+      general: "Geral",
+      dimensions: "Dimensões",
+      sessions: "Palestras/Sessões",
+      logistics: "Logística e Comunicação",
+      value: "Valor e intenção futura",
+      profile: "Perfil do participante (opcional)",
+      consents: "Consentimentos (opcional)",
+      contactInfo: "Contato (opcional)",
+      yes: "Sim",
+      no: "Não",
+      maybe: "Talvez",
+      npsQuestion: "Em uma escala de 0 a 10, o quanto você recomendaria este evento a um amigo ou colega do mesmo nicho de mercado?",
+      scaleHelp_0_10: "0 = não recomendaria; 10 = recomendaria com certeza",
+      scaleHelp_1_5: "1 = muito ruim; 5 = excelente",
+      requiredMsg: "Este campo é obrigatório.",
+      selectAllThatApply: "Selecione todas que se aplicam",
+      optional: "Opcional",
+      logoNote: "Seu logo é armazenado localmente (apenas neste navegador).",
+      dangerClientOnly: "Atenção: chaves/API aqui são apenas para testes (visíveis no cliente). Em produção, use backend.",
+      pdfHint: "Use o botão para imprimir/salvar este relatório em PDF."
+    },
+    en: {
+      admin: "Admin",
+      loginTitle: "Administrator Access",
+      setPassword: "Set your password",
+      password: "Password",
+      signIn: "Sign in",
+      signOut: "Sign out",
+      wrongPass: "Incorrect password.",
+      surveys: "Surveys",
+      newSurvey: "New survey",
+      edit: "Edit",
+      open: "Open public",
+      delete: "Delete",
+      duplicate: "Duplicate",
+      responses: "Responses",
+      tokens: "Tokens",
+      report: "Report",
+      settings: "Settings",
+      title: "Title",
+      eventDate: "Event date",
+      language: "Default language",
+      languagesEnabled: "Enabled languages",
+      brandColor: "Brand color",
+      logo: "Logo (PNG/SVG)",
+      status: "Status",
+      draft: "Draft",
+      active: "Active",
+      closed: "Closed",
+      save: "Save",
+      saved: "Saved.",
+      generate: "Generate",
+      count: "Count",
+      tokenLimitNote: "Each token allows 1 response. Include tokens in links/QRs.",
+      shareLink: "Response link",
+      exportCSV: "Export CSV",
+      exportJSON: "Export JSON",
+      importJSON: "Import JSON",
+      upload: "Upload",
+      addQuestion: "Add question",
+      customQuestions: "Custom questions",
+      type: "Type",
+      required: "Required",
+      remove: "Remove",
+      up: "Up",
+      down: "Down",
+      webhook: "Submit webhook (Google Apps Script, Zapier, Make, etc.)",
+      sendgridKey: "SendGrid API Key (dev)",
+      mailchimpKey: "Mailchimp API Key (dev)",
+      telegramToken: "Telegram Bot Token (dev)",
+      telegramChatId: "Telegram Chat ID (dev)",
+      whatsappNumber: "WhatsApp number (with country code, e.g., +1...)",
+      notifOnSubmit: "Send notification on submission",
+      printPDF: "Print/Save PDF",
+      avg: "Average",
+      nps: "NPS",
+      promoters: "Promoters",
+      passives: "Passives",
+      detractors: "Detractors",
+      resume: "Summary",
+      qr: "QR Code",
+      copy: "Copy",
+      copied: "Copied!",
+      review: "Review",
+      submit: "Submit",
+      submitting: "Submitting...",
+      submitted: "Response sent. Thank you!",
+      alreadyAnswered: "This link has already been used.",
+      invalidLink: "Invalid link or inactive survey.",
+      form: "Form",
+      general: "General",
+      dimensions: "Dimensions",
+      sessions: "Sessions",
+      logistics: "Logistics & Communication",
+      value: "Value & future intent",
+      profile: "Participant profile (optional)",
+      consents: "Consents (optional)",
+      contactInfo: "Contact (optional)",
+      yes: "Yes",
+      no: "No",
+      maybe: "Maybe",
+      npsQuestion: "On a scale from 0 to 10, how likely are you to recommend this event to a friend or colleague in the same niche?",
+      scaleHelp_0_10: "0 = would not recommend; 10 = definitely recommend",
+      scaleHelp_1_5: "1 = very poor; 5 = excellent",
+      requiredMsg: "This field is required.",
+      selectAllThatApply: "Select all that apply",
+      optional: "Optional",
+      logoNote: "Your logo is stored locally (this browser only).",
+      dangerClientOnly: "Warning: API keys here are for testing only (client-visible). Use a backend in production.",
+      pdfHint: "Use the button to print/save this report as PDF."
+    },
+    es: {
+      admin: "Admin",
+      loginTitle: "Acceso del Administrador",
+      setPassword: "Defina su contraseña",
+      password: "Contraseña",
+      signIn: "Iniciar sesión",
+      signOut: "Cerrar sesión",
+      wrongPass: "Contraseña incorrecta.",
+      surveys: "Encuestas",
+      newSurvey: "Nueva encuesta",
+      edit: "Editar",
+      open: "Abrir público",
+      delete: "Eliminar",
+      duplicate: "Duplicar",
+      responses: "Respuestas",
+      tokens: "Tokens",
+      report: "Informe",
+      settings: "Configuraciones",
+      title: "Título",
+      eventDate: "Fecha del evento",
+      language: "Idioma predeterminado",
+      languagesEnabled: "Idiomas habilitados",
+      brandColor: "Color de marca",
+      logo: "Logo (PNG/SVG)",
+      status: "Estado",
+      draft: "Borrador",
+      active: "Activa",
+      closed: "Cerrada",
+      save: "Guardar",
+      saved: "Guardado.",
+      generate: "Generar",
+      count: "Cantidad",
+      tokenLimitNote: "Cada token permite 1 respuesta. Incluya los tokens en los enlaces/QR.",
+      shareLink: "Enlace de respuesta",
+      exportCSV: "Exportar CSV",
+      exportJSON: "Exportar JSON",
+      importJSON: "Importar JSON",
+      upload: "Subir",
+      addQuestion: "Agregar pregunta",
+      customQuestions: "Preguntas personalizadas",
+      type: "Tipo",
+      required: "Obligatoria",
+      remove: "Eliminar",
+      up: "Arriba",
+      down: "Abajo",
+      webhook: "Webhook de envío (Google Apps Script, Zapier, Make, etc.)",
+      sendgridKey: "Clave API SendGrid (dev)",
+      mailchimpKey: "Clave API Mailchimp (dev)",
+      telegramToken: "Token de Bot de Telegram (dev)",
+      telegramChatId: "Telegram Chat ID (dev)",
+      whatsappNumber: "Número de WhatsApp (con código, ej.: +34...)",
+      notifOnSubmit: "Enviar notificación al recibir respuesta",
+      printPDF: "Imprimir/Guardar PDF",
+      avg: "Media",
+      nps: "NPS",
+      promoters: "Promotores",
+      passives: "Neutros",
+      detractors: "Detractores",
+      resume: "Resumen",
+      qr: "Código QR",
+      copy: "Copiar",
+      copied: "¡Copiado!",
+      review: "Revisar",
+      submit: "Enviar",
+      submitting: "Enviando...",
+      submitted: "Respuesta enviada. ¡Gracias!",
+      alreadyAnswered: "Este enlace ya fue utilizado.",
+      invalidLink: "Enlace inválido o encuesta inactiva.",
+      form: "Formulario",
+      general: "General",
+      dimensions: "Dimensiones",
+      sessions: "Sesiones",
+      logistics: "Logística y Comunicación",
+      value: "Valor e intención futura",
+      profile: "Perfil del participante (opcional)",
+      consents: "Consentimientos (opcional)",
+      contactInfo: "Contacto (opcional)",
+      yes: "Sí",
+      no: "No",
+      maybe: "Quizá",
+      npsQuestion: "En una escala de 0 a 10, ¿qué tan probable es que recomiende este evento a un amigo o colega del mismo nicho?",
+      scaleHelp_0_10: "0 = no recomendaría; 10 = definitivamente recomendaría",
+      scaleHelp_1_5: "1 = muy malo; 5 = excelente",
+      requiredMsg: "Este campo es obligatorio.",
+      selectAllThatApply: "Seleccione todas las que apliquen",
+      optional: "Opcional",
+      logoNote: "Su logo se almacena localmente (solo en este navegador).",
+      dangerClientOnly: "Atención: las claves/API aquí son solo para pruebas (visibles en el cliente). En producción, use backend.",
+      pdfHint: "Use el botón para imprimir/guardar este informe en PDF."
+    }
+  };
+
+  // Question templates (multilingual labels)
+  // Note: Session titles are kept as in original (proper names).
+  function defaultSurvey(lang="pt"){
+    const l = (pt,en,es)=>({pt,en,es});
+    const surveyId = uid("srv_");
+    return {
+      id: surveyId,
+      title: l("Ellit by Grado — Pesquisa de Satisfação", "Ellit by Grado — Satisfaction Survey", "Ellit by Grado — Encuesta de Satisfacción"),
+      eventDate: todayISO(),
+      brandColor: "#ff5a3c",
+      logoDataURL: "",
+      status: "draft",
+      langDefault: lang,
+      langsEnabled: ["pt","en","es"],
+      requireToken: true,
+      allowEditBeforeSubmit: true,
+      notifOnSubmit: false,
+      webhook: "",
+      integrations: { sendgridKey:"", mailchimpKey:"", telegramToken:"", telegramChatId:"", whatsappNumber:"" },
+      tokens: {},            // { token: { used: false, responseId: null } }
+      responses: [],         // array of { id, at, lang, answers: { qid: value }, token }
+      questions: [
+        // 1 - NPS
+        { id:"q1", kind:"nps", required:true,
+          label: l(
+            "1 - Em uma escala de 0 a 10, o quanto você recomendaria este evento a um amigo ou colega do mesmo nicho de mercado?",
+            "1 - On a scale from 0 to 10, how likely are you to recommend this event to a friend or colleague in the same niche?",
+            "1 - En una escala de 0 a 10, ¿qué tan probable es que recomiende este evento a un amigo o colega del mismo nicho?"
+          ),
+          help: l("0 = não recomendaria; 10 = recomendaria com certeza", "0 = would not recommend; 10 = definitely recommend", "0 = no recomendaría; 10 = definitivamente recomendaría")
+        },
+        // 2-11 Dimensões 1-5
+        { id:"q2", kind:"likert5", required:true, label:l("2 - Organização geral do evento (1–5)","2 - Overall event organization (1–5)","2 - Organización general del evento (1–5)") },
+        { id:"q3", kind:"likert5", required:true, label:l("3 - Qualidade do conteúdo (1–5)","3 - Content quality (1–5)","3 - Calidad del contenido (1–5)") },
+        { id:"q4", kind:"likert5", required:true, label:l("4 - Qualidade das palestras (1–5)","4 - Quality of talks (1–5)","4 - Calidad de las charlas (1–5)") },
+        { id:"q5", kind:"likert5", required:true, label:l("5 - Relevância para sua área (1–5)","5 - Relevance to your field (1–5)","5 - Relevancia para su área (1–5)") },
+        { id:"q6", kind:"likert5", required:true, label:l("6 - Aplicabilidade prática do que foi apresentado (1–5)","6 - Practical applicability of what was presented (1–5)","6 - Aplicabilidad práctica de lo presentado (1–5)") },
+        { id:"q7", kind:"likert5", required:true, label:l("7 - Oportunidades de networking (1–5)","7 - Networking opportunities (1–5)","7 - Oportunidades de networking (1–5)") },
+        { id:"q8", kind:"likert5", required:true, label:l("8 - Infraestrutura do local (salas, som, projeção) (1–5)","8 - Venue infrastructure (rooms, sound, projection) (1–5)","8 - Infraestructura del lugar (salas, sonido, proyección) (1–5)") },
+        { id:"q9", kind:"likert5", required:true, label:l("9 - Pontualidade da programação (1–5)","9 - Program punctuality (1–5)","9 - Puntualidad de la programación (1–5)") },
+        { id:"q10", kind:"likert5", required:false, label:l("10 - Alimentação/coffee break (se aplicável) (1–5)","10 - Food/coffee break (if applicable) (1–5)","10 - Alimentación/coffee break (si aplica) (1–5)") },
+        { id:"q11", kind:"likert5", required:true, label:l("11 - Experiência com expositores/estandes (se aplicável) (1–5)","11 - Experience with exhibitors/booths (if applicable) (1–5)","11 - Experiencia con expositores/stands (si aplica) (1–5)") },
+
+        // 12 - Sessões
+        { id:"q12", kind:"multiselect", required:true,
+          label:l("12 - Quais as palestras/sessões você participou?","12 - Which talks/sessions did you attend?","12 - ¿A qué charlas/sesiones asistió?"),
+          help:l("Selecione todas que se aplicam","Select all that apply","Seleccione todas las que apliquen"),
+          options: [
+            "Como está o mercado? -- com ABRAINC",
+            "Oportunidades no cenário atual: Construir casas para vender e House Flipping -- André",
+            "Estudo de Viabilidade: Exemplos reais de casas viáveis e não viáveis -- Israel",
+            "Dinâmica: Cálculo de Resultados -- Israel e André",
+            "Ciclo Estratégico para Incorporar Casas -- Israel e Gustavo",
+            "Aplicação de Inteligência Financeira na Viabilidade -- André",
+            "Estrutura Jurídica -- com Adriana e Ludmila",
+            "HDI: Seguro garantia em operações de investimento - Carlos",
+            "Sistema Construtivo ICF - João",
+            "Alavancagem de Operações e Modelos de Parceria -- Israel",
+            "Inter: Estratégia com financiamento -- Rodrigo",
+            "Impactos da Nova Reforma Tributária -- com Thaís Cru",
+            "⁠Captação de Investidores -- André",
+            "Dinâmica prática: Seu pitch para investidores - Israel e Igor",
+            "Apresentação de produtos para investidores -- Israel",
+            "Painel Dinâmico: Terreno, Projeto, Obra, Gestão de Obra e Pós-venda",
+            "Palestra Surpresa de Encerramento - Minotauro"
+          ]
+        },
+        // 13 - Melhor palestra
+        { id:"q13", kind:"radio", required:true,
+          label:l("13 - Qual foi a melhor palestra para você?","13 - What was the best talk for you?","13 - ¿Cuál fue la mejor charla para usted?"),
+          optionsRef:"q12"
+        },
+        // 14 - Melhor palestrante (texto)
+        { id:"q14", kind:"text", required:true,
+          label:l("14 - Qual o melhor palestrante do evento?","14 - Who was the best speaker?","14 - ¿Quién fue el mejor ponente?")
+        },
+        // 15 - Profundidade
+        { id:"q15", kind:"radio", required:true,
+          label:l("15 - Sobre a Profundidade técnica/temática?","15 - Regarding technical/topic depth?","15 - Sobre la profundidad técnica/temática?"),
+          options: l(["Muito raso","Adequado","Excelente"],["Too shallow","Adequate","Excellent"],["Muy superficial","Adecuado","Excelente"])
+        },
+        // 16 - Ritmo
+        { id:"q16", kind:"radio", required:true,
+          label:l("16 - Sobre Ritmo das apresentações?","16 - Regarding presentation pace?","16 - Sobre el ritmo de las presentaciones?"),
+          options: l(["Lento","Adequado","Rápido"],["Slow","Adequate","Fast"],["Lento","Adecuado","Rápido"])
+        },
+        // 17 - Temas próximos
+        { id:"q17", kind:"textarea", required:true,
+          label:l("17 - Quais temas você gostaria de ver nas próximas edições?","17 - Which topics would you like to see next editions?","17 - ¿Qué temas le gustaría ver en próximas ediciones?")
+        },
+
+        // 18-25 Logística 1-5
+        { id:"q18", kind:"likert5", required:true, label:l("18 - Logística e comunicação (1–5)","18 - Logistics & communication (1–5)","18 - Logística y comunicación (1–5)") },
+        { id:"q19", kind:"likert5", required:true, label:l("19 - Processo de inscrição (1–5)","19 - Registration process (1–5)","19 - Proceso de inscripción (1–5)") },
+        { id:"q20", kind:"likert5", required:true, label:l("20 - Comunicação pré-evento (e-mails, site, app) (1–5)","20 - Pre-event communication (emails, website, app) (1–5)","20 - Comunicación previa al evento (emails, sitio, app) (1–5)") },
+        { id:"q21", kind:"likert5", required:true, label:l("21 - Credenciamento/entrada (1–5)","21 - Check-in/entry (1–5)","21 - Acreditación/entrada (1–5)") },
+        { id:"q22", kind:"likert5", required:true, label:l("22 - Sinalização e orientação no local (1–5)","22 - On-site signage & guidance (1–5)","22 - Señalización y orientación en el lugar (1–5)") },
+        { id:"q23", kind:"likert5", required:true, label:l("23 - Conforto das salas (cadeiras, temperatura, acústica) (1–5)","23 - Room comfort (seating, temperature, acoustics) (1–5)","23 - Comodidad de salas (sillas, temperatura, acústica) (1–5)") },
+        { id:"q24", kind:"likert5", required:true, label:l("24 - Acessibilidade (mobilidade, inclusão) (1–5)","24 - Accessibility (mobility, inclusion) (1–5)","24 - Accesibilidad (movilidad, inclusión) (1–5)") },
+        { id:"q25", kind:"likert5", required:false, label:l("25 - Wi‑Fi e conectividade (se disponível) (1–5)","25 - Wi‑Fi & connectivity (if available) (1–5)","25 - Wi‑Fi y conectividad (si disponible) (1–5)") },
+
+        // 26 - Comentário logística
+        { id:"q26", kind:"textarea", required:false,
+          label:l("26 - Comente sobre a logística do evento","26 - Comments about event logistics","26 - Comentarios sobre la logística del evento")
+        },
+
+        // 27 - Expectativas
+        { id:"q27", kind:"radio", required:true,
+          label:l("27 - O evento atendeu suas expectativas?","27 - Did the event meet your expectations?","27 - ¿El evento cumplió sus expectativas?"),
+          options: l(["Abaixo","Dentro","Acima"],["Below","Met","Above"],["Por debajo","Dentro","Por encima"])
+        },
+        // 28 - Custo-benefício
+        { id:"q28", kind:"radio", required:true,
+          label:l("28 - Qual foi o Custo-benefício percebido?","28 - Perceived value for money?","28 - Relación costo-beneficio percibida"),
+          options: l(["Muito baixo","Baixo","Adequado","Alto","Muito alto"],["Very low","Low","Adequate","High","Very high"],["Muy bajo","Bajo","Adecuado","Alto","Muy alto"])
+        },
+        // 29 - Participaria novamente
+        { id:"q29", kind:"radio", required:true,
+          label:l("29 - Você participaria novamente deste evento?","29 - Would you attend this event again?","29 - ¿Participaría nuevamente en este evento?"),
+          options: l(["Sim","Não","Talvez"],["Yes","No","Maybe"],["Sí","No","Quizá"])
+        },
+        // 30 - Versão online/híbrida
+        { id:"q30", kind:"radio", required:true,
+          label:l("30 - Participaria de uma versão online/híbrida?","30 - Would you attend an online/hybrid version?","30 - ¿Participaría en una versión online/híbrida?"),
+          options: l(["Sim","Não","Talvez"],["Yes","No","Maybe"],["Sí","No","Quizá"])
+        },
+        // 31 - Recomendaria à equipe
+        { id:"q31", kind:"radio", required:true,
+          label:l("31 - Você recomendaria a um colega da sua equipe participar na próxima edição?","31 - Would you recommend a teammate to join next edition?","31 - ¿Recomendaría a un colega participar en la próxima edición?"),
+          options: l(["Sim","Não","Talvez"],["Yes","No","Maybe"],["Sí","No","Quizá"])
+        },
+
+        // 32-34 Likes/Dislikes/Mudanças
+        { id:"q32", kind:"textarea", required:true, label:l("32 - O que você mais gostou no evento?","32 - What did you like the most about the event?","32 - ¿Qué fue lo que más le gustó del evento?") },
+        { id:"q33", kind:"textarea", required:true, label:l("33 - O que você menos gostou no evento?","33 - What did you like the least about the event?","33 - ¿Qué fue lo que menos le gustó del evento?") },
+        { id:"q34", kind:"textarea", required:true, label:l("34 - Se pudesse mudar alguma coisa para a próxima edição, o que seria?","34 - If you could change something for next edition, what would it be?","34 - Si pudiera cambiar algo para la próxima edición, ¿qué sería?") },
+
+        // 35 - Cargo
+        { id:"q35", kind:"text", required:true, label:l("35 - Qual o seu Cargo/função?","35 - Your role/function?","35 - ¿Cuál es su cargo/función?") },
+        // 36 - Tamanho empresa
+        { id:"q36", kind:"select", required:true,
+          label:l("36 - Tamanho da empresa (funcionários)","36 - Company size (employees)","36 - Tamaño de la empresa (empleados)"),
+          options: l(["MEI","1 - 10","11 - 20","21 - 50","51 - 100","100 +"],["Sole proprietor","1 - 10","11 - 20","21 - 50","51 - 100","100 +"],["Autónomo","1 - 10","11 - 20","21 - 50","51 - 100","100 +"])
+        },
+        // 37 - Experiência
+        { id:"q37", kind:"select", required:true,
+          label:l("37 - Tempo de experiência na área (anos)","37 - Experience in the field (years)","37 - Experiencia en el área (años)"),
+          options: l(["Menos de 1","1 - 2","2 - 5","6 - 10","10 - 15","Mais de 15"],["Less than 1","1 - 2","2 - 5","6 - 10","10 - 15","More than 15"],["Menos de 1","1 - 2","2 - 5","6 - 10","10 - 15","Más de 15"])
+        },
+        // 38 - Faixa etária
+        { id:"q38", kind:"select", required:true,
+          label:l("38 - Faixa etária","38 - Age range","38 - Rango de edad"),
+          options: l(["< 18","18 - 24","25 - 34","35 - 44","45 - 54","55 +"],["< 18","18 - 24","25 - 34","35 - 44","45 - 54","55 +"],["< 18","18 - 24","25 - 34","35 - 44","45 - 54","55 +"])
+        },
+        // 39 - Como soube
+        { id:"q39", kind:"select", required:true,
+          label:l("39 - Como ficou sabendo do evento?","39 - How did you hear about the event?","39 - ¿Cómo se enteró del evento?"),
+          options: l(["E‑mail","Redes Sociais","Indicação","Site","Anúncios","Comunidade/Associação","Outro"],["Email","Social Media","Referral","Website","Ads","Community/Association","Other"],["Email","Redes Sociales","Recomendación","Sitio web","Anuncios","Comunidad/Asociación","Otro"])
+        },
+        // 40 - Objetivo
+        { id:"q40", kind:"select", required:true,
+          label:l("40 - Objetivo principal ao participar do evento","40 - Main objective in attending the event","40 - Objetivo principal al participar del evento"),
+          options: l(["Conteúdo","Networking","Negócios","Certificação","Recrutamento","Outro"],["Content","Networking","Business","Certification","Recruitment","Other"],["Contenido","Networking","Negocios","Certificación","Reclutamiento","Otro"])
+        },
+        // 41 - Consentimento contato
+        { id:"q41", kind:"radio", required:true,
+          label:l("41 - Podemos entrar em contato para entender melhor suas respostas?","41 - May we contact you to better understand your responses?","41 - ¿Podemos contactarlo para entender mejor sus respuestas?"),
+          options: l(["Sim","Não"],["Yes","No"],["Sí","No"])
+        },
+        // 42 - Autorização uso depoimento/imagem
+        { id:"q42", kind:"radio", required:true,
+          label:l("42 - Você autoriza o uso de um trecho do seu depoimento e da sua imagem em materiais de divulgação?","42 - Do you authorize using a snippet of your testimonial and your image in promotional materials?","42 - ¿Autoriza el uso de un fragmento de su testimonio y su imagen en materiales promocionales?"),
+          options: l(["Sim","Não"],["Yes","No"],["Sí","No"])
+        },
+        // Contato opcional
+        { id:"q43", kind:"group", label:l("Contato (opcional)","Contact (optional)","Contacto (opcional)"), children: [
+          { id:"q43_name", kind:"text", required:false, label:l("Nome","Name","Nombre") },
+          { id:"q43_email", kind:"text", required:false, label:l("E‑mail","Email","Email") },
+          { id:"q43_phone", kind:"text", required:false, label:l("Telefone/WhatsApp","Phone/WhatsApp","Teléfono/WhatsApp") },
+          { id:"q43_company", kind:"text", required:false, label:l("Empresa","Company","Empresa") }
+        ]},
+
+        // Área para personalizadas (admin pode adicionar)
+      ],
+      custom: [] // { id, kind, required, label:{pt,en,es}, options? }
+    };
+  }
+
+  // Hash simples de senha
+  async function sha256(s){
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+  }
+
+  // Estado inicial
+  function initState(){
+    return {
+      admin: { passHash: "" },
+      surveys: {}, // id -> survey
+      ui: { lang: "pt" }
+    };
+  }
+
+  // Copiar para clipboard
+  async function copy(text){
+    try{ await navigator.clipboard.writeText(text); alert(t("copied")); }catch(e){ console.log(e) }
+  }
+
+  // NPS helpers
+  function calcNPS(values){ // values: array 0..10
+    const v = values.filter(x=>typeof x==="number");
+    if(v.length===0) return {nps: NaN, counts:{pro:0, neu:0, det:0}, total:0};
+    let pro=0, neu=0, det=0;
+    for(const n of v){
+      if(n>=9) pro++; else if(n>=7) neu++; else det++;
+    }
+    const nps = ((pro - det) / v.length) * 100;
+    return { nps, counts:{pro,neu,det}, total: v.length };
+  }
+
+  // CSV export
+  function toCSV(survey){
+    const rows = [];
+    const header = ["responseId","timestamp","lang","token"].concat(
+      survey.questions.flatMap(q=>{
+        if(q.kind==="group") return q.children.map(c=>c.id);
+        return [q.id];
+      }),
+      survey.custom.map(q=>q.id)
+    );
+    rows.push(header);
+    for(const r of survey.responses){
+      const row = [r.id, r.at, r.lang, r.token];
+      for(const q of survey.questions){
+        if(q.kind==="group"){
+          for(const c of q.children){
+            let v = r.answers[c.id];
+            if(Array.isArray(v)) v = v.join(" | ");
+            row.push(v ?? "");
+          }
+        }else{
+          let v = r.answers[q.id];
+          if(Array.isArray(v)) v = v.join(" | ");
+          row.push(v ?? "");
+        }
+      }
+      for(const q of survey.custom){
+        let v = r.answers[q.id];
+        if(Array.isArray(v)) v = v.join(" | ");
+        row.push(v ?? "");
+      }
+      rows.push(row);
+    }
+    return rows.map(r=>r.map(cell=>{
+      const s = (cell??"").toString();
+      return `"${s.replace(/"/g,'""')}"`;
+    }).join(",")).join("\n");
+  }
+
+  // QR Code generator (minimal) — based on QRCode for JS (compact inline)
+  // Source adapted from https://github.com/davidshimjs/qrcodejs (MIT)
+  // Minimized/embedded for single-file use.
+  // eslint-disable-next-line
+  /*! qrcode.js v1.0.0 (MIT) */
+  !function(o){function t(o){this.mode=s.MODE_8BIT_BYTE,this.data=o}
+  function e(o,t){this.typeNumber=o,this.errorCorrectLevel=t,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}
+  function n(o,t){if(void 0==o.length)throw new Error(o.length+"/"+t);for(var e=0;e<o.length&&0==o[e];)e++;this.num=o.length-e,this.buf=new Array(this.num);for(var n=0;n<this.num;n++)this.buf[n]=o[n+e]}
+  function r(o,t){this.totalCount=o,this.dataCount=t}
+  var i=function(){for(var o=[],t=0;t<256;t++){for(var e=t,n=0;n<8;n++)e=1&e?e>>>1^140: e>>>1;o.push(e)}return o}(),u=function(){for(var o=[],t=0;t<256;t++){for(var e=t,n=0;n<8;n++)e=1&e?e>>>1^ (285): e>>>1;o.push(e)}return o}(),s={};t.prototype={getLength:function(){return this.data.length},write:function(o){for(var t=0;t<this.data.length;t++)o.put(this.data.charCodeAt(t),8)}};
+  var a={L:1,M:0,Q:3,H:2},h=0,l=1,c=2,d=3; e.prototype={addData:function(o){this.dataList.push(new t(o)),this.dataCache=null},isDark:function(o,t){if(0>o||this.moduleCount<=o||0>t||this.moduleCount<=t)throw new Error(o+","+t);return this.modules[o][t]},getModuleCount:function(){return this.moduleCount},make:function(){if(this.typeNumber<1){for(var o=1;o<40;o++){for(var t=new e(o,this.errorCorrectLevel),n=0;n<this.dataList.length;n++)t.addData(this.dataList[n].data);if(t.makeImpl(),t.getBestFit())return void(this.typeNumber=o)}this.typeNumber=4}this.makeImpl()},getBestFit:function(){return this.moduleCount>0},makeImpl:function(){this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var o=0;o<this.moduleCount;o++){this.modules[o]=new Array(this.moduleCount);for(var t=0;t<this.moduleCount;t++)this.modules[o][t]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupTimingPattern(),this.setupTypeInfo(!0),this.setupTypeInfo(!1),this.mapData(this.createData())},setupPositionProbePattern:function(o,t){for(var e=-1;7>=e;e++)if(!(0>o+e||this.moduleCount<=o+e))for(var n=-1;7>=n;n++)0>t+n||this.moduleCount<=t+n||(e>=0&&6>=e&&(0==n||6==n)||n>=0&&6>=n&&(0==e||6==e)||e>=2&&4>=e&&n>=2&&4>=n)?this.modules[o+e][t+n]=!0:this.modules[o+e][t+n]=!1},setupTimingPattern:function(){for(var o=8;o<this.moduleCount-8;o++)null==this.modules[o][6]&&(this.modules[o][6]=0==o%2),null==this.modules[6][o]&&(this.modules[6][o]=0==o%2)},setupTypeInfo:function(o){for(var t=a[this.errorCorrectLevel],e=0;15>e;e++){var n=!o&&6!=e,r=this.getBCHTypeInfo(t<<10|this.getMaskPattern()<<7|e);this.modules[n?this.moduleCount-1-e:8][o?8: this.moduleCount-1-e]=1==((r>>e)&1)}},getMaskPattern:function(){return 0},getBCHTypeInfo:function(o){for(var t=o<<10;this.getBCHDigit(t)-this.getBCHDigit(1335)>=0;)t^=1335<<this.getBCHDigit(t)-this.getBCHDigit(1335);return o<<10|t},getBCHDigit:function(o){for(var t=0;0!=o;)t++,o>>>=1;return t},createData:function(){for(var o=[],t=0;t<this.dataList.length;t++){var e=this.dataList[t];o.push(4),o.push(e.getLength()),o.push.apply(o,function(o){for(var t=[],e=0;e<o.length;e++)t.push(o.charCodeAt(e));return t}(e.data))}return new n(o,0)},mapData:function(o){for(var t=0,e=0;t<this.moduleCount;t++)for(var n=0;n<this.moduleCount;n++)null==this.modules[n][t]&&(this.modules[n][t]=1==((o.buf[(e/8|0)]>>(7-e%8))&1),e++)}}; n.prototype={get:function(o){return this.buf[o]},getLength:function(){return this.num}}; o.QRCode=e }(window);
+
+  function makeQR(el, text, size=160){
+    try{
+      const qr = new window.QRCode(0, 'M');
+      qr.addData(text);
+      qr.make();
+      const count = qr.getModuleCount();
+      const scale = Math.max(1, Math.floor(size / count));
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = count * scale;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#fff"; ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = "#000";
+      for(let r=0;r<count;r++){
+        for(let c=0;c<count;c++){
+          if(qr.isDark(r,c)) ctx.fillRect(c*scale, r*scale, scale, scale);
+        }
+      }
+      el.innerHTML = "";
+      el.appendChild(canvas);
+    }catch(e){
+      el.textContent = "QR error";
+    }
+  }
+
+  // ====== Renderização ======
+  function t(key){ const lang = state.ui.lang || "pt"; return (I18N_UI[lang] && I18N_UI[lang][key]) || (I18N_UI["pt"][key]||key); }
+
+  function setLang(lang){
+    state.ui.lang = lang;
+    saveState();
+    render();
+  }
+
+  function applyBrand(survey){
+    document.documentElement.style.setProperty("--brand", survey?.brandColor || "#ff5a3c");
+    const logo = qs("#brandLogo");
+    if(survey?.logoDataURL){
+      logo.src = survey.logoDataURL; logo.style.display = "";
+    } else {
+      logo.style.display = "none";
+    }
+    const badge = qs("#surveyBadge");
+    const title = qs("#brandTitle");
+    if(survey){
+      title.textContent = (survey.title[state.ui.lang] || survey.title.pt);
+      badge.textContent = t(survey.status);
+      badge.className = "status " + survey.status;
+      badge.style.display = "";
+    } else {
+      title.textContent = "NPS Eventos";
+      badge.style.display = "none";
+    }
+  }
+
+  function ensureState(){
+    if(!state){ state = loadState() || initState(); if(Object.keys(state.surveys).length===0){ const s=defaultSurvey("pt"); state.surveys[s.id]=s; } saveState(); }
+  }
+
+  function renderTopbar(){
+    qs("#nav-admin").textContent = t("admin");
+    qs("#lang-pt").onclick = ()=>setLang("pt");
+    qs("#lang-en").onclick = ()=>setLang("en");
+    qs("#lang-es").onclick = ()=>setLang("es");
+  }
+
+  function render(){
+    ensureState();
+    renderTopbar();
+    const root = qs("#app");
+    const {path, params} = getRoute();
+    if(path.startsWith("/s/")){
+      const sid = path.split("/")[2];
+      const survey = state.surveys[sid];
+      applyBrand(survey);
+      renderSurvey(root, survey, params);
+    } else if(path==="/admin"){
+      applyBrand(null);
+      renderAdmin(root);
+    } else if(path.startsWith("/report/")){
+      const sid = path.split("/")[2];
+      const survey = state.surveys[sid];
+      applyBrand(survey);
+      renderReport(root, survey);
+    } else {
+      applyBrand(null);
+      root.innerHTML = qs("#tmpl-empty").innerHTML;
+    }
+  }
+
+  // ====== Admin ======
+  function adminLogged(){ return !!state.admin.passHash && sessionStorage.getItem("admin_ok") === "1"; }
+
+  function renderAdmin(root){
+    root.innerHTML = "";
+    const wrap = document.createElement("div");
+    wrap.className = "grid";
+    root.appendChild(wrap);
+
+    // Login
+    if(!adminLogged()){
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <h2>${t("loginTitle")}</h2>
+        <p class="muted">${state.admin.passHash ? "" : t("setPassword")}</p>
+        <div class="grid cols-2">
+          <div>
+            <label>${t("password")}</label>
+            <input type="password" id="adm-pass" autocomplete="current-password" />
+          </div>
+          <div class="row" style="align-items:flex-end">
+            <button class="btn primary" id="adm-login">${t("signIn")}</button>
+          </div>
+        </div>
+      `;
+      wrap.appendChild(card);
+      qs("#adm-login").onclick = async ()=>{
+        const pass = qs("#adm-pass").value;
+        const hash = await sha256(pass);
+        if(!state.admin.passHash){
+          state.admin.passHash = hash; saveState();
+          sessionStorage.setItem("admin_ok","1");
+          render();
+        }else if(hash === state.admin.passHash){
+          sessionStorage.setItem("admin_ok","1"); render();
+        }else{
+          alert(t("wrongPass"));
+        }
+      };
+      return;
+    }
+
+    // Toolbar
+    const toolbar = document.createElement("div");
+    toolbar.className="row card";
+    toolbar.innerHTML = `
+      <div class="toolbar">
+        <strong>${t("surveys")}</strong>
+        <button class="btn primary" id="new-survey">${t("newSurvey")}</button>
+        <span class="spacer"></span>
+        <button class="btn ghost" id="signout">${t("signOut")}</button>
+      </div>
+      <div class="notice">${t("dangerClientOnly")}</div>
+    `;
+    wrap.appendChild(toolbar);
+    qs("#signout").onclick = ()=>{ sessionStorage.removeItem("admin_ok"); render(); };
+    qs("#new-survey").onclick = ()=>{
+      const s = defaultSurvey(state.ui.lang);
+      state.surveys[s.id] = s; saveState(); render();
+    };
+
+    // List surveys
+    const list = document.createElement("div");
+    list.className = "card";
+    const items = Object.values(state.surveys).sort((a,b)=> (b.eventDate||"") .localeCompare(a.eventDate||""));
+    list.innerHTML = `
+      <table class="table">
+        <thead><tr>
+          <th>${t("title")}</th>
+          <th>${t("eventDate")}</th>
+          <th>${t("status")}</th>
+          <th>${t("responses")}</th>
+          <th></th>
+        </tr></thead>
+        <tbody>
+          ${items.map(s=>`
+            <tr>
+              <td>${s.title[state.ui.lang]||s.title.pt}</td>
+              <td>${s.eventDate||""}</td>
+              <td><span class="status ${s.status}">${t(s.status)}</span></td>
+              <td>${s.responses.length}</td>
+              <td class="row">
+                <a class="btn small" href="#/admin?edit=${s.id}">${t("edit")}</a>
+                <a class="btn small" href="#/report/${s.id}">${t("report")}</a>
+                <a class="btn small" href="#/s/${s.id}">${t("open")}</a>
+                <button class="btn small" data-dup="${s.id}">${t("duplicate")}</button>
+                <button class="btn small bad" data-del="${s.id}">${t("delete")}</button>
+              </td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+    wrap.appendChild(list);
+    qsa("[data-del]").forEach(btn=> btn.onclick = ()=>{
+      const id = btn.getAttribute("data-del");
+      if(confirm("Excluir esta pesquisa?")){ delete state.surveys[id]; saveState(); render(); }
+    });
+    qsa("[data-dup]").forEach(btn=> btn.onclick = ()=>{
+      const id = btn.getAttribute("data-dup");
+      const s = JSON.parse(JSON.stringify(state.surveys[id]));
+      s.id = uid("srv_"); s.responses = []; s.tokens = {}; s.status="draft"; saveLogoCopy(s);
+      state.surveys[s.id]=s; saveState(); render();
+    });
+
+    // Edit panel
+    const params = getRoute().params;
+    const editing = params.edit && state.surveys[params.edit];
+    if(editing){
+      const s = editing;
+      const panel = document.createElement("div");
+      panel.className = "grid";
+      panel.innerHTML = `
+        <div class="card">
+          <h3>${t("settings")}</h3>
+          <div class="grid cols-2">
+            <div>
+              <label>${t("title")} (PT)</label>
+              <input type="text" id="ttl-pt" value="${s.title.pt||""}">
+              <label>${t("title")} (EN)</label>
+              <input type="text" id="ttl-en" value="${s.title.en||""}">
+              <label>${t("title")} (ES)</label>
+              <input type="text" id="ttl-es" value="${s.title.es||""}">
+              <label>${t("eventDate")}</label>
+              <input type="date" id="evt-date" value="${s.eventDate||""}">
+              <label>${t("language")}</label>
+              <select id="lang-def">
+                ${["pt","en","es"].map(c=>`<option ${s.langDefault===c?"selected":""} value="${c}">${c.toUpperCase()}</option>`).join("")}
+              </select>
+              <label>${t("languagesEnabled")}</label>
+              <div class="tags">
+                ${["pt","en","es"].map(c=>`
+                  <label class="chip"><input type="checkbox" value="${c}" ${s.langsEnabled.includes(c)?"checked":""}/> ${c.toUpperCase()}</label>
+                `).join("")}
+              </div>
+            </div>
+            <div>
+              <label>${t("brandColor")}</label>
+              <input type="color" id="brand-color" value="${s.brandColor}">
+              <label>${t("logo")} <span class="muted">(${t("logoNote")})</span></label>
+              <input type="file" id="logo-file" accept=".png,.svg,.jpg,.jpeg,.webp">
+              <div class="row" style="align-items:center;gap:10px;margin-top:6px">
+                <img src="${s.logoDataURL||""}" style="max-height:48px;max-width:180px; background:#fff; border-radius:8px; ${s.logoDataURL?"":"display:none"}" id="logo-prev" alt="Logo preview">
+                <button class="btn small" id="logo-clear">Remover logo</button>
+              </div>
+              <label>${t("status")}</label>
+              <div class="tags">
+                ${["draft","active","closed"].map(st=>`
+                  <label class="chip"><input type="radio" name="status" value="${st}" ${s.status===st?"checked":""}/> ${t(st)}</label>
+                `).join("")}
+              </div>
+              <label><input type="checkbox" id="require-token" ${s.requireToken?"checked":""}/> Exigir token (1 resposta por link)</label>
+              <label><input type="checkbox" id="allow-edit" ${s.allowEditBeforeSubmit?"checked":""}/> Permitir revisar antes de enviar</label>
+            </div>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <button class="btn primary" id="save-s">${t("save")}</button>
+            <span class="muted" id="save-msg"></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>${t("tokens")}</h3>
+          <p class="muted">${t("tokenLimitNote")}</p>
+          <div class="row" style="align-items:flex-end">
+            <div>
+              <label>${t("count")}</label>
+              <input type="number" min="1" max="1000" id="tok-count" value="25">
+            </div>
+            <button class="btn" id="tok-gen">${t("generate")}</button>
+            <a class="btn" target="_blank" href="#/s/${s.id}">${t("open")}</a>
+          </div>
+          <div id="tok-list" class="grid" style="margin-top:10px"></div>
+        </div>
+
+        <div class="card">
+          <h3>${t("customQuestions")}</h3>
+          <div class="row">
+            <button class="btn small" id="add-txt">${t("addQuestion")} (texto)</button>
+            <button class="btn small" id="add-area">${t("addQuestion")} (parágrafo)</button>
+            <button class="btn small" id="add-like">${t("addQuestion")} (escala 1–5)</button>
+            <button class="btn small" id="add-radio">${t("addQuestion")} (múltipla única)</button>
+            <button class="btn small" id="add-mult">${t("addQuestion")} (múltipla escolha)</button>
+          </div>
+          <div id="custom-list" class="grid" style="margin-top:10px"></div>
+        </div>
+
+        <div class="card">
+          <h3>${t("integrations")||"Integrações"}</h3>
+          <div class="grid cols-2">
+            <div>
+              <label>${t("webhook")}</label>
+              <input type="url" id="wh-url" placeholder="https://script.google.com/macros/s/.../exec" value="${s.webhook||""}">
+              <label>${t("notifOnSubmit")}</label>
+              <div><label class="chip"><input type="checkbox" id="notif-on" ${s.notifOnSubmit?"checked":""}/> ${t("notifOnSubmit")}</label></div>
+              <div class="notice">${t("pdfHint")}</div>
+            </div>
+            <div>
+              <label>${t("sendgridKey")}</label>
+              <input type="text" id="sendgrid" value="${s.integrations.sendgridKey||""}">
+              <label>${t("mailchimpKey")}</label>
+              <input type="text" id="mailchimp" value="${s.integrations.mailchimpKey||""}">
+              <label>${t("telegramToken")}</label>
+              <input type="text" id="tg-token" value="${s.integrations.telegramToken||""}">
+              <label>${t("telegramChatId")}</label>
+              <input type="text" id="tg-chat" value="${s.integrations.telegramChatId||""}">
+              <label>${t("whatsappNumber")}</label>
+              <input type="text" id="wa" value="${s.integrations.whatsappNumber||""}">
+              <div class="notice">${t("dangerClientOnly")}</div>
+            </div>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <a class="btn" href="#/report/${s.id}">${t("report")}</a>
+            <button class="btn" id="csv">${t("exportCSV")}</button>
+            <button class="btn" id="json">${t("exportJSON")}</button>
+            <label class="btn">
+              ${t("importJSON")}
+              <input id="json-in" type="file" accept=".json" style="display:none">
+            </label>
+            <button class="btn" id="print">${t("printPDF")}</button>
+          </div>
+        </div>
+      `;
+      wrap.appendChild(panel);
+
+      // Handlers settings
+      qs("#save-s").onclick = ()=>{
+        s.title.pt = qs("#ttl-pt").value.trim();
+        s.title.en = qs("#ttl-en").value.trim();
+        s.title.es = qs("#ttl-es").value.trim();
+        s.eventDate = qs("#evt-date").value;
+        s.langDefault = qs("#lang-def").value;
+        s.langsEnabled = [...panel.querySelectorAll('input[type="checkbox"][value]')]
+          .filter(x=>x.checked).map(x=>x.value);
+        s.brandColor = qs("#brand-color").value || s.brandColor;
+        s.status = panel.querySelector('input[name="status"]:checked')?.value || s.status;
+        s.requireToken = qs("#require-token").checked;
+        s.allowEditBeforeSubmit = qs("#allow-edit").checked;
+        s.webhook = qs("#wh-url").value.trim();
+        s.notifOnSubmit = qs("#notif-on").checked;
+        s.integrations.sendgridKey = qs("#sendgrid").value.trim();
+        s.integrations.mailchimpKey = qs("#mailchimp").value.trim();
+        s.integrations.telegramToken = qs("#tg-token").value.trim();
+        s.integrations.telegramChatId = qs("#tg-chat").value.trim();
+        s.integrations.whatsappNumber = qs("#wa").value.trim();
+        saveState();
+        qs("#save-msg").textContent = t("saved"); setTimeout(()=>qs("#save-msg").textContent="",1500);
+      };
+
+      // Logo
+      qs("#logo-file").onchange = (e)=>{
+        const f = e.target.files?.[0];
+        if(!f) return;
+        const r = new FileReader();
+        r.onload = ()=>{ s.logoDataURL = r.result; saveState(); qs("#logo-prev").src = s.logoDataURL; qs("#logo-prev").style.display = ""; };
+        r.readAsDataURL(f);
+      };
+      qs("#logo-clear").onclick = ()=>{ s.logoDataURL = ""; saveState(); qs("#logo-prev").style.display="none"; };
+
+      // Tokens
+      const tokList = qs("#tok-list");
+      function renderTokens(){
+        tokList.innerHTML = "";
+        const entries = Object.entries(s.tokens);
+        if(entries.length===0){
+          tokList.innerHTML = `<div class="muted">Nenhum token gerado.</div>`;
+          return;
+        }
+        entries.slice(0,200).forEach(([tk, info])=>{
+          const link = `${location.origin}${location.pathname}#/s/${s.id}?token=${tk}&lang=${s.langDefault}`;
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <div class="row" style="align-items:center">
+              <span class="chip">${info.used? "Usado" : "Novo"}</span>
+              <code class="kbd">${tk}</code>
+              <span class="spacer"></span>
+              <button class="btn small" data-copy>🔗 ${t("copy")}</button>
+            </div>
+            <div class="row" style="gap:16px; align-items:center; margin-top:8px">
+              <div class="muted" style="overflow-wrap:anywhere">${link}</div>
+              <div class="spacer"></div>
+              <div class="qr"></div>
+            </div>
+          `;
+          tokList.appendChild(card);
+          const qrEl = card.querySelector(".qr");
+          makeQR(qrEl, link, 128);
+          card.querySelector("[data-copy]").onclick = ()=>copy(link);
+        });
+      }
+      renderTokens();
+      qs("#tok-gen").onclick = ()=>{
+        const n = clamp(parseInt(qs("#tok-count").value||"25"),1,1000);
+        for(let i=0;i<n;i++){ const tk = uid("t_"); s.tokens[tk] = { used:false, responseId:null }; }
+        saveState(); renderTokens();
+      };
+
+      // Custom questions list
+      function renderCustom(){
+        const box = qs("#custom-list");
+        box.innerHTML = "";
+        if(s.custom.length===0){ box.innerHTML = `<div class="muted">Nenhuma pergunta personalizada.</div>`; return; }
+        s.custom.forEach((q,idx)=>{
+          const div = document.createElement("div");
+          div.className = "card";
+          div.innerHTML = `
+            <div class="row" style="align-items:center">
+              <strong>${q.id}</strong>
+              <span class="chip">${t("type")}: ${q.kind}</span>
+              <label class="chip"><input type="checkbox" ${q.required?"checked":""} data-req/> ${t("required")}</label>
+              <span class="spacer"></span>
+              <button class="btn small" data-up>↑ ${t("up")}</button>
+              <button class="btn small" data-down>↓ ${t("down")}</button>
+              <button class="btn small bad" data-rm>${t("remove")}</button>
+            </div>
+            <div class="grid cols-3" style="margin-top:8px">
+              <div><label>Label (PT)</label><input type="text" data-lpt value="${q.label.pt||""}"></div>
+              <div><label>Label (EN)</label><input type="text" data-len value="${q.label.en||""}"></div>
+              <div><label>Label (ES)</label><input type="text" data-les value="${q.label.es||""}"></div>
+            </div>
+            ${["radio","select","multiselect","likert5"].includes(q.kind) ? `
+              <div style="margin-top:8px">
+                <label>Opções (1 por linha; PT|EN|ES)</label>
+                <textarea data-opts>${(q.options||[]).map(opt=>{
+                  if(typeof opt==="string") return `${opt}|${opt}|${opt}`;
+                  return `${opt.pt}|${opt.en}|${opt.es}`;
+                }).join("\n")}</textarea>
+              </div>
+            `:""}
+          `;
+          box.appendChild(div);
+          div.querySelector("[data-req]").onchange = (e)=>{ q.required = e.target.checked; saveState(); };
+          div.querySelector("[data-rm]").onclick = ()=>{ s.custom.splice(idx,1); saveState(); renderCustom(); };
+          div.querySelector("[data-up]").onclick = ()=>{ if(idx>0){ const tmp=s.custom[idx-1]; s.custom[idx-1]=s.custom[idx]; s.custom[idx]=tmp; saveState(); renderCustom(); } };
+          div.querySelector("[data-down]").onclick = ()=>{ if(idx<s.custom.length-1){ const tmp=s.custom[idx+1]; s.custom[idx+1]=s.custom[idx]; s.custom[idx]=tmp; saveState(); renderCustom(); } };
+          div.querySelector("[data-lpt]").oninput = (e)=>{ q.label.pt = e.target.value; saveState(); };
+          div.querySelector("[data-len]").oninput = (e)=>{ q.label.en = e.target.value; saveState(); };
+          div.querySelector("[data-les]").oninput = (e)=>{ q.label.es = e.target.value; saveState(); };
+          const ta = div.querySelector("[data-opts]");
+          if(ta){
+            ta.oninput = (e)=>{
+              const lines = e.target.value.split("\n").map(x=>x.trim()).filter(Boolean);
+              q.options = lines.map(line=>{
+                const [pt,en,es] = line.split("|");
+                if(!en||!es) return pt;
+                return {pt,en,es};
+              });
+              saveState();
+            };
+          }
+        });
+      }
+      qs("#add-txt").onclick = ()=>{ s.custom.push({ id: uid("c_"), kind:"text", required:false, label:{pt:"Nova pergunta (texto)", en:"New question (text)", es:"Nueva pregunta (texto)"} }); saveState(); renderCustom(); };
+      qs("#add-area").onclick = ()=>{ s.custom.push({ id: uid("c_"), kind:"textarea", required:false, label:{pt:"Nova pergunta (parágrafo)", en:"New question (paragraph)", es:"Nueva pregunta (párrafo)"} }); saveState(); renderCustom(); };
+      qs("#add-like").onclick = ()=>{ s.custom.push({ id: uid("c_"), kind:"likert5", required:false, label:{pt:"Nova escala 1–5", en:"New 1–5 scale", es:"Nueva escala 1–5"}, options: ["1","2","3","4","5"] }); saveState(); renderCustom(); };
+      qs("#add-radio").onclick = ()=>{ s.custom.push({ id: uid("c_"), kind:"radio", required:false, label:{pt:"Nova múltipla única", en:"New single choice", es:"Nueva opción única"}, options: [{pt:"Opção A",en:"Option A",es:"Opción A"},{pt:"Opção B",en:"Option B",es:"Opción B"}] }); saveState(); renderCustom(); };
+      qs("#add-mult").onclick = ()=>{ s.custom.push({ id: uid("c_"), kind:"multiselect", required:false, label:{pt:"Nova múltipla escolha", en:"New multiple choice", es:"Nueva múltiple elección"}, options: [{pt:"Opção 1",en:"Option 1",es:"Opción 1"},{pt:"Opção 2",en:"Option 2",es:"Opción 2"}] }); saveState(); renderCustom(); };
+      renderCustom();
+
+      // Export/Import
+      qs("#csv").onclick = ()=>{
+        const csv = toCSV(s);
+        const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = (s.title.pt||"pesquisa") + "_respostas.csv";
+        a.click();
+      };
+      qs("#json").onclick = ()=>{
+        const json = JSON.stringify(s, null, 2);
+        const blob = new Blob([json], {type:"application/json"});
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = (s.title.pt||"pesquisa") + ".json";
+        a.click();
+      };
+      qs("#json-in").onchange = (e)=>{
+        const f = e.target.files?.[0]; if(!f) return;
+        const r = new FileReader();
+        r.onload = ()=>{
+          try{
+            const obj = JSON.parse(r.result);
+            if(obj.id && obj.questions){ state.surveys[obj.id]=obj; saveState(); alert("Importado."); render(); }
+            else alert("JSON inválido.");
+          }catch(err){ alert("Erro ao ler JSON."); }
+        };
+        r.readAsText(f);
+      };
+      qs("#print").onclick = ()=>{ location.hash = `#/report/${s.id}`; setTimeout(()=>window.print(), 300); };
+
+      function saveLogoCopy(s){ /* noop placeholder for future cloning mechanism */ }
+    }
+  }
+
+  // ====== Survey (público) ======
+  function renderSurvey(root, survey, params){
+    root.innerHTML = "";
+    // Validate
+    if(!survey || survey.status!=="active"){
+      root.innerHTML = `<div class="card danger">${t("invalidLink")}</div>`;
+      return;
+    }
+    // Token gate
+    const requireToken = survey.requireToken !== false;
+    const token = params.token || "";
+    if(requireToken){
+      if(!token || !survey.tokens[token]){
+        root.innerHTML = `<div class="card danger">${t("invalidLink")}</div>`;
+        return;
+      }
+      if(survey.tokens[token].used){
+        root.innerHTML = `<div class="card danger">${t("alreadyAnswered")}</div>`;
+        return;
+      }
+    }
+    // Lang
+    const lang = (params.lang && survey.langsEnabled.includes(params.lang)) ? params.lang : survey.langDefault;
+    state.ui.lang = lang; saveState();
+
+    // Title
+    const head = document.createElement("div");
+    head.className = "card";
+    head.innerHTML = `
+      <h2 style="margin-bottom:.2rem">${survey.title[lang] || survey.title.pt}</h2>
+      <p class="muted">${I18N_UI[lang].npsQuestion ? I18N_UI[lang].scaleHelp_0_10 : ""}</p>
+    `;
+    root.appendChild(head);
+
+    // Build form
+    const form = document.createElement("form");
+    form.className = "grid";
+    form.noValidate = true;
+
+    // Helper to render a question
+    function qLabel(lbl){ return (typeof lbl==="object") ? (lbl[lang] || lbl.pt || "") : lbl; }
+    function qOptions(opts){
+      if(!opts) return [];
+      if(typeof opts[0] === "string") return opts;
+      return opts.map(o=> (typeof o==="string" ? o : (o[lang]||o.pt)));
+    }
+
+    function renderNPS(q){
+      const fs = document.createElement("fieldset");
+      fs.innerHTML = `<legend>${qLabel(q.label)}</legend><div class="scale" role="radiogroup" aria-label="NPS 0-10"></div><div class="muted" style="margin-top:6px">${qLabel(q.help)||I18N_UI[lang].scaleHelp_0_10}</div>`;
+      const box = fs.querySelector(".scale");
+      for(let i=0;i<=10;i++){
+        const pill = document.createElement("button");
+        pill.type="button"; pill.className="pill"; pill.setAttribute("role","radio"); pill.setAttribute("aria-checked","false");
+        pill.textContent = i;
+        pill.onclick = ()=>{
+          qsa(".pill", box).forEach(p=>p.setAttribute("aria-checked","false"));
+          pill.setAttribute("aria-checked","true");
+          fs.dataset.value = i;
+        };
+        box.appendChild(pill);
+      }
+      return fs;
+    }
+
+    function renderLikert5(q){
+      const fs = document.createElement("fieldset");
+      fs.innerHTML = `<legend>${qLabel(q.label)}</legend><div class="scale" role="radiogroup" aria-label="Scale 1-5"></div><div class="muted" style="margin-top:6px">${I18N_UI[lang].scaleHelp_1_5}</div>`;
+      const box = fs.querySelector(".scale");
+      [1,2,3,4,5].forEach(n=>{
+        const pill = document.createElement("button");
+        pill.type="button"; pill.className="pill"; pill.setAttribute("role","radio"); pill.setAttribute("aria-checked","false");
+        pill.textContent = n;
+        pill.onclick = ()=>{
+          qsa(".pill", box).forEach(p=>p.setAttribute("aria-checked","false"));
+          pill.setAttribute("aria-checked","true");
+          fs.dataset.value = n;
+        };
+        box.appendChild(pill);
+      });
+      return fs;
+    }
+
+    function renderRadio(q){
+      const fs = document.createElement("fieldset");
+      fs.innerHTML = `<legend>${qLabel(q.label)}</legend>`;
+      const opts = q.optionsRef ? findOptionsFromRef(q.optionsRef) : qOptions(q.options);
+      opts.forEach((opt,i)=>{
+        const id = `${q.id}_${i}`;
+        const lab = document.createElement("label");
+        lab.className = "chip";
+        lab.innerHTML = `<input type="radio" name="${q.id}" value="${opt}" id="${id}"> ${opt}`;
+        fs.appendChild(lab);
+      });
+      return fs;
+    }
+
+    function renderSelect(q){
+      const div = document.createElement("div");
+      div.innerHTML = `<label>${qLabel(q.label)}</label><select id="${q.id}"></select>`;
+      const sel = div.querySelector("select");
+      qOptions(q.options).forEach(opt=>{
+        const o = document.createElement("option"); o.value = o.textContent = opt; sel.appendChild(o);
+      });
+      return div;
+    }
+
+    function renderText(q){
+      const div = document.createElement("div");
+      div.innerHTML = `<label>${qLabel(q.label)}</label><input type="text" id="${q.id}">`;
+      return div;
+    }
+
+    function renderTextarea(q){
+      const div = document.createElement("div");
+      div.innerHTML = `<label>${qLabel(q.label)}</label><textarea id="${q.id}"></textarea>`;
+      return div;
+    }
+
+    function renderMulti(q){
+      const fs = document.createElement("fieldset");
+      fs.innerHTML = `<legend>${qLabel(q.label)}</legend><div class="tags"></div>${q.help?`<div class="muted" style="margin-top:6px">${qLabel(q.help)}</div>`:""}`;
+      const box = fs.querySelector(".tags");
+      const opts = qOptions(q.options);
+      opts.forEach((opt,i)=>{
+        const id = `${q.id}_${i}`;
+        const lab = document.createElement("label");
+        lab.className = "chip";
+        lab.innerHTML = `<input type="checkbox" value="${opt}" id="${id}"> ${opt}`;
+        box.appendChild(lab);
+      });
+      return fs;
+    }
+
+    function renderGroup(q){
+      const fs = document.createElement("fieldset");
+      fs.innerHTML = `<legend>${qLabel(q.label)}</legend>`;
+      q.children.forEach(c=>{
+        let el;
+        if(c.kind==="text") el = renderText(c);
+        else if(c.kind==="textarea") el = renderTextarea(c);
+        else if(c.kind==="select") el = renderSelect(c);
+        fs.appendChild(el);
+      });
+      return fs;
+    }
+
+    function findOptionsFromRef(refId){
+      const ref = survey.questions.find(x=>x.id===refId);
+      if(!ref) return [];
+      return qOptions(ref.options);
+    }
+
+    // Mount sections in form order
+    const blocks = {
+      general: ["q1"],
+      dimensions: ["q2","q3","q4","q5","q6","q7","q8","q9","q10","q11"],
+      sessions: ["q12","q13","q14","q15","q16","q17"],
+      logistics: ["q18","q19","q20","q21","q22","q23","q24","q25","q26"],
+      value: ["q27","q28","q29","q30","q31","q32","q33","q34"],
+      profile: ["q35","q36","q37","q38","q39","q40"],
+      consents: ["q41","q42","q43"]
+    };
+
+    function addBlock(titleKey, ids){
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `<h3>${t(titleKey)}</h3>`;
+      ids.forEach(id=>{
+        const q = survey.questions.find(x=>x.id===id);
+        if(!q) return;
+        let el;
+        if(q.kind==="nps") el = renderNPS(q);
+        else if(q.kind==="likert5") el = renderLikert5(q);
+        else if(q.kind==="radio") el = renderRadio(q);
+        else if(q.kind==="select") el = renderSelect(q);
+        else if(q.kind==="text") el = renderText(q);
+        else if(q.kind==="textarea") el = renderTextarea(q);
+        else if(q.kind==="multiselect") el = renderMulti(q);
+        else if(q.kind==="group") el = renderGroup(q);
+        if(el) { el.dataset.qid = q.id; card.appendChild(el); }
+      });
+      form.appendChild(card);
+    }
+
+    addBlock("general", blocks.general);
+    addBlock("dimensions", blocks.dimensions);
+    addBlock("sessions", blocks.sessions);
+    addBlock("logistics", blocks.logistics);
+    addBlock("value", blocks.value);
+    addBlock("profile", blocks.profile);
+    addBlock("consents", blocks.consents);
+
+    // Custom questions
+    if(survey.custom && survey.custom.length){
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `<h3>${t("customQuestions")}</h3>`;
+      survey.custom.forEach(q=>{
+        let el;
+        if(q.kind==="text") el = renderText(q);
+        if(q.kind==="textarea") el = renderTextarea(q);
+        if(q.kind==="likert5") el = renderLikert5(q);
+        if(q.kind==="radio") el = renderRadio(q);
+        if(q.kind==="multiselect") el = renderMulti(q);
+        if(q.kind==="select") el = renderSelect(q);
+        if(el){ el.dataset.qid = q.id; card.appendChild(el); }
+      });
+      form.appendChild(card);
+    }
+
+    // Review + Submit
+    const actions = document.createElement("div");
+    actions.className = "row card";
+    actions.innerHTML = `
+      <div class="spacer"></div>
+      <button class="btn" type="button" id="review">${t("review")}</button>
+      <button class="btn primary" type="submit" id="submit">${t("submit")}</button>
+    `;
+    form.appendChild(actions);
+
+    // Validate and collect
+    function collect(){
+      const errors = [];
+      const ans = {};
+      function setAns(id, v){ ans[id]=v; }
+
+      for(const q of survey.questions){
+        if(q.kind==="group"){
+          for(const c of q.children){
+            const el = form.querySelector(`[data-qid="${q.id}"] [id="${c.id}"]`);
+            if(!el) continue;
+            const val = el.value.trim();
+            if(c.required && !val) errors.push(c.id);
+            setAns(c.id, val || "");
+          }
+          continue;
+        }
+        const holder = form.querySelector(`[data-qid="${q.id}"]`);
+        if(!holder) continue;
+
+        let val = null;
+        if(q.kind==="nps" || q.kind==="likert5"){
+          val = holder.dataset.value ? Number(holder.dataset.value) : null;
+        }else if(q.kind==="radio"){
+          val = holder.querySelector('input[type="radio"]:checked')?.value || null;
+        }else if(q.kind==="select"){
+          val = holder.querySelector("select")?.value || null;
+        }else if(q.kind==="text"){
+          val = holder.querySelector("input")?.value.trim() || "";
+        }else if(q.kind==="textarea"){
+          val = holder.querySelector("textarea")?.value.trim() || "";
+        }else if(q.kind==="multiselect"){
+          val = [...holder.querySelectorAll('input[type="checkbox"]:checked')].map(x=>x.value);
+        }
+        const req = q.required===true;
+        if(req){
+          if(q.kind==="multiselect"){ if(!val || val.length===0) errors.push(q.id); }
+          else if(val===null || val==="") errors.push(q.id);
+        }
+        setAns(q.id, val);
+      }
+
+      // Custom
+      if(survey.custom){
+        for(const q of survey.custom){
+          const holder = form.querySelector(`[data-qid="${q.id}"]`);
+          if(!holder) continue;
+          let val = null;
+          if(q.kind==="likert5"){ val = holder.dataset.value? Number(holder.dataset.value):null; }
+          else if(q.kind==="radio"){ val = holder.querySelector('input[type="radio"]:checked')?.value||null; }
+          else if(q.kind==="select"){ val = holder.querySelector("select")?.value||null; }
+          else if(q.kind==="text"){ val = holder.querySelector("input")?.value.trim()||""; }
+          else if(q.kind==="textarea"){ val = holder.querySelector("textarea")?.value.trim()||""; }
+          else if(q.kind==="multiselect"){ val = [...holder.querySelectorAll('input[type="checkbox"]:checked')].map(x=>x.value); }
+          if(q.required && (val===null || val==="" || (Array.isArray(val)&&val.length===0))) errors.push(q.id);
+          ans[q.id]=val;
+        }
+      }
+
+      return {errors, ans};
+    }
+
+    function showReview(ans){
+      const dlg = document.createElement("div");
+      dlg.className = "card";
+      dlg.style.borderColor = "var(--brand)";
+      dlg.innerHTML = `<h3>${t("review")}</h3>`;
+      const list = document.createElement("div");
+      list.className = "grid";
+      function addRow(label, value){
+        const row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML = `<div style="min-width:240px; color:var(--subtext)">${label}</div><div class="spacer"></div><div>${Array.isArray(value) ? value.join(", ") : (value??"")}</div>`;
+        list.appendChild(row);
+      }
+      // Iterate
+      for(const q of survey.questions){
+        if(q.kind==="group"){
+          addRow(qLabel(q.label), "");
+          q.children.forEach(c=> addRow("— " + qLabel(c.label), ans[c.id]));
+        }else{
+          addRow(qLabel(q.label), ans[q.id]);
+        }
+      }
+      if(survey.custom && survey.custom.length){
+        const sep = document.createElement("hr"); sep.style.borderColor="var(--border)"; dlg.appendChild(sep);
+        const h = document.createElement("h3"); h.textContent = t("customQuestions"); dlg.appendChild(h);
+        survey.custom.forEach(q=> addRow(qLabel(q.label), ans[q.id]));
+      }
+      dlg.appendChild(list);
+      const bar = document.createElement("div");
+      bar.className = "row";
+      bar.style.marginTop = "10px";
+      bar.innerHTML = `<div class="spacer"></div><button class="btn" id="close">${t("edit")}</button><button class="btn primary" id="confirm">${t("submit")}</button>`;
+      dlg.appendChild(bar);
+      root.appendChild(dlg);
+
+      qs("#close").onclick = ()=> dlg.remove();
+      qs("#confirm").onclick = async ()=>{
+        await doSubmit(ans);
+        dlg.remove();
+      };
+    }
+
+    async function doSubmit(ans){
+      qs("#submit").disabled = true; qs("#submit").textContent = t("submitting");
+      // Persist
+      const responseId = uid("r_");
+      const rec = { id: responseId, at: new Date().toISOString(), lang, token: token||"", answers: ans };
+      survey.responses.push(rec);
+      if(token && survey.tokens[token]){ survey.tokens[token].used = true; survey.tokens[token].responseId = responseId; }
+      saveState();
+
+      const payload = { surveyId: survey.id, title: survey.title, eventDate: survey.eventDate, lang, token, response: rec };
+      // Webhook
+      if(survey.webhook){
+        try{ await fetch(survey.webhook, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(payload) }); }catch(e){ console.warn("Webhook failed",e); }
+      }
+      // Telegram
+      if(survey.notifOnSubmit && survey.integrations.telegramToken && survey.integrations.telegramChatId){
+        const msg = `📊 Nova resposta em "${survey.title.pt}": NPS ${ans.q1} | ${new Date().toLocaleString()}`;
+        try {
+          await fetch(`https://api.telegram.org/bot${survey.integrations.telegramToken}/sendMessage`, {
+            method:"POST", headers:{ "Content-Type":"application/json" },
+            body: JSON.stringify({ chat_id: survey.integrations.telegramChatId, text: msg })
+          });
+        } catch(e){ console.warn("TG error", e); }
+      }
+      // WhatsApp (apenas abre link)
+      if(survey.notifOnSubmit && survey.integrations.whatsappNumber){
+        const wa = survey.integrations.whatsappNumber;
+        const text = encodeURIComponent(`Nova resposta na pesquisa "${survey.title.pt}". NPS: ${ans.q1}.`);
+        const url = `https://wa.me/${wa.replace(/\D/g,"")}?text=${text}`;
+        // não abre automaticamente para não bloquear UX
+        console.log("WA notify:", url);
+      }
+      // SendGrid: exemplo de envio (não recomendado no cliente em produção)
+      if(false && survey.integrations.sendgridKey){
+        try{
+          await fetch("https://api.sendgrid.com/v3/mail/send", {
+            method:"POST",
+            headers: { "Content-Type":"application/json", "Authorization":"Bearer "+survey.integrations.sendgridKey },
+            body: JSON.stringify({
+              personalizations: [{ to: [{ email: "you@example.com" }] }],
+              from: { email: "noreply@nps.local" },
+              subject: `Nova resposta: ${survey.title.pt}`,
+              content: [{ type:"text/plain", value: JSON.stringify(rec, null, 2) }]
+            })
+          });
+        }catch(e){ console.warn("SendGrid error", e); }
+      }
+
+      alert(t("submitted"));
+      location.reload();
+    }
+
+    qs("#review").onclick = ()=>{
+      const {errors, ans} = collect();
+      if(errors.length){
+        alert(t("requiredMsg"));
+        return;
+      }
+      showReview(ans);
+    };
+
+    form.onsubmit = (e)=>{
+      e.preventDefault();
+      const {errors, ans} = collect();
+      if(errors.length){
+        alert(t("requiredMsg"));
+        return;
+      }
+      if(survey.allowEditBeforeSubmit){ showReview(ans); } else { doSubmit(ans); }
+    };
+
+    root.appendChild(form);
+  }
+
+  // ====== Report ======
+  function renderReport(root, survey){
+    if(!survey){ root.innerHTML = `<div class="card danger">${t("invalidLink")}</div>`; return; }
+    const card = document.createElement("div");
+    card.className = "grid";
+    root.innerHTML = "";
+    root.appendChild(card);
+
+    const head = document.createElement("div");
+    head.className = "card";
+    head.innerHTML = `
+      <div class="row" style="align-items:center">
+        <div>
+          <h2>${survey.title[state.ui.lang]||survey.title.pt}</h2>
+          <div class="muted">${survey.eventDate||""}</div>
+        </div>
+        <div class="spacer"></div>
+        <button class="btn" onclick="window.print()">${t("printPDF")}</button>
+      </div>
+    `;
+    card.appendChild(head);
+
+    // NPS
+    const npsVals = survey.responses.map(r=> Number(r.answers?.q1)).filter(x=>!isNaN(x));
+    const nps = calcNPS(npsVals);
+    const npsCard = document.createElement("div");
+    npsCard.className = "card";
+    npsCard.innerHTML = `
+      <h3>${t("nps")}</h3>
+      <div class="grid cols-3">
+        <div>
+          <div style="font-size:2.4rem; font-weight:800">${isNaN(nps.nps)?"—":Math.round(nps.nps)}</div>
+          <div class="muted">${nps.total} respostas</div>
+        </div>
+        <div>
+          <div class="muted">${t("promoters")}</div>
+          <div class="progress"><span style="width:${(nps.counts.pro/nps.total)*100||0}%"></span></div>
+        </div>
+        <div>
+          <div class="muted">${t("detractors")}</div>
+          <div class="progress"><span style="width:${(nps.counts.det/nps.total)*100||0}%"></span></div>
+        </div>
+      </div>
+    `;
+    card.appendChild(npsCard);
+
+    // Médias 1-5
+    const dims = ["q2","q3","q4","q5","q6","q7","q8","q9","q10","q11","q18","q19","q20","q21","q22","q23","q24","q25"];
+    const dimCard = document.createElement("div");
+    dimCard.className = "card";
+    dimCard.innerHTML = `<h3>${t("dimensions")}</h3>`;
+    const tbl = document.createElement("table"); tbl.className = "table";
+    tbl.innerHTML = `<thead><tr><th>${t("title")}</th><th>${t("avg")}</th></tr></thead><tbody></tbody>`;
+    const tb = tbl.querySelector("tbody");
+    dims.forEach(id=>{
+      const q = survey.questions.find(x=>x.id===id);
+      if(!q) return;
+      const vals = survey.responses.map(r=> Number(r.answers?.[id])).filter(x=>!isNaN(x));
+      const avg = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : NaN;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${(q.label[state.ui.lang]||q.label.pt)}</td><td>${isNaN(avg)?"—":avg.toFixed(2).replace(".",",")}</td>`;
+      tb.appendChild(tr);
+    });
+    dimCard.appendChild(tbl);
+    card.appendChild(dimCard);
+
+    // Melhores sessões/palestras
+    const bestCard = document.createElement("div");
+    bestCard.className = "card";
+    bestCard.innerHTML = `<h3>${t("sessions")}</h3>`;
+    const mapCount = {};
+    survey.responses.forEach(r=>{
+      const best = r.answers?.q13;
+      if(best){ mapCount[best] = (mapCount[best]||0)+1; }
+    });
+    const sorted = Object.entries(mapCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    bestCard.innerHTML += `<p class="muted">${t("resume")}: ${sorted.map(([k,v])=>`${k} (${v})`).join(", ")||"—"}</p>`;
+    card.appendChild(bestCard);
+  }
+
+  // Boot
+  ensureState();
+  // match lang param on route
+  addEventListener("hashchange", render);
+  render();
+  </script>
+
+
+</body></html>
