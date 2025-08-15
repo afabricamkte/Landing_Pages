@@ -1,0 +1,998 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+<meta charset="UTF-8">
+<title>Precificador Gerencial de Ingressos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Segoe+UI:400,500,700&amp;display=swap">
+<style>
+:root {
+  --primary: #2563eb;
+  --accent: #16a34a;
+  --danger: #ef4444;
+  --card-bg: #fff;
+  --input-bg: #f8fafc;
+  --border: #e5e7eb;
+  --shadow: 0 2px 16px #0001;
+  --radius: 18px;
+  --transition: all .22s cubic-bezier(.18,.89,.32,1.28);
+  --highlight: #f0fdfa;
+  --dark: #151b26;
+  --dark-card: #1e293b;
+  --dark-input: #223045;
+  --dark-border: #394150;
+  --dark-text: #eaeaea;
+  --dark-alt: #111827;
+}
+body {
+  background: linear-gradient(120deg,#f8fafc 0%,#f3f7fd 100%);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #232323;
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+body.dark {
+  background: linear-gradient(120deg,#151b26 0%,#223045 100%);
+  color: var(--dark-text);
+}
+.container {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 24px 10px 36px 10px;
+  transition: background 0.3s, color 0.3s;
+}
+h1 {
+  font-size: 2.2rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 8px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  transition: color 0.3s;
+}
+body.dark h1 { color: #60a5fa;}
+h2 {
+  font-size: 1.19rem;
+  color: #1e293b;
+  margin-top: 32px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  transition: color 0.3s;
+}
+body.dark h2 { color: #f3f7fd;}
+label {
+  font-weight: 500;
+  color: #324c6c;
+  margin-bottom: 2px;
+  display: block;
+  font-size: 1em;
+  letter-spacing: -0.2px;
+  transition: color 0.3s;
+}
+body.dark label { color: #eaeaea;}
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 26px 20px 20px 20px;
+  margin-bottom: 28px;
+  border: 1.5px solid var(--border);
+  transition: var(--transition), background 0.3s, border 0.3s;
+}
+body.dark .card { background: var(--dark-card); border: 1.5px solid var(--dark-border);}
+.subtitle {
+  font-size: 1.09em;
+  color: var(--primary);
+  font-weight: bold;
+  margin-bottom: 8px;
+  letter-spacing: -0.15px;
+  transition: color 0.3s;
+}
+body.dark .subtitle { color: #60a5fa;}
+.explica {
+  font-size: 0.97em;
+  color: #4b5870;
+  margin-bottom: 13px;
+  margin-top: -2px;
+  padding-right: 8px;
+  transition: color 0.3s;
+}
+body.dark .explica { color: #e0e7ef;}
+input[type="text"], input[type="number"], select {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 11px;
+  font-size: 1.06em;
+  margin: 4px 0 10px 0;
+  background: var(--input-bg);
+  color: #232323;
+  transition: border .2s, box-shadow .2s, background 0.3s, color 0.3s;
+  box-sizing: border-box;
+  outline: none;
+}
+body.dark input, body.dark select, body.dark textarea {
+  background: var(--dark-input)!important;
+  color: var(--dark-text)!important;
+  border: 1.5px solid var(--dark-border)!important;
+}
+input:focus, select:focus {
+  border: 1.7px solid var(--primary);
+  background: #fff;
+  box-shadow: 0 1px 8px #2563eb13;
+}
+body.dark input:focus, body.dark select:focus {
+  background: #223045;
+  border: 1.7px solid #60a5fa;
+}
+button, .btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  padding: 13px 22px;
+  font-size: 1em;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 7px;
+  margin-bottom: 0;
+  margin-right: 8px;
+  box-shadow: 0 1px 4px #0001;
+  transition: background .18s, box-shadow .18s, transform .18s;
+  letter-spacing: -0.2px;
+}
+body.dark button, body.dark .btn { background: #60a5fa; color: #111827;}
+.btn-danger { background: var(--danger); margin-left: 6px;}
+.btn-small { font-size: .98em; padding: 7px 18px; border-radius: 7px; margin-left: 0;}
+.btn:hover, button:hover { background: #174fb7; transform: translateY(-1px) scale(1.02);}
+.btn-danger:hover { background: #991b1b;}
+body.dark .btn:hover, body.dark button:hover { background: #2563eb; color: #fff;}
+.btn-secondary {
+  background: #f1f5f9;
+  color: #2563eb;
+  border: 1.2px solid #bcd0ee;
+}
+body.dark .btn-secondary {
+  background: #1e293b;
+  color: #60a5fa;
+  border: 1.2px solid #394150;
+}
+.section { margin-bottom: 32px;}
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  margin-bottom: 0;
+}
+.grid3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px;
+}
+.form-group { margin-bottom: 10px;}
+.cat-card {
+  background: #f4f8fb;
+  border-radius: 15px;
+  box-shadow: 0 1px 8px #c8e1ff18;
+  padding: 14px 12px 10px 12px;
+  margin-bottom: 16px;
+  border: 1px solid #dbeafe;
+  transition: box-shadow .2s, background 0.3s, border 0.3s;
+}
+body.dark .cat-card {
+  background: #223045;
+  border: 1.5px solid #394150;
+}
+.cat-title {
+  font-weight: bold;
+  color: #2563eb;
+  font-size: 1.07em;
+  margin-bottom: 4px;
+  letter-spacing: -0.15px;
+  transition: color 0.3s;
+}
+body.dark .cat-title { color: #60a5fa;}
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+  background: #f9fafb;
+  box-shadow: 0 1px 6px #0001;
+}
+body.dark .table-responsive { background: #1e293b;}
+.lotes-table, .resumo-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 8px 0 0 0;
+  font-size: 0.98em;
+  background: transparent;
+}
+.lotes-table th, .lotes-table td, .resumo-table th, .resumo-table td {
+  border: 1px solid #e3e7ef;
+  padding: 9px 6px;
+  text-align: center;
+  background: transparent;
+  color: inherit;
+}
+.lotes-table th, .resumo-table th {
+  background: #e0e7ef;
+  color: #1d3557;
+  font-weight: 600;
+}
+body.dark .lotes-table th, body.dark .resumo-table th {
+  background: #223045;
+  color: #60a5fa;
+}
+.resumo {
+  background: linear-gradient(90deg,#dcfce7 50%, #f0fdf4 100%);
+  border-radius: 13px;
+  padding: 16px 14px 12px 14px;
+  margin: 14px 0 22px 0;
+  color: #166534;
+  font-size: 1.08em;
+  box-shadow: 0 1px 7px #0002;
+  border: 1.5px solid #bbf7d0;
+  font-weight: 500;
+  transition: background 0.3s, color 0.3s, border 0.3s;
+}
+body.dark .resumo {
+  background: linear-gradient(90deg,#223045 60%, #1e293b 100%);
+  color: #4ade80;
+  border: 1.5px solid #334155;
+}
+.alerta {
+  background: linear-gradient(90deg,#fee2e2 60%,#fef9c3 100%);
+  color: #991b1b;
+  border-radius: 11px;
+  padding: 10px 14px;
+  margin: 8px 0 12px 0;
+  font-size: 1.01em;
+  border: 1.5px solid #fecaca;
+  box-shadow: 0 1px 8px #fecaca30;
+  font-weight: 500;
+  transition: background 0.3s, color 0.3s, border 0.3s;
+}
+body.dark .alerta {
+  background: linear-gradient(90deg,#7f1d1d 60%,#f59e42 100%);
+  color: #fef9c3;
+  border: 1.5px solid #fecaca;
+}
+.ok {
+  background: linear-gradient(90deg,#dcfce7 60%, #dbeafe 100%);
+  color: #166534;
+  border: 1.5px solid #bbf7d0;
+  box-shadow: 0 1px 8px #bbf7d030;
+}
+body.dark .ok {
+  background: linear-gradient(90deg,#223045 60%, #166534 100%);
+  color: #4ade80;
+  border: 1.5px solid #334155;
+}
+.copy-btn {
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 23px;
+  font-size: 1em;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 7px;
+  transition: background .18s;
+}
+.copy-btn:hover { background: #14532d;}
+textarea {
+  width: 100%;
+  height: 122px;
+  border-radius: 10px;
+  border: 1.5px solid #cbd5e1;
+  padding: 10px;
+  font-size: 1.01em;
+  background: #f8fafc;
+  margin-bottom: 10px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  resize: vertical;
+  transition: background 0.3s, color 0.3s, border 0.3s;
+}
+body.dark textarea {
+  background: #223045;
+  color: #eaeaea;
+  border: 1.5px solid #394150;
+}
+input[type="range"] { width: 100%;}
+.tooltip {
+  display: inline-block;
+  position: relative;
+  cursor: help;
+  color: #2563eb;
+  font-size: 1.2em;
+  margin-left: 3px;
+  vertical-align: middle;
+}
+.tooltip:hover .tooltiptext, .tooltip:focus .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+.tooltiptext {
+  visibility: hidden;
+  width: 220px;
+  background-color: #111827cc;
+  color: #fff;
+  text-align: left;
+  border-radius: 10px;
+  padding: 10px;
+  position: absolute;
+  z-index: 10;
+  bottom: 130%;
+  left: 50%;
+  margin-left: -110px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.97em;
+  box-shadow: 0 4px 14px #0003;
+  pointer-events: none;
+}
+@media (max-width: 900px) {
+  h1 { font-size: 1.3rem; }
+  .card, .container { padding: 10px 4vw; }
+  .grid2, .grid3 { grid-template-columns: 1fr; gap: 9px; }
+  .cat-card { padding: 8px 5px 8px 8px;}
+  .lotes-table th, .lotes-table td, .resumo-table th, .resumo-table td { font-size: .97em; }
+  textarea { font-size: 0.99em;}
+}
+@media (max-width: 510px) {
+  .card, .container { padding: 2px 1vw; }
+  input, select { font-size: 0.98em;}
+}
+.toggle-dark {
+  position: fixed;
+  top: 20px;
+  right: 5vw;
+  z-index: 22;
+  background: #f4f8fb;
+  border-radius: 100px;
+  padding: 5px 18px 5px 14px;
+  font-size: 1.02em;
+  border: 1.2px solid #bcd0ee;
+  color: #2563eb;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  box-shadow: 0 1px 8px #60a5fa10;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+body.dark .toggle-dark { background: #1e293b; color: #fff; border: 1.2px solid #394150;}
+@media(max-width:500px){ .toggle-dark{ top: 9px; right:5px; font-size:.99em;} }
+.saved-list {
+  background: #e0e7ef;
+  color: #223045;
+  padding: 9px 12px;
+  border-radius: 11px;
+  border: 1.5px solid #2563eb33;
+  margin-bottom: 10px;
+}
+body.dark .saved-list { background: #223045; color:#eaeaea; border-color: #60a5fa44;}
+.saved-list button { margin:2px 6px 2px 0; }
+
+/* Explicação inicial */
+.explicativo-bloco {
+  background: linear-gradient(120deg,#e0e7ef 60%,#f1f5f9 100%);
+  border-radius: 16px;
+  padding: 28px 2vw 20px 2vw;
+  margin: 12px auto 30px auto;
+  max-width: 950px;
+  box-shadow: 0 2px 12px #2563eb14;
+  border: 1.5px solid #60a5fa22;
+  color: #223045;
+  font-size: 1.11em;
+}
+body.dark .explicativo-bloco {
+  background: linear-gradient(120deg,#172034 60%,#223045 100%);
+  color: #eaeaea;
+  border: 1.5px solid #2563eb55;
+}
+.explicativo-bloco h2 {
+  color: #2563eb;
+  font-size: 1.26em;
+  margin-top: 0;
+  margin-bottom: 12px;
+  text-align: left;
+  font-weight: 800;
+}
+body.dark .explicativo-bloco h2 { color: #60a5fa;}
+.explicativo-bloco ul,
+.explicativo-bloco ol {
+  padding-left: 18px;
+  margin-bottom: 12px;
+}
+.explicativo-bloco li {
+  margin-bottom: 7px;
+}
+.exemplo {
+  color: #166534;
+  background: #dcfce7;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: .98em;
+  margin: 5px 0 5px 0;
+  display: inline-block;
+}
+body.dark .exemplo {
+  color: #4ade80;
+  background: #223045;
+}
+@media (max-width: 700px) {
+  .explicativo-bloco { font-size: 1em; padding: 10px 2vw 10px 2vw;}
+}
+</style>
+</head>
+<body>
+<button class="toggle-dark" onclick="toggleDarkMode()" id="darkbtn" title="Alternar modo escuro">
+  <span id="icon-dark">🌙</span> Modo Escuro
+</button>
+<div class="container">
+  <!-- Bloco de explicação -->
+  <div class="explicativo-bloco">
+    <h2>Como Usar: Precificação Gerencial de Ingressos para Eventos</h2>
+    <ol>
+      <li>
+        <strong>Custos do Evento</strong><br>
+        Informe todos os custos previstos para realizar seu evento. Inclua custos fixos (locação, equipe, alimentação) e variáveis (brindes, marketing, etc). Quanto mais detalhado, melhor!
+        <div class="exemplo">
+          Ex: Locação do Espaço = R$ 6.000 | Alimentação = R$ 3.500<br>
+          Brindes = R$ 2.000 | Marketing = R$ 4.500
+        </div>
+      </li>
+      <li>
+        <strong>Público-Alvo</strong><br>
+        Defina o <b>público mínimo</b> (quantidade mínima para o evento acontecer) e o <b>público máximo</b> (capacidade máxima ou meta de lotação).
+        <div class="exemplo">
+          Ex: Mínimo = 60 participantes<br>
+          Máximo = 200 participantes
+        </div>
+      </li>
+      <li>
+        <strong>Categorias de Ingresso</strong><br>
+        Crie diferentes tipos de ingressos (ex: Padrão, VIP), especificando quantidade disponível e benefícios. Isso permite diversificação de preços e ofertas.
+        <div class="exemplo">
+          Ex: Categoria "Padrão": 100 ingressos, inclui acesso completo e coffee break.<br>
+          Categoria "VIP": 30 ingressos, inclui acesso extra e networking exclusivo.
+        </div>
+      </li>
+      <li>
+        <strong>Lotes</strong><br>
+        Para cada categoria, divida os ingressos em <b>lotes</b> com preços e quantidades diferentes. Lotes antecipados podem ter preços menores para estimular vendas iniciais.
+        <div class="exemplo">
+          Ex: Categoria Padrão<br>
+          - Lote 1: 50 ingressos a R$ 300<br>
+          - Lote 2: 50 ingressos a R$ 400
+        </div>
+      </li>
+      <li>
+        <strong>Taxas e Parâmetros Gerenciais</strong><br>
+        Informe as taxas de plataforma (ex: Sympla, Eventbrite), impostos e percentual de lucro desejado sobre o <b>total de ingressos vendidos</b>. Isso ajuda a definir o preço mínimo viável.
+        <div class="exemplo">
+          Ex: Taxa plataforma = 8%<br>
+          Impostos = 6%<br>
+          Lucro desejado = 20%
+        </div>
+      </li>
+      <li>
+        <strong>Simulação e Análise</strong><br>
+        Clique em <b>Calcular</b> para ver tabelas, gráficos e alertas.<br>
+        O sistema mostra se sua precificação cobre os custos, atinge o lucro desejado, e recomenda o preço mínimo necessário por ingresso.
+        <div class="exemplo">
+          Use “Salvar Simulação” para guardar diferentes cenários, e exporte dados para Excel ou PDF conforme necessidade.
+        </div>
+      </li>
+    </ol>
+    <b>Dica:</b> Use os <span style="color:#2563eb;">❔</span> para tirar dúvidas sobre cada campo.  
+    Ajuste as variáveis e simule diferentes estratégias de lotes e preços para encontrar a precificação ideal!
+  </div>
+  <!-- FORMULÁRIO PRINCIPAL -->
+  <form id="app-form" autocomplete="off">
+    <!-- 1. Custos do Evento -->
+    <div class="card">
+      <div class="subtitle">1️⃣ Custos do Evento
+        <span class="tooltip" tabindex="0">❔
+          <span class="tooltiptext">Inclua todos os custos estimados para a realização do evento. Exemplo: aluguel, alimentação, equipe, marketing, brindes, tecnologia, etc.</span>
+        </span>
+      </div>
+      <div class="explica">Adicione itens em "Adicionar Custo".</div>
+      <div id="custos-box"></div>
+      <button type="button" class="btn btn-small" onclick="addCusto()">Adicionar Custo</button>
+      <div class="explica" style="font-size:.95em;">💡 Dica: Não esqueça de incluir taxas da plataforma e impostos, se houver.</div>
+    </div>
+    <!-- 2. Público-Alvo -->
+    <div class="card">
+      <div class="subtitle">2️⃣ Público-Alvo
+        <span class="tooltip" tabindex="0">❔
+          <span class="tooltiptext">Informe o número mínimo e máximo de participantes esperados para simular cenários realistas.</span>
+        </span>
+      </div>
+      <div class="grid2">
+        <div class="form-group">
+          <label for="publicoMin">Público Mínimo Esperado</label>
+          <input type="number" id="publicoMin" min="1" value="50" required="">
+        </div>
+        <div class="form-group">
+          <label for="publicoMax">Público Máximo Esperado</label>
+          <input type="number" id="publicoMax" min="1" value="200" required="">
+        </div>
+      </div>
+      <div class="explica">Use o intervalo de público para comparar cenários de lotação.</div>
+    </div>
+    <!-- 3. Categorias de Ingresso -->
+    <div class="card">
+      <div class="subtitle">3️⃣ Categorias de Ingresso
+        <span class="tooltip" tabindex="0">❔
+          <span class="tooltiptext">Defina tipos de ingresso, quantidade disponível e benefícios para cada categoria.</span>
+        </span>
+      </div>
+      <div class="explica">Adicione diferentes tipos de ingresso, quantidades e benefícios.</div>
+      <div id="categorias-box"></div>
+      <button type="button" class="btn btn-small" onclick="addCategoria()">Adicionar Categoria</button>
+    </div>
+    <!-- 4. Lotes -->
+    <div class="card">
+      <div class="subtitle">4️⃣ Estratégia de Lotes
+        <span class="tooltip" tabindex="0">❔
+          <span class="tooltiptext">Crie lotes com preços e quantidades diferentes, podendo simular viradas por data ou quantidade. Útil para estimular vendas antecipadas.</span>
+        </span>
+      </div>
+      <div class="explica">Defina lotes para cada categoria (preço e quantidade).</div>
+      <div id="lotes-box"></div>
+    </div>
+    <!-- 5. Taxas e Parâmetros Gerenciais -->
+    <div class="card">
+      <div class="subtitle">5️⃣ Taxas e Parâmetros Gerenciais
+        <span class="tooltip" tabindex="0">❔
+          <span class="tooltiptext">Inclua taxas de plataforma, impostos e o percentual de lucro desejado sobre o total de ingressos vendidos.</span>
+        </span>
+      </div>
+      <div class="grid2">
+        <div>
+          <label for="taxa">Taxa de Plataforma/Comissão (%)</label>
+          <input type="number" id="taxa" min="0" max="100" step="0.1" value="8">
+        </div>
+        <div>
+          <label for="imposto">Impostos (%)</label>
+          <input type="number" id="imposto" min="0" max="100" step="0.1" value="6">
+        </div>
+      </div>
+      <div class="grid2">
+        <div>
+          <label for="lucroPerc">Percentual de Lucro Desejado (%)</label>
+          <input type="number" id="lucroPerc" min="0" max="200" step="0.1" value="20">
+        </div>
+        <div>
+          <label for="salvarSimulacao">Salvar Simulação:</label>
+          <button type="button" class="btn btn-secondary btn-small" onclick="salvarSimulacao()">Salvar</button>
+          <button type="button" class="btn btn-secondary btn-small" onclick="carregarSimulacoes()">Ver Simulações</button>
+        </div>
+      </div>
+    </div>
+    <!-- 6. Simulador -->
+    <div class="card">
+      <div class="subtitle">6️⃣ Simulação e Resultados</div>
+      <div class="explica">Ajuste variáveis acima e clique em <b>Calcular</b> para ver todos os cenários, gráficos e resumos.</div>
+      <button type="button" class="btn" onclick="calcular()">Calcular</button>
+      <button type="button" class="btn btn-secondary btn-small" onclick="exportarExcel()">Exportar Excel</button>
+      <button type="button" class="btn btn-secondary btn-small" onclick="window.print()">Imprimir/PDF</button>
+    </div>
+  </form>
+  <!-- Simulações salvas -->
+  <div id="simSaved"></div>
+  <!-- RESULTADOS -->
+  <div id="resultados"></div>
+</div>
+<!-- Chart.js para gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+function maskMoney(val) {
+  return "R$ " + (+val).toLocaleString('pt-BR', {minimumFractionDigits:2});
+}
+
+let custos = [
+  { nome: "Locação do Espaço", valor: 6000 },
+  { nome: "Alimentação/Coffee", valor: 3500 },
+  { nome: "Brindes/Kits", valor: 2000 },
+  { nome: "Equipe/Staff", valor: 3000 },
+  { nome: "Marketing/Tráfego", valor: 4500 }
+];
+function renderCustos() {
+  let html = '';
+  custos.forEach((c, i) => {
+    html += `<div class="form-group grid2" style="align-items:end;">
+      <div>
+        <label>Item:</label>
+        <input type="text" value="${c.nome}" onchange="custos[${i}].nome=this.value">
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;">
+          <label>Valor (R$):</label>
+          <input type="number" min="0" step="0.01" value="${c.valor}" onchange="custos[${i}].valor=+this.value">
+        </div>
+        <button type="button" class="btn btn-danger btn-small" onclick="removeCusto(${i})" title="Remover Custo">✖</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('custos-box').innerHTML = html;
+}
+function addCusto() {
+  custos.push({ nome: "", valor: 0 });
+  renderCustos();
+}
+function removeCusto(i) {
+  custos.splice(i,1);
+  renderCustos();
+}
+renderCustos();
+
+let categorias = [
+  { nome: "Padrão", qtd: 100, beneficios: "Acesso total, coffee break", lotes: [
+    { nome: "Lote 1", qtd: 50, preco: 300 },
+    { nome: "Lote 2", qtd: 50, preco: 400 }
+  ]},
+  { nome: "VIP", qtd: 30, beneficios: "Acesso + Networking Exclusivo", lotes: [
+    { nome: "Lote VIP", qtd: 30, preco: 700 }
+  ]}
+];
+function renderCategorias() {
+  let html = '';
+  categorias.forEach((cat, i) => {
+    html += `<div class="cat-card" tabindex="0">
+      <div class="cat-title">${cat.nome || 'Categoria '+(i+1)}
+        <button type="button" class="btn btn-danger btn-small" onclick="removeCategoria(${i})" title="Remover Categoria">✖</button>
+      </div>
+      <div class="grid2">
+        <div>
+          <label>Nome:</label>
+          <input type="text" value="${cat.nome}" onchange="categorias[${i}].nome=this.value">
+        </div>
+        <div>
+          <label>Qtd. disponível:</label>
+          <input type="number" min="1" value="${cat.qtd}" onchange="categorias[${i}].qtd=+this.value">
+        </div>
+      </div>
+      <label>Benefícios:</label>
+      <input type="text" value="${cat.beneficios}" onchange="categorias[${i}].beneficios=this.value">
+    </div>`;
+  });
+  document.getElementById('categorias-box').innerHTML = html;
+  renderLotes();
+}
+function addCategoria() {
+  categorias.push({ nome: "", qtd: 1, beneficios: "", lotes: [{nome:"Lote 1",qtd:1,preco:0}] });
+  renderCategorias();
+}
+function removeCategoria(i) {
+  categorias.splice(i,1);
+  renderCategorias();
+}
+renderCategorias();
+
+function renderLotes() {
+  let html = '';
+  categorias.forEach((cat, i) => {
+    html += `<div class="cat-card" style="background:#f9fafb;">
+      <div class="cat-title" style="margin-bottom:6px;">${cat.nome || 'Categoria '+(i+1)}
+        <button type="button" class="btn btn-small" style="background:#38bdf8;" onclick="addLote(${i})">+ Adicionar Lote</button>
+      </div>
+      <div class="table-responsive">
+        <table class="lotes-table">
+          <tr>
+            <th>Lote</th>
+            <th>Qtd</th>
+            <th>Preço (R$)</th>
+            <th>Ação</th>
+          </tr>`;
+    (cat.lotes||[]).forEach((l,j) => {
+      html += `<tr>
+        <td><input type="text" value="${l.nome}" onchange="categorias[${i}].lotes[${j}].nome=this.value"></td>
+        <td><input type="number" min="1" value="${l.qtd}" onchange="categorias[${i}].lotes[${j}].qtd=+this.value"></td>
+        <td><input type="number" min="0" step="0.01" value="${l.preco}" onchange="categorias[${i}].lotes[${j}].preco=+this.value"></td>
+        <td>
+          <button type="button" class="btn btn-danger btn-small" onclick="removeLote(${i},${j})">✖</button>
+        </td>
+      </tr>`;
+    });
+    html += `</table></div></div>`;
+  });
+  document.getElementById('lotes-box').innerHTML = html;
+}
+function addLote(idx) {
+  categorias[idx].lotes = categorias[idx].lotes || [];
+  categorias[idx].lotes.push({nome:"Novo Lote",qtd:1,preco:0});
+  renderLotes();
+}
+function removeLote(i,j) {
+  categorias[i].lotes.splice(j,1);
+  renderLotes();
+}
+
+function calcular() {
+  let custoTotal = custos.reduce((acc, c) => acc + (+c.valor||0), 0);
+
+  let publicoMin = +document.getElementById('publicoMin').value||1;
+  let publicoMax = +document.getElementById('publicoMax').value||1;
+  let taxa = +document.getElementById('taxa').value||0;
+  let imposto = +document.getElementById('imposto').value||0;
+  let lucroPerc = +document.getElementById('lucroPerc').value||0;
+
+  let lotesDetalhe = [];
+  let vendidoTotal = 0, receitaTotal = 0, receitaPorCategoria = [],
+      menorPreco = 999999999, maiorPreco = 0;
+  categorias.forEach((cat, i) => {
+    let catReceita = 0;
+    (cat.lotes||[]).forEach(l => {
+      lotesDetalhe.push({
+        categoria: cat.nome,
+        lote: l.nome,
+        qtd: l.qtd,
+        preco: l.preco
+      });
+      vendidoTotal += +l.qtd;
+      receitaTotal += (+l.qtd) * (+l.preco);
+      catReceita += (+l.qtd) * (+l.preco);
+      menorPreco = Math.min(menorPreco, +l.preco);
+      maiorPreco = Math.max(maiorPreco, +l.preco);
+    });
+    receitaPorCategoria.push({cat:cat.nome, receita: catReceita});
+  });
+
+  let propMin = vendidoTotal > 0 ? publicoMin/vendidoTotal : 0;
+  let propMax = vendidoTotal > 0 ? publicoMax/vendidoTotal : 0;
+  let receitaTotalMin = receitaTotal * propMin;
+  let receitaTotalMax = receitaTotal * propMax;
+
+  let taxaTotalPerc = (taxa + imposto)/100;
+  let receitaLiquidaMin = receitaTotalMin * (1 - taxaTotalPerc);
+  let receitaLiquidaMax = receitaTotalMax * (1 - taxaTotalPerc);
+
+  let lucroMin = receitaLiquidaMin - custoTotal;
+  let lucroMax = receitaLiquidaMax - custoTotal;
+  let roiMin = (lucroMin / Math.max(custoTotal,1))*100;
+  let roiMax = (lucroMax / Math.max(custoTotal,1))*100;
+
+  let precoEquilibrio = custoTotal / publicoMin;
+  let precoLucro = custoTotal * (1 + lucroPerc/100) / publicoMin;
+
+  let alerta = '';
+  if (receitaLiquidaMin < custoTotal) {
+    alerta = `<div class="alerta">⚠️ A receita líquida com ingressos <b>(mínimo)</b> está abaixo do custo do evento!<br>
+      Preço médio mínimo sugerido para equilibrar: <b>${maskMoney(precoEquilibrio)}</b></div>`;
+  } else if (lucroMin < (custoTotal * (lucroPerc/100)/100)) {
+    alerta = `<div class="alerta">⚠️ O lucro com ingressos <b>(mínimo)</b> não atinge o percentual desejado.<br>
+      Preço médio sugerido para lucro desejado: <b>${maskMoney(precoLucro)}</b></div>`;
+  } else {
+    alerta = `<div class="alerta ok">✅ O evento se paga e atinge o lucro desejado <b>apenas com ingressos</b> (mínimo).</div>`;
+  }
+
+  setTimeout(()=>{ desenhaGraficos({
+    receitaLiquidaMin, receitaLiquidaMax, custoTotal, lucroMin, lucroMax
+  }); }, 100);
+
+  let resumoCopia = `
+Resumo de Precificação de Ingressos:
+
+- Custo total do evento: ${maskMoney(custoTotal)}
+- Público mínimo: ${publicoMin}
+- Público máximo: ${publicoMax}
+- Receita líquida com ingressos: ${maskMoney(receitaLiquidaMin)} a ${maskMoney(receitaLiquidaMax)}
+- Lucro (apenas ingresso): ${maskMoney(lucroMin)} a ${maskMoney(lucroMax)}
+- ROI (apenas ingresso): ${roiMin.toFixed(2)}% a ${roiMax.toFixed(2)}%
+- Preço médio de equilíbrio: ${maskMoney(precoEquilibrio)}
+- Preço médio para lucro desejado: ${maskMoney(precoLucro)}
+- Taxa total: ${(taxa+imposto).toFixed(2)}%
+`;
+
+  let resumoCat = receitaPorCategoria.map(r => `<tr><td>${r.cat}</td><td>${maskMoney(r.receita)}</td></tr>`).join('');
+  let resumoLotes = lotesDetalhe.map(l =>
+    `<tr><td>${l.categoria}</td><td>${l.lote}</td><td>${l.qtd}</td><td>${maskMoney(l.preco)}</td><td>${maskMoney(l.qtd*l.preco)}</td></tr>`
+  ).join('');
+
+  document.getElementById('resultados').innerHTML = `
+    <div class="card" style="margin-top:8px;">
+      <h2>Resumo Gerencial</h2>
+      ${alerta}
+      <div class="resumo" style="font-size:1em;">
+        <b>Custo total do evento:</b> ${maskMoney(custoTotal)}<br>
+        <b>Receita líquida com ingressos:</b> ${maskMoney(receitaLiquidaMin)} (min) — ${maskMoney(receitaLiquidaMax)} (máx)<br>
+        <b>Lucro (apenas ingressos):</b> ${maskMoney(lucroMin)} (min) — ${maskMoney(lucroMax)} (máx)<br>
+        <b>ROI (apenas ingressos):</b> ${roiMin.toFixed(2)}% (min) — ${roiMax.toFixed(2)}% (máx)<br>
+        <b>Preço médio de equilíbrio:</b> ${maskMoney(precoEquilibrio)}<br>
+        <b>Preço médio para lucro desejado:</b> ${maskMoney(precoLucro)}<br>
+        <b>Taxa total:</b> ${(taxa+imposto).toFixed(2)}%<br>
+      </div>
+      <div id="grafico1" style="max-width:600px;margin:0 auto 30px auto;">
+        <canvas id="canvasGrafico1"></canvas>
+      </div>
+      <div id="grafico2" style="max-width:600px;margin:0 auto 35px auto;">
+        <canvas id="canvasGrafico2"></canvas>
+      </div>
+      <h2>Receita por Categoria</h2>
+      <div class="table-responsive">
+        <table class="resumo-table">
+          <tr><th>Categoria</th><th>Receita Total</th></tr>
+          ${resumoCat}
+        </table>
+      </div>
+      <h2>Receita Detalhada por Lote</h2>
+      <div class="table-responsive">
+        <table class="lotes-table">
+          <tr>
+            <th>Categoria</th>
+            <th>Lote</th>
+            <th>Qtd</th>
+            <th>Preço (R$)</th>
+            <th>Receita</th>
+          </tr>
+          ${resumoLotes}
+        </table>
+      </div>
+      <h2>Resumo Exportável</h2>
+      <textarea id="exporta" readonly>${resumoCopia.trim()}</textarea>
+      <button type="button" class="copy-btn" onclick="copiarResumo()">Copiar Resumo</button>
+    </div>
+  `;
+}
+
+function desenhaGraficos(dados) {
+  if(window.grafico1) window.grafico1.destroy();
+  let ctx1 = document.getElementById('canvasGrafico1').getContext('2d');
+  window.grafico1 = new Chart(ctx1, {
+    type: 'bar',
+    data: {
+      labels: ['Receita Líquida', 'Lucro'],
+      datasets: [
+        {
+          label: 'Mínimo',
+          backgroundColor: '#2563ebbb',
+          data: [
+            dados.receitaLiquidaMin,
+            dados.lucroMin
+          ]
+        },
+        {
+          label: 'Máximo',
+          backgroundColor: '#16a34abb',
+          data: [
+            dados.receitaLiquidaMax,
+            dados.lucroMax
+          ]
+        }
+      ]
+    },
+    options: {
+      responsive:true,
+      plugins: {legend:{position:'top'}},
+      scales: { y: { beginAtZero:true } }
+    }
+  });
+
+  if(window.grafico2) window.grafico2.destroy();
+  let ctx2 = document.getElementById('canvasGrafico2').getContext('2d');
+  window.grafico2 = new Chart(ctx2, {
+    type:'pie',
+    data: {
+      labels:['Custo Total','Receita Ingressos (max)','Lucro (max)'],
+      datasets:[{
+        data: [
+          dados.custoTotal,
+          dados.receitaLiquidaMax,
+          dados.lucroMax
+        ],
+        backgroundColor: ['#f87171bb','#2563ebbb','#16a34abb']
+      }]
+    },
+    options: {responsive:true}
+  });
+}
+
+function copiarResumo() {
+  let txt = document.getElementById('exporta');
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(txt.value).then(function() {
+      alert('Resumo copiado para área de transferência!');
+    }, function() {
+      fallbackCopy(txt);
+    });
+  } else {
+    fallbackCopy(txt);
+  }
+}
+function fallbackCopy(txt) {
+  txt.removeAttribute('readonly');
+  txt.select();
+  document.execCommand('copy');
+  txt.setAttribute('readonly', 'readonly');
+  txt.blur();
+  alert('Resumo copiado para área de transferência!');
+}
+
+function exportarExcel(){
+  let csv = "Categoria,Lote,Qtd,Preço,Receita\n";
+  categorias.forEach(cat=>{
+    (cat.lotes||[]).forEach(l=>{
+      csv += `${cat.nome},${l.nome},${l.qtd},${l.preco},${l.qtd*l.preco}\n`;
+    });
+  });
+  let blob = new Blob([csv], {type: 'text/csv'});
+  let a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = "simulacao_evento.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function salvarSimulacao() {
+  let sim = {
+    custos, categorias,
+    publicoMin: document.getElementById('publicoMin').value,
+    publicoMax: document.getElementById('publicoMax').value,
+    taxa: document.getElementById('taxa').value,
+    imposto: document.getElementById('imposto').value,
+    lucroPerc: document.getElementById('lucroPerc').value,
+    data: new Date().toLocaleString()
+  };
+  let todas = JSON.parse(localStorage.getItem('simulacoes_evento')||'[]');
+  todas.unshift(sim);
+  localStorage.setItem('simulacoes_evento',JSON.stringify(todas));
+  alert('Simulação salva com sucesso!');
+}
+
+function carregarSimulacoes() {
+  let todas = JSON.parse(localStorage.getItem('simulacoes_evento')||'[]');
+  let html = `<div class="saved-list"><b>Simulações Salvas</b> `;
+  if(todas.length===0){ html+="<br><i>Nenhuma simulação salva.</i></div>"; document.getElementById('simSaved').innerHTML = html; return;}
+  todas.forEach((s,i)=>{
+    html += `<div style="margin:8px 0;">
+      <span style="color:#2563eb;"><b>${s.data}</b></span> 
+      <button class="btn btn-small" onclick="recuperaSim(${i})">Carregar</button>
+      <button class="btn btn-danger btn-small" onclick="removeSim(${i})">Excluir</button>
+    </div>`;
+  });
+  html += `</div>`;
+  document.getElementById('simSaved').innerHTML = html;
+}
+function recuperaSim(i){
+  let todas = JSON.parse(localStorage.getItem('simulacoes_evento')||'[]');
+  let s = todas[i];
+  custos = JSON.parse(JSON.stringify(s.custos));
+  categorias = JSON.parse(JSON.stringify(s.categorias));
+  document.getElementById('publicoMin').value = s.publicoMin;
+  document.getElementById('publicoMax').value = s.publicoMax;
+  document.getElementById('taxa').value = s.taxa;
+  document.getElementById('imposto').value = s.imposto;
+  document.getElementById('lucroPerc').value = s.lucroPerc;
+  renderCustos();
+  renderCategorias();
+  calcular();
+  document.getElementById('simSaved').innerHTML = '';
+}
+function removeSim(i){
+  let todas = JSON.parse(localStorage.getItem('simulacoes_evento')||'[]');
+  todas.splice(i,1);
+  localStorage.setItem('simulacoes_evento',JSON.stringify(todas));
+  carregarSimulacoes();
+}
+
+function toggleDarkMode() {
+  document.body.classList.toggle('dark');
+  let dark = document.body.classList.contains('dark');
+  document.getElementById('icon-dark').textContent = dark ? "☀️" : "🌙";
+  document.getElementById('darkbtn').innerHTML = `<span id="icon-dark">${dark ? "☀️" : "🌙"}</span> ${dark ? "Modo Claro" : "Modo Escuro"}`;
+  localStorage.setItem('darkmode_evento', dark?'1':'0');
+}
+if(localStorage.getItem('darkmode_evento')==='1') setTimeout(()=>toggleDarkMode(),120);
+
+document.getElementById('categorias-box').addEventListener('change', renderLotes);
+</script>
+
+
+</body></html>

@@ -1,0 +1,948 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NPS | A Fábrica</title>
+  <meta name="description" content="Coleta de NPS com QR Code, Google Sheets e dashboard — A Fábrica">
+  <style>
+    :root{
+      /* Ajuste estas cores para refletir a paleta do site A Fábrica */
+      --brand-bg: #0f172a;           /* Fundo escuro premium */
+      --brand-surface: #111827;      /* Superfície cards */
+      --brand-primary: #ff7800;      /* Laranja A Fábrica */
+      --brand-primary-600:#ff6a00;
+      --brand-accent:#ffd166;        /* Acento */
+      --brand-text: #e5e7eb;         /* Texto principal */
+      --brand-muted:#9ca3af;         /* Texto secundário */
+      --ok: #10b981;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --border: #1f2937;
+      --focus: #60a5fa;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --radius-xs: 8px;
+      --maxw: 1100px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--brand-text);
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(255,120,0,.08), transparent 60%) ,
+                  radial-gradient(900px 500px at 10% 110%, rgba(255,209,102,.08), transparent 60%),
+                  var(--brand-bg);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    a{color:var(--brand-accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: rgba(15,23,42,.6);
+      border-bottom:1px solid var(--border);
+    }
+    .nav{
+      max-width:var(--maxw); margin:0 auto; padding:12px 16px;
+      display:flex; align-items:center; gap:16px; justify-content:space-between;
+    }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.3px}
+    .brand-logo{
+      width:28px; height:28px; border-radius:8px;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-600));
+      box-shadow: 0 4px 16px rgba(255,120,0,.45), inset 0 0 10px rgba(255,255,255,.12);
+    }
+    .nav-actions{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .btn{
+      appearance:none; border:1px solid var(--border);
+      background:#0b1220; color:var(--brand-text);
+      padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600;
+      transition:.2s transform, .2s background, .2s border-color, .2s box-shadow;
+    }
+    .btn:hover{transform:translateY(-1px); border-color:#2b3648}
+    .btn.primary{
+      border:none; background:linear-gradient(180deg, var(--brand-primary), var(--brand-primary-600));
+      color:#111; text-shadow:0 1px 0 rgba(255,255,255,.25);
+      box-shadow: 0 10px 22px rgba(255,120,0,.35);
+    }
+    .btn.ghost{background:transparent}
+    .btn.warn{background:linear-gradient(180deg, #ffb020, #f59e0b); color:#111; border:none}
+    .btn.danger{background:linear-gradient(180deg, #ff6666, #ef4444); color:#111; border:none}
+    .btn.small{padding:8px 10px; border-radius:10px; font-size:13px}
+    .btn:focus{outline:2px solid var(--focus); outline-offset:2px}
+
+    main{max-width:var(--maxw); margin:0 auto; padding:20px 16px 60px}
+    .grid{display:grid; gap:16px}
+    @media(min-width:900px){ .grid.cols-2{grid-template-columns: 1.3fr 1fr} }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+      border:1px solid var(--border);
+      border-radius:var(--radius); box-shadow:var(--shadow);
+    }
+    .card .hd{padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:8px}
+    .card .bd{padding:16px}
+    .muted{color:var(--brand-muted); font-size:.95rem}
+    .field{display:flex; flex-direction:column; gap:8px; margin-bottom:14px}
+    .field.inline{flex-direction:row; align-items:center}
+    label{font-weight:600}
+    input, select, textarea{
+      width:100%; padding:12px 12px; border-radius:12px; border:1px solid var(--border);
+      color:var(--brand-text); background:#0a101e;
+    }
+    textarea{min-height:90px; resize:vertical}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    .row > *{flex:1 1 200px}
+    .hidden{display:none !important}
+    .center{text-align:center}
+    .kpis{display:grid; grid-template-columns: repeat(2,1fr); gap:12px}
+    @media(min-width:700px){ .kpis{grid-template-columns: repeat(4,1fr)} }
+    .kpi{background:#0b1220; border:1px solid var(--border); border-radius:12px; padding:14px}
+    .kpi .v{font-size:28px; font-weight:800; margin-top:6px}
+    .badge{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:#0b1220; border:1px solid var(--border); font-size:12px}
+    .help{cursor:help; border-bottom:1px dotted var(--brand-muted)}
+    .pill{
+      display:inline-flex; gap:6px; align-items:center; padding:6px 10px; border-radius:9999px; border:1px solid var(--border); background:#0b1220; font-size:12px;
+    }
+    .nps-scale{display:grid; grid-template-columns: repeat(11, minmax(0,1fr)); gap:6px; margin-top:6px}
+    .nps-scale button{
+      padding:10px 0; border-radius:10px; border:1px solid var(--border); background:#0b1220; color:var(--brand-text); cursor:pointer; font-weight:700;
+    }
+    .nps-scale button.sel{background:linear-gradient(180deg, var(--brand-primary), var(--brand-primary-600)); color:#111; border:none; box-shadow: 0 6px 16px rgba(255,120,0,.35)}
+    .alert{padding:12px 14px; border-radius:12px; border:1px solid var(--border); background:#0b1220; margin:8px 0}
+    .alert.ok{border-color:#064e3b; background:#052e2a}
+    .alert.warn{border-color:#4d3b05; background:#2b2205}
+    .alert.err{border-color:#4c1d1d; background:#2a0f0f}
+    .toolbar{display:flex; gap:8px; flex-wrap:wrap}
+    .list{display:flex; flex-direction:column; gap:10px}
+    .list .item{display:flex; flex-direction:column; gap:8px; border:1px solid var(--border); background:#0b1220; border-radius:12px; padding:10px}
+    .list .item .row{align-items:center}
+    .qr-wrap{display:flex; flex-direction:column; gap:8px; align-items:flex-start}
+    .canvas-wrap{background:#0b1220; border:1px dashed var(--border); border-radius:12px; padding:8px; display:inline-block}
+    .foot{margin-top:26px; font-size:12px; color:var(--brand-muted); display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap}
+    .divider{height:1px; background:var(--border); margin:10px 0}
+    .statbar{display:flex; align-items:flex-end; gap:6px; height:160px; padding:8px; border:1px solid var(--border); border-radius:12px; overflow:hidden}
+    .bar{flex:1; background:linear-gradient(180deg, rgba(255,120,0,.25), rgba(255,120,0,.05)); border:1px solid rgba(255,120,0,.35); border-radius:8px; display:flex; align-items:flex-end; justify-content:center; position:relative}
+    .bar .h{width:100%; border-radius:8px 8px 4px 4px; background:linear-gradient(180deg, var(--brand-primary), var(--brand-primary-600))}
+    .bar .lbl{position:absolute; bottom:4px; font-weight:800; color:#111; text-shadow:0 1px 0 rgba(255,255,255,.3)}
+    .bar .x{position:absolute; bottom:-22px; font-size:12px; color:var(--brand-muted)}
+    .chip{display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; border:1px solid var(--border); background:#0b1220; font-size:12px}
+    .switch{display:inline-flex; align-items:center; gap:8px}
+    .switch input{width:auto}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true"></div>
+        <div>
+          <div style="font-size:14px; color:var(--brand-muted); line-height:1;">A Fábrica</div>
+          <div style="font-weight:900; letter-spacing:.2px">NPS de Eventos</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button class="btn ghost small" data-nav="gate">Início</button>
+        <button class="btn ghost small" data-nav="survey">Questionário</button>
+        <button class="btn ghost small" data-nav="dashboard">Dashboard</button>
+        <button class="btn primary small" data-nav="admin">Admin</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Gate de acesso (igual fluxo da calculadora) -->
+    <section id="view-gate" class="grid">
+      <div class="card">
+        <div class="hd">
+          <div>
+            <div class="badge">Calculadora de NPS para Eventos</div>
+            <h1 style="margin:8px 0 0; font-size:24px">Descubra a satisfação real dos seus participantes</h1>
+            <div class="muted">Acesse gratuitamente. Seus dados estão seguros conosco.</div>
+          </div>
+        </div>
+        <div class="bd">
+          <form id="gate-form">
+            <div class="row">
+              <div class="field">
+                <label for="gate_nome">Nome completo</label>
+                <input id="gate_nome" name="nome" placeholder="Seu nome" autocomplete="name" required="">
+              </div>
+              <div class="field">
+                <label for="gate_email">E-mail</label>
+                <input id="gate_email" name="email" placeholder="voce@empresa.com" type="email" autocomplete="email" required="">
+              </div>
+              <div class="field">
+                <label for="gate_tel">Telefone (com DDD)</label>
+                <input id="gate_tel" name="telefone" placeholder="(61) 9 9125-8571" inputmode="tel" autocomplete="tel">
+              </div>
+            </div>
+            <!-- honeypot -->
+            <input type="text" name="website" id="gate_hp" class="hidden" tabindex="-1" autocomplete="off">
+            <div class="row">
+              <button class="btn primary" type="submit">ACESSAR CALCULADORA</button>
+              <div class="pill">Oferecimento: A Fábrica - Marketing e Eventos</div>
+            </div>
+            <div id="gate-msg" class="muted" style="margin-top:8px"></div>
+          </form>
+          <div class="foot">
+            <div>© 2025 A Fábrica Marketing e Eventos | afabricamkte.com.br</div>
+            <div class="muted">Não compartilhamos suas informações com terceiros.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formulário público da pesquisa -->
+    <section id="view-survey" class="grid hidden">
+      <div class="card">
+        <div class="hd">
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <div class="badge">Questionário de NPS</div>
+            <div style="font-size:20px; font-weight:800" id="survey-title">Carregando…</div>
+            <div class="muted" id="survey-subtitle"></div>
+          </div>
+          <div class="toolbar">
+            <span class="chip"><span id="survey-event">Evento</span> • <span id="survey-client">Cliente</span></span>
+            <span class="chip" id="survey-origin">Origem: link</span>
+          </div>
+        </div>
+        <div class="bd">
+          <div id="survey-access-note" class="alert warn hidden">Esta pesquisa requer identificação. Preencha seu nome e email.</div>
+          <form id="survey-form">
+            <div id="survey-ident" class="row hidden">
+              <div class="field">
+                <label for="resp_nome">Seu nome</label>
+                <input id="resp_nome" name="resp_nome" placeholder="Nome" autocomplete="name">
+              </div>
+              <div class="field">
+                <label for="resp_email">Seu e-mail</label>
+                <input id="resp_email" name="resp_email" placeholder="voce@empresa.com" type="email" autocomplete="email">
+              </div>
+            </div>
+
+            <!-- Pergunta NPS -->
+            <div class="field">
+              <label class="row" style="align-items:baseline">
+                <span style="font-size:18px; font-weight:800">De 0 a 10, o quanto você recomendaria este evento a um amigo?</span>
+                <span class="muted">(0 = Nada provável, 10 = Extremamente provável)</span>
+              </label>
+              <div class="nps-scale" id="nps-scale"></div>
+              <input type="hidden" id="nps_score" name="nps_score" required="">
+              <div id="nps-hint" class="muted">Toque em um número para selecionar sua nota.</div>
+            </div>
+
+            <!-- Comentário -->
+            <div class="field">
+              <label for="resp_coment">Deixe um comentário (opcional)</label>
+              <textarea id="resp_coment" name="resp_coment" placeholder="O que mais gostou? O que pode melhorar?"></textarea>
+            </div>
+
+            <!-- honeypot -->
+            <input type="text" name="website" id="survey_hp" class="hidden" tabindex="-1" autocomplete="off">
+
+            <div class="row" style="align-items:center">
+              <button class="btn primary" type="submit">Enviar resposta</button>
+              <div id="survey-status" class="muted"></div>
+            </div>
+          </form>
+
+          <div id="survey-thanks" class="alert ok hidden">
+            Obrigado! Sua resposta foi registrada. Compartilhe o QR para novos participantes ou volte à página inicial.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="view-dashboard" class="grid hidden">
+      <div class="card">
+        <div class="hd">
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <div class="badge">Dashboard de NPS</div>
+            <div style="font-size:20px; font-weight:800" id="dash-title">Selecione uma pesquisa</div>
+            <div class="muted">Acompanhe NPS, volume e distribuição das notas em tempo quase real.</div>
+          </div>
+          <div class="toolbar">
+            <select id="dash-select" title="Selecione a pesquisa"></select>
+            <button class="btn" id="dash-refresh">Atualizar</button>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="kpis">
+            <div class="kpi">
+              <div class="muted">NPS</div>
+              <div class="v" id="kpi-nps">–</div>
+            </div>
+            <div class="kpi">
+              <div class="muted">Respostas</div>
+              <div class="v" id="kpi-count">–</div>
+            </div>
+            <div class="kpi">
+              <div class="muted">Promotores (9–10)</div>
+              <div class="v" id="kpi-promoters">–</div>
+            </div>
+            <div class="kpi">
+              <div class="muted">Detratores (0–6)</div>
+              <div class="v" id="kpi-detractors">–</div>
+            </div>
+          </div>
+
+          <h3 style="margin:18px 0 6px">Distribuição das Notas (0–10)</h3>
+          <div id="hist" class="statbar"></div>
+
+          <div class="foot">
+            <div class="muted">ROI em eventos é maximizado com experiência de alto impacto. NPS médio: 9,73.</div>
+            <a href="https://afabricamkte.com.br/" target="_blank" rel="noopener">A Fábrica</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admin -->
+    <section id="view-admin" class="grid hidden">
+      <div class="card">
+        <div class="hd">
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <div class="badge">Admin • Produção de Alto Impacto</div>
+            <div style="font-size:20px; font-weight:800">Gerenciar Pesquisas NPS</div>
+            <div class="muted">Crie pesquisas por evento/cliente, gere link e QR, e acompanhe resultados.</div>
+          </div>
+          <div class="toolbar">
+            <button class="btn" id="admin-new">Nova pesquisa</button>
+            <button class="btn" id="admin-list">Atualizar lista</button>
+            <button class="btn warn" id="admin-ensure-model">Criar/Validar modelo no Sheets</button>
+          </div>
+        </div>
+        <div class="bd">
+          <div id="admin-auth" class="row">
+            <div class="field">
+              <label for="admin_pass">Passcode de Admin</label>
+              <input id="admin_pass" type="password" placeholder="Defina um passcode seguro">
+            </div>
+            <div class="field">
+              <label for="api_url">URL do Apps Script (Web App)</label>
+              <input id="api_url" placeholder="https://script.google.com/macros/s/XXXXX/exec">
+            </div>
+            <div class="field">
+              <label>&nbsp;</label>
+              <button class="btn primary" id="admin_enter">Entrar</button>
+            </div>
+          </div>
+
+          <div id="admin-area" class="hidden">
+            <div id="admin-msg" class="alert hidden"></div>
+
+            <div class="card" style="margin:16px 0">
+              <div class="hd"><strong>Criar/Editar Pesquisa</strong></div>
+              <div class="bd">
+                <form id="survey-editor">
+                  <div class="row">
+                    <div class="field">
+                      <label for="sv_event">Nome do Evento</label>
+                      <input id="sv_event" required="" placeholder="Ex.: Ellit by Grado">
+                    </div>
+                    <div class="field">
+                      <label for="sv_client">Cliente</label>
+                      <input id="sv_client" required="" placeholder="Ex.: Israel">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="field">
+                      <label for="sv_title">Título</label>
+                      <input id="sv_title" placeholder="Ex.: Pesquisa de Satisfação do Evento">
+                    </div>
+                    <div class="field">
+                      <label for="sv_slug">Slug (URL)</label>
+                      <input id="sv_slug" placeholder="ellit-by-grado-israel">
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="sv_welcome">Mensagem de boas-vindas</label>
+                    <textarea id="sv_welcome" placeholder="Obrigado por participar! Sua opinião é muito importante."></textarea>
+                  </div>
+                  <div class="row">
+                    <div class="field">
+                      <label class="switch">
+                        <input type="checkbox" id="sv_allowAnon" checked="">
+                        Permitir respostas anônimas
+                      </label>
+                    </div>
+                    <div class="field">
+                      <label class="switch">
+                        <input type="checkbox" id="sv_publish" checked="">
+                        Publicar pesquisa
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="divider"></div>
+                  <div class="muted">Perguntas adicionais (além do NPS e comentário padrão)</div>
+                  <div id="q-list" class="list"></div>
+                  <div class="row">
+                    <button class="btn small" id="q-add-text" type="button">+ Pergunta Texto</button>
+                    <button class="btn small" id="q-add-mc" type="button">+ Múltipla Escolha</button>
+                  </div>
+
+                  <div class="row" style="margin-top:12px">
+                    <button class="btn primary" type="submit">Salvar pesquisa</button>
+                    <button class="btn" id="editor-reset" type="button">Limpar</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="hd"><strong>Pesquisas</strong></div>
+              <div class="bd">
+                <div id="sv-list" class="list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // =========================
+    // CONFIGURAÇÃO DO APP
+    // =========================
+    const CONFIG = {
+      // Defina um passcode seguro e mantenha fora de screenshots
+      ADMIN_PASSCODE: 'afabrica-admin', // troque em produção
+      // Defina aqui ou pelo campo na UI (persistido em localStorage)
+      APPS_SCRIPT_URL: '', // ex.: 'https://script.google.com/macros/s/XXXXX/exec'
+      BRAND: {
+        site: 'https://afabricamkte.com.br/',
+        name: 'A Fábrica - Marketing e Eventos'
+      }
+    };
+
+    // Persistência de URL do backend e autenticação admin
+    const storage = {
+      get api(){ return localStorage.getItem('nps_api_url') || CONFIG.APPS_SCRIPT_URL || '' },
+      set api(v){ localStorage.setItem('nps_api_url', v) },
+      get admin(){ return localStorage.getItem('nps_admin_auth') === '1' },
+      set admin(v){ localStorage.setItem('nps_admin_auth', v ? '1' : '0') },
+      get lead(){ try{return JSON.parse(localStorage.getItem('nps_lead')||'null')}catch(_){return null} },
+      set lead(obj){ localStorage.setItem('nps_lead', JSON.stringify(obj)) },
+      deviceId(){
+        let id = localStorage.getItem('nps_device_id');
+        if(!id){
+          id = 'dvc_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+          localStorage.setItem('nps_device_id', id);
+        }
+        return id;
+      },
+      hasResponded(slug){
+        return localStorage.getItem('nps_responded_'+slug) === '1';
+      },
+      markResponded(slug){
+        localStorage.setItem('nps_responded_'+slug,'1');
+      }
+    };
+
+    // Utilitários
+    function $(sel, root=document){ return root.querySelector(sel) }
+    function $all(sel, root=document){ return Array.from(root.querySelectorAll(sel)) }
+    function fmtNumber(n){ return new Intl.NumberFormat('pt-BR').format(n) }
+    function fmtCurrency(n){ return new Intl.NumberFormat('pt-BR',{style:'currency', currency:'BRL'}).format(n||0) }
+    function toast(el, msg, type='ok'){
+      el.classList.remove('hidden','ok','warn','err');
+      el.textContent = msg;
+      el.classList.add(type==='ok'?'ok':type==='warn'?'warn':'err');
+      setTimeout(()=>{ el.classList.add('hidden') }, 4000);
+    }
+    function slugify(s){
+      return s.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+        .replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+    }
+    function getQueryFromHash(){
+      const h = location.hash.slice(1);
+      if(!h) return { route:'gate', params:{} };
+      const [route, q=''] = h.split('?');
+      const params = {};
+      q.split('&').filter(Boolean).forEach(p=>{
+        const [k,v] = p.split('=');
+        params[decodeURIComponent(k)] = decodeURIComponent(v||'');
+      });
+      return { route, params };
+    }
+    function navigate(route, params={}){
+      const q = new URLSearchParams(params).toString();
+      location.hash = q ? `${route}?${q}` : route;
+    }
+    function originFromURL(){
+      const u = new URL(location.href);
+      const src = u.searchParams.get('src') || (u.hash.includes('src=qr') ? 'qr' : 'link');
+      return src === 'qr' ? 'qr' : 'link';
+    }
+
+    // API client
+    async function api(action, data={}, method='POST'){
+      const url = storage.api || '';
+      if(!url) throw new Error('Configure a URL do Apps Script no Admin.');
+      const headers = {'Content-Type':'application/json'};
+      const payload = JSON.stringify({ action, ...data });
+      const res = await fetch(url + (method==='GET'? ('?'+ new URLSearchParams({action, ...data})) : ''), {
+        method, headers, body: method==='POST'? payload : undefined,
+      });
+      if(!res.ok) throw new Error('Falha na comunicação com o servidor.');
+      return res.json();
+    }
+
+    // QR Code (QRCode.js min embutido) — crédito: https://github.com/davidshimjs/qrcodejs (MIT)
+    // Minificado leve adaptado para gerar canvas e DataURL
+    // eslint-disable-next-line
+    /*! qrcode.js v1.0.0 (min adaptada) */
+    (function(o){function l(a){this.mode=q.MODE_8BIT_BYTE;this.data=a}function r(a,b){this.typeNumber=a;this.errorCorrectLevel=b;this.modules=null;this.moduleCount=0;this.dataCache=null;this.dataList=[]}function t(a,b){if(void 0==a.length)throw Error(a.length+"/"+b);for(var c=0;c<a.length&&0==a[c];)c++;this.num=Array(a.length-c+b);for(var d=0;d<a.length-c;d++)this.num[d]=a[d+c]}function u(a,b){this.totalCount=a;this.dataCount=b}function v(){this.buffer=[];this.length=0}var q={PAD0:236,PAD1:17,MODE_8BIT_BYTE:4,ErrorCorrectLevel:{L:1,M:0,Q:3,H:2},getBCHTypeNumber:function(a){for(var b=a<<10;0<=q.getBCHDigit(b)-q.getBCHDigit(1335);)b^=1335<<q.getBCHDigit(b)-q.getBCHDigit(1335);return a<<10|b},getBCHTypeInfo:function(a){for(var b=a<<10;0<=q.getBCHDigit(b)-q.getBCHDigit(7973);)b^=7973<<q.getBCHDigit(b)-q.getBCHDigit(7973);return a<<10|b},getBCHDigit:function(a){for(var b=0;0!=a;)b++,a>>>=1;return b},getPatternPosition:function(a){return[[],[6,14],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70]] [a-1]},getMask:function(a,b){switch(a){case 0:return 0==(b.y+b.x)%2;case 1:return 0==b.y%2;case 2:return 0==b.x%3;case 3:return 0==(b.y+b.x)%3;case 4:return 0==(Math.floor(b.y/2)+Math.floor(b.x/3))%2;case 5:return 0==(b.y*b.x)%2+ (b.y*b.x)%3;case 6:return 0==( (b.y*b.x)%2 + (b.y*b.x)%3 )%2;case 7:return 0==( (b.y+b.x)%2 + (b.y*b.x)%3 )%2;default:throw Error("bad maskPattern:"+a);}},getErrorCorrectPolynomial:function(a){for(var b=new t([1],0),c=0;c<a;c++)b=b.multiply(new t([1,Math.pow(2,c)],0));return b},getLengthInBits:function(a,b){if(4!=a)throw Error("mode:"+a);return 8*b},getRSBlocks:function(a,b){var c=w[a][b];if(!c)throw Error("bad rs block @ typeNumber:"+a+"/errorCorrectLevel:"+b);for(var d=[],e=0;e<c.length;e++){var f=c[e];for(var g=0;g<f.length;g++)d.push(new u(f[g][0],f[g][1]))}return d},stringToBytes:function(a){for(var b=[],c=0;c<a.length;c++){var d=a.charCodeAt(c);128>d?b.push(d):2048>d?(b.push(192|(d>>6&31)),b.push(128|d&63)):(55296<=d&&57343>=d?(c++,d=65536+((d&1023)<<10|a.charCodeAt(c)&1023),b.push(240|(d>>18&7)),b.push(128|(d>>12&63)),b.push(128|(d>>6&63)),b.push(128|d&63)):(b.push(224|(d>>12&15)),b.push(128|(d>>6&63)),b.push(128|d&63)))}return b}};l.prototype={getLength:function(){return q.stringToBytes(this.data).length},write:function(a){for(var b=q.stringToBytes(this.data),c=0;c<b.length;c++)a.put(b[c],8)}};r.prototype={addData:function(a){this.dataList.push(new l(a));this.dataCache=null},isDark:function(a,b){if(0>a||this.moduleCount<=a||0>b||this.moduleCount<=b)throw Error(a+","+b);return this.modules[a][b]},getModuleCount:function(){return this.moduleCount},make:function(){if(this.typeNumber<1)this.typeNumber=1;for(;this.typeNumber<10&&!this._tryMake(this.typeNumber);)this.typeNumber++},_tryMake:function(a){this.typeNumber=a;this.modules=Array(this.typeNumber*4+17);for(var b=0;b<this.modules.length;b++){this.modules[b]=Array(this.modules.length);for(var c=0;c<this.modules.length;c++)this.modules[b][c]=null}this._setupPositionProbePattern(0,0);this._setupPositionProbePattern(this.modules.length-7,0);this._setupPositionProbePattern(0,this.modules.length-7);this._setupTimingPattern();this._setupTypeInfo(!0,0);this._setupTypeNumber(!0);var b=this._createData(this.typeNumber,this.errorCorrectLevel),c=0;for(var d=0;d<this.modules.length;d++)for(var e=0;e<this.modules.length;e++)null===this.modules[d][e]&&(this.modules[d][e]=0);for(var aMask=0;8>aMask;aMask++){var h=this._mapData(b,aMask);var p=this._getLostPoint(h);if(0==c||h.score<p.score)c=p,bMask=h}this.modules=bMask.modules;return!0},_getLostPoint:function(a){for(var b=a.modules,c=a.moduleCount,d=0,e=0,f=0,g=0,h=0;h<c;h++){for(var p=0;p<c;p++){var m=b[h][p];if(0==m||1==m){var n=0;for(var k=-1;1>=k;k++)if(!(0>h+k||h+k>=c))for(var y=-1;1>=y;y++)0>p+y||p+y>=c||0==k&&0==y||m==b[h+k][p+y]&&n++;4<n&&(e+=3+n-5)}0<p&&m==b[h][p-1]&&(f++,3<f&&(e+=f-2));0<h&&m==b[h-1][p]&&(g++,3<g&&(e+=g-2))}f=0;g=0}for(h=0;h<c-1;h++)for(p=0;p<c-1;p++){m=b[h][p];if(m==b[h+1][p]&&m==b[h][p+1]&&m==b[h+1][p+1])e+=3}for(h=0;h<c;h++)for(p=0;p<c-6;p++)b[h][p]&& !b[h][p+1]&&b[h][p+2]&&b[h][p+3]&&b[h][p+4]&& !b[h][p+5]&&b[h][p+6]&&(e+=40);for(p=0;p<c;p++)for(h=0;h<c-6;h++)b[h][p]&& !b[h+1][p]&&b[h+2][p]&&b[h+3][p]&&b[h+4][p]&& !b[h+5][p]&&b[h+6][p]&&(e+=40);for(h=0;h<c;h++)for(p=0;p<c;p++)b[h][p]&&d++;h=Math.abs(100*d/c/c-50)/5;return{score:e+10*h,modules:b,moduleCount:c}},_mapData:function(a,bMask){for(var b=this.moduleCount,c=Array(b);for(var d=0;d<b;d++)c[d]=Array(b);for(var e=0;e<b;e++)for(var f=0;f<b;f++)c[e][f]=this.modules[e][f];for(e=0;e<b;e++)for(f=0;f<b;f++)null===c[e][f]&&(c[e][f]=0);for(var d=0,h=0,p=b-1,m=-1,k=b-1;0<=k;k-=2){7==k&&k--;for(var y=0;y<b;y++){var x=0<=m?b-1-y:y;for(var z=0;2>z;z++)null===this.modules[x][k-z]&&(h<8*d.length&&(this.modules[x][k-z]=1==(d[h>>3]>>>7-h%8&1)?1:0),h++)}m*=-1}for(e=0;e<b;e++)for(f=0;f<b;f++)c[e][f]=this.modules[e][f]^q.getMask(bMask,{x:f,y:e});return{modules:c,moduleCount:b}},_setupPositionProbePattern:function(a,b){for(var c=-1;7>=c;c++)if(!(-1>=a+c||this.moduleCount<=a+c))for(var d=-1;7>=d;d++)-1>=b+d||this.moduleCount<=b+d||(this.modules[a+c][b+d]=0<=c&&6>=c&&(0==d||6==d)||0<=d&&6>=d&&(0==c||6==c)||2<=c&&4>=c&&2<=d&&4>=d?1:0)},_setupTimingPattern:function(){for(var a=8;a<this.moduleCount-8;a++)null===this.modules[a][6]&&(this.modules[a][6]=0==a%2),null===this.modules[6][a]&&(this.modules[6][a]=0==a%2)},_setupTypeNumber:function(a){for(var b=q.getBCHTypeNumber(this.typeNumber),c=0;c<18;c++){var d=!a?c%3:Math.floor(c/3),e=!a?Math.floor(c/3):c%3;this.modules[d][this.moduleCount-11+e]=1==(b>>c&1)}},_setupTypeInfo:function(a,b){for(var c=q.getBCHTypeInfo(this.errorCorrectLevel<<3|b),d=0;d<15;d++){var e=!a?d%3:Math.floor(d/3),f=!a?Math.floor(d/3):d%3;this.modules[e][8+f]=1==(c>>d&1)}},_createData:function(a,b){for(var c=q.getRSBlocks(a,b),d=new v,e=0;e<this.dataList.length;e++){var f=this.dataList[e];d.put(4,4);d.put(f.getLength(),q.getLengthInBits(4,this.typeNumber));f.write(d)}for(e=0;e<c.length;e++)if(!(d.getLengthInBits()<=8*c[e].dataCount))return [];for(;d.getLengthInBits()+4<=8*c[0].dataCount;)d.put(0,4);for(;0!=d.getLengthInBits()%8;)d.put(0,1);for(var g=0,h=0,e=0;e<c.length;e++)h+=c[e].dataCount;var p=Array(h),m=0;for(e=0;e<c.length;e++){var n=c[e].dataCount;for(g=0;g<n;g++)p[m++]=255&d.buffer[g]}return p}};t.prototype={get:function(a){return 1== (this.num[a>>3]>>>7-a%8&1)},getLength:function(){return 8*this.num.length},multiply:function(a){for(var b=Array(this.getLength()/8+a.getLength()/8-1),c=0;c<b.length;c++)b[c]=0;for(c=0;c<this.num.length;c++)for(var d=0;d<a.num.length;d++)b[c+d]^=q.gexp(q.glog(this.num[c])+q.glog(a.num[d]));return new t(b,0)},mod:function(a){if(this.getLength()-a.getLength()<0)return this;for(var b=q.glog(this.num[0])-q.glog(a.num[0]),c=Array(this.num.length),d=0;d<this.num.length;d++)c[d]=this.num[d];for(d=0;d<a.num.length;d++)c[d]^=q.gexp(q.glog(a.num[d])+b);return new t(c,0)}};q.glog=function(a){if(1>a)throw Error("glog("+a+")");return q.LOG_TABLE[a]};q.gexp=function(a){for(;0>a;)a+=255;for(;256<=a;)a-=255;return q.EXP_TABLE[a]};q.LOG_TABLE=Array(256);q.EXP_TABLE=Array(256);for(var s=0;256>s;s++)q.EXP_TABLE[s]=s<8?1<<s:q.EXP_TABLE[s-4]^q.EXP_TABLE[s-5]^q.EXP_TABLE[s-6]^q.EXP_TABLE[s-8];for(s=0;256>s;s++)for(var A=0;A<256;A++)if(q.EXP_TABLE[A]==s){q.LOG_TABLE[s]=A;break}v.prototype={getBuffer:function(){return this.buffer},getLengthInBits:function(){return 8*this.length},put:function(a,b){for(var c=0;c<b;c++)this.putBit(1==(a>>>b-c-1&1))},putBit:function(a){this.length%8==0&&(this.buffer.push(0));a&&(this.buffer[this.buffer.length-1]|=128>>>this.length%8);this.length++}};function QR(data, level){var ec = q.ErrorCorrectLevel.M; var qr = new r(1, ec); qr.addData(data); qr.make(); return qr }
+    function generateQRCodeDataURL(text, size=256, margin=4){
+      const qr = QR(text);
+      const count = qr.getModuleCount();
+      const scale = Math.floor((size - margin*2)/count);
+      const dim = count*scale + margin*2;
+      const cnv = document.createElement('canvas');
+      cnv.width = cnv.height = dim;
+      const ctx = cnv.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0,0,dim,dim);
+      ctx.fillStyle = '#111111';
+      for(let r=0;r<count;r++){
+        for(let c=0;c<count;c++){
+          if(qr.isDark(r,c)){
+            ctx.fillRect(margin + c*scale, margin + r*scale, scale, scale);
+          }
+        }
+      }
+      return cnv.toDataURL('image/png');
+    }
+
+    // Estado simples
+    let currentSurvey = null; // {slug,eventName,clientName,...}
+    let surveysCache = [];
+
+    // Inicialização UI
+    const views = {
+      gate: $('#view-gate'),
+      survey: $('#view-survey'),
+      dashboard: $('#view-dashboard'),
+      admin: $('#view-admin'),
+    };
+
+    // Build NPS scale buttons
+    function buildNpsScale(){
+      const wrap = $('#nps-scale');
+      wrap.innerHTML = '';
+      for(let i=0;i<=10;i++){
+        const b = document.createElement('button');
+        b.type='button'; b.textContent=String(i);
+        b.setAttribute('aria-label', 'Nota '+i);
+        b.addEventListener('click', ()=>{
+          $all('#nps-scale button').forEach(x=>x.classList.remove('sel'));
+          b.classList.add('sel');
+          $('#nps_score').value = i;
+          $('#nps-hint').textContent = 'Nota selecionada: '+i;
+        });
+        wrap.appendChild(b);
+      }
+    }
+    buildNpsScale();
+
+    // Render histogram
+    function renderHistogram(targetEl, dist){
+      targetEl.innerHTML = '';
+      const max = Math.max(1, ...dist);
+      for(let i=0;i<=10;i++){
+        const v = dist[i]||0;
+        const bar = document.createElement('div');
+        bar.className='bar';
+        const h = document.createElement('div');
+        h.className='h';
+        h.style.height = (v/max*100)+'%';
+        const lbl = document.createElement('div');
+        lbl.className='lbl';
+        lbl.textContent = v? v : '';
+        const x = document.createElement('div');
+        x.className='x'; x.textContent = i;
+        bar.appendChild(h); bar.appendChild(lbl); bar.appendChild(x);
+        targetEl.appendChild(bar);
+      }
+    }
+
+    // Navegação
+    function show(route){
+      Object.values(views).forEach(v=>v.classList.add('hidden'));
+      const v = views[route] || views.gate;
+      v.classList.remove('hidden');
+    }
+    function applyGateLeadToSurveyIdent(sv){
+      // Mostrar campos de identificação se pesquisa não permitir anônimo
+      const needIdent = !sv.allowAnonymous;
+      $('#survey-ident').classList.toggle('hidden', !needIdent);
+      $('#survey-access-note').classList.toggle('hidden', !needIdent);
+      if(needIdent){
+        const lead = storage.lead;
+        if(lead){
+          $('#resp_nome').value = lead.nome || '';
+          $('#resp_email').value = lead.email || '';
+        }
+      }
+    }
+
+    // Gate
+    $('#gate-form').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const hp = $('#gate_hp').value.trim();
+      if(hp){ return } // honeypot
+      const nome = $('#gate_nome').value.trim();
+      const email = $('#gate_email').value.trim();
+      const telefone = $('#gate_tel').value.trim();
+      const lead = { nome, email, telefone, ts: Date.now() };
+      storage.lead = lead;
+      $('#gate-msg').textContent = 'Acesso liberado. Redirecionando…';
+      try{
+        if(storage.api){
+          await api('saveLead', { lead }, 'POST').catch(()=>{});
+        }
+      }catch(_){}
+      // se há slug na URL, vá direto à pesquisa
+      const {route, params} = getQueryFromHash();
+      if(route==='survey' && params.slug){
+        navigate('survey', { slug: params.slug, src: params.src||originFromURL() });
+      }else{
+        navigate('survey');
+      }
+    });
+
+    // Survey
+    async function loadSurvey(slug){
+      const res = await api('getSurvey', { slug }, 'GET');
+      if(!res || !res.ok) throw new Error(res?.error||'Pesquisa não encontrada');
+      currentSurvey = res.survey;
+      $('#survey-title').textContent = currentSurvey.title || 'Pesquisa de Satisfação';
+      $('#survey-subtitle').textContent = currentSurvey.welcomeText || 'Sua opinião é muito importante!';
+      $('#survey-event').textContent = currentSurvey.eventName;
+      $('#survey-client').textContent = currentSurvey.clientName;
+      $('#survey-origin').textContent = 'Origem: ' + originFromURL();
+      applyGateLeadToSurveyIdent(currentSurvey);
+    }
+
+    $('#survey-form').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const hp = $('#survey_hp').value.trim();
+      if(hp) return;
+
+      if(!currentSurvey){ $('#survey-status').textContent = 'Carregando pesquisa…'; return; }
+
+      const slug = currentSurvey.slug;
+      if(storage.hasResponded(slug)){
+        $('#survey-status').textContent = 'Este dispositivo já respondeu a esta pesquisa.';
+        return;
+      }
+      const npsScore = parseInt($('#nps_score').value, 10);
+      if(Number.isNaN(npsScore)){
+        $('#survey-status').textContent = 'Selecione uma nota de 0 a 10.';
+        return;
+      }
+      const allowAnonymous = !!currentSurvey.allowAnonymous;
+      const name = $('#resp_nome').value.trim();
+      const email = $('#resp_email').value.trim();
+
+      if(!allowAnonymous && (!name || !email)){
+        $('#survey-status').textContent = 'Preencha seu nome e email.';
+        return;
+      }
+
+      const payload = {
+        slug,
+        nps_score: npsScore,
+        comment: $('#resp_coment').value.trim(),
+        anonymous: allowAnonymous && !name && !email ? true : false,
+        responder_name: name || (storage.lead?.nome || ''),
+        responder_email: email || (storage.lead?.email || ''),
+        source: originFromURL(),
+        device_id: storage.deviceId(),
+        user_agent: navigator.userAgent,
+      };
+
+      $('#survey-status').textContent = 'Enviando…';
+      try{
+        const res = await api('submitResponse', payload, 'POST');
+        if(res.ok){
+          $('#survey-status').textContent = 'Resposta registrada com sucesso.';
+          $('#survey-thanks').classList.remove('hidden');
+          storage.markResponded(slug);
+          // limpar seleção
+          $all('#nps-scale button').forEach(x=>x.classList.remove('sel'));
+          $('#nps_score').value = '';
+          $('#resp_coment').value = '';
+        }else if(res.code==='DUP'){
+          $('#survey-status').textContent = 'Este dispositivo já respondeu.';
+          storage.markResponded(slug);
+        }else{
+          $('#survey-status').textContent = 'Não foi possível registrar agora. Tente novamente.';
+        }
+      }catch(err){
+        console.error(err);
+        $('#survey-status').textContent = 'Erro de conexão. Verifique sua internet e tente novamente.';
+      }
+    });
+
+    // Dashboard
+    async function refreshSurveysList(){
+      const res = await api('getSurveys', {}, 'GET');
+      if(!res.ok) throw new Error(res.error||'Falha ao listar pesquisas');
+      surveysCache = res.surveys || [];
+      const sel = $('#dash-select');
+      sel.innerHTML = '<option value="">Selecione…</option>';
+      surveysCache.forEach(s=>{
+        const opt = document.createElement('option');
+        opt.value = s.slug;
+        opt.textContent = `${s.eventName} • ${s.clientName} (${s.slug})`;
+        sel.appendChild(opt);
+      });
+    }
+    async function loadStats(slug){
+      const res = await api('getStats', { slug }, 'GET');
+      if(!res.ok) throw new Error(res.error||'Falha ao carregar stats');
+      const st = res.stats;
+      $('#dash-title').textContent = `${res.survey?.eventName||''} • ${res.survey?.clientName||''}`;
+      $('#kpi-nps').textContent = (st.count>0) ? (Math.round(st.nps*10)/10).toString() : '–';
+      $('#kpi-count').textContent = fmtNumber(st.count);
+      $('#kpi-promoters').textContent = fmtNumber(st.promoters||0);
+      $('#kpi-detractors').textContent = fmtNumber(st.detractors||0);
+      renderHistogram($('#hist'), st.distribution||[]);
+    }
+
+    $('#dash-refresh').addEventListener('click', async ()=>{
+      const slug = $('#dash-select').value;
+      if(!slug){ return }
+      try{ await loadStats(slug) }catch(err){ alert(err.message) }
+    });
+    $('#dash-select').addEventListener('change', async (e)=>{
+      const slug = e.target.value;
+      if(!slug) return;
+      try{ await loadStats(slug) }catch(err){ alert(err.message) }
+    });
+
+    // Admin
+    function requireAdmin(){
+      if(!storage.admin){
+        $('#admin-area').classList.add('hidden');
+        return false;
+      }
+      $('#admin-area').classList.remove('hidden');
+      return true;
+    }
+    $('#admin_enter').addEventListener('click', async ()=>{
+      const pass = $('#admin_pass').value;
+      const apiUrl = $('#api_url').value.trim();
+      if(!apiUrl){ alert('Informe a URL do Apps Script'); return }
+      if(pass !== CONFIG.ADMIN_PASSCODE){ alert('Passcode inválido'); return }
+      storage.api = apiUrl; storage.admin = true;
+      $('#admin_pass').value = '';
+      requireAdmin();
+      try{ await refreshSurveysList(); }catch(err){ console.error(err) }
+      alert('Acesso admin liberado.');
+    });
+
+    $('#admin-new').addEventListener('click', ()=>{
+      $('#survey-editor').reset();
+      $('#q-list').innerHTML = '';
+    });
+    $('#editor-reset').addEventListener('click', ()=>{
+      $('#survey-editor').reset();
+      $('#q-list').innerHTML = '';
+    });
+    function addQuestionUI(type){
+      const id = 'q_'+Math.random().toString(36).slice(2);
+      const item = document.createElement('div');
+      item.className='item';
+      item.dataset.id = id;
+      item.innerHTML = `
+        <div class="row">
+          <div class="field" style="flex:2">
+            <label>Pergunta (${type==='text'?'Texto aberto':'Múltipla escolha'})</label>
+            <input placeholder="Digite o texto da pergunta" class="q-text" />
+          </div>
+          <div class="field" style="flex:1">
+            <label>Obrigatória?</label>
+            <select class="q-req"><option value="true">Sim</option><option value="false" selected>Não</option></select>
+          </div>
+        </div>
+        ${type==='mc' ? `
+          <div class="field">
+            <label>Opções (separadas por vírgula)</label>
+            <input placeholder="Ex.: Ótimo,Bom,Regular,Ruim,Péssimo" class="q-opts" />
+          </div>` : ''}
+        <div class="row">
+          <button class="btn small danger" type="button">Remover</button>
+        </div>`;
+      item.querySelector('button').addEventListener('click', ()=> item.remove());
+      $('#q-list').appendChild(item);
+    }
+    $('#q-add-text').addEventListener('click', ()=> addQuestionUI('text'));
+    $('#q-add-mc').addEventListener('click', ()=> addQuestionUI('mc'));
+
+    $('#survey-editor').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      if(!requireAdmin()) return;
+      const eventName = $('#sv_event').value.trim();
+      const clientName = $('#sv_client').value.trim();
+      let slug = $('#sv_slug').value.trim();
+      if(!slug){ slug = slugify(eventName + '-' + clientName) }
+      const data = {
+        slug,
+        eventName,
+        clientName,
+        title: $('#sv_title').value.trim() || 'Pesquisa de Satisfação',
+        welcomeText: $('#sv_welcome').value.trim(),
+        allowAnonymous: $('#sv_allowAnon').checked,
+        isPublished: $('#sv_publish').checked,
+        extraQuestions: $all('#q-list .item').map(el=>{
+          const text = el.querySelector('.q-text').value.trim();
+          const required = el.querySelector('.q-req').value==='true';
+          const optsEl = el.querySelector('.q-opts');
+          if(optsEl){
+            const opts = optsEl.value.split(',').map(s=>s.trim()).filter(Boolean);
+            return { type:'mc', text, required, options:opts };
+          }
+          return { type:'text', text, required };
+        }),
+      };
+      try{
+        const res = await api('saveSurvey', { survey: data }, 'POST');
+        if(res.ok){
+          alert('Pesquisa salva e aba de respostas garantida no Sheets.');
+          await refreshSurveysList();
+          renderSurveysList();
+        }else{
+          alert('Falha ao salvar: ' + (res.error||''));
+        }
+      }catch(err){ alert(err.message) }
+    });
+
+    $('#admin-list').addEventListener('click', async ()=>{
+      try{ await refreshSurveysList(); renderSurveysList(); }catch(err){ alert(err.message) }
+    });
+
+    $('#admin-ensure-model').addEventListener('click', async ()=>{
+      if(!confirm('Criar/validar modelo: abas Surveys, Leads e garantir headers?')) return;
+      try{
+        const res = await api('ensureModel', {}, 'POST');
+        alert(res.ok ? 'Modelo pronto.' : ('Falha: '+(res.error||'')));
+      }catch(err){ alert(err.message) }
+    });
+
+    function renderSurveysList(){
+      const wrap = $('#sv-list');
+      wrap.innerHTML = '';
+      if(!surveysCache.length){
+        wrap.innerHTML = '<div class="muted">Nenhuma pesquisa cadastrada ainda.</div>';
+        return;
+      }
+      surveysCache.forEach(s=>{
+        const link = location.origin + location.pathname + '#survey?slug='+encodeURIComponent(s.slug);
+        const item = document.createElement('div');
+        item.className='item';
+        item.innerHTML = `
+          <div class="row">
+            <div style="flex:2; font-weight:800">${s.eventName} • ${s.clientName}</div>
+            <div class="muted">slug:</div><div class="mono">${s.slug}</div>
+          </div>
+          <div class="row">
+            <div class="muted" style="flex:2">${s.title||''}</div>
+            <div class="chip">${s.isPublished? 'Publicado' : 'Rascunho'}</div>
+            <div class="chip">${s.allowAnonymous? 'Anônimo permitido' : 'Identificação obrigatória'}</div>
+          </div>
+          <div class="row">
+            <div class="qr-wrap">
+              <div class="muted">Link público</div>
+              <div class="mono">${link}</div>
+              <div class="canvas-wrap"><img alt="QR Code" style="width:160px; height:160px; display:block; background:white; border-radius:8px" /></div>
+              <div class="row">
+                <button class="btn small" data-copy>Copiar link</button>
+                <button class="btn small" data-dl>Baixar QR (PNG)</button>
+                <a class="btn small" data-open target="_blank" rel="noopener">Abrir</a>
+                <button class="btn small" data-dash>Abrir Dashboard</button>
+              </div>
+            </div>
+          </div>`;
+        const img = item.querySelector('img');
+        img.src = generateQRCodeDataURL(link+'%3Fsrc%3Dqr', 360, 8);
+        item.querySelector('[data-copy]').addEventListener('click', async ()=>{
+          await navigator.clipboard.writeText(link);
+          alert('Link copiado.');
+        });
+        item.querySelector('[data-dl]').addEventListener('click', ()=>{
+          const a = document.createElement('a');
+          a.href = generateQRCodeDataURL(link+'%3Fsrc%3Dqr', 1080, 16);
+          a.download = `qr-${s.slug}.png`;
+          a.click();
+        });
+        item.querySelector('[data-open]').href = link;
+        item.querySelector('[data-dash]').addEventListener('click', ()=>{
+          navigate('dashboard'); setTimeout(async ()=>{
+            try{
+              await refreshSurveysList();
+              $('#dash-select').value = s.slug;
+              $('#dash-refresh').click();
+            }catch(err){ console.error(err) }
+          }, 50);
+        });
+        wrap.appendChild(item);
+      });
+    }
+
+    // Router
+    async function handleRoute(){
+      const {route, params} = getQueryFromHash();
+      show(route);
+      if(route==='survey'){
+        try{
+          if(params.slug){
+            await loadSurvey(params.slug);
+          }else{
+            // se não há slug, mostre sugestão
+            $('#survey-title').textContent = 'Selecione um link de pesquisa';
+            $('#survey-subtitle').textContent = 'Peça ao admin o link público desta pesquisa.';
+          }
+        }catch(err){
+          $('#survey-title').textContent = 'Pesquisa não encontrada';
+          $('#survey-subtitle').textContent = err.message || 'Verifique o link ou contate o admin.';
+        }
+      }else if(route==='dashboard'){
+        try{ await refreshSurveysList() }catch(err){ console.error(err) }
+      }else if(route==='admin'){
+        requireAdmin();
+        $('#api_url').value = storage.api || '';
+      }else if(route==='gate'){
+        // nada
+      }
+    }
+    window.addEventListener('hashchange', handleRoute);
+    document.querySelectorAll('[data-nav]').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        navigate(b.getAttribute('data-nav'));
+      });
+    });
+
+    // Startup
+    (async function init(){
+      // auto-navegação: se tem slug direto e sem lead, exiba gate primeiro
+      const {route, params} = getQueryFromHash();
+      if(route==='survey' && params.slug && !storage.lead){
+        show('gate');
+      }else{
+        await handleRoute();
+      }
+    })();
+  </script>
+
+
+</body></html>
