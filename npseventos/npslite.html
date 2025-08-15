@@ -1,0 +1,450 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NPS Lite | A Fábrica</title>
+  <meta name="description" content="NPS Lite — criar pesquisa e responder via link">
+  <style>
+    :root{
+      --brand-bg: #0f172a;
+      --brand-surface: #111827;
+      --brand-primary: #ff7800;
+      --brand-primary-600:#ff6a00;
+      --brand-accent:#ffd166;
+      --brand-text: #e5e7eb;
+      --brand-muted:#9ca3af;
+      --border:#1f2937;
+      --focus:#60a5fa;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 14px;
+      --maxw: 900px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--brand-text);
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(255,120,0,.08), transparent 60%),
+                  radial-gradient(900px 500px at 10% 110%, rgba(255,209,102,.08), transparent 60%),
+                  var(--brand-bg);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    header{
+      position:sticky; top:0; z-index:20; backdrop-filter: blur(10px);
+      background: rgba(15,23,42,.6); border-bottom:1px solid var(--border);
+    }
+    .nav{max-width:var(--maxw); margin:0 auto; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px}
+    .brand{display:flex; align-items:center; gap:10px}
+    .brand-logo{width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,var(--brand-primary),var(--brand-primary-600)); box-shadow:0 4px 16px rgba(255,120,0,.45)}
+    .brand-title{font-weight:900}
+    .nav-actions{display:flex; gap:8px; flex-wrap:wrap}
+    .btn{appearance:none; border:1px solid var(--border); background:#0b1220; color:var(--brand-text); padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600}
+    .btn.primary{border:none; background:linear-gradient(180deg,var(--brand-primary),var(--brand-primary-600)); color:#111}
+    .btn.small{padding:8px 10px; font-size:13px}
+    .btn:focus{outline:2px solid var(--focus); outline-offset:2px}
+    main{max-width:var(--maxw); margin:0 auto; padding:18px 16px 40px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01)); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:16px}
+    .card .hd{padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:8px}
+    .card .bd{padding:16px}
+    .muted{color:var(--brand-muted)}
+    .field{display:flex; flex-direction:column; gap:8px; margin-bottom:12px}
+    label{font-weight:600}
+    input, textarea, select{width:100%; padding:12px 12px; border-radius:10px; border:1px solid var(--border); background:#0a101e; color:var(--brand-text)}
+    textarea{min-height:90px; resize:vertical}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    .row > *{flex:1 1 220px}
+    .hidden{display:none !important}
+    .badge{display:inline-flex; padding:6px 10px; font-size:12px; border-radius:999px; background:#0b1220; border:1px solid var(--border)}
+    .nps-scale{display:grid; grid-template-columns: repeat(11, minmax(0,1fr)); gap:6px; margin-top:6px}
+    .nps-scale button{padding:10px 0; border-radius:10px; border:1px solid var(--border); background:#0b1220; color:var(--brand-text); font-weight:700; cursor:pointer}
+    .nps-scale button.sel{background:linear-gradient(180deg, var(--brand-primary), var(--brand-primary-600)); color:#111; border:none}
+    .alert{padding:12px 14px; border-radius:10px; background:#0b1220; border:1px solid var(--border); margin:8px 0}
+    .alert.err{border-color:#4c1d1d; background:#2a0f0f}
+    .alert.ok{border-color:#064e3b; background:#052e2a}
+    .list{display:flex; flex-direction:column; gap:10px}
+    .item{border:1px solid var(--border); background:#0b1220; border-radius:10px; padding:10px}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+    .foot{margin-top:14px; font-size:12px; color:var(--brand-muted); display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true"></div>
+        <div>
+          <div class="muted" style="font-size:13px">A Fábrica</div>
+          <div class="brand-title">NPS Lite</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button class="btn small" data-nav="s">Responder</button>
+        <button class="btn primary small" data-nav="admin">Admin</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Responder (público) -->
+    <section id="view-s" class="card hidden">
+      <div class="hd">
+        <div>
+          <div class="badge">Questionário de NPS</div>
+          <div style="font-weight:800; font-size:20px" id="sv-title">Carregando…</div>
+          <div class="muted" id="sv-sub"> </div>
+        </div>
+        <div class="muted" id="sv-meta"></div>
+      </div>
+      <div class="bd">
+        <form id="form-answer">
+          <div id="ident-wrap" class="row hidden">
+            <div class="field">
+              <label for="a_name">Seu nome</label>
+              <input id="a_name" placeholder="Nome" autocomplete="name">
+            </div>
+            <div class="field">
+              <label for="a_email">Seu e-mail</label>
+              <input id="a_email" type="email" placeholder="voce@empresa.com" autocomplete="email">
+            </div>
+          </div>
+
+          <div class="field">
+            <label style="font-weight:800">De 0 a 10, o quanto você recomendaria este evento a um amigo?</label>
+            <div class="muted">(0 = Nada provável, 10 = Extremamente provável)</div>
+            <div class="nps-scale" id="nps-scale"></div>
+            <input type="hidden" id="a_score" required="">
+          </div>
+
+          <div class="field">
+            <label for="a_comment">Comentário (opcional)</label>
+            <textarea id="a_comment" placeholder="O que mais gostou? O que pode melhorar?"></textarea>
+          </div>
+
+          <input type="text" id="hp_a" class="hidden" autocomplete="off" tabindex="-1">
+
+          <div class="row" style="align-items:center">
+            <button class="btn primary" type="submit">Enviar</button>
+            <div class="muted" id="a_status"></div>
+          </div>
+        </form>
+
+        <div id="a_thanks" class="alert ok hidden">Obrigado! Sua resposta foi registrada.</div>
+      </div>
+    </section>
+
+    <!-- Admin (criar e obter link) -->
+    <section id="view-admin" class="card">
+      <div class="hd">
+        <div>
+          <div class="badge">Admin • Simples</div>
+          <div style="font-weight:800; font-size:20px">Criar pesquisa e gerar link</div>
+          <div class="muted">Cole abaixo a URL do Apps Script (exec) e seu token. Depois crie a pesquisa.</div>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="row" id="admin-auth">
+          <div class="field">
+            <label for="api_url">URL do Apps Script (exec)</label>
+            <input id="api_url" placeholder="https://script.google.com/macros/s/SEU_ID/exec">
+          </div>
+          <div class="field">
+            <label for="admin_token">Admin Token</label>
+            <input id="admin_token" type="password" placeholder="Defina no Apps Script">
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <button class="btn primary" id="btn_enter">Entrar</button>
+          </div>
+        </div>
+
+        <div id="admin-area" class="hidden">
+          <div class="row">
+            <button class="btn" id="btn_model">Criar/validar modelo no Sheets</button>
+            <button class="btn" id="btn_list">Listar pesquisas</button>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <div class="hd"><strong>Criar Pesquisa</strong></div>
+            <div class="bd">
+              <form id="form-new">
+                <div class="row">
+                  <div class="field"><label for="e_event">Nome do Evento</label><input id="e_event" required="" placeholder="Ex.: Ellit by Grado"></div>
+                  <div class="field"><label for="e_client">Cliente</label><input id="e_client" required="" placeholder="Ex.: Israel"></div>
+                </div>
+                <div class="row">
+                  <div class="field"><label for="e_title">Título</label><input id="e_title" placeholder="Pesquisa de Satisfação"></div>
+                  <div class="field"><label for="e_slug">Slug</label><input id="e_slug" placeholder="ellit-by-grado-israel"></div>
+                </div>
+                <div class="field"><label for="e_welcome">Mensagem de boas-vindas</label><textarea id="e_welcome" placeholder="Obrigado por participar!"></textarea></div>
+                <div class="row">
+                  <div class="field">
+                    <label>Exigir identificação?</label>
+                    <select id="e_ident"><option value="false">Não (anônimo permitido)</option><option value="true">Sim (nome e e-mail)</option></select>
+                  </div>
+                  <div class="field">
+                    <label>Publicado?</label>
+                    <select id="e_pub"><option value="true">Sim</option><option value="false">Não (rascunho)</option></select>
+                  </div>
+                </div>
+                <div class="row">
+                  <button class="btn primary" type="submit">Salvar</button>
+                  <button class="btn" type="button" id="btn_clear">Limpar</button>
+                </div>
+              </form>
+              <div id="new_status" class="muted" style="margin-top:6px"></div>
+              <div id="link_wrap" class="alert hidden">
+                <div><strong>Link público:</strong></div>
+                <div class="mono" id="pub_link"></div>
+                <div class="row"><button class="btn small" id="btn_copy">Copiar link</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="hd"><strong>Pesquisas</strong></div>
+            <div class="bd">
+              <div id="list" class="list"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="foot">
+          <div>© 2025 A Fábrica Marketing e Eventos</div>
+          <a href="https://afabricamkte.com.br/" target="_blank" rel="noopener" class="muted">afabricamkte.com.br</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Config local
+    const CONFIG = {
+      ADMIN_PASS_PLACEHOLDER: '', // removido (usamos token no backend)
+    };
+
+    // Storage
+    const store = {
+      get api(){ return localStorage.getItem('npslite_api') || '' },
+      set api(v){ localStorage.setItem('npslite_api', v) },
+      get token(){ return localStorage.getItem('npslite_token') || '' },
+      set token(v){ localStorage.setItem('npslite_token', v) },
+      deviceId(){
+        let id = localStorage.getItem('npslite_device');
+        if(!id){ id = 'dvc_' + Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('npslite_device', id); }
+        return id;
+      },
+      hasResponded(slug){ return localStorage.getItem('npslite_done_'+slug)==='1' },
+      markResponded(slug){ localStorage.setItem('npslite_done_'+slug, '1') }
+    };
+
+    // Utils
+    function $(s, r=document){ return r.querySelector(s) }
+    function $all(s, r=document){ return Array.from(r.querySelectorAll(s)) }
+    function slugify(s){
+      return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+    }
+    function getRoute(){
+      const h = location.hash.slice(1);
+      if(!h) return {route:'admin', params:{}};
+      const [route, q=''] = h.split('?');
+      const params = {};
+      q.split('&').filter(Boolean).forEach(p=>{ const [k,v] = p.split('='); params[decodeURIComponent(k)] = decodeURIComponent(v||'') });
+      return {route, params};
+    }
+    function go(route, params={}){
+      const q = new URLSearchParams(params).toString();
+      location.hash = q? `${route}?${q}` : route;
+    }
+    function show(id){
+      $('#view-admin').classList.add('hidden');
+      $('#view-s').classList.add('hidden');
+      if(id==='admin') $('#view-admin').classList.remove('hidden');
+      if(id==='s') $('#view-s').classList.remove('hidden');
+    }
+    function buildScale(){
+      const w = $('#nps-scale'); w.innerHTML = '';
+      for(let i=0;i<=10;i++){
+        const b = document.createElement('button'); b.type='button'; b.textContent=String(i);
+        b.addEventListener('click', ()=>{
+          $all('#nps-scale button').forEach(x=>x.classList.remove('sel'));
+          b.classList.add('sel'); $('#a_score').value = i;
+        });
+        w.appendChild(b);
+      }
+    }
+    buildScale();
+
+    // API client (POST text/plain para evitar preflight CORS)
+    async function api(action, data={}, useToken=false){
+      const url = store.api;
+      if(!url) throw new Error('Configure a URL do Apps Script (exec) no Admin.');
+      const body = JSON.stringify(useToken ? { action, token: store.token, ...data } : { action, ...data });
+      const res = await fetch(url, { method:'POST', headers:{'Content-Type':'text/plain;charset=UTF-8'}, body });
+      if(!res.ok) throw new Error('Falha na chamada da API (HTTP '+res.status+').');
+      let json; try{ json = await res.json() }catch(_){ throw new Error('Resposta inválida do servidor.') }
+      if(json.error){ throw new Error(json.error) }
+      return json;
+    }
+
+    // ADMIN
+    $('#btn_enter').addEventListener('click', ()=>{
+      const api = $('#api_url').value.trim();
+      const token = $('#admin_token').value.trim();
+      if(!api || !token){ alert('Preencha API e Token.'); return; }
+      store.api = api; store.token = token;
+      $('#admin-area').classList.remove('hidden');
+      alert('Configuração salva.');
+    });
+    $('#btn_model').addEventListener('click', async ()=>{
+      try{ const r = await api('ensureModel', {}, true); alert(r.ok? 'Modelo OK' : 'Falha'); }
+      catch(err){ alert(err.message) }
+    });
+    $('#btn_clear').addEventListener('click', ()=>{
+      $('#form-new').reset(); $('#link_wrap').classList.add('hidden'); $('#new_status').textContent='';
+    });
+    $('#form-new').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const eventName = $('#e_event').value.trim();
+      const clientName = $('#e_client').value.trim();
+      let slug = $('#e_slug').value.trim();
+      if(!slug){ slug = slugify(eventName + '-' + clientName) }
+      const payload = {
+        survey: {
+          slug,
+          eventName,
+          clientName,
+          title: $('#e_title').value.trim() || 'Pesquisa de Satisfação',
+          welcomeText: $('#e_welcome').value.trim(),
+          isPublished: $('#e_pub').value==='true',
+          allowAnonymous: $('#e_ident').value!=='true',
+          extraQuestions: [] // não usado nesta versão
+        }
+      };
+      $('#new_status').textContent = 'Salvando…';
+      try{
+        const r = await api('saveSurvey', payload, true);
+        if(r.ok){
+          $('#new_status').textContent = 'Pesquisa salva.';
+          const base = location.origin + location.pathname;
+          const link = `${base}#s?slug=${encodeURIComponent(slug)}`;
+          $('#pub_link').textContent = link;
+          $('#link_wrap').classList.remove('hidden');
+          renderList(); // atualiza lista
+        }else{
+          $('#new_status').textContent = 'Falha ao salvar.';
+        }
+      }catch(err){
+        $('#new_status').textContent = err.message;
+      }
+    });
+    $('#btn_copy').addEventListener('click', async ()=>{
+      const t = $('#pub_link').textContent;
+      try{ await navigator.clipboard.writeText(t); alert('Link copiado.'); }catch(_){ alert('Copie manualmente.') }
+    });
+
+    async function renderList(){
+      const wrap = $('#list'); wrap.innerHTML = '';
+      try{
+        const r = await api('listSurveys', {}, true);
+        const surveys = r.surveys || [];
+        if(!surveys.length){ wrap.innerHTML = '<div class="muted">Nenhuma pesquisa criada.</div>'; return; }
+        surveys.forEach(s=>{
+          const link = location.origin + location.pathname + '#s?slug=' + encodeURIComponent(s.slug);
+          const div = document.createElement('div'); div.className='item';
+          div.innerHTML = `
+            <div style="font-weight:800">${s.eventName} • ${s.clientName}</div>
+            <div class="muted">${s.title||''}</div>
+            <div class="mono">${link}</div>
+          `;
+          wrap.appendChild(div);
+        });
+      }catch(err){
+        wrap.innerHTML = '<div class="alert err">'+err.message+'</div>';
+      }
+    }
+    $('#btn_list').addEventListener('click', renderList);
+
+    // PÚBLICO — responder
+    async function loadSurvey(slug){
+      const r = await api('getSurvey', { slug });
+      if(!r.ok) throw new Error(r.error||'Pesquisa não encontrada');
+      const sv = r.survey;
+      $('#sv-title').textContent = sv.title || 'Pesquisa de Satisfação';
+      $('#sv-sub').textContent = sv.welcomeText || '';
+      $('#sv-meta').textContent = `${sv.eventName} • ${sv.clientName}`;
+      $('#ident-wrap').classList.toggle('hidden', !!sv.allowAnonymous);
+      return sv;
+    }
+    $('#form-answer').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      if($('#hp_a').value.trim()) return;
+      const route = getRoute(); const slug = route.params.slug;
+      const status = $('#a_status');
+      if(!slug){ status.textContent = 'Link inválido (sem slug).'; return; }
+      if(store.hasResponded(slug)){ status.textContent = 'Este dispositivo já respondeu.'; return; }
+      const score = parseInt($('#a_score').value, 10);
+      if(Number.isNaN(score)){ status.textContent = 'Selecione uma nota de 0 a 10.'; return; }
+      const name = $('#a_name').value.trim();
+      const email = $('#a_email').value.trim();
+
+      status.textContent = 'Enviando…';
+      try{
+        const body = {
+          slug,
+          nps_score: score,
+          comment: $('#a_comment').value.trim(),
+          responder_name: name,
+          responder_email: email,
+          anonymous: (!name && !email),
+          device_id: store.deviceId(),
+          user_agent: navigator.userAgent,
+          source: 'link'
+        };
+        const r = await api('submitResponse', body, false);
+        if(r.ok){
+          $('#a_thanks').classList.remove('hidden'); status.textContent = 'Enviado.';
+          store.markResponded(slug);
+          $all('#nps-scale button').forEach(x=>x.classList.remove('sel')); $('#a_score').value='';
+          $('#a_comment').value=''; $('#a_name').value=''; $('#a_email').value='';
+        }else if(r.code==='DUP'){
+          status.textContent = 'Este dispositivo já respondeu.'; store.markResponded(slug);
+        }else{
+          status.textContent = 'Não foi possível registrar agora.';
+        }
+      }catch(err){
+        status.textContent = err.message;
+      }
+    });
+
+    // Router
+    function onRoute(){
+      const {route, params} = getRoute();
+      if(route==='s'){
+        show('s');
+        if(!params.slug){
+          $('#sv-title').textContent = 'Link inválido';
+          $('#sv-sub').textContent = 'Peça o link correto ao organizador.';
+          return;
+        }
+        $('#a_thanks').classList.add('hidden'); $('#a_status').textContent='';
+        loadSurvey(params.slug).catch(err=>{
+          $('#sv-title').textContent = 'Erro ao carregar';
+          $('#sv-sub').textContent = err.message||'Tente novamente mais tarde.';
+        });
+      }else{
+        show('admin');
+        $('#api_url').value = store.api || '';
+        $('#admin_token').value = store.token || '';
+        if(store.api && store.token){
+          $('#admin-area').classList.remove('hidden');
+        }
+      }
+    }
+    window.addEventListener('hashchange', onRoute);
+    document.querySelectorAll('[data-nav]').forEach(b=> b.addEventListener('click', ()=> go(b.getAttribute('data-nav')) ));
+    // Inicialização
+    (function init(){
+      onRoute();
+    })();
+  </script>
+
+
+</body></html>
