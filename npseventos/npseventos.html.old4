@@ -73,10 +73,6 @@
     .btn.bad{background:var(--bad); color:#fff; border-color:transparent}
     .btn.ok{background:var(--ok); color:#0b0c0f; border-color:transparent}
     .btn.small{padding:8px 12px; font-size:.9rem}
-    .btn.active{
-      background:linear-gradient(135deg, #6366f1, #8b5cf6); 
-      color:#fff; border-color:transparent;
-    }
     .toolbar{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
     .status{padding:6px 12px; border-radius:999px; font-weight:600; font-size: 0.85rem;}
     .status.draft{background:#374151;color:#fff}
@@ -456,49 +452,11 @@
       currentSurvey: null,
       currentStep: 0,
       responses: {},
-      isTestMode: false,
-      currentLanguage: 'pt'
+      isTestMode: false
     };
 
     // Storage key
     const STORAGE_KEY = 'nps_quiz_state_v4';
-
-    // Language translations
-    const translations = {
-      pt: {
-        systemTitle: 'Sistema de Pesquisas NPS',
-        collectFeedback: 'Colete feedback valioso dos seus eventos com pesquisas profissionais de Net Promoter Score.',
-        accessAdmin: 'Acessar Área Administrativa',
-        smartSurveys: 'Pesquisas Inteligentes',
-        smartSurveysDesc: 'Crie pesquisas NPS completas com perguntas personalizadas e múltiplos idiomas.',
-        responsiveInterface: 'Interface Responsiva',
-        responsiveDesc: 'Experiência otimizada para desktop e mobile com design moderno.',
-        detailedReports: 'Relatórios Detalhados',
-        reportsDesc: 'Análise completa dos resultados com métricas NPS e exportação de dados.'
-      },
-      en: {
-        systemTitle: 'NPS Survey System',
-        collectFeedback: 'Collect valuable feedback from your events with professional Net Promoter Score surveys.',
-        accessAdmin: 'Access Administrative Area',
-        smartSurveys: 'Smart Surveys',
-        smartSurveysDesc: 'Create complete NPS surveys with personalized questions and multiple languages.',
-        responsiveInterface: 'Responsive Interface',
-        responsiveDesc: 'Optimized experience for desktop and mobile with modern design.',
-        detailedReports: 'Detailed Reports',
-        reportsDesc: 'Complete analysis of results with NPS metrics and data export.'
-      },
-      es: {
-        systemTitle: 'Sistema de Encuestas NPS',
-        collectFeedback: 'Recopile comentarios valiosos de sus eventos con encuestas profesionales de Net Promoter Score.',
-        accessAdmin: 'Acceder al Área Administrativa',
-        smartSurveys: 'Encuestas Inteligentes',
-        smartSurveysDesc: 'Cree encuestas NPS completas con preguntas personalizadas y múltiples idiomas.',
-        responsiveInterface: 'Interfaz Responsiva',
-        responsiveDesc: 'Experiencia optimizada para escritorio y móvil con diseño moderno.',
-        detailedReports: 'Informes Detallados',
-        reportsDesc: 'Análisis completo de resultados con métricas NPS y exportación de datos.'
-      }
-    };
 
     // Load state from localStorage
     function loadState() {
@@ -558,48 +516,6 @@
         production: `${baseUrl}#/s/${surveyId}?lang=pt`,
         test: `${baseUrl}#/test/${surveyId}?lang=pt`
       };
-    }
-
-    // Update language
-    function updateLanguage(lang) {
-      state.currentLanguage = lang;
-      
-      // Update language buttons
-      document.querySelectorAll('[id^="lang-"]').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      document.getElementById(`lang-${lang}`).classList.add('active');
-      
-      // Update home page content
-      const t = translations[lang];
-      if (t) {
-        const homeElements = {
-          'h1': t.systemTitle,
-          '.muted': t.collectFeedback,
-          '.btn.primary': t.accessAdmin
-        };
-        
-        Object.entries(homeElements).forEach(([selector, text]) => {
-          const element = document.querySelector(`#page-home ${selector}`);
-          if (element) element.textContent = text;
-        });
-        
-        // Update feature cards
-        const features = document.querySelectorAll('#page-home h3');
-        const descriptions = document.querySelectorAll('#page-home .muted');
-        
-        if (features.length >= 3) {
-          features[0].textContent = `📊 ${t.smartSurveys}`;
-          features[1].textContent = `📱 ${t.responsiveInterface}`;
-          features[2].textContent = `📈 ${t.detailedReports}`;
-        }
-        
-        if (descriptions.length >= 4) {
-          descriptions[1].textContent = t.smartSurveysDesc;
-          descriptions[2].textContent = t.responsiveDesc;
-          descriptions[3].textContent = t.reportsDesc;
-        }
-      }
     }
 
     // Router
@@ -668,7 +584,7 @@
       
       document.getElementById('page-survey-editor').style.display = 'block';
       
-      if (surveyId && surveyId !== 'new' && data.surveys[surveyId]) {
+      if (surveyId && data.surveys[surveyId]) {
         loadSurveyIntoEditor(data.surveys[surveyId], surveyId);
       } else {
         // New survey
@@ -839,11 +755,6 @@
 
     // Event Listeners
     document.addEventListener('DOMContentLoaded', function() {
-      // Language buttons
-      document.getElementById('lang-pt').addEventListener('click', () => updateLanguage('pt'));
-      document.getElementById('lang-en').addEventListener('click', () => updateLanguage('en'));
-      document.getElementById('lang-es').addEventListener('click', () => updateLanguage('es'));
-
       // Admin login
       document.getElementById('admin-login-btn').addEventListener('click', function() {
         const password = document.getElementById('admin-password').value;
@@ -921,9 +832,6 @@
         // Handle quiz navigation logic here
         console.log('Next clicked, responses:', state.responses);
       });
-
-      // Initialize language
-      updateLanguage('pt');
 
       // Initialize router
       window.addEventListener('hashchange', route);
