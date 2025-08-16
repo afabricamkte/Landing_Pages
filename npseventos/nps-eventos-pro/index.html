@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NPS Eventos Pro - Sistema Avançado de Pesquisas</title>
+    <meta name="color-scheme" content="light dark">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="#/" class="logo">
+                <div class="logo-icon">N</div>
+                <div>
+                    <div>NPS Eventos Pro</div>
+                    <div style="font-size: 0.75rem; font-weight: 400; opacity: 0.8;">Sistema Avançado de Pesquisas</div>
+                </div>
+            </a>
+            
+            <nav class="nav">
+                <div class="language-selector">
+                    <button class="language-btn active" data-lang="pt">PT</button>
+                    <button class="language-btn" data-lang="en">EN</button>
+                    <button class="language-btn" data-lang="es">ES</button>
+                </div>
+                <a href="#/admin" class="admin-link">Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div id="app">
+                <!-- Content will be loaded here by JavaScript -->
+                <div class="hero">
+                    <h1>Bem-vindo ao NPS Eventos Pro</h1>
+                    <p>Sistema avançado de pesquisas de satisfação para eventos</p>
+                </div>
+
+                <!-- Dashboard Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalSurveys">1</div>
+                        <div class="stat-label">Total de Pesquisas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalResponses">0</div>
+                        <div class="stat-label">Total de Respostas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="averageNPS">--</div>
+                        <div class="stat-label">NPS Médio</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="activeSurveys">0</div>
+                        <div class="stat-label">Pesquisas Ativas</div>
+                    </div>
+                </div>
+
+                <!-- CTA Button -->
+                <div class="text-center">
+                    <a href="#/admin" class="btn btn-primary">Acessar Área Administrativa</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 NPS Eventos Pro - Sistema Avançado de Pesquisas<br>
+            Desenvolvido com ❤️ para eventos excepcionais</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Files -->
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script src="assets/js/quiz.js"></script>
+    <script src="assets/js/reports.js"></script>
+    
+    <!-- Initialize Application -->
+    <script>
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('NPS Eventos Pro - Initializing...');
+            
+            // Initialize state if not exists
+            if (typeof initializeApp === 'function') {
+                initializeApp();
+            } else {
+                console.error('initializeApp function not found. Check if app.js is loaded correctly.');
+            }
+            
+            // Set up language switcher
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.dataset.lang;
+                    if (typeof switchLanguage === 'function') {
+                        switchLanguage(lang);
+                    }
+                    
+                    // Update active state
+                    document.querySelectorAll('.language-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Set up router
+            if (typeof router === 'function') {
+                window.addEventListener('hashchange', router);
+                router(); // Initial route
+            }
+            
+            console.log('NPS Eventos Pro - Initialized successfully!');
+        });
+    </script>
+</body>
+</html>
+
