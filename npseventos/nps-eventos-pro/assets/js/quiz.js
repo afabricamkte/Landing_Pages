@@ -1,4 +1,4 @@
-// NPS Eventos Pro - Sistema de Quiz
+// NPS Eventos Pro - Sistema de Quiz Avançado
 
 /**
  * Estado do quiz atual
@@ -8,39 +8,315 @@ let quizState = {
     answers: {},
     surveyId: null,
     startTime: null,
-    deviceId: null
+    deviceId: null,
+    token: null,
+    survey: null,
+    visibleQuestions: [],
+    dynamicRequired: {},
+    hiddenByRule: {}
 };
+
+let autoSaveTimer = null;
 
 /**
  * Inicializa o quiz
  */
-function initializeQuiz(surveyId) {
+function initializeQuiz(surveyId, token = null) {
+    const survey = state.surveys[surveyId];
+    if (!survey) {
+        showQuizError(t('invalidLink'));
+        return;
+    }
+    
+    // Verifica se a pesquisa está ativa
+    if (survey.status !== 'active') {
+        showQuizError(t('invalidLink'));
+        return;
+    }
+    
+    // Verifica token se necessário
+    if (survey.requireToken) {
+        if (!token || !survey.tokens[token] || survey.tokens[token].used) {
+            showQuizError('Token inválido ou já utilizado');
+            return;
+        }
+    }
+    
+    // Verifica se o dispositivo já respondeu (se não usar tokens)
+    const deviceId = Utils.generateDeviceId();
+    if (!survey.requireToken && survey.answeredDevices && survey.answeredDevices[deviceId]) {
+        showQuizError('Este dispositivo já respondeu a pesquisa');
+        return;
+    }
+    
     quizState = {
         currentQuestion: 0,
         answers: {},
         surveyId: surveyId,
         startTime: new Date().toISOString(),
-        deviceId: generateDeviceId()
+        deviceId: deviceId,
+        token: token,
+        survey: survey,
+        visibleQuestions: survey.questions.filter(q => q.visible !== false),
+        dynamicRequired: {},
+        hiddenByRule: {}
     };
+    
+    // Carrega rascunho se existir
+    loadDraft();
     
     // Salva estado do quiz no sessionStorage
     sessionStorage.setItem('quizState', JSON.stringify(quizState));
+    
+    // Renderiza o quiz
+    renderQuiz();
+    
+    // Inicia auto-salvamento
+    startAutoSave();
 }
 
 /**
- * Gera um ID único para o dispositivo
+ * Renderiza o quiz
  */
-function generateDeviceId() {
-    let deviceId = localStorage.getItem('npsDeviceId');
-    if (!deviceId) {
-        deviceId = Utils.generateId('device_');
-        localStorage.setItem('npsDeviceId', deviceId);
+function renderQuiz() {
+    const survey = quizState.survey;
+    const currentQ = getCurrentQuestion();
+    
+    if (!currentQ) {
+        finishQuiz();
+        return;
     }
-    return deviceId;
+    
+    // Aplica regras condicionais
+    applyConditionalRules();
+    
+    // Calcula progresso
+    const progress = ((quizState.currentQuestion + 1) / quizState.visibleQuestions.length) * 100;
+    
+    document.getElementById('app').innerHTML = `
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div class="quiz-progress">
+                    <div class="progress-bar" style="width: ${progress}%"></div>
+                </div>
+                <div class="quiz-info">
+                    <span class="question-counter">${quizState.currentQuestion + 1} de ${quizState.visibleQuestions.length}</span>
+                    <div class="quiz-actions">
+                        <button class="language-btn ${state.ui.lang === 'pt' ? 'active' : ''}" onclick="changeQuizLanguage('pt')">PT</button>
+                        <button class="language-btn ${state.ui.lang === 'en' ? 'active' : ''}" onclick="changeQuizLanguage('en')">EN</button>
+                        <button class="language-btn ${state.ui.lang === 'es' ? 'active' : ''}" onclick="changeQuizLanguage('es')">ES</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quiz-content">
+                <div class="question-container">
+                    ${renderQuestion(currentQ)}
+                </div>
+                
+                <div class="quiz-navigation">
+                    <button onclick="previousQuestion()" class="btn btn-ghost" ${quizState.currentQuestion === 0 ? 'disabled' : ''}>
+                        ${t('previous')}
+                    </button>
+                    <div class="spacer"></div>
+                    <button onclick="nextQuestion()" class="btn btn-primary" id="nextBtn" ${!isCurrentQuestionAnswered() ? 'disabled' : ''}>
+                        ${quizState.currentQuestion === quizState.visibleQuestions.length - 1 ? t('finish') : t('next')}
+                    </button>
+                </div>
+            </div>
+            
+            <div class="quiz-footer">
+                <small class="auto-save-indicator" id="autoSaveIndicator">${t('autoSave')}</small>
+            </div>
+        </div>
+    `;
+    
+    // Aplica cor da marca
+    if (survey.brandColor) {
+        document.documentElement.style.setProperty('--brand-primary', survey.brandColor);
+    }
+    
+    // Foca no primeiro elemento interativo
+    setTimeout(() => {
+        const firstInput = document.querySelector('.question-container input, .question-container button, .question-container select, .question-container textarea');
+        if (firstInput) firstInput.focus();
+    }, 100);
 }
 
 /**
- * Seleciona uma resposta NPS (0-10)
+ * Renderiza uma pergunta
+ */
+function renderQuestion(question) {
+    const label = question.label?.[state.ui.lang] || question.label?.pt || 'Pergunta sem título';
+    const help = question.help?.[state.ui.lang] || question.help?.pt || '';
+    const isRequired = isQuestionRequired(question);
+    const currentAnswer = quizState.answers[question.id];
+    
+    let questionHTML = `
+        <div class="question" data-question-id="${question.id}">
+            <h2 class="question-title">
+                ${label}
+                ${isRequired ? '<span class="required">*</span>' : ''}
+            </h2>
+            ${help ? `<p class="question-help">${help}</p>` : ''}
+            <div class="question-input">
+    `;
+    
+    switch (question.type) {
+        case 'nps':
+            questionHTML += renderNPSQuestion(question, currentAnswer);
+            break;
+        case 'likert':
+            questionHTML += renderLikertQuestion(question, currentAnswer);
+            break;
+        case 'text':
+            questionHTML += renderTextQuestion(question, currentAnswer);
+            break;
+        case 'textarea':
+            questionHTML += renderTextareaQuestion(question, currentAnswer);
+            break;
+        case 'radio':
+            questionHTML += renderRadioQuestion(question, currentAnswer);
+            break;
+        case 'select':
+            questionHTML += renderSelectQuestion(question, currentAnswer);
+            break;
+        default:
+            questionHTML += '<p>Tipo de pergunta não suportado</p>';
+    }
+    
+    questionHTML += `
+            </div>
+        </div>
+    `;
+    
+    return questionHTML;
+}
+
+/**
+ * Renderizadores específicos por tipo de pergunta
+ */
+function renderNPSQuestion(question, currentAnswer) {
+    let html = '<div class="nps-scale">';
+    
+    for (let i = 0; i <= 10; i++) {
+        const isSelected = currentAnswer === i;
+        html += `
+            <button class="nps-button ${isSelected ? 'selected' : ''}" 
+                    data-score="${i}" 
+                    onclick="selectNPS(${i})"
+                    type="button">
+                ${i}
+            </button>
+        `;
+    }
+    
+    html += '</div>';
+    html += `
+        <div class="nps-labels">
+            <span class="nps-label-left">${t('notRecommend')}</span>
+            <span class="nps-label-right">${t('definitelyRecommend')}</span>
+        </div>
+    `;
+    
+    return html;
+}
+
+function renderLikertQuestion(question, currentAnswer) {
+    let html = '<div class="likert-scale">';
+    
+    for (let i = 1; i <= 5; i++) {
+        const isSelected = currentAnswer === i;
+        html += `
+            <button class="likert-button ${isSelected ? 'selected' : ''}" 
+                    data-score="${i}" 
+                    onclick="selectLikert(${i})"
+                    type="button">
+                ${i}
+            </button>
+        `;
+    }
+    
+    html += '</div>';
+    html += `
+        <div class="likert-labels">
+            <span>1 - Muito ruim</span>
+            <span>5 - Excelente</span>
+        </div>
+    `;
+    
+    return html;
+}
+
+function renderTextQuestion(question, currentAnswer) {
+    return `
+        <input type="text" 
+               class="text-input" 
+               value="${currentAnswer || ''}" 
+               onchange="updateTextAnswer('${question.id}', this.value)"
+               oninput="updateTextAnswer('${question.id}', this.value)"
+               placeholder="Digite sua resposta...">
+    `;
+}
+
+function renderTextareaQuestion(question, currentAnswer) {
+    return `
+        <textarea class="textarea-input" 
+                  onchange="updateTextAnswer('${question.id}', this.value)"
+                  oninput="updateTextAnswer('${question.id}', this.value)"
+                  placeholder="Digite sua resposta..."
+                  rows="4">${currentAnswer || ''}</textarea>
+    `;
+}
+
+function renderRadioQuestion(question, currentAnswer) {
+    if (!question.options || question.options.length === 0) {
+        return '<p>Nenhuma opção configurada</p>';
+    }
+    
+    let html = '<div class="radio-options">';
+    
+    question.options.forEach((option, index) => {
+        const optionValue = typeof option === 'string' ? option : option[state.ui.lang] || option.pt || option;
+        const isSelected = currentAnswer === optionValue;
+        
+        html += `
+            <label class="radio-option ${isSelected ? 'selected' : ''}">
+                <input type="radio" 
+                       name="question_${question.id}" 
+                       value="${optionValue}" 
+                       ${isSelected ? 'checked' : ''}
+                       onchange="updateRadioAnswer('${question.id}', this.value)">
+                <span class="radio-label">${optionValue}</span>
+            </label>
+        `;
+    });
+    
+    html += '</div>';
+    return html;
+}
+
+function renderSelectQuestion(question, currentAnswer) {
+    if (!question.options || question.options.length === 0) {
+        return '<p>Nenhuma opção configurada</p>';
+    }
+    
+    let html = `<select class="select-input" onchange="updateSelectAnswer('${question.id}', this.value)">`;
+    html += '<option value="">Selecione uma opção...</option>';
+    
+    question.options.forEach(option => {
+        const optionValue = typeof option === 'string' ? option : option[state.ui.lang] || option.pt || option;
+        const isSelected = currentAnswer === optionValue;
+        
+        html += `<option value="${optionValue}" ${isSelected ? 'selected' : ''}>${optionValue}</option>`;
+    });
+    
+    html += '</select>';
+    return html;
+}
+
+/**
+ * Funções de seleção de respostas
  */
 function selectNPS(score) {
     const currentQuestion = getCurrentQuestion();
@@ -59,18 +335,10 @@ function selectNPS(score) {
     
     // Salva resposta
     quizState.answers[currentQuestion.id] = score;
-    sessionStorage.setItem('quizState', JSON.stringify(quizState));
-    
-    // Habilita botão próximo
-    const nextBtn = document.querySelector('.quiz-navigation .btn-primary');
-    if (nextBtn) {
-        nextBtn.disabled = false;
-    }
+    updateNextButton();
+    queueAutoSave();
 }
 
-/**
- * Seleciona uma resposta Likert (1-5)
- */
 function selectLikert(score) {
     const currentQuestion = getCurrentQuestion();
     if (!currentQuestion) return;
@@ -88,465 +356,452 @@ function selectLikert(score) {
     
     // Salva resposta
     quizState.answers[currentQuestion.id] = score;
-    sessionStorage.setItem('quizState', JSON.stringify(quizState));
-    
-    // Habilita botão próximo
-    const nextBtn = document.querySelector('.quiz-navigation .btn-primary');
-    if (nextBtn) {
-        nextBtn.disabled = false;
-    }
+    updateNextButton();
+    queueAutoSave();
 }
 
-/**
- * Seleciona uma opção de múltipla escolha
- */
-function selectRadio(value) {
-    const currentQuestion = getCurrentQuestion();
-    if (!currentQuestion) return;
+function updateTextAnswer(questionId, value) {
+    quizState.answers[questionId] = value.trim();
+    updateNextButton();
+    queueAutoSave();
+}
+
+function updateRadioAnswer(questionId, value) {
+    quizState.answers[questionId] = value;
     
     // Atualiza visual
-    document.querySelectorAll('.radio-option').forEach(option => {
-        option.classList.remove('selected');
+    document.querySelectorAll(`input[name="question_${questionId}"]`).forEach(input => {
+        const label = input.closest('.radio-option');
+        if (input.checked) {
+            label.classList.add('selected');
+        } else {
+            label.classList.remove('selected');
+        }
     });
     
-    const selectedOption = document.querySelector(`input[value="${value}"]`).closest('.radio-option');
-    if (selectedOption) {
-        selectedOption.classList.add('selected');
-        selectedOption.querySelector('input').checked = true;
-    }
-    
-    // Salva resposta
-    quizState.answers[currentQuestion.id] = value;
-    sessionStorage.setItem('quizState', JSON.stringify(quizState));
-    
-    // Habilita botão próximo
-    const nextBtn = document.querySelector('.quiz-navigation .btn-primary');
-    if (nextBtn) {
-        nextBtn.disabled = false;
-    }
+    updateNextButton();
+    queueAutoSave();
+}
+
+function updateSelectAnswer(questionId, value) {
+    quizState.answers[questionId] = value;
+    updateNextButton();
+    queueAutoSave();
 }
 
 /**
- * Obtém a pergunta atual
- */
-function getCurrentQuestion() {
-    const survey = state.surveys[quizState.surveyId];
-    if (!survey) return null;
-    
-    return survey.questions[quizState.currentQuestion];
-}
-
-/**
- * Obtém a pesquisa atual
- */
-function getCurrentSurvey() {
-    return state.surveys[quizState.surveyId];
-}
-
-/**
- * Vai para a próxima pergunta
+ * Navegação do quiz
  */
 function nextQuestion() {
-    const survey = getCurrentSurvey();
-    const currentQuestion = getCurrentQuestion();
+    if (!isCurrentQuestionAnswered()) return;
     
-    if (!survey || !currentQuestion) return;
-    
-    // Valida resposta obrigatória
-    if (currentQuestion.required && !quizState.answers[currentQuestion.id]) {
-        Utils.showToast('Esta pergunta é obrigatória!', 'warning');
-        return;
-    }
-    
-    // Captura resposta de texto se necessário
-    if (currentQuestion.type === 'text') {
-        const textInput = document.getElementById('textInput');
-        if (textInput) {
-            const value = textInput.value.trim();
-            if (currentQuestion.required && !value) {
-                Utils.showToast('Esta pergunta é obrigatória!', 'warning');
-                textInput.focus();
-                return;
-            }
-            quizState.answers[currentQuestion.id] = value;
-        }
-    } else if (currentQuestion.type === 'textarea') {
-        const textareaInput = document.getElementById('textareaInput');
-        if (textareaInput) {
-            const value = textareaInput.value.trim();
-            if (currentQuestion.required && !value) {
-                Utils.showToast('Esta pergunta é obrigatória!', 'warning');
-                textareaInput.focus();
-                return;
-            }
-            quizState.answers[currentQuestion.id] = value;
-        }
-    }
-    
-    // Verifica se é a última pergunta
-    if (quizState.currentQuestion >= survey.questions.length - 1) {
+    if (quizState.currentQuestion < quizState.visibleQuestions.length - 1) {
+        quizState.currentQuestion++;
+        renderQuiz();
+    } else {
         finishQuiz();
-        return;
     }
-    
-    // Vai para próxima pergunta
-    quizState.currentQuestion++;
-    sessionStorage.setItem('quizState', JSON.stringify(quizState));
-    
-    // Re-renderiza o quiz
-    router();
 }
 
-/**
- * Volta para a pergunta anterior
- */
 function previousQuestion() {
-    if (quizState.currentQuestion <= 0) return;
+    if (quizState.currentQuestion > 0) {
+        quizState.currentQuestion--;
+        renderQuiz();
+    }
+}
+
+function finishQuiz() {
+    // Salva resposta final
+    saveResponse();
     
-    quizState.currentQuestion--;
-    sessionStorage.setItem('quizState', JSON.stringify(quizState));
+    // Marca token como usado se necessário
+    if (quizState.token && quizState.survey.requireToken) {
+        quizState.survey.tokens[quizState.token].used = true;
+        quizState.survey.tokens[quizState.token].usedAt = new Date().toISOString();
+    }
     
-    // Re-renderiza o quiz
-    router();
+    // Marca dispositivo como respondido se não usar tokens
+    if (!quizState.survey.requireToken) {
+        if (!quizState.survey.answeredDevices) {
+            quizState.survey.answeredDevices = {};
+        }
+        quizState.survey.answeredDevices[quizState.deviceId] = true;
+    }
+    
+    saveState();
+    
+    // Remove rascunho
+    clearDraft();
+    
+    // Redireciona para página de agradecimento
+    window.location.hash = `/thank-you/${quizState.surveyId}`;
 }
 
 /**
- * Finaliza o quiz
+ * Funções auxiliares
  */
-function finishQuiz() {
-    const survey = getCurrentSurvey();
-    if (!survey) return;
+function getCurrentQuestion() {
+    return quizState.visibleQuestions[quizState.currentQuestion];
+}
+
+function isCurrentQuestionAnswered() {
+    const currentQuestion = getCurrentQuestion();
+    if (!currentQuestion) return false;
     
-    // Verifica se o dispositivo já respondeu (se configurado)
-    if (survey.answeredDevices && survey.answeredDevices[quizState.deviceId]) {
-        showThankYouPage('Você já respondeu esta pesquisa anteriormente.');
-        return;
+    const isRequired = isQuestionRequired(currentQuestion);
+    const answer = quizState.answers[currentQuestion.id];
+    
+    if (!isRequired) return true;
+    
+    return answer !== undefined && answer !== null && answer !== '';
+}
+
+function isQuestionRequired(question) {
+    // Verifica se foi tornado obrigatório por regra condicional
+    if (quizState.dynamicRequired[question.id]) return true;
+    
+    // Verifica se está escondido por regra
+    if (quizState.hiddenByRule[question.id]) return false;
+    
+    return question.required === true;
+}
+
+function updateNextButton() {
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) {
+        nextBtn.disabled = !isCurrentQuestionAnswered();
+    }
+}
+
+/**
+ * Sistema de regras condicionais
+ */
+function applyConditionalRules() {
+    // Reset das regras dinâmicas
+    quizState.dynamicRequired = {};
+    quizState.hiddenByRule = {};
+    
+    const rules = quizState.survey.rules || [];
+    
+    rules.forEach(rule => {
+        if (!rule.when || !rule.when.qid) return;
+        
+        const conditionMet = evaluateCondition(rule.when);
+        
+        if (conditionMet && rule.then) {
+            rule.then.forEach(action => {
+                if (!action.target) return;
+                
+                switch (action.action) {
+                    case 'show':
+                        // Remove da lista de escondidos
+                        delete quizState.hiddenByRule[action.target];
+                        break;
+                    case 'hide':
+                        quizState.hiddenByRule[action.target] = true;
+                        break;
+                    case 'makeReq':
+                        quizState.dynamicRequired[action.target] = true;
+                        break;
+                }
+            });
+        }
+    });
+    
+    // Atualiza lista de perguntas visíveis
+    updateVisibleQuestions();
+}
+
+function evaluateCondition(condition) {
+    const answer = quizState.answers[condition.qid];
+    const value = condition.value;
+    
+    switch (condition.op) {
+        case 'equals':
+            return answer == value;
+        case 'notEquals':
+            return answer != value;
+        case 'contains':
+            if (Array.isArray(answer)) {
+                return answer.includes(value);
+            }
+            return String(answer || '').toLowerCase().includes(String(value || '').toLowerCase());
+        case 'greater':
+            return Number(answer) > Number(value);
+        case 'less':
+            return Number(answer) < Number(value);
+        default:
+            return false;
+    }
+}
+
+function updateVisibleQuestions() {
+    quizState.visibleQuestions = quizState.survey.questions.filter(q => {
+        return q.visible !== false && !quizState.hiddenByRule[q.id];
+    });
+}
+
+/**
+ * Sistema de auto-salvamento (rascunho)
+ */
+function startAutoSave() {
+    // Auto-salva a cada 2 segundos
+    autoSaveTimer = setInterval(() => {
+        saveDraft();
+    }, 2000);
+}
+
+function queueAutoSave() {
+    // Salva imediatamente quando há mudança
+    saveDraft();
+    
+    // Mostra indicador visual
+    const indicator = document.getElementById('autoSaveIndicator');
+    if (indicator) {
+        indicator.style.opacity = '1';
+        setTimeout(() => {
+            indicator.style.opacity = '0.6';
+        }, 1000);
+    }
+}
+
+function saveDraft() {
+    const draftScope = quizState.survey.requireToken ? (quizState.token || 'notoken') : quizState.deviceId;
+    const draftKey = DRAFT_KEY(quizState.surveyId, draftScope);
+    
+    const draftData = {
+        timestamp: Date.now(),
+        answers: quizState.answers,
+        currentQuestion: quizState.currentQuestion,
+        language: state.ui.lang
+    };
+    
+    try {
+        localStorage.setItem(draftKey, JSON.stringify(draftData));
+    } catch (e) {
+        console.warn('Erro ao salvar rascunho:', e);
+    }
+}
+
+function loadDraft() {
+    const draftScope = quizState.survey.requireToken ? (quizState.token || 'notoken') : quizState.deviceId;
+    const draftKey = DRAFT_KEY(quizState.surveyId, draftScope);
+    
+    try {
+        const draftData = localStorage.getItem(draftKey);
+        if (draftData) {
+            const draft = JSON.parse(draftData);
+            
+            // Carrega respostas salvas
+            quizState.answers = draft.answers || {};
+            
+            // Carrega posição se não for muito antiga (24h)
+            const age = Date.now() - draft.timestamp;
+            if (age < 24 * 60 * 60 * 1000) {
+                quizState.currentQuestion = draft.currentQuestion || 0;
+                
+                // Carrega idioma
+                if (draft.language) {
+                    state.ui.lang = draft.language;
+                }
+                
+                Utils.showToast(t('draftLoaded'), 'info');
+            }
+        }
+    } catch (e) {
+        console.warn('Erro ao carregar rascunho:', e);
+    }
+}
+
+function clearDraft() {
+    const draftScope = quizState.survey.requireToken ? (quizState.token || 'notoken') : quizState.deviceId;
+    const draftKey = DRAFT_KEY(quizState.surveyId, draftScope);
+    
+    try {
+        localStorage.removeItem(draftKey);
+    } catch (e) {
+        console.warn('Erro ao limpar rascunho:', e);
     }
     
-    // Cria resposta
+    // Para o auto-salvamento
+    if (autoSaveTimer) {
+        clearInterval(autoSaveTimer);
+        autoSaveTimer = null;
+    }
+}
+
+/**
+ * Salvamento da resposta final
+ */
+function saveResponse() {
     const response = {
-        id: Utils.generateId('response_'),
+        id: Utils.generateId('resp_'),
         timestamp: new Date().toISOString(),
         startTime: quizState.startTime,
         endTime: new Date().toISOString(),
-        device: quizState.deviceId,
+        language: state.ui.lang,
+        deviceId: quizState.deviceId,
+        token: quizState.token,
         answers: { ...quizState.answers },
         userAgent: navigator.userAgent,
-        language: navigator.language,
-        screenResolution: `${screen.width}x${screen.height}`,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        duration: Date.now() - new Date(quizState.startTime).getTime()
     };
     
     // Adiciona resposta à pesquisa
-    survey.responses.push(response);
-    
-    // Marca dispositivo como respondido
-    if (!survey.answeredDevices) {
-        survey.answeredDevices = {};
-    }
-    survey.answeredDevices[quizState.deviceId] = {
-        timestamp: response.timestamp,
-        responseId: response.id
-    };
-    
-    // Salva estado
-    saveState();
+    quizState.survey.responses.push(response);
     
     // Envia webhook se configurado
-    if (survey.webhook) {
-        sendWebhook(survey.webhook, response, survey);
+    if (quizState.survey.webhook) {
+        sendWebhook(quizState.survey.webhook, response);
     }
     
-    // Limpa estado do quiz
-    sessionStorage.removeItem('quizState');
-    quizState = {
-        currentQuestion: 0,
-        answers: {},
-        surveyId: null,
-        startTime: null,
-        deviceId: null
-    };
-    
-    // Mostra página de agradecimento
-    showThankYouPage();
+    return response;
 }
 
 /**
- * Mostra página de agradecimento
+ * Envio de webhook
  */
-function showThankYouPage(customMessage = null) {
-    const app = document.getElementById('app');
-    const survey = getCurrentSurvey();
+function sendWebhook(webhookUrl, responseData) {
+    const payload = {
+        survey: {
+            id: quizState.survey.id,
+            slug: quizState.survey.slug,
+            title: quizState.survey.title
+        },
+        response: responseData
+    };
     
-    app.innerHTML = `
-        <div class="container">
-            <div class="quiz-container">
-                <div class="question-card text-center">
-                    <div style="font-size: 4rem; margin-bottom: 1rem; color: #22c55e;">✓</div>
-                    <h2>${t('thankYou')}</h2>
-                    <p class="muted">
-                        ${customMessage || t('responseRecorded')}
-                    </p>
-                    ${survey ? `
-                        <div style="margin-top: 2rem; padding: 1rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px;">
-                            <h3 style="color: #6366f1; margin-bottom: 0.5rem;">${survey.title[state.ui.lang]}</h3>
-                            <p style="color: #6b7280; font-size: 0.875rem;">
-                                ${Utils.formatDate(survey.eventDate)}
-                            </p>
-                        </div>
-                    ` : ''}
-                    <a href="#/" class="btn btn-primary" style="margin-top: 2rem;">
-                        ${t('backToHome')}
-                    </a>
-                </div>
+    fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    }).catch(error => {
+        console.warn('Erro ao enviar webhook:', error);
+    });
+}
+
+/**
+ * Mudança de idioma durante o quiz
+ */
+function changeQuizLanguage(lang) {
+    state.ui.lang = lang;
+    saveState();
+    
+    // Atualiza botões de idioma
+    document.querySelectorAll('.language-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[onclick="changeQuizLanguage('${lang}')"]`).classList.add('active');
+    
+    // Re-renderiza a pergunta atual
+    renderQuiz();
+}
+
+/**
+ * Exibição de erro
+ */
+function showQuizError(message) {
+    document.getElementById('app').innerHTML = `
+        <div class="error-container">
+            <div class="error-card">
+                <h2>Erro</h2>
+                <p>${message}</p>
+                <a href="#/" class="btn btn-primary">${t('backToHome')}</a>
             </div>
         </div>
     `;
 }
 
 /**
- * Envia webhook com os dados da resposta
+ * Página de agradecimento
  */
-async function sendWebhook(webhookUrl, response, survey) {
-    try {
-        const payload = {
-            survey: {
-                id: survey.id,
-                title: survey.title,
-                slug: survey.slug,
-                eventDate: survey.eventDate
-            },
-            response: response,
-            timestamp: new Date().toISOString()
-        };
-        
-        await fetch(webhookUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
-        
-        console.log('Webhook enviado com sucesso');
-    } catch (error) {
-        console.error('Erro ao enviar webhook:', error);
-    }
-}
-
-/**
- * Valida token se necessário
- */
-function validateToken(surveyId, token) {
+function showThankYouPage(surveyId) {
     const survey = state.surveys[surveyId];
-    if (!survey) return false;
+    const title = survey ? (survey.title[state.ui.lang] || survey.title.pt) : 'Pesquisa';
     
-    // Se não requer token, permite acesso
-    if (!survey.requireToken) return true;
-    
-    // Se requer token mas não foi fornecido
-    if (!token) return false;
-    
-    // Verifica se token existe e não foi usado
-    const tokenData = survey.tokens[token];
-    if (!tokenData || tokenData.used) return false;
-    
-    return true;
+    document.getElementById('app').innerHTML = `
+        <div class="thank-you-container">
+            <div class="thank-you-card">
+                <div class="thank-you-icon">✓</div>
+                <h1>${t('thankYou')}</h1>
+                <p>${t('responseRecorded')}</p>
+                <p class="survey-title">${title}</p>
+                <a href="#/" class="btn btn-primary">${t('backToHome')}</a>
+            </div>
+        </div>
+    `;
 }
 
 /**
- * Marca token como usado
+ * Inicialização do quiz via URL
  */
-function useToken(surveyId, token) {
-    const survey = state.surveys[surveyId];
-    if (!survey || !token) return;
-    
-    if (survey.tokens[token]) {
-        survey.tokens[token].used = true;
-        survey.tokens[token].usedAt = new Date().toISOString();
-        saveState();
+function showSurveyPage(slug, token = null) {
+    const surveyId = state.slugs[slug];
+    if (!surveyId) {
+        showQuizError(t('invalidLink'));
+        return;
     }
-}
-
-/**
- * Recupera estado do quiz do sessionStorage
- */
-function restoreQuizState() {
-    try {
-        const saved = sessionStorage.getItem('quizState');
-        if (saved) {
-            const parsedState = JSON.parse(saved);
-            quizState = { ...quizState, ...parsedState };
-            return true;
-        }
-    } catch (error) {
-        console.error('Erro ao recuperar estado do quiz:', error);
-    }
-    return false;
-}
-
-/**
- * Limpa estado do quiz
- */
-function clearQuizState() {
-    sessionStorage.removeItem('quizState');
-    quizState = {
-        currentQuestion: 0,
-        answers: {},
-        surveyId: null,
-        startTime: null,
-        deviceId: null
-    };
-}
-
-/**
- * Calcula tempo gasto no quiz
- */
-function getQuizDuration() {
-    if (!quizState.startTime) return 0;
     
-    const start = new Date(quizState.startTime);
-    const end = new Date();
-    return Math.round((end - start) / 1000); // em segundos
+    initializeQuiz(surveyId, token);
 }
 
-/**
- * Obtém progresso do quiz
- */
-function getQuizProgress() {
-    const survey = getCurrentSurvey();
-    if (!survey) return 0;
+// Suporte a navegação por teclado
+document.addEventListener('keydown', (e) => {
+    if (!quizState.survey) return;
     
-    return Math.round(((quizState.currentQuestion + 1) / survey.questions.length) * 100);
-}
-
-/**
- * Verifica se pode pular pergunta
- */
-function canSkipQuestion() {
-    const currentQuestion = getCurrentQuestion();
-    return currentQuestion && !currentQuestion.required;
-}
-
-/**
- * Pula pergunta atual (se permitido)
- */
-function skipQuestion() {
-    const currentQuestion = getCurrentQuestion();
-    if (!currentQuestion || currentQuestion.required) return;
-    
-    // Remove resposta se existir
-    delete quizState.answers[currentQuestion.id];
-    sessionStorage.setItem('quizState', JSON.stringify(quizState));
-    
-    // Vai para próxima pergunta
-    nextQuestion();
-}
-
-/**
- * Obtém estatísticas do quiz atual
- */
-function getQuizStats() {
-    const survey = getCurrentSurvey();
-    if (!survey) return null;
-    
-    const totalQuestions = survey.questions.length;
-    const answeredQuestions = Object.keys(quizState.answers).length;
-    const progress = getQuizProgress();
-    const duration = getQuizDuration();
-    
-    return {
-        totalQuestions,
-        answeredQuestions,
-        currentQuestion: quizState.currentQuestion + 1,
-        progress,
-        duration,
-        isComplete: quizState.currentQuestion >= totalQuestions - 1
-    };
-}
-
-/**
- * Adiciona eventos de teclado para navegação
- */
-function addKeyboardNavigation() {
-    document.addEventListener('keydown', function(e) {
-        // Só funciona se estiver no quiz
-        if (!window.location.hash.includes('/s/')) return;
-        
-        switch(e.key) {
-            case 'ArrowLeft':
+    switch (e.key) {
+        case 'ArrowLeft':
+            if (e.ctrlKey || e.metaKey) {
                 e.preventDefault();
-                previousQuestion();
-                break;
-            case 'ArrowRight':
-            case 'Enter':
-                e.preventDefault();
-                nextQuestion();
-                break;
-            case 'Escape':
-                e.preventDefault();
-                if (confirm('Deseja sair do quiz? Suas respostas serão perdidas.')) {
-                    clearQuizState();
-                    window.location.hash = '/';
-                }
-                break;
-        }
-    });
-}
-
-/**
- * Adiciona suporte a gestos touch para mobile
- */
-function addTouchNavigation() {
-    let startX = 0;
-    let startY = 0;
-    
-    document.addEventListener('touchstart', function(e) {
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-    });
-    
-    document.addEventListener('touchend', function(e) {
-        if (!window.location.hash.includes('/s/')) return;
-        
-        const endX = e.changedTouches[0].clientX;
-        const endY = e.changedTouches[0].clientY;
-        
-        const diffX = startX - endX;
-        const diffY = startY - endY;
-        
-        // Só processa se o movimento horizontal for maior que o vertical
-        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-            if (diffX > 0) {
-                // Swipe left - próxima pergunta
-                nextQuestion();
-            } else {
-                // Swipe right - pergunta anterior
                 previousQuestion();
             }
-        }
-    });
-}
-
-// Inicialização
-document.addEventListener('DOMContentLoaded', function() {
-    addKeyboardNavigation();
-    addTouchNavigation();
+            break;
+        case 'ArrowRight':
+        case 'Enter':
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                if (isCurrentQuestionAnswered()) {
+                    nextQuestion();
+                }
+            }
+            break;
+        case 'Escape':
+            if (confirm('Deseja sair da pesquisa? Seu progresso será salvo.')) {
+                window.location.hash = '/';
+            }
+            break;
+    }
 });
 
-// Exporta funções para uso global
-if (typeof window !== 'undefined') {
-    window.quizState = quizState;
-    window.initializeQuiz = initializeQuiz;
-    window.selectNPS = selectNPS;
-    window.selectLikert = selectLikert;
-    window.selectRadio = selectRadio;
-    window.nextQuestion = nextQuestion;
-    window.previousQuestion = previousQuestion;
-    window.finishQuiz = finishQuiz;
-    window.skipQuestion = skipQuestion;
-    window.clearQuizState = clearQuizState;
-    window.restoreQuizState = restoreQuizState;
-    window.getQuizStats = getQuizStats;
+// Suporte a gestos touch para navegação
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+});
+
+function handleSwipe() {
+    const swipeThreshold = 50;
+    const diff = touchStartX - touchEndX;
+    
+    if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0) {
+            // Swipe left - próxima pergunta
+            if (isCurrentQuestionAnswered()) {
+                nextQuestion();
+            }
+        } else {
+            // Swipe right - pergunta anterior
+            previousQuestion();
+        }
+    }
 }
 

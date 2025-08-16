@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>NPS Eventos Pro - Sistema Avançado de Pesquisas</title>
+    <meta name="description" content="Sistema avançado de pesquisas de satisfação para eventos com funcionalidades profissionais">
     <meta name="color-scheme" content="light dark">
     
     <!-- CSS Files -->
@@ -94,33 +95,11 @@
             console.log('NPS Eventos Pro - Initializing...');
             
             // Initialize state if not exists
-            if (typeof initializeApp === 'function') {
-                initializeApp();
+            if (typeof initApp === 'function') {
+                initApp();
             } else {
-                console.error('initializeApp function not found. Check if app.js is loaded correctly.');
+                console.error('initApp function not found. Check if app.js is loaded correctly.');
             }
-            
-            // Set up language switcher
-            document.querySelectorAll('.language-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const lang = this.dataset.lang;
-                    if (typeof switchLanguage === 'function') {
-                        switchLanguage(lang);
-                    }
-                    
-                    // Update active state
-                    document.querySelectorAll('.language-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-            
-            // Set up router
-            if (typeof router === 'function') {
-                window.addEventListener('hashchange', router);
-                router(); // Initial route
-            }
-            
-            console.log('NPS Eventos Pro - Initialized successfully!');
         });
     </script>
 </body>
