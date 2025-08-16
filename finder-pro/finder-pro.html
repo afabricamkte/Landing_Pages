@@ -1,0 +1,943 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finder Pro - Busca de Fornecedores para Eventos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --success-color: #16a34a;
+            --danger-color: #dc2626;
+            --warning-color: #f59e0b;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --white: #ffffff;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: var(--dark);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .search-panel {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: var(--white);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: var(--white);
+        }
+
+        .results-panel {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .results-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .counter {
+            background: var(--light);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .supplier-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .supplier-card:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .supplier-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .supplier-name {
+            font-size: 1.2rem;
+            color: var(--dark);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .supplier-type {
+            display: inline-block;
+            background: var(--light);
+            color: var(--dark);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .supplier-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .info-item strong {
+            color: var(--dark);
+        }
+
+        .supplier-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            color: var(--dark);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6b7280;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: var(--dark);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            opacity: 0.3;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        .spinner {
+            border: 3px solid var(--light);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success-color);
+            color: var(--white);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+        }
+
+        .filters-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border);
+        }
+
+        .filters-title {
+            font-size: 1.1rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Finder Pro - Busca de Fornecedores</h1>
+            <p>Sistema inteligente para encontrar fornecedores de eventos corporativos</p>
+        </div>
+
+        <div class="main-content">
+            <div class="search-panel">
+                <h2 style="margin-bottom: 20px; color: var(--dark);">Buscar Fornecedores</h2>
+                
+                <div class="form-group">
+                    <label for="country">País</label>
+                    <select id="country">
+                        <option value="">Selecione o país</option>
+                        <option value="brasil">Brasil</option>
+                        <option value="usa">Estados Unidos</option>
+                        <option value="portugal">Portugal</option>
+                        <option value="argentina">Argentina</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="state">Estado</label>
+                    <select id="state">
+                        <option value="">Selecione o estado</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="city">Cidade</label>
+                    <input type="text" id="city" placeholder="Digite a cidade">
+                </div>
+
+                <div class="form-group">
+                    <label for="keywords">Palavras-chave</label>
+                    <input type="text" id="keywords" placeholder="Ex: buffet, decoração, som">
+                </div>
+
+                <div class="filters-section">
+                    <div class="filters-title">Categorias de Serviço</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="buffet"> Buffet
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="decoracao"> Decoração
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="som"> Som &amp; Iluminação
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="foto"> Foto &amp; Vídeo
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="locacao"> Locação de Espaço
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="flores"> Floricultura
+                        </label>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 25px;">
+                    <button class="btn btn-primary" onclick="searchSuppliers()" style="flex: 1;">
+                        🔍 Buscar
+                    </button>
+                    <button class="btn btn-success" onclick="openAddModal()">
+                        ➕ Adicionar
+                    </button>
+                </div>
+            </div>
+
+            <div class="results-panel">
+                <div class="results-header">
+                    <div class="results-info">
+                        <h2 style="color: var(--dark);">Resultados</h2>
+                        <span class="counter" id="resultsCounter">0 fornecedores</span>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-warning" onclick="exportToCSV()">
+                            📊 Exportar CSV
+                        </button>
+                        <button class="btn btn-danger" onclick="clearResults()">
+                            🗑️ Limpar
+                        </button>
+                    </div>
+                </div>
+
+                <div id="resultsContainer">
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <h3>Nenhuma busca realizada</h3>
+                        <p>Use os filtros ao lado para buscar fornecedores</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Adicionar Fornecedor -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Adicionar Fornecedor</h2>
+                <button class="close-btn" onclick="closeAddModal()">✕</button>
+            </div>
+            <form id="addSupplierForm">
+                <div class="form-group">
+                    <label for="supplierName">Nome da Empresa *</label>
+                    <input type="text" id="supplierName" required="">
+                </div>
+                <div class="form-group">
+                    <label for="supplierType">Tipo de Serviço *</label>
+                    <input type="text" id="supplierType" placeholder="Ex: Buffet, Decoração" required="">
+                </div>
+                <div class="form-group">
+                    <label for="supplierPhone">Telefone</label>
+                    <input type="tel" id="supplierPhone" placeholder="(11) 98765-4321">
+                </div>
+                <div class="form-group">
+                    <label for="supplierEmail">E-mail</label>
+                    <input type="email" id="supplierEmail" placeholder="contato@empresa.com">
+                </div>
+                <div class="form-group">
+                    <label for="supplierInstagram">Instagram</label>
+                    <input type="text" id="supplierInstagram" placeholder="@empresa">
+                </div>
+                <div class="form-group">
+                    <label for="supplierWebsite">Website</label>
+                    <input type="url" id="supplierWebsite" placeholder="https://www.empresa.com">
+                </div>
+                <div class="form-group">
+                    <label for="supplierAddress">Endereço</label>
+                    <textarea id="supplierAddress" rows="2" placeholder="Rua, número, bairro, cidade"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="supplierNotes">Observações</label>
+                    <textarea id="supplierNotes" rows="3" placeholder="Informações adicionais sobre o fornecedor"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 25px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        ✓ Salvar Fornecedor
+                    </button>
+                    <button type="button" class="btn" onclick="closeAddModal()" style="background: var(--light); color: var(--dark);">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast de Notificação -->
+    <div class="toast" id="toast">
+        <span id="toastMessage">Ação realizada com sucesso!</span>
+    </div>
+
+    <script>
+        // Base de dados simulada
+        let suppliers = [];
+        let searchResults = [];
+
+        // Estados por país
+        const statesByCountry = {
+            brasil: [
+                'Acre', 'Alagoas', 'Amapá', 'Amazonas', 'Bahia', 'Ceará', 'Distrito Federal',
+                'Espírito Santo', 'Goiás', 'Maranhão', 'Mato Grosso', 'Mato Grosso do Sul',
+                'Minas Gerais', 'Pará', 'Paraíba', 'Paraná', 'Pernambuco', 'Piauí',
+                'Rio de Janeiro', 'Rio Grande do Norte', 'Rio Grande do Sul', 'Rondônia',
+                'Roraima', 'Santa Catarina', 'São Paulo', 'Sergipe', 'Tocantins'
+            ],
+            usa: [
+                'California', 'Texas', 'Florida', 'New York', 'Pennsylvania', 'Illinois',
+                'Ohio', 'Georgia', 'North Carolina', 'Michigan'
+            ],
+            portugal: [
+                'Lisboa', 'Porto', 'Braga', 'Setúbal', 'Coimbra', 'Faro', 'Leiria',
+                'Aveiro', 'Viseu', 'Évora'
+            ],
+            argentina: [
+                'Buenos Aires', 'Córdoba', 'Santa Fe', 'Mendoza', 'Tucumán', 'Entre Ríos',
+                'Salta', 'Misiones', 'Chaco', 'Corrientes'
+            ]
+        };
+
+        // Dados de exemplo para demonstração
+        const sampleSuppliers = [
+            {
+                id: 1,
+                name: "Buffet Delícias Premium",
+                type: "Buffet e Catering",
+                phone: "(11) 98765-4321",
+                email: "contato@buffetdelicias.com.br",
+                instagram: "@buffetdelicias",
+                website: "https://www.buffetdelicias.com.br",
+                address: "Rua das Flores, 123 - São Paulo, SP",
+                country: "brasil",
+                state: "São Paulo",
+                city: "São Paulo",
+                notes: "Especializado em eventos corporativos de grande porte"
+            },
+            {
+                id: 2,
+                name: "Decoração & Arte Eventos",
+                type: "Decoração",
+                phone: "(21) 97654-3210",
+                email: "arte@decoracaoearte.com",
+                instagram: "@decoracaoearte",
+                website: "https://www.decoracaoearte.com",
+                address: "Av. Atlântica, 456 - Rio de Janeiro, RJ",
+                country: "brasil",
+                state: "Rio de Janeiro",
+                city: "Rio de Janeiro",
+                notes: "Decoração temática para feiras e convenções"
+            },
+            {
+                id: 3,
+                name: "Pro Sound Iluminação",
+                type: "Som e Iluminação",
+                phone: "(31) 96543-2109",
+                email: "contato@prosound.com.br",
+                instagram: "@prosoundmg",
+                website: "https://www.prosound.com.br",
+                address: "Rua da Música, 789 - Belo Horizonte, MG",
+                country: "brasil",
+                state: "Minas Gerais",
+                city: "Belo Horizonte",
+                notes: "Equipamentos de última geração para grandes eventos"
+            }
+        ];
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            loadSampleData();
+        });
+
+        function setupEventListeners() {
+            // Mudança de país atualiza estados
+            document.getElementById('country').addEventListener('change', updateStates);
+            
+            // Form de adicionar fornecedor
+            document.getElementById('addSupplierForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addSupplier();
+            });
+        }
+
+        function loadSampleData() {
+            suppliers = [...sampleSuppliers];
+        }
+
+        function updateStates() {
+            const country = document.getElementById('country').value;
+            const stateSelect = document.getElementById('state');
+            
+            stateSelect.innerHTML = '<option value="">Selecione o estado</option>';
+            
+            if (country && statesByCountry[country]) {
+                statesByCountry[country].forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state;
+                    option.textContent = state;
+                    stateSelect.appendChild(option);
+                });
+            }
+        }
+
+        function searchSuppliers() {
+            const country = document.getElementById('country').value;
+            const state = document.getElementById('state').value;
+            const city = document.getElementById('city').value.toLowerCase();
+            const keywords = document.getElementById('keywords').value.toLowerCase();
+            
+            // Categorias selecionadas
+            const selectedCategories = Array.from(document.querySelectorAll('.checkbox-item input:checked'))
+                .map(cb => cb.value);
+            
+            // Mostrar loading
+            showLoading();
+            
+            // Simular delay de busca
+            setTimeout(() => {
+                // Filtrar fornecedores
+                searchResults = suppliers.filter(supplier => {
+                    let match = true;
+                    
+                    if (country && supplier.country !== country) match = false;
+                    if (state && supplier.state !== state) match = false;
+                    if (city && !supplier.city.toLowerCase().includes(city)) match = false;
+                    if (keywords && !supplier.type.toLowerCase().includes(keywords) && 
+                        !supplier.name.toLowerCase().includes(keywords)) match = false;
+                    
+                    return match;
+                });
+                
+                // Se não houver filtros, simular busca na internet
+                if (!country && !state && !city && !keywords && selectedCategories.length === 0) {
+                    searchResults = suppliers;
+                } else if (searchResults.length === 0) {
+                    // Simular resultados encontrados na internet
+                    searchResults = generateSimulatedResults(country, state, city, keywords, selectedCategories);
+                }
+                
+                displayResults();
+                showToast(`${searchResults.length} fornecedores encontrados`);
+            }, 1500);
+        }
+
+        function generateSimulatedResults(country, state, city, keywords, categories) {
+            const simulatedResults = [];
+            const types = categories.length > 0 ? categories : ['buffet', 'decoracao', 'som', 'foto'];
+            
+            types.forEach((type, index) => {
+                const typeNames = {
+                    'buffet': 'Buffet e Catering',
+                    'decoracao': 'Decoração e Ambientação',
+                    'som': 'Som e Iluminação',
+                    'foto': 'Fotografia e Vídeo',
+                    'locacao': 'Locação de Espaços',
+                    'flores': 'Floricultura e Arranjos'
+                };
+                
+                simulatedResults.push({
+                    id: Date.now() + index,
+                    name: `${typeNames[type] || 'Serviços'} ${city || 'Local'} ${index + 1}`,
+                    type: typeNames[type] || type,
+                    phone: `(11) 9${Math.floor(Math.random() * 10000)}-${Math.floor(Math.random() * 10000)}`,
+                    email: `contato@empresa${index + 1}.com.br`,
+                    instagram: `@empresa${index + 1}`,
+                    website: `https://www.empresa${index + 1}.com.br`,
+                    address: `${city || 'Cidade'}, ${state || 'Estado'}`,
+                    country: country || 'brasil',
+                    state: state || '',
+                    city: city || '',
+                    notes: 'Fornecedor encontrado via busca online'
+                });
+            });
+            
+            return simulatedResults;
+        }
+
+        function showLoading() {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Buscando fornecedores...</p>
+                </div>
+            `;
+        }
+
+        function displayResults() {
+            const container = document.getElementById('resultsContainer');
+            const counter = document.getElementById('resultsCounter');
+            
+            if (searchResults.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <h3>Nenhum fornecedor encontrado</h3>
+                        <p>Tente ajustar os filtros de busca</p>
+                    </div>
+                `;
+                counter.textContent = '0 fornecedores';
+                return;
+            }
+            
+            let html = '';
+            searchResults.forEach(supplier => {
+                html += createSupplierCard(supplier);
+            });
+            
+            container.innerHTML = html;
+            counter.textContent = `${searchResults.length} fornecedor${searchResults.length !== 1 ? 'es' : ''}`;
+        }
+
+        function createSupplierCard(supplier) {
+            return `
+                <div class="supplier-card">
+                    <div class="supplier-header">
+                        <div>
+                            <div class="supplier-name">${supplier.name}</div>
+                            <span class="supplier-type">${supplier.type}</span>
+                        </div>
+                    </div>
+                    <div class="supplier-info">
+                        ${supplier.phone ? `
+                            <div class="info-item">
+                                📱 <strong>Tel:</strong> ${supplier.phone}
+                            </div>
+                        ` : ''}
+                        ${supplier.email ? `
+                            <div class="info-item">
+                                ✉️ <strong>Email:</strong> ${supplier.email}
+                            </div>
+                        ` : ''}
+                        ${supplier.instagram ? `
+                            <div class="info-item">
+                                📷 <strong>Instagram:</strong> ${supplier.instagram}
+                            </div>
+                        ` : ''}
+                        ${supplier.website ? `
+                            <div class="info-item">
+                                🌐 <strong>Site:</strong> ${supplier.website}
+                            </div>
+                        ` : ''}
+                        ${supplier.address ? `
+                            <div class="info-item">
+                                📍 <strong>Local:</strong> ${supplier.address}
+                            </div>
+                        ` : ''}
+                    </div>
+                    ${supplier.notes ? `
+                        <div style="margin-top: 15px; padding: 10px; background: var(--light); border-radius: 8px;">
+                            <small style="color: #6b7280;">📝 ${supplier.notes}</small>
+                        </div>
+                    ` : ''}
+                    <div class="supplier-actions">
+                        <button class="btn btn-primary" onclick="saveToDatabase(${supplier.id})" style="font-size: 0.9rem;">
+                            💾 Salvar
+                        </button>
+                        <button class="btn" onclick="editSupplier(${supplier.id})" style="background: var(--light); color: var(--dark); font-size: 0.9rem;">
+                            ✏️ Editar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openAddModal() {
+            document.getElementById('addModal').classList.add('active');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('active');
+            document.getElementById('addSupplierForm').reset();
+        }
+
+        function addSupplier() {
+            const newSupplier = {
+                id: Date.now(),
+                name: document.getElementById('supplierName').value,
+                type: document.getElementById('supplierType').value,
+                phone: document.getElementById('supplierPhone').value,
+                email: document.getElementById('supplierEmail').value,
+                instagram: document.getElementById('supplierInstagram').value,
+                website: document.getElementById('supplierWebsite').value,
+                address: document.getElementById('supplierAddress').value,
+                notes: document.getElementById('supplierNotes').value,
+                country: document.getElementById('country').value || 'brasil',
+                state: document.getElementById('state').value || '',
+                city: document.getElementById('city').value || ''
+            };
+            
+            suppliers.push(newSupplier);
+            searchResults.push(newSupplier);
+            
+            displayResults();
+            closeAddModal();
+            showToast('Fornecedor adicionado com sucesso!');
+        }
+
+        function saveToDatabase(id) {
+            const supplier = [...suppliers, ...searchResults].find(s => s.id === id);
+            if (supplier) {
+                // Aqui você implementaria a integração com Google Sheets API
+                showToast(`Fornecedor "${supplier.name}" salvo com sucesso!`);
+            }
+        }
+
+        function editSupplier(id) {
+            const supplier = [...suppliers, ...searchResults].find(s => s.id === id);
+            if (supplier) {
+                // Preencher o modal com os dados do fornecedor
+                document.getElementById('supplierName').value = supplier.name;
+                document.getElementById('supplierType').value = supplier.type;
+                document.getElementById('supplierPhone').value = supplier.phone || '';
+                document.getElementById('supplierEmail').value = supplier.email || '';
+                document.getElementById('supplierInstagram').value = supplier.instagram || '';
+                document.getElementById('supplierWebsite').value = supplier.website || '';
+                document.getElementById('supplierAddress').value = supplier.address || '';
+                document.getElementById('supplierNotes').value = supplier.notes || '';
+                
+                openAddModal();
+            }
+        }
+
+        function exportToCSV() {
+            if (searchResults.length === 0) {
+                showToast('Nenhum fornecedor para exportar', 'warning');
+                return;
+            }
+            
+            // Criar CSV
+            const headers = ['Nome', 'Tipo', 'Telefone', 'Email', 'Instagram', 'Website', 'Endereço', 'País', 'Estado', 'Cidade', 'Observações'];
+            const csvContent = [
+                headers.join(','),
+                ...searchResults.map(s => [
+                    `"${s.name}"`,
+                    `"${s.type}"`,
+                    `"${s.phone || ''}"`,
+                    `"${s.email || ''}"`,
+                    `"${s.instagram || ''}"`,
+                    `"${s.website || ''}"`,
+                    `"${s.address || ''}"`,
+                    `"${s.country || ''}"`,
+                    `"${s.state || ''}"`,
+                    `"${s.city || ''}"`,
+                    `"${s.notes || ''}"`
+                ].join(','))
+            ].join('\n');
+            
+            // Download do arquivo
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `fornecedores_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast('Arquivo CSV exportado com sucesso!');
+        }
+
+        function clearResults() {
+            if (confirm('Deseja limpar todos os resultados?')) {
+                searchResults = [];
+                displayResults();
+                showToast('Resultados limpos');
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.style.background = type === 'warning' ? 'var(--warning-color)' : 'var(--success-color)';
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+
+
+</body></html>
