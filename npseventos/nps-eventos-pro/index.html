@@ -82,7 +82,7 @@
     </footer>
 
     <!-- JavaScript Files -->
-    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/error-monitor.js"></script>
     <script src="assets/js/app.js"></script>
     <script src="assets/js/admin.js"></script>
     <script src="assets/js/quiz.js"></script>
@@ -90,16 +90,28 @@
     
     <!-- Initialize Application -->
     <script>
-        // Initialize the application when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('NPS Eventos Pro - Initializing...');
-            
-            // Initialize state if not exists
-            if (typeof initApp === 'function') {
-                initApp();
-            } else {
-                console.error('initApp function not found. Check if app.js is loaded correctly.');
-            }
+        // Remove duplicate initialization since app.js already handles it
+        console.log('NPS Eventos Pro - Scripts loaded');
+        
+        // Debug function to check initialization
+        window.debugNPS = function() {
+            console.log('=== NPS DEBUG INFO ===');
+            console.log('initApp available:', typeof initApp);
+            console.log('state available:', typeof state);
+            console.log('translations available:', typeof translations);
+            console.log('Utils available:', typeof Utils);
+            console.log('DOM ready:', document.readyState);
+            console.log('Current hash:', window.location.hash);
+        };
+        
+        // Global error handler
+        window.addEventListener('error', function(event) {
+            console.error('Global JavaScript Error:', event.error);
+            console.error('File:', event.filename, 'Line:', event.lineno);
+        });
+        
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('Unhandled Promise Rejection:', event.reason);
         });
     </script>
 </body>

@@ -1211,3 +1211,12 @@ if (document.readyState === 'loading') {
     initApp();
 }
 
+// Expor funções e variáveis no escopo global para debug e acesso
+window.initApp = initApp;
+window.state = state;
+window.translations = translations;
+window.Utils = Utils;
+window.changeLanguage = changeLanguage;
+window.showAdminLogin = showAdminLogin;
+window.handleRoute = handleRoute;
+
