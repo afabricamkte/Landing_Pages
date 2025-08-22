@@ -1,0 +1,1084 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pizzaria — Controle Operacional e Financeiro</title>
+  <style>
+    :root{
+      --bg:#0f172a; --panel:#111827; --muted:#94a3b8; --text:#e5e7eb; --brand:#22c55e;
+      --danger:#ef4444; --warn:#f59e0b; --accent:#38bdf8;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+      background:linear-gradient(180deg,#0b1220, #0f172a);
+      color:var(--text);
+    }
+    header{
+      position:sticky; top:0; z-index:10; backdrop-filter:saturate(1.2) blur(6px);
+      background:rgba(15,23,42,.7); border-bottom:1px solid #1f2937;
+    }
+    .wrap{max-width:1200px; margin:0 auto; padding:10px 16px}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:700}
+    .brand .dot{width:12px; height:12px; border-radius:50%; background:var(--brand); box-shadow:0 0 12px var(--brand)}
+    nav{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+    nav button{
+      background:#111827; color:var(--text); border:1px solid #1f2937; padding:8px 12px; border-radius:8px; cursor:pointer;
+    }
+    nav button.active{border-color:var(--brand); box-shadow:0 0 0 2px rgba(34,197,94,.2)}
+    main{padding:16px}
+    .grid{display:grid; gap:16px}
+    @media(min-width:900px){ .grid-cols-2{grid-template-columns:1fr 1fr} .grid-cols-3{grid-template-columns:repeat(3,1fr)} }
+    section.panel{
+      background:var(--panel); border:1px solid #1f2937; border-radius:12px; padding:16px;
+    }
+    h2{margin:0 0 8px 0; font-size:18px}
+    h3{margin:16px 0 8px; font-size:16px}
+    p.muted{color:var(--muted); margin:6px 0}
+    label{display:block; font-size:12px; color:var(--muted); margin:10px 0 4px}
+    input, select, textarea{
+      width:100%; background:#0b1220; color:var(--text); border:1px solid #1f2937;
+      padding:8px 10px; border-radius:8px; outline:none;
+    }
+    input[type="number"]{appearance:textfield}
+    .row{display:flex; gap:8px; flex-wrap:wrap}
+    .row > *{flex:1}
+    table{width:100%; border-collapse:collapse}
+    th,td{border-bottom:1px solid #1f2937; padding:8px; text-align:left; font-size:13px}
+    th{color:#cbd5e1}
+    .pill{display:inline-block; padding:2px 8px; border-radius:999px; background:#0b1220; border:1px solid #1f2937; color:#cbd5e1; font-size:12px}
+    .btn{
+      background:linear-gradient(180deg,#16a34a,#15803d); border:none; color:white; padding:10px 14px; border-radius:10px; cursor:pointer;
+    }
+    .btn.secondary{background:#0b1220; border:1px solid #1f2937; color:#e5e7eb}
+    .btn.danger{background:linear-gradient(180deg,#ef4444,#b91c1c)}
+    .right{display:flex; gap:8px; justify-content:flex-end; align-items:center; flex-wrap:wrap}
+    .kpi{padding:12px; border:1px dashed #334155; border-radius:10px; background:#0b1220}
+    .kpi .v{font-size:20px; font-weight:700}
+    .ok{color:var(--brand)} .warn{color:var(--warn)} .bad{color:var(--danger)}
+    .footer{color:#94a3b8; font-size:12px; text-align:center; padding:24px 0}
+    .tag{font-size:11px; color:#94a3b8}
+    .scroll{max-height:360px; overflow:auto}
+    .hr{height:1px; background:#1f2937; margin:12px 0}
+    .note{font-size:12px; color:#94a3b8}
+    .badge{background:#0ea5e9; color:#052c3b; padding:2px 6px; border-radius:6px; font-size:11px; font-weight:700}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="brand">
+        <div class="dot"></div>
+        <div>Pizzaria — Operação &amp; Financeiro</div>
+        <span class="badge">Local-First</span>
+      </div>
+      <nav id="nav"></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="view"></div>
+  </main>
+
+  <div class="wrap footer">Dados salvos no seu navegador (IndexedDB). Exporte XLS/Backup regularmente.</div>
+
+  <script>
+    // Utilidades
+    const fmtBR = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+    const fmtNum = (n, d=2) => (isFinite(n) ? Number(n).toFixed(d) : '-');
+    const todayStr = () => new Date().toISOString().slice(0,10);
+
+    // IndexedDB leve
+    const DB_NAME = 'pizzaria-db-v1';
+    const DB_STORE = ['itens','contagens','compras','despesas','vendas','receitas','config'];
+    let db;
+    function openDB(){
+      return new Promise((resolve,reject)=>{
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = (e)=>{
+          db = e.target.result;
+          DB_STORE.forEach(s=>{
+            if(!db.objectStoreNames.contains(s)){
+              const store = db.createObjectStore(s, { keyPath:'id', autoIncrement:true });
+              if(['itens','receitas'].includes(s)) store.createIndex('nome','nome',{unique:true});
+              if(['contagens','compras','despesas','vendas'].includes(s)) store.createIndex('data','data');
+            }
+          });
+        };
+        req.onsuccess = ()=>{ db = req.result; resolve(); };
+        req.onerror = ()=>reject(req.error);
+      });
+    }
+    function tx(store, mode='readonly'){ return db.transaction(store, mode).objectStore(store); }
+    function add(store, val){ return new Promise((res,rej)=>{ const r = tx(store, 'readwrite').add(val); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); });}
+    function put(store, val){ return new Promise((res,rej)=>{ const r = tx(store, 'readwrite').put(val); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); });}
+    function del(store, key){ return new Promise((res,rej)=>{ const r = tx(store, 'readwrite').delete(key); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); });}
+    function all(store){ return new Promise((res,rej)=>{ const r = tx(store).getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>rej(r.error); });}
+    function byIndex(store, idx, key){ return new Promise((res,rej)=>{ const r = tx(store).index(idx).getAll(key); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>rej(r.error); });}
+
+    // Estado simples
+    const S = {
+      tab: 'dashboard',
+      data: { itens:[], contagens:[], compras:[], despesas:[], vendas:[], receitas:[], config:[] }
+    };
+
+    // Navegação
+    const tabs = [
+      {id:'dashboard', label:'Dashboard'},
+      {id:'estoque', label:'Estoque'},
+      {id:'receitas', label:'Fichas Técnicas'},
+      {id:'vendas', label:'Vendas'},
+      {id:'financeiro', label:'Financeiro'},
+      {id:'export', label:'Exportar XLS / Backup'},
+      {id:'ajuda', label:'Ajuda'}
+    ];
+
+    function renderNav(){
+      const nav = document.getElementById('nav');
+      nav.innerHTML = '';
+      tabs.forEach(t=>{
+        const b = document.createElement('button');
+        b.textContent = t.label;
+        b.className = S.tab===t.id ? 'active' : '';
+        b.onclick = ()=>{ S.tab = t.id; render(); };
+        nav.appendChild(b);
+      });
+    }
+
+    // Helpers de negócio
+    function mapBy(arr, key){ const m = new Map(); arr.forEach(o=>m.set(o[key], o)); return m; }
+
+    // Calcula CMV por dia a partir de contagens + compras
+    function calculaCMV(){
+      // Consumo = (Saldo inicial + Entradas - Saldo final) x custo
+      const itens = S.data.itens;
+      const contagens = S.data.contagens.sort((a,b)=>a.data.localeCompare(b.data));
+      const compras = S.data.compras;
+      const custos = new Map(itens.map(i=>[i.id, Number(i.custo)||0]));
+      // organizar por data
+      const porDia = {};
+      contagens.forEach(c=>{
+        porDia[c.data] = porDia[c.data] || { finais:new Map(), iniciais:new Map(), entradas:new Map(), cmv:0 };
+        porDia[c.data].finais.set(c.itemId, Number(c.qtd));
+      });
+      // determinar saldos iniciais (o final do dia anterior)
+      let prevFinal = new Map();
+      const datas = Object.keys(porDia).sort();
+      datas.forEach(d=>{
+        const hoje = porDia[d];
+        hoje.iniciais = new Map(prevFinal);
+        // entradas do dia por item
+        const comprasDoDia = compras.filter(k=>k.data===d);
+        comprasDoDia.forEach(k=>{
+          const cur = hoje.entradas.get(k.itemId)||0;
+          hoje.entradas.set(k.itemId, cur + Number(k.qtd));
+        });
+        // consumo e CMV
+        let cmvDia = 0;
+        itens.forEach(it=>{
+          const ini = Number(hoje.iniciais.get(it.id)||0);
+          const ent = Number(hoje.entradas.get(it.id)||0);
+          const fim = Number(hoje.finais.get(it.id)||0);
+          const consumo = Math.max(0, ini + ent - fim);
+          cmvDia += consumo * (custos.get(it.id)||0);
+        });
+        hoje.cmv = cmvDia;
+        prevFinal = hoje.finais; // para o próximo dia
+      });
+      return { porDia, datas };
+    }
+
+    function resumoFinanceiro(){
+      const vendas = S.data.vendas;
+      const despesas = S.data.despesas;
+      const totalBruto = vendas.reduce((s,v)=>s+Number(v.valorBruto||0),0);
+      const comissoes = vendas.reduce((s,v)=>s+Number(v.comissao||0),0);
+      const entregas = vendas.reduce((s,v)=>s+Number(v.custoEntrega||0),0);
+      const embalagem = vendas.reduce((s,v)=>s+Number(v.custoEmbalagem||0),0);
+      const receitasLiq = totalBruto - comissoes;
+      const fixas = despesas.filter(d=>d.tipo==='fixa').reduce((s,d)=>s+Number(d.valor||0),0);
+      const variaveis = despesas.filter(d=>d.tipo!=='fixa').reduce((s,d)=>s+Number(d.valor||0),0);
+      return { totalBruto, comissoes, receitasLiq, entregas, embalagem, fixas, variaveis };
+    }
+
+    function kpis(){
+      const { porDia, datas } = calculaCMV();
+      const fin = resumoFinanceiro();
+      // CMV total (soma dos dias)
+      const cmvTotal = Object.values(porDia).reduce((s,d)=>s+d.cmv,0);
+      const receita = fin.totalBruto;
+      const cmvPerc = receita>0? cmvTotal/receita : 0;
+      const margemContrib = fin.receitasLiq - cmvTotal - fin.entregas - fin.embalagem;
+      const resultado = margemContrib - (fin.fixas + fin.variaveis);
+      // vendas por dia
+      const vendasPorDia = {};
+      S.data.vendas.forEach(v=>{
+        vendasPorDia[v.data] = vendasPorDia[v.data] || { qtd:0, valor:0 };
+        vendasPorDia[v.data].qtd += Number(v.qtdPizzas||0);
+        vendasPorDia[v.data].valor += Number(v.valorBruto||0);
+      });
+      const dias = Object.keys(vendasPorDia);
+      const pizzasDiaMed = dias.length? (dias.reduce((s,d)=>s+vendasPorDia[d].qtd,0)/dias.length) : 0;
+      const ticketMed = dias.length? (dias.reduce((s,d)=>s+vendasPorDia[d].valor,0)/dias.reduce((s,d)=>s+vendasPorDia[d].qtd,0)) : 0;
+      return { cmvTotal, cmvPerc, receita, margemContrib, resultado, pizzasDiaMed, ticketMed, porDia, datas };
+    }
+
+    // XLSX geração (pequeno gerador .xlsx)
+    // Implementação minimalista usando SheetJS-lite CDN é inviável offline.
+    // Portanto, vamos gerar um XLSX básico manualmente via mimetype application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+    // Para robustez, exportaremos CSVs zipados. Porém o pedido exige XLS.
+    // Solução prática: gerar múltiplas planilhas em um único arquivo .xlsx simples usando a biblioteca embutida a seguir (mini-xlsx).
+    // Fonte: implementação reduzida (MIT) para criar xlsx com poucas features.
+    // Para manter tudo em um arquivo, criaremos um zip (PK) manual com estrutura mínima.
+    // Obs: Excel aceita CSV também, mas atenderemos como .xlsx.
+
+    // Mini util Zip + XLSX (super simplificado, atende colunas básicas)
+    // Créditos conceituais: openxlsx spec. Implementação ad hoc.
+    // Limitações: até ~100k células. Sem fórmulas. Texto/números.
+    function exportXLSX(sheets){
+      // sheets: { name: string, data: string[][] }[]
+      // Cria xlsx via construção de zip armazenado (sem compressão).
+      function uint8(s){ const a=new Uint8Array(s.length); for(let i=0;i<s.length;i++) a[i]=s.charCodeAt(i); return a; }
+      function strToArrayBuffer(s){ const buf=new ArrayBuffer(s.length); const view=new Uint8Array(buf); for(let i=0;i<s.length;i++) view[i]=s.charCodeAt(i) & 0xFF; return buf; }
+      function fdate(){ return new Date().toISOString().replace(/\.\d+Z$/,'Z'); }
+      const esc = s => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const rels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+          <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
+        </Relationships>`;
+      const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+          <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+          <Default Extension="xml" ContentType="application/xml"/>
+          <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+          ${sheets.map((s,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}
+          <Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>
+          <Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>
+          <Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>
+        </Types>`;
+      const core = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"
+          xmlns:dc="http://purl.org/dc/elements/1.1/"
+          xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <dc:title>Pizzaria Export</dc:title>
+          <dc:creator>Pizzaria App</dc:creator>
+          <cp:lastModifiedBy>Pizzaria App</cp:lastModifiedBy>
+          <dcterms:created xsi:type="dcterms:W3CDTF">${fdate()}</dcterms:created>
+          <dcterms:modified xsi:type="dcterms:W3CDTF">${fdate()}</dcterms:modified>
+        </cp:coreProperties>`;
+      const app = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"
+          xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
+          <Application>Pizzaria App</Application>
+          <Sheets>${sheets.length}</Sheets>
+        </Properties>`;
+      const workbook = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+         xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+          <sheets>
+            ${sheets.map((s,i)=>`<sheet name="${esc(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')}
+          </sheets>
+          <bookViews><workbookView/></bookViews>
+          <calcPr calcId="124519"/></workbook>`;
+      const wbRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+          ${sheets.map((s,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}
+          <Relationship Id="rId${sheets.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+        </Relationships>`;
+      const styles = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+          <fonts count="1"><font><sz val="11"/><color rgb="FF000000"/><name val="Calibri"/></font></fonts>
+          <fills count="1"><fill><patternFill patternType="none"/></fill></fills>
+          <borders count="1"><border/></borders>
+          <cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
+          <cellXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/></cellXfs>
+        </styleSheet>`;
+      function sheetXML(data){
+        // data: string[][]
+        let rows = '';
+        for(let r=0;r<data.length;r++){
+          let cells = '';
+          for(let c=0;c<data[r].length;c++){
+            const v = data[r][c];
+            const col = (()=>{ // A1 notation
+              let n=c+1,s=''; while(n){ let m=(n-1)%26; s=String.fromCharCode(65+m)+s; n=Math.floor((n-1)/26); } return s;
+            })();
+            if(v===null || v===undefined || v===''){ cells += `<c r="${col}${r+1}"/>`; continue; }
+            const num = typeof v==='number' && isFinite(v);
+            if(num) cells += `<c r="${col}${r+1}"><v>${v}</v></c>`;
+            else cells += `<c r="${col}${r+1}" t="inlineStr"><is><t>${esc(String(v))}</t></is></c>`;
+          }
+          rows += `<row r="${r+1}">${cells}</row>`;
+        }
+        return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+          <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${rows}</sheetData></worksheet>`;
+      }
+      const sheetsXML = sheets.map(s=>sheetXML(s.data));
+      // ZIP sem compressão
+      // Estrutura mínima central directory
+      function makeZip(files){ // files: [{name, data(string)}]
+        function crc32(str){ // tabela rápida
+          let crc=-1; for(let i=0;i<str.length;i++){ let c=str.charCodeAt(i); crc = (crc>>>8) ^ table[(crc^c)&0xFF]; }
+          return (crc^(-1))>>>0;
+        }
+        const table = (()=>{ let c, table=[]; for(let n=0;n<256;n++){ c=n; for(let k=0;k<8;k++) c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1); table[n]=c; } return table; })();
+        const encoder = s=>uint8(s);
+        const filesData = [];
+        let offset = 0;
+        const cd = [];
+        files.forEach(f=>{
+          const data = encoder(f.data);
+          const name = f.name;
+          const sig = '\x50\x4b\x03\x04';
+          const ver = '\x0A\x00';
+          const flag = '\x00\x00';
+          const comp = '\x00\x00'; // store
+          const modt = '\x00\x00\x00\x00';
+          const crc = crc32(f.data);
+          const size = data.length;
+          const header = sig + ver + flag + comp + modt
+            + String.fromCharCode(crc&0xFF,(crc>>8)&0xFF,(crc>>16)&0xFF,(crc>>24)&0xFF)
+            + String.fromCharCode(size&0xFF,(size>>8)&0xFF,(size>>16)&0xFF,(size>>24)&0xFF)
+            + String.fromCharCode(size&0xFF,(size>>8)&0xFF,(size>>16)&0xFF,(size>>24)&0xFF)
+            + String.fromCharCode(name.length&0xFF,(name.length>>8)&0xFF) + '\x00\x00' + name;
+          const fileRec = header + String.fromCharCode.apply(null, data);
+          filesData.push({bin: uint8(fileRec), offset, size, crc, name});
+          offset += fileRec.length;
+        });
+        // central directory
+        let cdBin = [];
+        let cdSize = 0;
+        filesData.forEach(f=>{
+          const sig = '\x50\x4b\x01\x02';
+          const verMade = '\x1E\x03';
+          const ver = '\x0A\x00';
+          const flag = '\x00\x00';
+          const comp = '\x00\x00';
+          const modt = '\x00\x00\x00\x00';
+          const header = sig + verMade + ver + flag + comp + modt
+            + String.fromCharCode(f.crc&0xFF,(f.crc>>8)&0xFF,(f.crc>>16)&0xFF,(f.crc>>24)&0xFF)
+            + String.fromCharCode(f.size&0xFF,(f.size>>8)&0xFF,(f.size>>16)&0xFF,(f.size>>24)&0xFF)
+            + String.fromCharCode(f.size&0xFF,(f.size>>8)&0xFF,(f.size>>16)&0xFF,(f.size>>24)&0xFF)
+            + String.fromCharCode(f.name.length&0xFF,(f.name.length>>8)&0xFF) + '\x00\x00' + '\x00\x00' + '\x00\x00' + '\x00\x00'
+            + '\x00\x00\x00\x00'
+            + String.fromCharCode(f.offset&0xFF,(f.offset>>8)&0xFF,(f.offset>>16)&0xFF,(f.offset>>24)&0xFF)
+            + f.name;
+          const arr = uint8(header);
+          cdBin.push(arr); cdSize += arr.length;
+        });
+        const cdStart = offset;
+        const cdConcat = new Uint8Array(cdSize);
+        let p=0; cdBin.forEach(b=>{ cdConcat.set(b,p); p+=b.length; });
+        const endSig = '\x50\x4b\x05\x06' + '\x00\x00'+'\x00\x00'
+          + String.fromCharCode(files.length&0xFF,(files.length>>8)&0xFF) + String.fromCharCode(files.length&0xFF,(files.length>>8)&0xFF)
+          + String.fromCharCode(cdSize&0xFF,(cdSize>>8)&0xFF,(cdSize>>16)&0xFF,(cdSize>>24)&0xFF)
+          + String.fromCharCode(cdStart&0xFF,(cdStart>>8)&0xFF,(cdStart>>16)&0xFF,(cdStart>>24)&0xFF)
+          + '\x00\x00';
+        // Concatenate
+        let totalLen = offset + cdConcat.length + endSig.length;
+        const out = new Uint8Array(totalLen);
+        let pos=0;
+        filesData.forEach(f=>{ out.set(f.bin,pos); pos+=f.bin.length; });
+        out.set(cdConcat,pos); pos+=cdConcat.length;
+        out.set(uint8(endSig),pos);
+        return out.buffer;
+      }
+
+      const files = [
+        {name:'[Content_Types].xml', data:contentTypes},
+        {name:'_rels/.rels', data:rels},
+        {name:'docProps/core.xml', data:core},
+        {name:'docProps/app.xml', data:app},
+        {name:'xl/workbook.xml', data:workbook},
+        {name:'xl/_rels/workbook.xml.rels', data:wbRels},
+        {name:'xl/styles.xml', data:styles},
+        ...sheetsXML.map((xml,i)=>({name:`xl/worksheets/sheet${i+1}.xml`, data:xml}))
+      ];
+      const blob = new Blob([makeZip(files)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `pizzaria-export-${new Date().toISOString().slice(0,10)}.xlsx`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    // Views
+    function viewDashboard(){
+      const { cmvTotal, cmvPerc, receita, margemContrib, resultado, pizzasDiaMed, ticketMed, porDia, datas } = kpis();
+      const cmvClass = cmvPerc<=0.3? 'ok' : (cmvPerc<=0.35? 'warn':'bad');
+      const resClass = resultado>=0 ? 'ok' : 'bad';
+
+      // Curta série temporal das últimas 14 datas
+      const serie = datas.slice(-14).map(d=>{
+        const v = S.data.vendas.filter(x=>x.data===d).reduce((s,a)=>s+Number(a.valorBruto||0),0);
+        return {d, v, cmv: porDia[d]?.cmv || 0};
+      });
+
+      return `
+        <section class="panel">
+          <h2>Dashboard</h2>
+          <p class="muted">Acompanhe CMV, margem e resultado. Meta de CMV: 25–30% da receita.</p>
+          <div class="grid grid-cols-3">
+            <div class="kpi">
+              <div class="tag">Receita Bruta (período)</div>
+              <div class="v">${fmtBR.format(receita)}</div>
+            </div>
+            <div class="kpi">
+              <div class="tag">CMV Total</div>
+              <div class="v ${cmvClass}">${fmtBR.format(cmvTotal)} (${fmtNum(cmvPerc*100,1)}%)</div>
+            </div>
+            <div class="kpi">
+              <div class="tag">Margem de Contribuição</div>
+              <div class="v">${fmtBR.format(margemContrib)}</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-3" style="margin-top:12px">
+            <div class="kpi">
+              <div class="tag">Pizzas/dia (média)</div>
+              <div class="v">${fmtNum(pizzasDiaMed,1)}</div>
+            </div>
+            <div class="kpi">
+              <div class="tag">Ticket Médio</div>
+              <div class="v">${fmtBR.format(ticketMed||0)}</div>
+            </div>
+            <div class="kpi">
+              <div class="tag">Resultado Operacional</div>
+              <div class="v ${resClass}">${fmtBR.format(resultado)}</div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <h3>Série recente (14 dias)</h3>
+          <div class="scroll">
+            <table>
+              <thead><tr><th>Data</th><th>Vendas</th><th>CMV</th></tr></thead>
+              <tbody>
+                ${serie.map(r=>`<tr><td>${r.d}</td><td>${fmtBR.format(r.v)}</td><td>${fmtBR.format(r.cmv)}</td></tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      `;
+    }
+
+    function viewEstoque(){
+      const itens = S.data.itens;
+      const contagens = S.data.contagens;
+      return `
+        <section class="panel">
+          <h2>Estoque</h2>
+          <div class="grid grid-cols-2">
+            <div>
+              <h3>Cadastrar/Editar Item</h3>
+              <div class="row">
+                <div>
+                  <label>Nome do item</label>
+                  <input id="it-nome" placeholder="Ex.: Muçarela (kg)" />
+                </div>
+                <div>
+                  <label>Unidade</label>
+                  <input id="it-un" placeholder="kg, un, L, g..." />
+                </div>
+              </div>
+              <div class="row">
+                <div>
+                  <label>Custo unitário (R$ por unidade)</label>
+                  <input id="it-custo" type="number" step="0.01" />
+                </div>
+                <div>
+                  <label>Estoque mínimo (alerta)</label>
+                  <input id="it-min" type="number" step="0.01" />
+                </div>
+              </div>
+              <div class="right">
+                <button class="btn" onclick="saveItem()">Salvar Item</button>
+              </div>
+              <p class="note">Dica: itens críticos — muçarela, farinha, molho, calabresa, caixas, refri.</p>
+            </div>
+            <div>
+              <h3>Itens cadastrados</h3>
+              <div class="scroll">
+                <table>
+                  <thead><tr><th>Item</th><th>Un</th><th>Custo</th><th>Mín</th><th></th></tr></thead>
+                  <tbody>
+                    ${itens.map(i=>`
+                      <tr>
+                        <td>${i.nome}</td>
+                        <td>${i.un}</td>
+                        <td>${fmtBR.format(i.custo||0)}</td>
+                        <td>${i.min||0}</td>
+                        <td class="right">
+                          <button class="btn secondary" onclick='editItem(${i.id})'>Editar</button>
+                          <button class="btn danger" onclick='deleteItem(${i.id})'>Del</button>
+                        </td>
+                      </tr>`).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h3>Compras e Contagem Diária</h3>
+          <div class="row">
+            <div>
+              <label>Data</label>
+              <input id="mov-data" type="date" value="${todayStr()}" />
+            </div>
+            <div>
+              <label>Item</label>
+              <select id="mov-item">
+                ${itens.map(i=>`<option value="${i.id}">${i.nome}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label>Quantidade (unidade do item)</label>
+              <input id="mov-qtd" type="number" step="0.01" />
+            </div>
+            <div>
+              <label>Tipo</label>
+              <select id="mov-tipo">
+                <option value="compra">Compra (entrada)</option>
+                <option value="contagem">Contagem (saldo final)</option>
+              </select>
+            </div>
+          </div>
+          <div class="right">
+            <button class="btn" onclick="salvarMov()">Registrar</button>
+          </div>
+
+          <div class="grid grid-cols-2" style="margin-top:12px">
+            <div>
+              <h3>Compras recentes</h3>
+              <div class="scroll">
+                <table>
+                  <thead><tr><th>Data</th><th>Item</th><th>Qtd</th><th>R$ Total</th><th></th></tr></thead>
+                  <tbody>
+                    ${S.data.compras.slice().reverse().map(c=>{
+                      const it = itens.find(i=>i.id===c.itemId)||{};
+                      return `<tr>
+                        <td>${c.data}</td><td>${it.nome||''}</td><td>${c.qtd}</td><td>${fmtBR.format((it.custo||0)*c.qtd)}</td>
+                        <td class="right"><button class="btn danger" onclick="deleteCompra(${c.id})">Del</button></td>
+                      </tr>`;
+                    }).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div>
+              <h3>Contagens recentes</h3>
+              <div class="scroll">
+                <table>
+                  <thead><tr><th>Data</th><th>Item</th><th>Saldo Final</th><th></th></tr></thead>
+                  <tbody>
+                    ${S.data.contagens.slice().reverse().map(c=>{
+                      const it = itens.find(i=>i.id===c.itemId)||{};
+                      return `<tr>
+                        <td>${c.data}</td><td>${it.nome||''}</td><td>${c.qtd}</td>
+                        <td class="right"><button class="btn danger" onclick="deleteContagem(${c.id})">Del</button></td>
+                      </tr>`;
+                    }).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function viewReceitas(){
+      const itens = S.data.itens;
+      const receitas = S.data.receitas;
+      return `
+        <section class="panel">
+          <h2>Fichas Técnicas (Pizzas)</h2>
+          <div class="grid grid-cols-2">
+            <div>
+              <h3>Cadastrar Receita</h3>
+              <label>Nome da pizza</label>
+              <input id="rcp-nome" placeholder="Ex.: Margherita" />
+              <label>Preço de venda (R$)</label>
+              <input id="rcp-preco" type="number" step="0.01" />
+              <h3>Ingredientes</h3>
+              <div id="rcp-ings"></div>
+              <div class="right">
+                <button class="btn secondary" onclick="addIng()">Adicionar ingrediente</button>
+                <button class="btn" onclick="saveReceita()">Salvar Receita</button>
+              </div>
+              <p class="note">Use as mesmas unidades dos itens de estoque. Ex.: muçarela (kg) com quantidade em kg por pizza.</p>
+            </div>
+            <div>
+              <h3>Receitas</h3>
+              <div class="scroll">
+                <table>
+                  <thead><tr><th>Pizza</th><th>Preço</th><th>Food Cost</th><th>Margem</th><th></th></tr></thead>
+                  <tbody>
+                    ${receitas.map(r=>{
+                      const custo = (r.ings||[]).reduce((s,g)=>{
+                        const it = itens.find(i=>i.id===g.itemId);
+                        return s + (it ? (it.custo||0)*Number(g.qtd||0) : 0);
+                      },0);
+                      const preco = Number(r.preco||0);
+                      const fc = preco>0 ? custo/preco : 0;
+                      return `<tr>
+                        <td>${r.nome}</td>
+                        <td>${fmtBR.format(preco)}</td>
+                        <td>${fmtNum(fc*100,1)}%</td>
+                        <td>${fmtBR.format(preco - custo)}</td>
+                        <td class="right">
+                          <button class="btn secondary" onclick='editReceita(${r.id})'>Editar</button>
+                          <button class="btn danger" onclick='deleteReceita(${r.id})'>Del</button>
+                        </td>
+                      </tr>`;
+                    }).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function viewVendas(){
+      const receitas = S.data.receitas;
+      const vendas = S.data.vendas;
+      return `
+        <section class="panel">
+          <h2>Vendas</h2>
+          <div class="row">
+            <div>
+              <label>Data</label>
+              <input id="vd-data" type="date" value="${todayStr()}" />
+            </div>
+            <div>
+              <label>Canal</label>
+              <select id="vd-canal">
+                <option value="balcao">Balcão</option>
+                <option value="direto">Delivery Direto</option>
+                <option value="app">App (iFood/Rappi)</option>
+              </select>
+            </div>
+            <div>
+              <label>Qtd pizzas</label>
+              <input id="vd-qtd" type="number" step="1" />
+            </div>
+            <div>
+              <label>Valor bruto do dia (R$)</label>
+              <input id="vd-bruto" type="number" step="0.01" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Comissão (R$)</label>
+              <input id="vd-com" type="number" step="0.01" />
+            </div>
+            <div>
+              <label>Custo de entrega (R$)</label>
+              <input id="vd-ent" type="number" step="0.01" />
+            </div>
+            <div>
+              <label>Custo de embalagem (R$)</label>
+              <input id="vd-emb" type="number" step="0.01" />
+            </div>
+            <div>
+              <label>Avaliação média do dia (0–5)</label>
+              <input id="vd-av" type="number" step="0.1" />
+            </div>
+          </div>
+          <div class="right">
+            <button class="btn" onclick="saveVenda()">Salvar Vendas do Dia</button>
+          </div>
+
+          <h3 style="margin-top:12px">Histórico</h3>
+          <div class="scroll">
+            <table>
+              <thead><tr><th>Data</th><th>Canal</th><th>Qtd</th><th>Bruto</th><th>Comissão</th><th>Entrega</th><th>Embalagem</th><th>Avaliação</th><th></th></tr></thead>
+              <tbody>
+                ${vendas.slice().reverse().map(v=>`
+                  <tr>
+                    <td>${v.data}</td>
+                    <td>${v.canal}</td>
+                    <td>${v.qtdPizzas||0}</td>
+                    <td>${fmtBR.format(v.valorBruto||0)}</td>
+                    <td>${fmtBR.format(v.comissao||0)}</td>
+                    <td>${fmtBR.format(v.custoEntrega||0)}</td>
+                    <td>${fmtBR.format(v.custoEmbalagem||0)}</td>
+                    <td>${v.avaliacao||''}</td>
+                    <td class="right"><button class="btn danger" onclick="deleteVenda(${v.id})">Del</button></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      `;
+    }
+
+    function viewFinanceiro(){
+      const despesas = S.data.despesas;
+      return `
+        <section class="panel">
+          <h2>Financeiro</h2>
+          <div class="row">
+            <div>
+              <label>Data</label>
+              <input id="fin-data" type="date" value="${todayStr()}" />
+            </div>
+            <div>
+              <label>Categoria</label>
+              <select id="fin-cat">
+                <option value="insumos">Insumos</option>
+                <option value="embalagens">Embalagens</option>
+                <option value="entregas">Entregas</option>
+                <option value="folha">Folha</option>
+                <option value="aluguel">Aluguel</option>
+                <option value="contas">Gás/Energia/Água/Internet</option>
+                <option value="sistemas">Sistemas</option>
+                <option value="marketing">Marketing</option>
+                <option value="manutencao">Manutenção</option>
+                <option value="outros">Outros</option>
+              </select>
+            </div>
+            <div>
+              <label>Tipo</label>
+              <select id="fin-tipo">
+                <option value="fixa">Fixa</option>
+                <option value="variavel">Variável</option>
+              </select>
+            </div>
+            <div>
+              <label>Valor (R$)</label>
+              <input id="fin-valor" type="number" step="0.01" />
+            </div>
+          </div>
+          <div class="right">
+            <button class="btn" onclick="saveDespesa()">Salvar Despesa</button>
+          </div>
+
+          <h3 style="margin-top:12px">Despesas</h3>
+          <div class="scroll">
+            <table>
+              <thead><tr><th>Data</th><th>Categoria</th><th>Tipo</th><th>Valor</th><th></th></tr></thead>
+              <tbody>
+                ${despesas.slice().reverse().map(d=>`
+                  <tr>
+                    <td>${d.data}</td>
+                    <td>${d.categoria}</td>
+                    <td>${d.tipo}</td>
+                    <td>${fmtBR.format(d.valor||0)}</td>
+                    <td class="right"><button class="btn danger" onclick="deleteDespesa(${d.id})">Del</button></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      `;
+    }
+
+    function viewExport(){
+      const { cmvTotal, cmvPerc, receita, margemContrib, resultado, porDia, datas } = kpis();
+      return `
+        <section class="panel">
+          <h2>Exportar XLS e Backup</h2>
+          <p class="muted">Exporte planilhas para análise externa e faça backup/restore do banco local.</p>
+          <div class="row">
+            <button class="btn" onclick="exportarXLS()">Exportar XLS</button>
+            <button class="btn secondary" onclick="backupJSON()">Exportar Backup (JSON)</button>
+            <label class="btn secondary" style="display:inline-block; cursor:pointer">
+              Importar Backup
+              <input id="import-json" type="file" accept="application/json" style="display:none" onchange="importarJSON(this.files[0])" />
+            </label>
+          </div>
+          <div class="hr"></div>
+          <h3>Resumo atual</h3>
+          <div class="grid grid-cols-3">
+            <div class="kpi"><div class="tag">Receita</div><div class="v">${fmtBR.format(receita)}</div></div>
+            <div class="kpi"><div class="tag">CMV</div><div class="v">${fmtBR.format(cmvTotal)} (${fmtNum(cmvPerc*100,1)}%)</div></div>
+            <div class="kpi"><div class="tag">Resultado</div><div class="v">${fmtBR.format(resultado)}</div></div>
+          </div>
+        </section>
+      `;
+    }
+
+    function viewAjuda(){
+      return `
+        <section class="panel">
+          <h2>Ajuda rápida</h2>
+          <ul>
+            <li>Faça contagem diária dos itens ao final do dia em Estoque › Contagem.</li>
+            <li>Registre compras no dia que entraram para acertar CMV.</li>
+            <li>Em Vendas, lance valores agregados por canal (balcão, direto, app).</li>
+            <li>Em Financeiro, registre despesas fixas/variáveis (folha, aluguel, contas, etc.).</li>
+            <li>Use Exportar › XLS para baixar relatórios e compartilhe com seu contador.</li>
+          </ul>
+          <h3>Métricas de referência</h3>
+          <ul>
+            <li>CMV alvo: 25–30% da receita bruta.</li>
+            <li>Comissão de app ideal: negociar ≤ 22% do pedido.</li>
+            <li>Embalagem: ~2–3% da receita. Entrega direta: R$ 6–10 por entrega.</li>
+            <li>Ponto de equilíbrio típico: 22–30 pizzas/dia (varia pelos seus custos fixos).</li>
+          </ul>
+        </section>
+      `;
+    }
+
+    // Actions: Estoque
+    async function saveItem(){
+      const nome = document.getElementById('it-nome').value.trim();
+      const un = document.getElementById('it-un').value.trim();
+      const custo = Number(document.getElementById('it-custo').value||0);
+      const min = Number(document.getElementById('it-min').value||0);
+      if(!nome) return alert('Informe o nome do item.');
+      const exists = S.data.itens.find(i=>i.nome.toLowerCase()===nome.toLowerCase());
+      const obj = exists ? {...exists, nome, un, custo, min} : {nome, un, custo, min};
+      if(exists){ await put('itens', obj); } else { obj.id = await add('itens', obj); }
+      await loadAll(); render(); alert('Item salvo.');
+    }
+    async function editItem(id){
+      const it = S.data.itens.find(i=>i.id===id); if(!it) return;
+      document.getElementById('it-nome').value = it.nome;
+      document.getElementById('it-un').value = it.un||'';
+      document.getElementById('it-custo').value = it.custo||0;
+      document.getElementById('it-min').value = it.min||0;
+    }
+    async function deleteItem(id){
+      if(!confirm('Excluir item?')) return;
+      await del('itens', id); await loadAll(); render();
+    }
+    async function salvarMov(){
+      const data = document.getElementById('mov-data').value;
+      const itemId = Number(document.getElementById('mov-item').value);
+      const qtd = Number(document.getElementById('mov-qtd').value||0);
+      const tipo = document.getElementById('mov-tipo').value;
+      if(!data || !itemId || !qtd) return alert('Preencha data, item e quantidade.');
+      if(tipo==='compra'){
+        await add('compras', { data, itemId, qtd });
+      } else {
+        // sobrescreve contagem do dia para o item (uma por dia/item)
+        const existentes = S.data.contagens.filter(c=>c.data===data && c.itemId===itemId);
+        for(const e of existentes) await del('contagens', e.id);
+        await add('contagens', { data, itemId, qtd });
+      }
+      await loadAll(); render();
+    }
+    async function deleteCompra(id){ if(!confirm('Excluir compra?')) return; await del('compras', id); await loadAll(); render(); }
+    async function deleteContagem(id){ if(!confirm('Excluir contagem?')) return; await del('contagens', id); await loadAll(); render(); }
+
+    // Actions: Receitas
+    function addIng(){
+      const cont = document.getElementById('rcp-ings');
+      const row = document.createElement('div');
+      row.className='row';
+      row.innerHTML = `
+        <div>
+          <label>Item</label>
+          <select class="ing-item">
+            ${S.data.itens.map(i=>`<option value="${i.id}">${i.nome}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label>Quantidade (un)</label>
+          <input class="ing-qtd" type="number" step="0.001" />
+        </div>
+        <div style="flex:0 0 auto; align-self:flex-end">
+          <button class="btn danger" onclick="this.parentElement.parentElement.remove()">Remover</button>
+        </div>
+      `;
+      cont.appendChild(row);
+    }
+    async function saveReceita(){
+      const nome = document.getElementById('rcp-nome').value.trim();
+      const preco = Number(document.getElementById('rcp-preco').value||0);
+      const items = Array.from(document.querySelectorAll('#rcp-ings .row')).map(r=>{
+        const itemId = Number(r.querySelector('.ing-item').value);
+        const qtd = Number(r.querySelector('.ing-qtd').value||0);
+        return { itemId, qtd };
+      }).filter(x=>x.itemId && x.qtd>0);
+      if(!nome) return alert('Informe o nome da pizza.');
+      const exists = S.data.receitas.find(r=>r.nome.toLowerCase()===nome.toLowerCase());
+      const obj = exists ? {...exists, nome, preco, ings:items} : {nome, preco, ings:items};
+      if(exists){ await put('receitas', obj); } else { obj.id = await add('receitas', obj); }
+      await loadAll(); render(); alert('Receita salva.');
+    }
+    async function editReceita(id){
+      const r = S.data.receitas.find(x=>x.id===id); if(!r) return;
+      document.getElementById('rcp-nome').value = r.nome;
+      document.getElementById('rcp-preco').value = r.preco||0;
+      const cont = document.getElementById('rcp-ings'); cont.innerHTML='';
+      (r.ings||[]).forEach(g=>{
+        addIng();
+        const row = cont.lastElementChild;
+        row.querySelector('.ing-item').value = g.itemId;
+        row.querySelector('.ing-qtd').value = g.qtd;
+      });
+    }
+    async function deleteReceita(id){ if(!confirm('Excluir receita?')) return; await del('receitas', id); await loadAll(); render(); }
+
+    // Actions: Vendas
+    async function saveVenda(){
+      const data = document.getElementById('vd-data').value;
+      const canal = document.getElementById('vd-canal').value;
+      const qtdPizzas = Number(document.getElementById('vd-qtd').value||0);
+      const valorBruto = Number(document.getElementById('vd-bruto').value||0);
+      const comissao = Number(document.getElementById('vd-com').value||0);
+      const custoEntrega = Number(document.getElementById('vd-ent').value||0);
+      const custoEmbalagem = Number(document.getElementById('vd-emb').value||0);
+      const avaliacao = Number(document.getElementById('vd-av').value||0);
+      if(!data) return alert('Informe a data.');
+      await add('vendas', { data, canal, qtdPizzas, valorBruto, comissao, custoEntrega, custoEmbalagem, avaliacao });
+      await loadAll(); render();
+    }
+    async function deleteVenda(id){ if(!confirm('Excluir registro?')) return; await del('vendas', id); await loadAll(); render(); }
+
+    // Actions: Financeiro
+    async function saveDespesa(){
+      const data = document.getElementById('fin-data').value;
+      const categoria = document.getElementById('fin-cat').value;
+      const tipo = document.getElementById('fin-tipo').value;
+      const valor = Number(document.getElementById('fin-valor').value||0);
+      if(!data || !valor) return alert('Informe data e valor.');
+      await add('despesas', { data, categoria, tipo, valor });
+      await loadAll(); render();
+    }
+    async function deleteDespesa(id){ if(!confirm('Excluir despesa?')) return; await del('despesas', id); await loadAll(); render(); }
+
+    // Export / Backup
+    function exportarXLS(){
+      // Montar planilhas
+      const itens = S.data.itens;
+      const compras = S.data.compras;
+      const contagens = S.data.contagens;
+      const receitas = S.data.receitas;
+      const vendas = S.data.vendas;
+      const despesas = S.data.despesas;
+      const sheets = [];
+
+      sheets.push({
+        name:'Itens',
+        data: [['ID','Nome','Un','Custo','Min']].concat(itens.map(i=>[i.id,i.nome,i.un,i.custo,i.min]))
+      });
+      sheets.push({
+        name:'Compras',
+        data: [['ID','Data','ItemID','Item','Qtd','R$Unit','R$Total']].concat(compras.map(c=>{
+          const it = itens.find(i=>i.id===c.itemId)||{};
+          return [c.id,c.data,c.itemId,it.nome||'',c.qtd,it.custo||0,(it.custo||0)*(c.qtd||0)];
+        }))
+      });
+      sheets.push({
+        name:'Contagens',
+        data: [['ID','Data','ItemID','Item','SaldoFinal']].concat(contagens.map(c=>{
+          const it = itens.find(i=>i.id===c.itemId)||{};
+          return [c.id,c.data,c.itemId,it.nome||'',c.qtd];
+        }))
+      });
+      sheets.push({
+        name:'Receitas',
+        data: [['ID','Nome','Preço','IngredienteItemID','Ingrediente','Qtd','CustoIng']].concat(
+          receitas.flatMap(r=>{
+            if(!r.ings||!r.ings.length) return [[r.id,r.nome,r.preco,'','','','']];
+            return r.ings.map(g=>{
+              const it = itens.find(i=>i.id===g.itemId)||{};
+              const custoIng = (it.custo||0)*(g.qtd||0);
+              return [r.id,r.nome,r.preco,g.itemId,it.nome||'',g.qtd,custoIng];
+            });
+          })
+        )
+      });
+      sheets.push({
+        name:'Vendas',
+        data: [['ID','Data','Canal','QtdPizzas','Bruto','Comissão','Entrega','Embalagem','Avaliação']].concat(
+          vendas.map(v=>[v.id,v.data,v.canal,v.qtdPizzas,v.valorBruto,v.comissao,v.custoEntrega,v.custoEmbalagem,v.avaliacao])
+        )
+      });
+      sheets.push({
+        name:'Despesas',
+        data: [['ID','Data','Categoria','Tipo','Valor']].concat(despesas.map(d=>[d.id,d.data,d.categoria,d.tipo,d.valor]))
+      });
+
+      // KPI Resumo
+      const K = kpis();
+      sheets.push({
+        name:'Resumo',
+        data: [
+          ['Métrica','Valor'],
+          ['Receita Bruta', K.receita],
+          ['CMV Total', K.cmvTotal],
+          ['CMV %', K.cmvPerc],
+          ['Margem Contribuição', K.margemContrib],
+          ['Resultado', K.resultado],
+          ['Pizzas/dia (média)', K.pizzasDiaMed],
+          ['Ticket Médio', K.ticketMed]
+        ]
+      });
+
+      exportXLSX(sheets);
+    }
+
+    function backupJSON(){
+      const dump = JSON.stringify(S.data);
+      const blob = new Blob([dump], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `pizzaria-backup-${todayStr()}.json`;
+      a.click(); URL.revokeObjectURL(a.href);
+    }
+    async function importarJSON(file){
+      if(!file) return;
+      const text = await file.text();
+      try{
+        const obj = JSON.parse(text);
+        // Limpa e repõe
+        for(const store of DB_STORE){
+          const t = db.transaction(store, 'readwrite').objectStore(store);
+          const req = t.clear();
+          await new Promise((res,rej)=>{ req.onsuccess=res; req.onerror=()=>rej(req.error); });
+        }
+        // Reinsere
+        for(const store of DB_STORE){
+          if(Array.isArray(obj[store])){
+            for(const rec of obj[store]){
+              // Se vier id, preserva
+              await new Promise((res,rej)=>{
+                const r = tx(store, 'readwrite').put(rec);
+                r.onsuccess=res; r.onerror=()=>rej(r.error);
+              });
+            }
+          }
+        }
+        await loadAll(); render();
+        alert('Backup importado com sucesso.');
+      }catch(e){
+        alert('Falha ao importar: '+e.message);
+      }
+    }
+
+    // Render
+    function render(){
+      renderNav();
+      const v = document.getElementById('view');
+      if(S.tab==='dashboard') v.innerHTML = viewDashboard();
+      if(S.tab==='estoque') v.innerHTML = viewEstoque();
+      if(S.tab==='receitas') v.innerHTML = viewReceitas();
+      if(S.tab==='vendas') v.innerHTML = viewVendas();
+      if(S.tab==='financeiro') v.innerHTML = viewFinanceiro();
+      if(S.tab==='export') v.innerHTML = viewExport();
+      if(S.tab==='ajuda') v.innerHTML = viewAjuda();
+    }
+
+    async function loadAll(){
+      for(const s of DB_STORE){ S.data[s] = await all(s); }
+    }
+
+    // Boot
+    (async function(){
+      await openDB();
+      await loadAll();
+      render();
+    })();
+  </script>
+
+
+</body></html>
