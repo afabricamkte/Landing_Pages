@@ -1,0 +1,572 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador de Patrocínios — Tabela Simples</title>
+<style>
+  :root{
+    --bg:#f7fafc; --card:#ffffff; --text:#1f2937; --muted:#6b7280; --border:#e5e7eb;
+    --primary:#2563eb; --accent:#16a34a; --warn:#d97706; --danger:#dc2626;
+    --chip:#eef2ff; --perf:#fbf8e6;
+    --row-hover:#f9fafb; --shadow:0 1px 2px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    background:var(--bg); color:var(--text); line-height:1.35;
+  }
+  header{
+    background:#ffffff; border-bottom:1px solid var(--border); padding:12px 16px; position:sticky; top:0; z-index:20;
+  }
+  header h1{margin:0; font-size:18px}
+  header p{margin:6px 0 0; color:var(--muted); font-size:12px}
+  .wrap{max-width:1200px; margin:0 auto; padding:12px}
+  .panel{
+    background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow);
+  }
+  .panel .head{padding:12px 14px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap}
+  .panel .body{padding:10px 12px}
+  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  label{font-size:12px; color:var(--muted)}
+  input[type="text"], input[type="number"], select{
+    background:#fff; color:var(--text); border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:14px;
+  }
+  input[type="number"]{width:120px}
+  .btn{
+    background: var(--primary); color:#fff; border:0; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer
+  }
+  .btn.secondary{background:#fff; color:var(--text); border:1px solid var(--border)}
+  .btn.ghost{background:transparent; color:var(--primary); border:1px dashed var(--primary)}
+  .grid{
+    display:grid; grid-template-columns:1fr; gap:12px; margin-top:12px;
+  }
+  @media(min-width:900px){ .grid{grid-template-columns: 1fr} }
+
+  /* Tabela responsiva estilo planilha */
+  .table-wrap{
+    width:100%; overflow:auto; border:1px solid var(--border); border-radius:10px; background:#fff; box-shadow:var(--shadow)
+  }
+  table{width:100%; border-collapse:separate; border-spacing:0; min-width:900px}
+  thead th{
+    position:sticky; top:0; background:#f8fafc; z-index:1; font-size:12px; color:#374151; text-align:left; padding:8px; border-bottom:1px solid var(--border);
+    white-space:nowrap;
+  }
+  tbody td{border-bottom:1px solid var(--border); padding:8px; vertical-align:top; font-size:13px}
+  tbody tr:hover{background:var(--row-hover)}
+  .cat{font-weight:700; color:#111827; background:#f3f4f6}
+  .sub{color:#374151}
+  .core{background:#eef7ff}
+  .perf-chip{display:inline-flex; align-items:center; gap:6px; padding:2px 8px; border-radius:999px; font-size:11px; background:var(--perf); border:1px solid #f1e6b7; color:#7a5d00}
+  .hint{font-size:11px; color:var(--muted)}
+  .chips{display:flex; gap:8px; flex-wrap:wrap}
+  .chip{background:var(--chip); color:#3730a3; border:1px solid #e0e7ff; padding:4px 8px; border-radius:999px; font-size:11px}
+  .kpis{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+  .kpi{background:#fff; border:1px solid var(--border); border-radius:10px; padding:10px 12px; box-shadow:var(--shadow)}
+  .kpi .val{font-weight:800; font-size:18px}
+  .sum{display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-top:10px}
+  .price{font-size:22px; font-weight:800}
+  .muted{color:var(--muted)}
+  .hr{height:1px; background:var(--border); margin:10px 0}
+  .footnote{font-size:12px; color:var(--muted)}
+  .warning{color:var(--warn)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Simulador de Patrocínios — Interface Simplificada</h1>
+  <p>Defina a cota, valor e quantidade. Marque/desmarque entregáveis em uma tabela tipo planilha. Tudo recalcula automaticamente.</p>
+</header>
+
+<div class="wrap">
+  <!-- Configurações rápidas -->
+  <section class="panel">
+    <div class="head">
+      <div class="row">
+        <label for="cotaNome">Cota base</label>
+        <select id="cotaNome">
+          <option value="Starter">Starter</option>
+          <option value="Growth">Growth</option>
+          <option value="Scale">Scale</option>
+          <option value="Prime">Prime/Master</option>
+        </select>
+      </div>
+      <div class="row">
+        <label for="preco">Preço atual (R$)</label>
+        <input id="preco" type="number" step="100" min="0">
+        <span class="hint" id="faixaTexto">Faixa sugerida: R$ 8.000–12.000</span>
+      </div>
+      <div class="row">
+        <label for="qtde">Qtde</label>
+        <input id="qtde" type="number" step="1" min="1">
+        <span class="hint" id="qtdeHint">Starter: 6–10</span>
+      </div>
+      <div class="row" style="flex:1">
+        <label for="excl">Exclusividade</label>
+        <input id="excl" type="text" style="flex:1" placeholder="Ex.: sem exclusividade / curadoria / subcategoria / macrosegmento + naming">
+      </div>
+      <div class="row">
+        <button class="btn secondary" id="restaurar">Restaurar padrão da cota</button>
+        <button class="btn ghost" id="upgrade">Upgrade p/ próxima cota (crédito 100% até D‑30)</button>
+      </div>
+    </div>
+    <div class="body">
+      <div class="chips">
+        <span class="chip">Growth “Mais vendida”</span>
+        <span class="chip">Scale “Melhor retorno”</span>
+        <span class="chip">Prime “Âncora Premium”</span>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi">
+          <div class="hint">★ Geração de Leads</div>
+          <div class="val" id="kpiLeads">0 itens</div>
+        </div>
+        <div class="kpi">
+          <div class="hint">★ Palco/Conteúdo</div>
+          <div class="val" id="kpiStage">0 itens</div>
+        </div>
+        <div class="kpi">
+          <div class="hint">Variação vs. meio da faixa</div>
+          <div class="val" id="kpiVar">0%</div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <!-- Planilha de entregáveis -->
+      <div class="table-wrap" aria-label="Tabela de entregáveis com checkboxes">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:220px">Categoria</th>
+              <th>Entregável</th>
+              <th style="width:110px">Selecionado</th>
+              <th style="width:120px">Cota de origem</th>
+              <th style="width:120px">Core</th>
+              <th style="width:160px">Performance</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="sum">
+        <div>
+          <div class="price" id="sumPreco">R$ 10.000</div>
+          <div class="muted" id="sumFaixa">(R$ 8.000 – 12.000) · variação 0%</div>
+        </div>
+        <div class="muted" id="sumHeader"></div>
+      </div>
+
+      <div class="hr"></div>
+      <div class="footnote" id="obs"></div>
+
+      <div class="hr"></div>
+      <div class="row">
+        <button class="btn" id="exportar">Exportar resumo</button>
+      </div>
+      <div id="exportArea" style="margin-top:8px"></div>
+    </div>
+  </section>
+
+  <p class="footnote" style="margin-top:10px">
+    Pergunta: Qual cota você quer simular primeiro? Starter, Growth, Scale ou Prime/Master? Prefere manter a configuração padrão cumulativa ou customizar já na largada?
+  </p>
+</div>
+
+<script>
+/* ---------------------
+   Dados das cotas
+---------------------- */
+const tiers = {
+  Starter:{range:[8000,12000], def:10000, qty:[6,10], exclusividade:"sem exclusividade"},
+  Growth:{range:[18000,25000], def:21000, qty:[1,5], exclusividade:"curadoria para evitar concorrentes lado a lado"},
+  Scale:{range:[35000,50000], def:42000, qty:[1,3], exclusividade:"exclusividade por subcategoria"},
+  Prime:{range:[75000,100000], def:88000, qty:[1,1], exclusividade:"exclusividade por macrosegmento + naming"},
+};
+const items = [
+  // Starter
+  I("Identidade/Marca","logo-folder","logo no folder/programação oficial",1,true),
+  I("Identidade/Marca","logo-site","logo no site (rodapé)",1,true),
+  I("Identidade/Marca","logo-telao-int","logo no telão nos intervalos (carrossel)",1,true),
+  I("Identidade/Marca","logo-mats","logo nos materiais de divulgação (site + e‑mail)",1,true),
+  I("Brindes/Benefícios","kit-brinde","inserção de 1 brinde/material no kit (sem coleta de dados)",1,false),
+  I("Presença Digital","listagem-site","listagem no site com breve descrição",1,false),
+  I("Acessos","2std","2 credenciais standard",1,false),
+
+  // Growth
+  I("Identidade/Marca","post-rs","inclusão em posts de redes sociais de inscrições abertas",2,false),
+  I("Mídia de Telão","video30","1 vídeo 30–45s 1x/dia com QR",2,false,"leads"),
+  I("Ponto Físico","stand2x2","stand 2×2 m em área de fluxo",2,false),
+  I("Ponto Físico","mesa-antec","mesa de exposição na antessala com banner próprio",2,false),
+  I("Conteúdo/Autoridade","demo-talk","1 Demo Talk de 10 min na Arena de Soluções",2,false,"stage"),
+  I("Geração de Leads","qr-landing","QR/landing nas ativações; leads opt‑in (LGPD)",2,false,"leads"),
+  I("Presença Digital","desc-utm","descrição no site com link UTM; CTA em 1 e‑mail (pré ou pós-evento)",2,false),
+  I("Acessos","+1cred"," +1 credencial (total 3; 1 VIP/Executivo + 2 standard)",2,false),
+  I("Mídia Social/Conteúdo","3c-5f","3 cortes de vídeo + 5 fotos da ativação",2,false),
+  I("Brindes/Benefícios","brinde-cred","direito a brinde no credenciamento (lote limitado)",2,false),
+
+  // Scale
+  I("Identidade/Marca","logo-cracha","logo no crachá (congressistas e palestrantes, tier secundário)",3,false),
+  I("Identidade/Marca","logo-brindes","logo impresso nos brindes oficiais (quando aplicável)",3,false),
+  I("Mídia de Telão","video3","vídeo até 3 min nos intervalos (2x/dia)",3,false,"leads"),
+  I("Mídia de Telão","bumper-painel","bumper 5s antes de 1 painel temático",3,false),
+  I("Ponto Físico","stand3x3","stand 3×3 m em hot zone; mesa de exposição destacada",3,false),
+  I("Conteúdo/Autoridade","palestra-tech","1 Palestra técnica 15–20 min OU Workshop 30 min (sala paralela) com inscrição",3,false,"stage"),
+  I("Geração de Leads","lead-scanner","lead scanner no stand + relatório de visitas; coleta nas sessões com cadastro obrigatório",3,false,"leads"),
+  I("Conteúdo Co‑criado","mesa-redonda","mesa‑redonda gravada e publicada com CTA do patrocinador",3,false),
+  I("Presença Digital","app-email","inclusão em app/agenda; e‑mail marketing com logo (tier superior)",3,false),
+  I("Acessos","+2vip"," +2 VIP (total 6; 4 VIP/Executivo + 2 standard)",3,false),
+  I("Mídia Social/Conteúdo","6c-10f","6 cortes de vídeo + 10 fotos; 1 depoimento‑vitrine 30–45s",3,false),
+  I("Brindes/Benefícios","voucher-trial","voucher/trial educacional no Hub de Benefícios",3,false),
+
+  // Prime
+  I("Naming/Posicionamento","naming","naming rights de trilha OU “Patrocínio Master apresenta” 1 keynote",4,false,"stage"),
+  I("Conteúdo/Autoridade","keynote","keynote 20–30 min (curadoria e ensaio)",4,false,"stage"),
+  I("Ponto Físico","stand6x4","stand 6×4 m em posição nº1 + lounge de reuniões",4,false),
+  I("Mídia de Telão","3ins-bumper-key","3 inserções/dia; bumper antes de 1 keynote/dia",4,false,"leads"),
+  I("Identidade/Marca","logo-max","logo em credenciais/lanyard OU sacolas (co‑branding); LED do palco principal; press kit e mídia paga",4,false),
+  I("Presença Digital","email-dedicado","e‑mail dedicado para base de inscritos (opt‑in)",4,false),
+  I("Mídia Social/Conteúdo","mini-doc","mini‑documentário 2–3 min; 12 cortes curtos; 20 fotos profissionais",4,false),
+  I("Acessos","10cred","10 credenciais (6 VIP/Executivo + 4 standard)",4,false),
+  I("Ativações","acao-vip","ação exclusiva em Almoço VIP ou Happy Hour",4,false),
+  I("Mensuração","relatorio","relatório avançado com estimativa de CPL e benchmarks",4,false),
+];
+
+function I(cat,key,label,tier,core=false,perf=null){ return {cat,key,label,tier,core,perf}; }
+
+const order = ["Starter","Growth","Scale","Prime"];
+
+let state = {
+  tier:"Starter",
+  selected:new Set(), // por key
+  preco:null,
+  range:[8000,12000],
+  qty:8,
+  exclusividade: tiers.Starter.exclusividade,
+  paid:0
+};
+
+/* ---------------------
+   Helpers
+---------------------- */
+function avg([a,b]){return (a+b)/2}
+function clamp(v,min,max){return Math.min(Math.max(v,min),max)}
+function money(v){return "R$ " + Math.round(v/100)*100.toLocaleString?.("pt-BR") ?? v}
+function fmt(n){return n.toLocaleString('pt-BR')}
+
+/* ---------------------
+   Lógica de seleção cumulativa
+---------------------- */
+function cumulativeFor(tierName){
+  const idx = order.indexOf(tierName)+1; // 1..4
+  return items.filter(i=>i.tier<=idx);
+}
+function selectDefault(tierName){
+  const list = cumulativeFor(tierName).map(i=>i.key);
+  state.selected = new Set(list);
+}
+
+/* ---------------------
+   Precificação simplificada e transparente
+---------------------- */
+function computePrice(){
+  const [min,max] = state.range;
+  const meio = avg(state.range);
+  // Se usuário digitou preço, usar como âncora e ainda ajustar por extras/remoções
+  let base = state.preco ?? meio;
+
+  const cumul = cumulativeFor(state.tier);
+  const perfWeight = i => (i.perf ? 2 : 1);
+  const totalPts = cumul.reduce((s,i)=>s+perfWeight(i),0);
+  const onPts = cumul.reduce((s,i)=> s + (state.selected.has(i.key)?perfWeight(i):0),0);
+  const proportion = totalPts? onPts/totalPts : 1;
+
+  // Penalidade se remover "core" do nível da cota atual (e Starter-core nos níveis acima)
+  const tierIndex = order.indexOf(state.tier)+1;
+  const coreSet = cumul.filter(i => i.tier===tierIndex || (tierIndex>1 && i.tier===1 && i.core));
+  const coreTotal = coreSet.length || 1;
+  const coreOn = coreSet.filter(i => state.selected.has(i.key)).length;
+  const coreRatio = coreOn/coreTotal;
+
+  // Itens de tiers superiores ligados (extras)
+  const extras = items.filter(i => i.tier>tierIndex && state.selected.has(i.key));
+  const steps = {
+    s2g: avg(tiers.Growth.range)-avg(tiers.Starter.range),
+    g2s: avg(tiers.Scale.range)-avg(tiers.Growth.range),
+    s2p: avg(tiers.Prime.range)-avg(tiers.Scale.range)
+  };
+  let extraAdd = 0;
+  extras.forEach(i=>{
+    let diff = 0;
+    if(i.tier===2) diff = steps.s2g;
+    if(i.tier===3) diff = steps.g2s;
+    if(i.tier===4) diff = steps.s2p;
+    const boost = i.perf ? 0.25 : 0.12;
+    extraAdd += diff * boost;
+  });
+
+  // Ajustes
+  let price = base;
+  // proporcional geral (varia ~±10%)
+  price *= (0.9 + 0.2*proportion);
+  // core (até -25% se remover tudo do core)
+  price *= (0.75 + 0.25*coreRatio);
+  // extras
+  price += extraAdd;
+
+  // Limites elásticos
+  const low = min*0.9, high = max*1.15;
+  price = Math.max(Math.min(price, high), low);
+
+  const varPct = ((price - meio)/meio)*100;
+  return {price:Math.round(price/100)*100, min, max, varPct:Math.round(varPct)};
+}
+
+/* ---------------------
+   Renderização
+---------------------- */
+const tbody = document.getElementById("tbody");
+
+function renderTable(){
+  const list = cumulativeFor(state.tier);
+  // Agrupar por categoria mantendo ordem
+  const cats = [...new Set(list.map(i=>i.cat))];
+  tbody.innerHTML = "";
+  cats.forEach(cat=>{
+    const catRow = document.createElement("tr");
+    catRow.className="cat";
+    catRow.innerHTML = `<td colspan="6">${cat}</td>`;
+    tbody.appendChild(catRow);
+
+    list.filter(i=>i.cat===cat).forEach(i=>{
+      const tr = document.createElement("tr");
+      const isCore = (i.tier=== (order.indexOf(state.tier)+1)) || (i.tier===1 && i.core && state.tier!=="Starter");
+      tr.className = isCore ? "core" : "sub";
+      const perf = i.perf ? `<span class="perf-chip">★ ${i.perf==="leads"?"Leads":"Palco/Conteúdo"}</span>`: "";
+      tr.innerHTML = `
+        <td>${cat}</td>
+        <td>${i.label}</td>
+        <td style="text-align:center">
+          <input type="checkbox" data-key="${i.key}" ${state.selected.has(i.key)?"checked":""} />
+        </td>
+        <td>Cota ${i.tier}</td>
+        <td>${isCore? "Sim" : "—"}</td>
+        <td>${perf||"—"}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
+
+  // listeners
+  tbody.querySelectorAll('input[type="checkbox"]').forEach(cb=>{
+    cb.addEventListener("change", (e)=>{
+      const k = e.target.getAttribute("data-key");
+      if(e.target.checked) state.selected.add(k); else state.selected.delete(k);
+      updateSummary();
+    });
+  });
+}
+
+function renderHeader(){
+  const {range, qty} = state;
+  const faixaTexto = document.getElementById("faixaTexto");
+  faixaTexto.textContent = `Faixa sugerida: R$ ${fmt(range[0])}–${fmt(range[1])}`;
+  const qtdeHint = document.getElementById("qtdeHint");
+  const lim = tiers[state.tier].qty;
+  qtdeHint.textContent = state.tier==="Starter" ? `Starter: ${lim[0]}–${lim[1]}` : `${state.tier}: até ${lim[1]}`;
+  document.getElementById("excl").placeholder = tiers[state.tier].exclusividade;
+}
+
+function renderKPIs(){
+  const list = cumulativeFor(state.tier).filter(i=>state.selected.has(i.key));
+  const leads = list.filter(i=>i.perf==="leads").length;
+  const stage = list.filter(i=>i.perf==="stage").length;
+  document.getElementById("kpiLeads").textContent = `${leads} item${leads===1?"":"s"}`;
+  document.getElementById("kpiStage").textContent = `${stage} item${stage===1?"":"s"}`;
+}
+
+function renderSummary(){
+  const {price,min,max,varPct} = computePrice();
+  document.getElementById("sumPreco").textContent = "R$ " + fmt(price);
+  document.getElementById("sumFaixa").textContent = `(R$ ${fmt(min)} – ${fmt(max)}) · variação ${varPct}%`;
+  document.getElementById("kpiVar").textContent = `${varPct}%`;
+
+  const head = `Cota: ${state.tier==="Prime"?"Prime/Master":state.tier} · Qtde: ${state.qty} · Exclusividade: ${state.exclusividade || tiers[state.tier].exclusividade}`;
+  document.getElementById("sumHeader").textContent = head;
+
+  const obs = [
+    "Progressão cumulativa entre cotas; é possível desmarcar itens individualmente.",
+    "Itens de performance (Leads e Palco/Conteúdo) têm peso maior na precificação.",
+    "Upgrades até D‑30 aplicam 100% de crédito do valor já pago.",
+    `Limites de quantidade — Starter ${tiers.Starter.qty[0]}–${tiers.Starter.qty[1]}; Growth até ${tiers.Growth.qty[1]}; Scale até ${tiers.Scale.qty[1]}; Prime 1.`,
+    "Exclusividade — Starter: sem exclusividade; Growth: curadoria; Scale: subcategoria; Prime: macrosegmento + naming."
+  ].join(" • ");
+  document.getElementById("obs").textContent = obs;
+}
+
+function updateSummary(){
+  renderKPIs();
+  renderSummary();
+}
+
+/* ---------------------
+   Controles
+---------------------- */
+const cotaNome = document.getElementById("cotaNome");
+const preco = document.getElementById("preco");
+const qtde = document.getElementById("qtde");
+const excl = document.getElementById("excl");
+
+cotaNome.addEventListener("change", ()=>{
+  state.tier = cotaNome.value;
+  state.range = [...tiers[state.tier].range];
+  state.preco = tiers[state.tier].def;
+  qtde.min = tiers[state.tier].qty[0];
+  qtde.max = tiers[state.tier].qty[1];
+  state.qty = state.tier==="Starter" ? 8 : tiers[state.tier].qty[0];
+  selectDefault(state.tier);
+  state.exclusividade = tiers[state.tier].exclusividade;
+  preco.value = state.preco;
+  qtde.value = state.qty;
+  excl.value = state.exclusividade;
+  renderHeader();
+  renderTable();
+  updateSummary();
+});
+
+preco.addEventListener("input", ()=>{
+  const v = Number(preco.value||0);
+  if(v>0) state.preco = v;
+  updateSummary();
+});
+
+qtde.addEventListener("input", ()=>{
+  const lim = tiers[state.tier].qty;
+  const v = Number(qtde.value||1);
+  state.qty = clamp(v, lim[0], lim[1]);
+  qtde.value = state.qty;
+  updateSummary();
+});
+
+excl.addEventListener("input", ()=>{
+  state.exclusividade = excl.value;
+  updateSummary();
+});
+
+document.getElementById("restaurar").addEventListener("click", ()=>{
+  // volta aos padrões da cota atual
+  state.range = [...tiers[state.tier].range];
+  state.preco = tiers[state.tier].def;
+  state.qty = state.tier==="Starter" ? 8 : tiers[state.tier].qty[0];
+  state.exclusividade = tiers[state.tier].exclusividade;
+  selectDefault(state.tier);
+  preco.value = state.preco;
+  qtde.value = state.qty;
+  excl.value = state.exclusividade;
+  renderHeader();
+  renderTable();
+  updateSummary();
+});
+
+document.getElementById("upgrade").addEventListener("click", ()=>{
+  const idx = order.indexOf(state.tier);
+  if(idx<order.length-1){
+    const atual = computePrice().price;
+    state.paid += atual; // considera o valor atual como pago
+    const prox = order[idx+1];
+    state.tier = prox;
+    state.range = [...tiers[prox].range];
+    state.preco = tiers[prox].def;
+    state.qty = tiers[prox].qty[0];
+    selectDefault(prox);
+    state.exclusividade = tiers[prox].exclusividade;
+    // recalcular novo preço e aplicar crédito 100%
+    const novoPreco = computePrice().price;
+    const diferenca = Math.max(0, novoPreco - state.paid);
+    state.paid = 0; // zera após upgrade
+
+    // atualizar UI
+    cotaNome.value = prox;
+    preco.value = state.preco;
+    qtde.min = tiers[prox].qty[0]; qtde.max = tiers[prox].qty[1]; qtde.value = state.qty;
+    excl.value = state.exclusividade;
+    renderHeader(); renderTable(); updateSummary();
+
+    const area = document.getElementById("exportArea");
+    const div = document.createElement("div");
+    div.className="footnote";
+    div.innerHTML = `Upgrade aplicado para ${prox==="Prime"?"Prime/Master":prox}. Novo preço: R$ ${fmt(novoPreco)}. Crédito 100% do pago. Diferença agora: <b>R$ ${fmt(diferenca)}</b>.`;
+    area.prepend(div);
+  }
+});
+
+/* ---------------------
+   Exportação
+---------------------- */
+document.getElementById("exportar").addEventListener("click", ()=>{
+  const selList = cumulativeFor(state.tier).filter(i=>state.selected.has(i.key));
+  const leads = selList.filter(i=>i.perf==="leads").length;
+  const stage = selList.filter(i=>i.perf==="stage").length;
+  const {price,min,max,varPct} = computePrice();
+
+  const selo = state.tier==="Growth" ? "Mais vendida" : state.tier==="Scale" ? "Melhor retorno" : state.tier==="Prime" ? "Âncora Premium" : "";
+
+  const html = `
+    <table style="width:100%; border-collapse:collapse; font-size:12px">
+      <thead>
+        <tr>
+          <th style="border:1px solid #e5e7eb; padding:8px; background:#f9fafb">Cota</th>
+          <th style="border:1px solid #e5e7eb; padding:8px; background:#f9fafb">Preço</th>
+          <th style="border:1px solid #e5e7eb; padding:8px; background:#f9fafb">Qtde</th>
+          <th style="border:1px solid #e5e7eb; padding:8px; background:#f9fafb">Exclusividade</th>
+          <th style="border:1px solid #e5e7eb; padding:8px; background:#f9fafb">Entregáveis selecionados</th>
+          <th style="border:1px solid #e5e7eb; padding:8px; background:#f9fafb">Itens de performance</th>
+          <th style="border:1px solid #e5e7eb; padding:8px; background:#f9fafb">Observações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="border:1px solid #e5e7eb; padding:8px">${state.tier==="Prime"?"Prime/Master":state.tier}${selo?` — <em>${selo}</em>`:""}</td>
+          <td style="border:1px solid #e5e7eb; padding:8px">R$ ${fmt(price)}<br><span style="color:#6b7280">Faixa R$ ${fmt(min)} – ${fmt(max)} · var. ${varPct}%</span></td>
+          <td style="border:1px solid #e5e7eb; padding:8px">${state.qty}</td>
+          <td style="border:1px solid #e5e7eb; padding:8px">${state.exclusividade || tiers[state.tier].exclusividade}</td>
+          <td style="border:1px solid #e5e7eb; padding:8px">${selList.length} itens<br>${selList.map(i=>"• "+i.label).join("<br>")}</td>
+          <td style="border:1px solid #e5e7eb; padding:8px">Leads: ${leads} • Palco/Conteúdo: ${stage}</td>
+          <td style="border:1px solid #e5e7eb; padding:8px">Progressão cumulativa; peso maior para performance; upgrade com crédito integral até D‑30.</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+  document.getElementById("exportArea").innerHTML = html;
+});
+
+/* ---------------------
+   Inicialização
+---------------------- */
+function init(){
+  // Padrão: Starter cumulativo
+  state.tier="Starter";
+  state.range=[...tiers.Starter.range];
+  state.preco=tiers.Starter.def;
+  state.qty=8;
+  state.exclusividade=tiers.Starter.exclusividade;
+  selectDefault("Starter");
+
+  // Preencher campos
+  document.getElementById("cotaNome").value="Starter";
+  document.getElementById("preco").value=state.preco;
+  document.getElementById("qtde").value=state.qty;
+  document.getElementById("qtde").min=tiers.Starter.qty[0];
+  document.getElementById("qtde").max=tiers.Starter.qty[1];
+  document.getElementById("excl").value=state.exclusividade;
+
+  renderHeader();
+  renderTable();
+  updateSummary();
+}
+init();
+</script>
+
+
+</body></html>
