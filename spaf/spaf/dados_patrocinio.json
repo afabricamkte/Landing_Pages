@@ -1,0 +1,86 @@
+{
+  "packages": [
+    {
+      "id": "starter",
+      "name": "STARTER",
+      "price": "R$ 5.000,00",
+      "color": "#8B4513",
+      "gradient": "linear-gradient(135deg, #8B4513 0%, #A0522D 100%)",
+      "icon": "💼",
+      "benefits": [
+        "Logo no folder/programação oficial",
+        "Logo no site (rodapé)",
+        "Logo na cracha de participantes e palestrantes",
+        "Stand \"Virtual\"",
+        "QR/landing nas ativações"
+      ]
+    },
+    {
+      "id": "growth", 
+      "name": "GROWTH",
+      "price": "R$ 10.000,00",
+      "color": "#C0C0C0",
+      "gradient": "linear-gradient(135deg, #C0C0C0 0%, #E5E5E5 100%)",
+      "icon": "🚀",
+      "benefits": [
+        "Logo no folder/programação oficial",
+        "Logo no site (rodapé)",
+        "Logo no telão nos intervalos",
+        "Logo nos materiais de divulgação",
+        "Logo na cracha de participantes e palestrantes",
+        "Logo impresso nos brindes oficiais",
+        "Vídeo até 3 min nos intervalos",
+        "Stand 2x2 m em área de fluxo",
+        "Demo Talk de 10 min no palco principal"
+      ]
+    },
+    {
+      "id": "scale",
+      "name": "SCALE", 
+      "price": "R$ 15.000,00",
+      "color": "#FFD700",
+      "gradient": "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
+      "icon": "⭐",
+      "benefits": [
+        "Logo no folder/programação oficial",
+        "Logo no site (rodapé)",
+        "Logo no telão nos intervalos",
+        "Logo nos materiais de divulgação",
+        "Inclusão em posts de redes sociais",
+        "Logo na cracha de participantes e palestrantes",
+        "Logo impresso nos brindes oficiais",
+        "Logo em artigos de co-branding",
+        "LED do palco principal",
+        "Vídeo até 3 min nos intervalos",
+        "Stand 3x3 m em área de fluxo",
+        "Mesa de exposição destacada",
+        "Palestra de 15 a 45 min",
+        "Lead scanner no stand + relatório"
+      ]
+    },
+    {
+      "id": "pro",
+      "name": "PRO",
+      "price": "R$ 25.000,00",
+      "color": "#9932CC",
+      "gradient": "linear-gradient(135deg, #9932CC 0%, #8A2BE2 100%)",
+      "icon": "💎",
+      "benefits": [
+        "Todos os benefícios do SCALE",
+        "Logo em artigos de co-branding",
+        "Stand 5x5 m em posição nº1",
+        "Ativações em lounges de reuniões",
+        "Mesa redonda co-criada gravada",
+        "Naming rights de trilha",
+        "Exposição dos produtos em mesa VIP",
+        "Logotipo da empresa nos materiais de divulgação premium"
+      ]
+    }
+  ],
+  "event": {
+    "title": "PATROCINADORES",
+    "subtitle": "A Fábrica Marketing e Eventos",
+    "description": "Pacotes de patrocínio para eventos corporativos"
+  }
+}
+
