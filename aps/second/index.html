@@ -4,206 +4,1410 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pizzaria Pro - Sistema de Gestão Completo</title>
-    <meta name="description" content="Sistema completo de gestão para pizzarias com controle de estoque, precificação e análise de rentabilidade">
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="src/assets/favicon.ico">
-    
-    <!-- External Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Styles -->
-    <link rel="stylesheet" href="src/styles/main.css">
-    <link rel="stylesheet" href="src/styles/components.css">
-    <link rel="stylesheet" href="src/styles/responsive.css">
+    <!-- CSS Styles -->
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-color: #ff6b6b;
+            --primary-dark: #ee5a24;
+            --secondary-color: #4ecdc4;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #3498db;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --white: #ffffff;
+            --gray-light: #f8f9fa;
+            --gray-medium: #6c757d;
+            --gray-dark: #343a40;
+            
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --spacing-3xl: 4rem;
+            
+            --border-radius-sm: 0.25rem;
+            --border-radius-md: 0.375rem;
+            --border-radius-lg: 0.5rem;
+            --border-radius-xl: 0.75rem;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--gray-light);
+            color: var(--gray-dark);
+            line-height: 1.6;
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, var(--dark-color) 0%, #34495e 100%);
+            color: var(--white);
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h1 {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .sidebar-header p {
+            font-size: var(--font-size-sm);
+            opacity: 0.8;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .nav-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .nav-section-title {
+            font-size: var(--font-size-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: var(--spacing-md);
+            font-weight: 600;
+        }
+
+        .nav-item {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-md);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: var(--border-radius-md);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
+        }
+
+        .nav-link.active {
+            background: var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-link .icon {
+            margin-right: var(--spacing-md);
+            font-size: var(--font-size-lg);
+        }
+
+        .nav-link .badge {
+            margin-left: auto;
+            background: var(--primary-color);
+            color: var(--white);
+            font-size: var(--font-size-xs);
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title h2 {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .header-title p {
+            opacity: 0.9;
+            font-size: var(--font-size-lg);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: var(--spacing-2xl);
+            overflow-y: auto;
+        }
+
+        /* Components */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            gap: var(--spacing-sm);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--gray-medium);
+            color: var(--white);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: var(--white);
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: var(--white);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: var(--white);
+        }
+
+        .btn-sm {
+            padding: var(--spacing-sm) var(--spacing-md);
+            font-size: var(--font-size-sm);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .card-body {
+            padding: var(--spacing-lg);
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            gap: var(--spacing-lg);
+        }
+
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .kpi-icon {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+
+        .kpi-content h3 {
+            font-size: var(--font-size-sm);
+            color: var(--gray-medium);
+            margin-bottom: var(--spacing-xs);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-dark);
+            line-height: 1;
+        }
+
+        /* Tables */
+        .table-container {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: var(--spacing-md);
+            text-align: left;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .table th {
+            background: var(--gray-light);
+            font-weight: 600;
+            color: var(--gray-dark);
+        }
+
+        .table tbody tr:hover {
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--gray-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-base);
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        /* Alerts */
+        .alert {
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-3xl);
+            color: var(--gray-medium);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .empty-state h3 {
+            margin-bottom: var(--spacing-md);
+            color: var(--gray-dark);
+        }
+
+        .empty-state p {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: var(--font-size-xl);
+            cursor: pointer;
+            color: var(--gray-medium);
+        }
+
+        .modal-body {
+            padding: var(--spacing-lg);
+        }
+
+        .modal-footer {
+            padding: var(--spacing-lg);
+            border-top: 1px solid var(--gray-light);
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: flex-end;
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: var(--spacing-lg);
+            right: var(--spacing-lg);
+            z-index: 3000;
+        }
+
+        .toast {
+            background: var(--white);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            min-width: 300px;
+            border-left: 4px solid var(--success-color);
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.error {
+            border-left-color: var(--danger-color);
+        }
+
+        .toast.warning {
+            border-left-color: var(--warning-color);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-2,
+            .grid-3,
+            .grid-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: var(--spacing-md);
+            }
+        }
+
+        /* Utilities */
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .font-weight-bold { font-weight: 700; }
+        .text-muted { color: var(--gray-medium); }
+        .d-none { display: none; }
+        .d-block { display: block; }
+        .d-flex { display: flex; }
+        .justify-content-between { justify-content: space-between; }
+        .align-items-center { align-items: center; }
+        .gap-md { gap: var(--spacing-md); }
+        .mb-lg { margin-bottom: var(--spacing-lg); }
+        .mt-lg { margin-top: var(--spacing-lg); }
+    </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="loading-screen">
-        <div class="loading-content">
-            <div class="pizza-loader">🍕</div>
-            <h2>Pizzaria Pro</h2>
-            <p>Carregando sistema...</p>
-        </div>
-    </div>
-
-    <!-- Main App Container -->
-    <div id="app" class="app-container" style="display: none;">
-        <!-- Sidebar Navigation -->
+    <div class="app-container">
+        <!-- Sidebar -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="logo">
-                    <span class="logo-icon">🍕</span>
-                    <h1>Pizzaria Pro</h1>
-                </div>
-                <p class="subtitle">Sistema de Gestão Completo</p>
+                <h1>🍕 Pizzaria Pro</h1>
+                <p>Sistema de Gestão Completo</p>
             </div>
-
-            <div class="sidebar-menu">
-                <!-- Dashboard -->
-                <div class="menu-group">
-                    <div class="menu-group-title">📊 Dashboard</div>
-                    <button class="menu-item active" data-module="dashboard">
-                        <span class="menu-icon">📈</span>
-                        <span>Visão Geral</span>
-                    </button>
-                </div>
-
-                <!-- Gestão de Produtos -->
-                <div class="menu-group">
-                    <div class="menu-group-title">🍕 Produtos</div>
-                    <button class="menu-item" data-module="ingredientes">
-                        <span class="menu-icon">🥬</span>
-                        <span>Ingredientes</span>
-                    </button>
-                    <button class="menu-item" data-module="receitas">
-                        <span class="menu-icon">📝</span>
-                        <span>Receitas</span>
-                    </button>
-                    <button class="menu-item" data-module="cardapio">
-                        <span class="menu-icon">📋</span>
-                        <span>Cardápio</span>
-                    </button>
-                </div>
-
-                <!-- Estoque -->
-                <div class="menu-group">
-                    <div class="menu-group-title">📦 Estoque</div>
-                    <button class="menu-item" data-module="estoque">
-                        <span class="menu-icon">📦</span>
-                        <span>Controle de Estoque</span>
-                    </button>
-                    <button class="menu-item" data-module="compras">
-                        <span class="menu-icon">🛒</span>
-                        <span>Compras</span>
-                    </button>
-                </div>
-
-                <!-- Vendas -->
-                <div class="menu-group">
-                    <div class="menu-group-title">💰 Vendas</div>
-                    <button class="menu-item" data-module="vendas">
-                        <span class="menu-icon">💳</span>
-                        <span>Registrar Vendas</span>
-                    </button>
-                    <button class="menu-item" data-module="resultados">
-                        <span class="menu-icon">📊</span>
-                        <span>Resultados Diários</span>
-                    </button>
-                </div>
-
-                <!-- Precificação -->
-                <div class="menu-group">
-                    <div class="menu-group-title">💲 Precificação</div>
-                    <button class="menu-item" data-module="custos">
-                        <span class="menu-icon">💰</span>
-                        <span>Custos Operacionais</span>
-                    </button>
-                    <button class="menu-item" data-module="precos">
-                        <span class="menu-icon">🏷️</span>
-                        <span>Tabela de Preços</span>
-                    </button>
-                    <button class="menu-item" data-module="simulador">
-                        <span class="menu-icon">🧮</span>
-                        <span>Simulador</span>
-                    </button>
-                </div>
-
-                <!-- Relatórios -->
-                <div class="menu-group">
-                    <div class="menu-group-title">📈 Relatórios</div>
-                    <button class="menu-item" data-module="analises">
-                        <span class="menu-icon">📊</span>
-                        <span>Análises</span>
-                    </button>
-                    <button class="menu-item" data-module="exportar">
-                        <span class="menu-icon">📤</span>
-                        <span>Exportar Dados</span>
-                    </button>
-                </div>
-
-                <!-- Configurações -->
-                <div class="menu-group">
-                    <div class="menu-group-title">⚙️ Sistema</div>
-                    <button class="menu-item" data-module="configuracoes">
-                        <span class="menu-icon">⚙️</span>
-                        <span>Configurações</span>
-                    </button>
-                    <button class="menu-item" data-module="backup">
-                        <span class="menu-icon">💾</span>
-                        <span>Backup</span>
-                    </button>
-                </div>
-            </div>
+            
+            <ul class="sidebar-nav">
+                <li class="nav-section">
+                    <div class="nav-section-title">📊 Dashboard</div>
+                    <ul>
+                        <li class="nav-item">
+                            <a href="#dashboard" class="nav-link active" data-module="dashboard">
+                                <span class="icon">📈</span>
+                                Visão Geral
+                                <span class="badge">1</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                
+                <li class="nav-section">
+                    <div class="nav-section-title">🍕 Produtos</div>
+                    <ul>
+                        <li class="nav-item">
+                            <a href="#ingredientes" class="nav-link" data-module="ingredientes">
+                                <span class="icon">🥬</span>
+                                Ingredientes
+                                <span class="badge">2</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#receitas" class="nav-link" data-module="receitas">
+                                <span class="icon">📝</span>
+                                Receitas
+                                <span class="badge">3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#cardapio" class="nav-link" data-module="cardapio">
+                                <span class="icon">📋</span>
+                                Cardápio
+                                <span class="badge">4</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                
+                <li class="nav-section">
+                    <div class="nav-section-title">📦 Estoque</div>
+                    <ul>
+                        <li class="nav-item">
+                            <a href="#estoque" class="nav-link" data-module="estoque">
+                                <span class="icon">📦</span>
+                                Controle de Estoque
+                                <span class="badge">5</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#compras" class="nav-link" data-module="compras">
+                                <span class="icon">🛒</span>
+                                Compras
+                                <span class="badge">6</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                
+                <li class="nav-section">
+                    <div class="nav-section-title">💰 Vendas</div>
+                    <ul>
+                        <li class="nav-item">
+                            <a href="#vendas" class="nav-link" data-module="vendas">
+                                <span class="icon">💳</span>
+                                Registrar Vendas
+                                <span class="badge">7</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#resultados" class="nav-link" data-module="resultados">
+                                <span class="icon">📊</span>
+                                Resultados Diários
+                                <span class="badge">8</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#custos" class="nav-link" data-module="custos">
+                                <span class="icon">💰</span>
+                                Custos Operacionais
+                                <span class="badge">9</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </nav>
 
-        <!-- Mobile Menu Toggle -->
-        <button class="mobile-menu-toggle" id="mobile-menu-toggle">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-
-        <!-- Main Content Area -->
+        <!-- Main Content -->
         <main class="main-content">
-            <!-- Content Header -->
-            <header class="content-header">
+            <!-- Header -->
+            <header class="header">
                 <div class="header-content">
-                    <h1 id="page-title">Dashboard</h1>
-                    <p id="page-subtitle">Visão geral do seu negócio</p>
-                </div>
-                <div class="header-actions">
-                    <button class="btn btn-primary" id="quick-sale-btn">
-                        <span>⚡</span>
-                        Venda Rápida
-                    </button>
+                    <div class="header-title">
+                        <h2 id="page-title">Dashboard</h2>
+                        <p id="page-subtitle">Visão geral do seu negócio</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="quick-action-btn">
+                            ⚡ Venda Rápida
+                            <span class="badge">10</span>
+                        </button>
+                    </div>
                 </div>
             </header>
 
-            <!-- Dynamic Content Area -->
-            <div class="content-body" id="content-body">
-                <!-- Content will be loaded dynamically here -->
+            <!-- Content -->
+            <div class="content" id="main-content">
+                <!-- Dashboard Content -->
+                <div id="dashboard-content">
+                    <!-- KPIs -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">🛒</div>
+                            <div class="kpi-content">
+                                <h3>Vendas Hoje</h3>
+                                <div class="kpi-value" id="vendas-hoje">0</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">💰</div>
+                            <div class="kpi-content">
+                                <h3>Faturamento Hoje</h3>
+                                <div class="kpi-value" id="faturamento-hoje">R$ 0,00</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">🎯</div>
+                            <div class="kpi-content">
+                                <h3>Ticket Médio</h3>
+                                <div class="kpi-value" id="ticket-medio">R$ 0,00</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">📈</div>
+                            <div class="kpi-content">
+                                <h3>Margem Média</h3>
+                                <div class="kpi-value" id="margem-media">0%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sections Grid -->
+                    <div class="grid grid-2">
+                        <!-- Vendas Recentes -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>📊 Vendas Recentes</h3>
+                                <button class="btn btn-primary btn-sm" onclick="loadModule('vendas')">
+                                    Nova Venda
+                                </button>
+                            </div>
+                            <div class="card-body" id="vendas-recentes">
+                                <div class="empty-state">
+                                    <p>Nenhuma venda registrada ainda.</p>
+                                    <button class="btn btn-primary" onclick="loadModule('vendas')">
+                                        Registrar Primeira Venda
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Status do Estoque -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>📦 Status do Estoque</h3>
+                                <button class="btn btn-secondary btn-sm" onclick="loadModule('estoque')">
+                                    Ver Estoque
+                                </button>
+                            </div>
+                            <div class="card-body" id="status-estoque">
+                                <div class="alert alert-success">
+                                    <strong>✅ Estoque OK!</strong><br>
+                                    Todos os ingredientes estão com estoque adequado.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Receitas Populares -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>🍕 Receitas Populares</h3>
+                                <button class="btn btn-secondary btn-sm" onclick="loadModule('receitas')">
+                                    Ver Receitas
+                                </button>
+                            </div>
+                            <div class="card-body" id="receitas-populares">
+                                <div class="empty-state">
+                                    <p>Nenhuma receita cadastrada ainda.</p>
+                                    <button class="btn btn-primary" onclick="loadModule('receitas')">
+                                        Criar Primeira Receita
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Análise por Canal -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>📱 Vendas por Canal</h3>
+                                <button class="btn btn-secondary btn-sm" onclick="loadModule('analises')">
+                                    Ver Análises
+                                </button>
+                            </div>
+                            <div class="card-body" id="vendas-por-canal">
+                                <div class="empty-state">
+                                    <p>Nenhuma venda para análise ainda.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ingredientes Content -->
+                <div id="ingredientes-content" class="d-none">
+                    <div class="card mb-lg">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex gap-md">
+                                    <input type="text" class="form-control" placeholder="Buscar ingredientes..." id="search-ingredientes">
+                                    <select class="form-control" id="category-filter">
+                                        <option value="">Todas as categorias</option>
+                                        <option value="queijos">Queijos</option>
+                                        <option value="carnes">Carnes</option>
+                                        <option value="vegetais">Vegetais</option>
+                                        <option value="temperos">Temperos</option>
+                                        <option value="massas">Massas</option>
+                                        <option value="molhos">Molhos</option>
+                                        <option value="bebidas">Bebidas</option>
+                                        <option value="outros">Outros</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary" onclick="showAddIngredienteModal()">
+                                    ➕ Novo Ingrediente
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="ingredientes-list">
+                                <div class="empty-state">
+                                    <div class="empty-icon">🥬</div>
+                                    <h3>Nenhum ingrediente encontrado</h3>
+                                    <p>Comece adicionando seus primeiros ingredientes ao sistema.</p>
+                                    <button class="btn btn-primary" onclick="showAddIngredienteModal()">
+                                        Adicionar Primeiro Ingrediente
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other module contents will be added here -->
+                <div id="receitas-content" class="d-none">
+                    <div class="empty-state">
+                        <div class="empty-icon">📝</div>
+                        <h3>Módulo de Receitas</h3>
+                        <p>Em desenvolvimento...</p>
+                    </div>
+                </div>
+
+                <div id="cardapio-content" class="d-none">
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <h3>Módulo de Cardápio</h3>
+                        <p>Em desenvolvimento...</p>
+                    </div>
+                </div>
+
+                <div id="estoque-content" class="d-none">
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <h3>Módulo de Estoque</h3>
+                        <p>Em desenvolvimento...</p>
+                    </div>
+                </div>
+
+                <div id="compras-content" class="d-none">
+                    <div class="empty-state">
+                        <div class="empty-icon">🛒</div>
+                        <h3>Módulo de Compras</h3>
+                        <p>Em desenvolvimento...</p>
+                    </div>
+                </div>
+
+                <div id="vendas-content" class="d-none">
+                    <div class="empty-state">
+                        <div class="empty-icon">💳</div>
+                        <h3>Módulo de Vendas</h3>
+                        <p>Em desenvolvimento...</p>
+                    </div>
+                </div>
+
+                <div id="resultados-content" class="d-none">
+                    <div class="empty-state">
+                        <div class="empty-icon">📊</div>
+                        <h3>Módulo de Resultados</h3>
+                        <p>Em desenvolvimento...</p>
+                    </div>
+                </div>
+
+                <div id="custos-content" class="d-none">
+                    <div class="empty-state">
+                        <div class="empty-icon">💰</div>
+                        <h3>Módulo de Custos</h3>
+                        <p>Em desenvolvimento...</p>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 
-    <!-- Overlay for mobile sidebar -->
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-    <!-- Toast Notifications -->
+    <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- Modals Container -->
-    <div class="modals-container" id="modals-container"></div>
+    <!-- JavaScript -->
+    <script>
+        console.log('Inicializando Pizzaria Pro v2.0.0');
 
-    <!-- Core Scripts -->
-    <script type="module" src="src/utils/constants.js"></script>
-    <script type="module" src="src/utils/storage.js"></script>
-    <script type="module" src="src/utils/validation.js"></script>
-    <script type="module" src="src/utils/calculations.js"></script>
-    <script type="module" src="src/utils/helpers.js"></script>
-    
-    <!-- Components -->
-    <script type="module" src="src/components/toast.js"></script>
-    <script type="module" src="src/components/modal.js"></script>
-    <script type="module" src="src/components/table.js"></script>
-    <script type="module" src="src/components/chart.js"></script>
-    
-    <!-- Modules -->
-    <script type="module" src="src/modules/dashboard.js"></script>
-    <script type="module" src="src/modules/ingredientes.js"></script>
-    <script type="module" src="src/modules/receitas.js"></script>
-    <script type="module" src="src/modules/estoque.js"></script>
-    <script type="module" src="src/modules/vendas.js"></script>
-    <script type="module" src="src/modules/custos.js"></script>
-    <script type="module" src="src/modules/precos.js"></script>
-    <script type="module" src="src/modules/cardapio.js"></script>
-    <script type="module" src="src/modules/analises.js"></script>
-    <script type="module" src="src/modules/exportar.js"></script>
-    
-    <!-- Main App -->
-    <script type="module" src="src/app.js"></script>
+        // Global variables
+        let currentModule = 'dashboard';
+        let ingredientes = [];
+        let receitas = [];
+        let vendas = [];
+        let estoque = {};
+
+        // Storage utilities
+        const storage = {
+            save: function(key, data) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(data));
+                    return true;
+                } catch (error) {
+                    console.error('Erro ao salvar dados:', error);
+                    return false;
+                }
+            },
+            
+            load: function(key, defaultValue = null) {
+                try {
+                    const data = localStorage.getItem(key);
+                    return data ? JSON.parse(data) : defaultValue;
+                } catch (error) {
+                    console.error('Erro ao carregar dados:', error);
+                    return defaultValue;
+                }
+            },
+            
+            remove: function(key) {
+                try {
+                    localStorage.removeItem(key);
+                    return true;
+                } catch (error) {
+                    console.error('Erro ao remover dados:', error);
+                    return false;
+                }
+            }
+        };
+
+        // Toast notifications
+        const toast = {
+            show: function(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                const toastEl = document.createElement('div');
+                toastEl.className = `toast ${type}`;
+                toastEl.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>${message}</span>
+                        <button class="modal-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                    </div>
+                `;
+                
+                container.appendChild(toastEl);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (toastEl.parentElement) {
+                        toastEl.remove();
+                    }
+                }, 5000);
+            },
+            
+            success: function(message) {
+                this.show(message, 'success');
+            },
+            
+            error: function(message) {
+                this.show(message, 'error');
+            },
+            
+            warning: function(message) {
+                this.show(message, 'warning');
+            }
+        };
+
+        // Modal utilities
+        const modal = {
+            show: function(title, content, onConfirm = null, onCancel = null) {
+                const overlay = document.createElement('div');
+                overlay.className = 'modal-overlay';
+                overlay.innerHTML = `
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h3 class="modal-title">${title}</h3>
+                            <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                        </div>
+                        <div class="modal-body">
+                            ${content}
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
+                            <button class="btn btn-primary" id="modal-confirm">Confirmar</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(overlay);
+                
+                // Handle confirm button
+                const confirmBtn = overlay.querySelector('#modal-confirm');
+                if (onConfirm) {
+                    confirmBtn.onclick = function() {
+                        onConfirm();
+                        overlay.remove();
+                    };
+                }
+                
+                return overlay;
+            },
+            
+            confirm: function(message, onConfirm, onCancel = null) {
+                return this.show('Confirmação', `<p>${message}</p>`, onConfirm, onCancel);
+            }
+        };
+
+        // Utility functions
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value || 0);
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('pt-BR');
+        }
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function getCurrentDate() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        // Navigation
+        function loadModule(moduleName) {
+            // Hide all content divs
+            const contentDivs = document.querySelectorAll('[id$="-content"]');
+            contentDivs.forEach(div => div.classList.add('d-none'));
+            
+            // Show selected module content
+            const moduleContent = document.getElementById(`${moduleName}-content`);
+            if (moduleContent) {
+                moduleContent.classList.remove('d-none');
+            }
+            
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            const activeLink = document.querySelector(`[data-module="${moduleName}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+            
+            // Update header
+            const titles = {
+                dashboard: { title: 'Dashboard', subtitle: 'Visão geral do seu negócio' },
+                ingredientes: { title: 'Ingredientes', subtitle: 'Gestão de ingredientes e matérias-primas' },
+                receitas: { title: 'Receitas', subtitle: 'Criação e gestão de receitas' },
+                cardapio: { title: 'Cardápio', subtitle: 'Montagem do cardápio de vendas' },
+                estoque: { title: 'Estoque', subtitle: 'Controle de estoque e inventário' },
+                compras: { title: 'Compras', subtitle: 'Gestão de compras e fornecedores' },
+                vendas: { title: 'Vendas', subtitle: 'Registro e controle de vendas' },
+                resultados: { title: 'Resultados', subtitle: 'Análise de resultados diários' },
+                custos: { title: 'Custos', subtitle: 'Controle de custos operacionais' }
+            };
+            
+            const moduleInfo = titles[moduleName] || { title: 'Módulo', subtitle: 'Descrição do módulo' };
+            document.getElementById('page-title').textContent = moduleInfo.title;
+            document.getElementById('page-subtitle').textContent = moduleInfo.subtitle;
+            
+            currentModule = moduleName;
+            
+            // Update URL hash
+            window.location.hash = moduleName;
+            
+            // Load module specific data
+            if (moduleName === 'ingredientes') {
+                loadIngredientes();
+            }
+        }
+
+        // Ingredientes module
+        function loadIngredientes() {
+            ingredientes = storage.load('ingredientes', []);
+            renderIngredientesList();
+        }
+
+        function renderIngredientesList() {
+            const container = document.getElementById('ingredientes-list');
+            
+            if (ingredientes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🥬</div>
+                        <h3>Nenhum ingrediente encontrado</h3>
+                        <p>Comece adicionando seus primeiros ingredientes ao sistema.</p>
+                        <button class="btn btn-primary" onclick="showAddIngredienteModal()">
+                            Adicionar Primeiro Ingrediente
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const tableHTML = `
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Unidade</th>
+                                <th>Preço</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${ingredientes.map(ingrediente => `
+                                <tr>
+                                    <td>
+                                        <strong>${ingrediente.nome}</strong>
+                                        ${ingrediente.descricao ? `<br><small class="text-muted">${ingrediente.descricao}</small>` : ''}
+                                    </td>
+                                    <td>${ingrediente.categoria}</td>
+                                    <td>${ingrediente.unidade}</td>
+                                    <td class="text-right font-weight-bold">${formatCurrency(ingrediente.preco)}</td>
+                                    <td>
+                                        <div class="d-flex gap-md">
+                                            <button class="btn btn-sm btn-secondary" onclick="editIngrediente('${ingrediente.id}')">✏️</button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteIngrediente('${ingrediente.id}')">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML = tableHTML;
+        }
+
+        function showAddIngredienteModal() {
+            const formHTML = `
+                <form id="ingrediente-form">
+                    <div class="form-group">
+                        <label class="form-label">Nome do Ingrediente *</label>
+                        <input type="text" class="form-control" name="nome" required placeholder="Ex: Mussarela">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Categoria *</label>
+                        <select class="form-control" name="categoria" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="queijos">Queijos</option>
+                            <option value="carnes">Carnes</option>
+                            <option value="vegetais">Vegetais</option>
+                            <option value="temperos">Temperos</option>
+                            <option value="massas">Massas</option>
+                            <option value="molhos">Molhos</option>
+                            <option value="bebidas">Bebidas</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Unidade de Medida *</label>
+                        <select class="form-control" name="unidade" required>
+                            <option value="">Selecione uma unidade</option>
+                            <option value="kg">Quilograma (kg)</option>
+                            <option value="g">Grama (g)</option>
+                            <option value="l">Litro (l)</option>
+                            <option value="ml">Mililitro (ml)</option>
+                            <option value="un">Unidade (un)</option>
+                            <option value="pct">Pacote (pct)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Preço por Unidade *</label>
+                        <input type="number" class="form-control" name="preco" required step="0.01" min="0" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fornecedor</label>
+                        <input type="text" class="form-control" name="fornecedor" placeholder="Nome do fornecedor">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" name="descricao" rows="3" placeholder="Descrição opcional do ingrediente"></textarea>
+                    </div>
+                </form>
+            `;
+            
+            const modalEl = modal.show('Novo Ingrediente', formHTML, function() {
+                const form = document.getElementById('ingrediente-form');
+                const formData = new FormData(form);
+                
+                const ingrediente = {
+                    id: generateId(),
+                    nome: formData.get('nome'),
+                    categoria: formData.get('categoria'),
+                    unidade: formData.get('unidade'),
+                    preco: parseFloat(formData.get('preco')),
+                    fornecedor: formData.get('fornecedor') || '',
+                    descricao: formData.get('descricao') || '',
+                    criadoEm: new Date().toISOString()
+                };
+                
+                // Validate
+                if (!ingrediente.nome || !ingrediente.categoria || !ingrediente.unidade || !ingrediente.preco) {
+                    toast.error('Preencha todos os campos obrigatórios');
+                    return;
+                }
+                
+                // Check if already exists
+                const exists = ingredientes.some(i => 
+                    i.nome.toLowerCase() === ingrediente.nome.toLowerCase() &&
+                    i.categoria === ingrediente.categoria
+                );
+                
+                if (exists) {
+                    toast.error('Já existe um ingrediente com este nome nesta categoria');
+                    return;
+                }
+                
+                // Add to list
+                ingredientes.push(ingrediente);
+                storage.save('ingredientes', ingredientes);
+                renderIngredientesList();
+                toast.success('Ingrediente adicionado com sucesso!');
+            });
+        }
+
+        function editIngrediente(id) {
+            const ingrediente = ingredientes.find(i => i.id === id);
+            if (!ingrediente) {
+                toast.error('Ingrediente não encontrado');
+                return;
+            }
+            
+            const formHTML = `
+                <form id="ingrediente-form">
+                    <div class="form-group">
+                        <label class="form-label">Nome do Ingrediente *</label>
+                        <input type="text" class="form-control" name="nome" required value="${ingrediente.nome}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Categoria *</label>
+                        <select class="form-control" name="categoria" required>
+                            <option value="queijos" ${ingrediente.categoria === 'queijos' ? 'selected' : ''}>Queijos</option>
+                            <option value="carnes" ${ingrediente.categoria === 'carnes' ? 'selected' : ''}>Carnes</option>
+                            <option value="vegetais" ${ingrediente.categoria === 'vegetais' ? 'selected' : ''}>Vegetais</option>
+                            <option value="temperos" ${ingrediente.categoria === 'temperos' ? 'selected' : ''}>Temperos</option>
+                            <option value="massas" ${ingrediente.categoria === 'massas' ? 'selected' : ''}>Massas</option>
+                            <option value="molhos" ${ingrediente.categoria === 'molhos' ? 'selected' : ''}>Molhos</option>
+                            <option value="bebidas" ${ingrediente.categoria === 'bebidas' ? 'selected' : ''}>Bebidas</option>
+                            <option value="outros" ${ingrediente.categoria === 'outros' ? 'selected' : ''}>Outros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Unidade de Medida *</label>
+                        <select class="form-control" name="unidade" required>
+                            <option value="kg" ${ingrediente.unidade === 'kg' ? 'selected' : ''}>Quilograma (kg)</option>
+                            <option value="g" ${ingrediente.unidade === 'g' ? 'selected' : ''}>Grama (g)</option>
+                            <option value="l" ${ingrediente.unidade === 'l' ? 'selected' : ''}>Litro (l)</option>
+                            <option value="ml" ${ingrediente.unidade === 'ml' ? 'selected' : ''}>Mililitro (ml)</option>
+                            <option value="un" ${ingrediente.unidade === 'un' ? 'selected' : ''}>Unidade (un)</option>
+                            <option value="pct" ${ingrediente.unidade === 'pct' ? 'selected' : ''}>Pacote (pct)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Preço por Unidade *</label>
+                        <input type="number" class="form-control" name="preco" required step="0.01" min="0" value="${ingrediente.preco}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fornecedor</label>
+                        <input type="text" class="form-control" name="fornecedor" value="${ingrediente.fornecedor || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" name="descricao" rows="3">${ingrediente.descricao || ''}</textarea>
+                    </div>
+                </form>
+            `;
+            
+            modal.show('Editar Ingrediente', formHTML, function() {
+                const form = document.getElementById('ingrediente-form');
+                const formData = new FormData(form);
+                
+                const updatedIngrediente = {
+                    ...ingrediente,
+                    nome: formData.get('nome'),
+                    categoria: formData.get('categoria'),
+                    unidade: formData.get('unidade'),
+                    preco: parseFloat(formData.get('preco')),
+                    fornecedor: formData.get('fornecedor') || '',
+                    descricao: formData.get('descricao') || '',
+                    atualizadoEm: new Date().toISOString()
+                };
+                
+                // Validate
+                if (!updatedIngrediente.nome || !updatedIngrediente.categoria || !updatedIngrediente.unidade || !updatedIngrediente.preco) {
+                    toast.error('Preencha todos os campos obrigatórios');
+                    return;
+                }
+                
+                // Update in list
+                const index = ingredientes.findIndex(i => i.id === id);
+                ingredientes[index] = updatedIngrediente;
+                storage.save('ingredientes', ingredientes);
+                renderIngredientesList();
+                toast.success('Ingrediente atualizado com sucesso!');
+            });
+        }
+
+        function deleteIngrediente(id) {
+            const ingrediente = ingredientes.find(i => i.id === id);
+            if (!ingrediente) {
+                toast.error('Ingrediente não encontrado');
+                return;
+            }
+            
+            modal.confirm(
+                `Tem certeza que deseja excluir o ingrediente "${ingrediente.nome}"?`,
+                function() {
+                    const index = ingredientes.findIndex(i => i.id === id);
+                    ingredientes.splice(index, 1);
+                    storage.save('ingredientes', ingredientes);
+                    renderIngredientesList();
+                    toast.success('Ingrediente excluído com sucesso!');
+                }
+            );
+        }
+
+        // Initialize app
+        function initApp() {
+            console.log('Aplicação inicializada com sucesso');
+            
+            // Load initial data
+            ingredientes = storage.load('ingredientes', []);
+            receitas = storage.load('receitas', []);
+            vendas = storage.load('vendas', []);
+            estoque = storage.load('estoque', {});
+            
+            // Setup navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const module = this.getAttribute('data-module');
+                    if (module) {
+                        loadModule(module);
+                    }
+                });
+            });
+            
+            // Load initial module from hash or default to dashboard
+            const hash = window.location.hash.substring(1);
+            const initialModule = hash || 'dashboard';
+            loadModule(initialModule);
+            
+            // Update KPIs
+            updateDashboardKPIs();
+        }
+
+        function updateDashboardKPIs() {
+            const hoje = getCurrentDate();
+            const vendasHoje = vendas.filter(v => v.data === hoje);
+            
+            const vendasCount = vendasHoje.length;
+            const faturamentoHoje = vendasHoje.reduce((total, venda) => {
+                return total + (parseFloat(venda.valorTotal) || 0);
+            }, 0);
+            
+            const ticketMedio = vendasCount > 0 ? faturamentoHoje / vendasCount : 0;
+            
+            document.getElementById('vendas-hoje').textContent = vendasCount;
+            document.getElementById('faturamento-hoje').textContent = formatCurrency(faturamentoHoje);
+            document.getElementById('ticket-medio').textContent = formatCurrency(ticketMedio);
+            document.getElementById('margem-media').textContent = '0%'; // Will be calculated when we have recipes
+        }
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+
+        // Handle browser back/forward
+        window.addEventListener('hashchange', function() {
+            const hash = window.location.hash.substring(1);
+            if (hash && hash !== currentModule) {
+                loadModule(hash);
+            }
+        });
+
+        // Global error handler
+        window.addEventListener('error', function(event) {
+            console.error('Erro global:', event.error);
+            toast.error('Ocorreu um erro inesperado');
+        });
+    </script>
 </body>
 </html>
 
