@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzaria Pro - Sistema de Gestão Completo</title>
+    <meta name="description" content="Sistema completo de gestão para pizzarias com controle de estoque, precificação e análise de rentabilidade">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="src/assets/favicon.ico">
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="src/styles/main.css">
+    <link rel="stylesheet" href="src/styles/components.css">
+    <link rel="stylesheet" href="src/styles/responsive.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="pizza-loader">🍕</div>
+            <h2>Pizzaria Pro</h2>
+            <p>Carregando sistema...</p>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app" class="app-container" style="display: none;">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">🍕</span>
+                    <h1>Pizzaria Pro</h1>
+                </div>
+                <p class="subtitle">Sistema de Gestão Completo</p>
+            </div>
+
+            <div class="sidebar-menu">
+                <!-- Dashboard -->
+                <div class="menu-group">
+                    <div class="menu-group-title">📊 Dashboard</div>
+                    <button class="menu-item active" data-module="dashboard">
+                        <span class="menu-icon">📈</span>
+                        <span>Visão Geral</span>
+                    </button>
+                </div>
+
+                <!-- Gestão de Produtos -->
+                <div class="menu-group">
+                    <div class="menu-group-title">🍕 Produtos</div>
+                    <button class="menu-item" data-module="ingredientes">
+                        <span class="menu-icon">🥬</span>
+                        <span>Ingredientes</span>
+                    </button>
+                    <button class="menu-item" data-module="receitas">
+                        <span class="menu-icon">📝</span>
+                        <span>Receitas</span>
+                    </button>
+                    <button class="menu-item" data-module="cardapio">
+                        <span class="menu-icon">📋</span>
+                        <span>Cardápio</span>
+                    </button>
+                </div>
+
+                <!-- Estoque -->
+                <div class="menu-group">
+                    <div class="menu-group-title">📦 Estoque</div>
+                    <button class="menu-item" data-module="estoque">
+                        <span class="menu-icon">📦</span>
+                        <span>Controle de Estoque</span>
+                    </button>
+                    <button class="menu-item" data-module="compras">
+                        <span class="menu-icon">🛒</span>
+                        <span>Compras</span>
+                    </button>
+                </div>
+
+                <!-- Vendas -->
+                <div class="menu-group">
+                    <div class="menu-group-title">💰 Vendas</div>
+                    <button class="menu-item" data-module="vendas">
+                        <span class="menu-icon">💳</span>
+                        <span>Registrar Vendas</span>
+                    </button>
+                    <button class="menu-item" data-module="resultados">
+                        <span class="menu-icon">📊</span>
+                        <span>Resultados Diários</span>
+                    </button>
+                </div>
+
+                <!-- Precificação -->
+                <div class="menu-group">
+                    <div class="menu-group-title">💲 Precificação</div>
+                    <button class="menu-item" data-module="custos">
+                        <span class="menu-icon">💰</span>
+                        <span>Custos Operacionais</span>
+                    </button>
+                    <button class="menu-item" data-module="precos">
+                        <span class="menu-icon">🏷️</span>
+                        <span>Tabela de Preços</span>
+                    </button>
+                    <button class="menu-item" data-module="simulador">
+                        <span class="menu-icon">🧮</span>
+                        <span>Simulador</span>
+                    </button>
+                </div>
+
+                <!-- Relatórios -->
+                <div class="menu-group">
+                    <div class="menu-group-title">📈 Relatórios</div>
+                    <button class="menu-item" data-module="analises">
+                        <span class="menu-icon">📊</span>
+                        <span>Análises</span>
+                    </button>
+                    <button class="menu-item" data-module="exportar">
+                        <span class="menu-icon">📤</span>
+                        <span>Exportar Dados</span>
+                    </button>
+                </div>
+
+                <!-- Configurações -->
+                <div class="menu-group">
+                    <div class="menu-group-title">⚙️ Sistema</div>
+                    <button class="menu-item" data-module="configuracoes">
+                        <span class="menu-icon">⚙️</span>
+                        <span>Configurações</span>
+                    </button>
+                    <button class="menu-item" data-module="backup">
+                        <span class="menu-icon">💾</span>
+                        <span>Backup</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Content Header -->
+            <header class="content-header">
+                <div class="header-content">
+                    <h1 id="page-title">Dashboard</h1>
+                    <p id="page-subtitle">Visão geral do seu negócio</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="quick-sale-btn">
+                        <span>⚡</span>
+                        Venda Rápida
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dynamic Content Area -->
+            <div class="content-body" id="content-body">
+                <!-- Content will be loaded dynamically here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Overlay for mobile sidebar -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Modals Container -->
+    <div class="modals-container" id="modals-container"></div>
+
+    <!-- Core Scripts -->
+    <script type="module" src="src/utils/constants.js"></script>
+    <script type="module" src="src/utils/storage.js"></script>
+    <script type="module" src="src/utils/validation.js"></script>
+    <script type="module" src="src/utils/calculations.js"></script>
+    <script type="module" src="src/utils/helpers.js"></script>
+    
+    <!-- Components -->
+    <script type="module" src="src/components/toast.js"></script>
+    <script type="module" src="src/components/modal.js"></script>
+    <script type="module" src="src/components/table.js"></script>
+    <script type="module" src="src/components/chart.js"></script>
+    
+    <!-- Modules -->
+    <script type="module" src="src/modules/dashboard.js"></script>
+    <script type="module" src="src/modules/ingredientes.js"></script>
+    <script type="module" src="src/modules/receitas.js"></script>
+    <script type="module" src="src/modules/estoque.js"></script>
+    <script type="module" src="src/modules/vendas.js"></script>
+    <script type="module" src="src/modules/custos.js"></script>
+    <script type="module" src="src/modules/precos.js"></script>
+    <script type="module" src="src/modules/cardapio.js"></script>
+    <script type="module" src="src/modules/analises.js"></script>
+    <script type="module" src="src/modules/exportar.js"></script>
+    
+    <!-- Main App -->
+    <script type="module" src="src/app.js"></script>
+</body>
+</html>
+
