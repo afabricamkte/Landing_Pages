@@ -4,9 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pizzaria Pro - Sistema de Gestão Completo</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- CSS Styles -->
     <style>
+        /* CSS Variables */
+        :root {
+            --primary-color: #ff6b6b;
+            --primary-dark: #ee5a24;
+            --secondary-color: #4ecdc4;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #3498db;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --white: #ffffff;
+            --gray-light: #f8f9fa;
+            --gray-medium: #6c757d;
+            --gray-dark: #343a40;
+            
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --spacing-3xl: 4rem;
+            
+            --border-radius-sm: 0.25rem;
+            --border-radius-md: 0.375rem;
+            --border-radius-lg: 0.5rem;
+            --border-radius-xl: 0.75rem;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Reset and Base Styles */
         * {
             margin: 0;
             padding: 0;
@@ -14,252 +57,285 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--gray-light);
+            color: var(--gray-dark);
+            line-height: 1.6;
         }
 
+        /* Layout */
         .app-container {
             display: flex;
             min-height: 100vh;
         }
 
-        /* SIDEBAR LATERAL */
+        /* Sidebar */
         .sidebar {
             width: 280px;
-            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
-            color: white;
+            background: linear-gradient(135deg, var(--dark-color) 0%, #34495e 100%);
+            color: var(--white);
+            padding: var(--spacing-lg);
+            overflow-y: auto;
             position: fixed;
             height: 100vh;
-            overflow-y: auto;
             z-index: 1000;
-            transition: transform 0.3s ease;
         }
 
         .sidebar-header {
-            padding: 20px;
-            background: linear-gradient(45deg, #ff6b6b, #ffa500);
             text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: var(--spacing-2xl);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .sidebar-header h1 {
-            font-size: 1.4em;
-            margin-bottom: 5px;
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
         }
 
         .sidebar-header p {
-            font-size: 0.9em;
-            opacity: 0.9;
+            font-size: var(--font-size-sm);
+            opacity: 0.8;
         }
 
-        .sidebar-menu {
-            padding: 20px 0;
+        .sidebar-nav {
+            list-style: none;
         }
 
-        .menu-group {
-            margin-bottom: 30px;
+        .nav-section {
+            margin-bottom: var(--spacing-xl);
         }
 
-        .menu-group-title {
-            padding: 10px 20px;
-            font-size: 0.85em;
-            font-weight: 600;
+        .nav-section-title {
+            font-size: var(--font-size-xs);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #bdc3c7;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: var(--spacing-md);
+            font-weight: 600;
         }
 
-        .menu-item {
+        .nav-item {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .nav-link {
             display: flex;
             align-items: center;
-            padding: 12px 20px;
-            color: #ecf0f1;
+            padding: var(--spacing-md);
+            color: var(--white);
             text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            font-size: 14px;
+            border-radius: var(--border-radius-md);
+            transition: all 0.2s ease;
+            position: relative;
         }
 
-        .menu-item:hover {
-            background: rgba(255,255,255,0.1);
-            padding-left: 30px;
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
         }
 
-        .menu-item.active {
-            background: linear-gradient(45deg, #3498db, #2980b9);
-            border-right: 4px solid #fff;
-            font-weight: 600;
+        .nav-link.active {
+            background: var(--primary-color);
+            box-shadow: var(--shadow-md);
         }
 
-        .menu-item .icon {
-            margin-right: 12px;
-            font-size: 16px;
-            width: 20px;
-            text-align: center;
+        .nav-link .icon {
+            margin-right: var(--spacing-md);
+            font-size: var(--font-size-lg);
         }
 
-        .menu-item .badge {
+        .nav-link .badge {
             margin-left: auto;
-            background: #e74c3c;
-            color: white;
-            font-size: 10px;
+            background: var(--primary-color);
+            color: var(--white);
+            font-size: var(--font-size-xs);
             padding: 2px 6px;
             border-radius: 10px;
-            min-width: 16px;
+            min-width: 18px;
             text-align: center;
         }
 
-        /* CONTEÚDO PRINCIPAL */
+        /* Main Content */
         .main-content {
             flex: 1;
             margin-left: 280px;
-            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
         }
 
-        .content-header {
-            background: linear-gradient(45deg, #ff6b6b, #ffa500);
-            color: white;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
         }
 
-        .content-header h1 {
-            font-size: 2em;
-            margin-bottom: 5px;
-        }
-
-        .content-header p {
-            opacity: 0.9;
-            font-size: 1.1em;
-        }
-
-        .content-body {
-            padding: 30px;
-        }
-
-        /* TABS */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* CARDS */
-        .card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .card-header {
-            background: #f8f9fa;
-            padding: 20px;
-            border-bottom: 1px solid #dee2e6;
+        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .card-body {
-            padding: 20px;
+        .header-title h2 {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
         }
 
-        /* BOTÕES */
+        .header-title p {
+            opacity: 0.9;
+            font-size: var(--font-size-lg);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: var(--spacing-2xl);
+            overflow-y: auto;
+        }
+
+        /* Components */
         .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
+            justify-content: center;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            gap: var(--spacing-sm);
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, #3498db, #2980b9);
-            color: white;
+            background: var(--primary-color);
+            color: var(--white);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
-        }
-
-        .btn-success {
-            background: linear-gradient(45deg, #2ecc71, #27ae60);
-            color: white;
-        }
-
-        .btn-warning {
-            background: linear-gradient(45deg, #f39c12, #e67e22);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(45deg, #e74c3c, #c0392b);
-            color: white;
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
         .btn-secondary {
-            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
-            color: white;
+            background: var(--gray-medium);
+            color: var(--white);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: var(--white);
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: var(--white);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: var(--white);
         }
 
         .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
+            padding: var(--spacing-sm) var(--spacing-md);
+            font-size: var(--font-size-sm);
         }
 
-        /* FORMULÁRIOS */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #2c3e50;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-        }
-
-        /* TABELAS */
-        .table-container {
-            background: white;
-            border-radius: 10px;
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .card-body {
+            padding: var(--spacing-lg);
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            gap: var(--spacing-lg);
+        }
+
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .kpi-icon {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+
+        .kpi-content h3 {
+            font-size: var(--font-size-sm);
+            color: var(--gray-medium);
+            margin-bottom: var(--spacing-xs);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-dark);
+            line-height: 1;
+        }
+
+        /* Tables */
+        .table-container {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
         }
 
         .table {
@@ -269,73 +345,95 @@
 
         .table th,
         .table td {
-            padding: 15px;
+            padding: var(--spacing-md);
             text-align: left;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid var(--gray-light);
         }
 
         .table th {
-            background: #f8f9fa;
+            background: var(--gray-light);
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--gray-dark);
         }
 
         .table tbody tr:hover {
-            background: #f8f9fa;
+            background: rgba(255, 107, 107, 0.05);
         }
 
-        /* GRID */
-        .grid {
-            display: grid;
-            gap: 20px;
+        /* Forms */
+        .form-group {
+            margin-bottom: var(--spacing-lg);
         }
 
-        .grid-2 { grid-template-columns: repeat(2, 1fr); }
-        .grid-3 { grid-template-columns: repeat(3, 1fr); }
-        .grid-4 { grid-template-columns: repeat(4, 1fr); }
-
-        /* KPI CARDS */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--gray-dark);
         }
 
-        .kpi-card {
-            background: white;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        .form-control {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-base);
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        /* Alerts */
+        .alert {
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Empty State */
+        .empty-state {
             text-align: center;
-            border-left: 5px solid #3498db;
-            transition: transform 0.3s ease;
+            padding: var(--spacing-3xl);
+            color: var(--gray-medium);
         }
 
-        .kpi-card:hover {
-            transform: translateY(-5px);
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
         }
 
-        .kpi-card.success { border-left-color: #2ecc71; }
-        .kpi-card.warning { border-left-color: #f39c12; }
-        .kpi-card.danger { border-left-color: #e74c3c; }
-        .kpi-card.info { border-left-color: #3498db; }
-
-        .kpi-value {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 10px;
+        .empty-state h3 {
+            margin-bottom: var(--spacing-md);
+            color: var(--gray-dark);
         }
 
-        .kpi-label {
-            color: #7f8c8d;
-            font-size: 0.9em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .empty-state p {
+            margin-bottom: var(--spacing-xl);
         }
 
-        /* MODAL */
+        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -350,71 +448,74 @@
         }
 
         .modal {
-            background: white;
-            border-radius: 10px;
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
             max-width: 500px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow-lg);
         }
 
         .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid #e9ecef;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-light);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .modal-title {
-            font-size: 1.25em;
+            font-size: var(--font-size-xl);
             font-weight: 600;
-            color: #2c3e50;
         }
 
         .modal-close {
             background: none;
             border: none;
-            font-size: 1.5em;
+            font-size: var(--font-size-xl);
             cursor: pointer;
-            color: #7f8c8d;
+            color: var(--gray-medium);
         }
 
         .modal-body {
-            padding: 20px;
+            padding: var(--spacing-lg);
         }
 
         .modal-footer {
-            padding: 20px;
-            border-top: 1px solid #e9ecef;
+            padding: var(--spacing-lg);
+            border-top: 1px solid var(--gray-light);
             display: flex;
-            gap: 10px;
+            gap: var(--spacing-md);
             justify-content: flex-end;
         }
 
-        /* TOAST */
+        /* Toast */
         .toast-container {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: var(--spacing-lg);
+            right: var(--spacing-lg);
             z-index: 3000;
         }
 
         .toast {
-            background: white;
-            border-radius: 5px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            padding: 15px 20px;
-            margin-bottom: 10px;
+            background: var(--white);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
             min-width: 300px;
-            border-left: 4px solid #2ecc71;
+            border-left: 4px solid var(--success-color);
             animation: slideIn 0.3s ease;
         }
 
-        .toast.error { border-left-color: #e74c3c; }
-        .toast.warning { border-left-color: #f39c12; }
-        .toast.info { border-left-color: #3498db; }
+        .toast.error {
+            border-left-color: var(--danger-color);
+        }
+
+        .toast.warning {
+            border-left-color: var(--warning-color);
+        }
 
         @keyframes slideIn {
             from {
@@ -427,68 +528,19 @@
             }
         }
 
-        /* EMPTY STATE */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #7f8c8d;
-        }
-
-        .empty-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        .empty-state h3 {
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-
-        .empty-state p {
-            margin-bottom: 20px;
-        }
-
-        /* RESPONSIVE */
+        /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
+                transition: transform 0.3s ease;
             }
 
-            .sidebar.mobile-open {
+            .sidebar.open {
                 transform: translateX(0);
             }
 
             .main-content {
                 margin-left: 0;
-            }
-
-            .sidebar-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 999;
-                display: none;
-            }
-
-            .sidebar-overlay.active {
-                display: block;
-            }
-
-            .mobile-menu-btn {
-                position: fixed;
-                top: 20px;
-                left: 20px;
-                z-index: 1001;
-                background: #3498db;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                padding: 10px;
-                cursor: pointer;
             }
 
             .kpi-grid {
@@ -500,31 +552,30 @@
             .grid-4 {
                 grid-template-columns: 1fr;
             }
+
+            .header-content {
+                flex-direction: column;
+                gap: var(--spacing-md);
+            }
         }
 
-        /* UTILITIES */
+        /* Utilities */
         .text-center { text-align: center; }
         .text-right { text-align: right; }
-        .font-weight-bold { font-weight: bold; }
-        .text-muted { color: #7f8c8d; }
+        .font-weight-bold { font-weight: 700; }
+        .text-muted { color: var(--gray-medium); }
         .d-none { display: none; }
         .d-block { display: block; }
         .d-flex { display: flex; }
         .justify-content-between { justify-content: space-between; }
         .align-items-center { align-items: center; }
-        .gap-10 { gap: 10px; }
-        .mb-20 { margin-bottom: 20px; }
-        .mt-20 { margin-top: 20px; }
+        .gap-md { gap: var(--spacing-md); }
+        .mb-lg { margin-bottom: var(--spacing-lg); }
+        .mt-lg { margin-top: var(--spacing-lg); }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- Mobile Menu Button -->
-        <button class="mobile-menu-btn d-none" onclick="toggleMobileSidebar()">☰</button>
-        
-        <!-- Sidebar Overlay for Mobile -->
-        <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
-        
         <!-- Sidebar -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -532,165 +583,229 @@
                 <p>Sistema de Gestão Completo</p>
             </div>
             
-            <div class="sidebar-menu">
-                <!-- Dashboard -->
-                <div class="menu-group">
-                    <div class="menu-group-title">📊 Dashboard</div>
-                    <button class="menu-item active" data-tab="dashboard" onclick="showTab('dashboard')">
-                        <span class="icon">📈</span>
-                        Visão Geral
-                        <span class="badge">1</span>
-                    </button>
-                </div>
+            <ul class="sidebar-nav">
+                <li class="nav-section">
+                    <div class="nav-section-title">📊 Dashboard</div>
+                    <ul>
+                        <li class="nav-item">
+                            <a href="#dashboard" class="nav-link active" data-module="dashboard">
+                                <span class="icon">📈</span>
+                                Visão Geral
+                                <span class="badge">1</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 
-                <!-- Produtos -->
-                <div class="menu-group">
-                    <div class="menu-group-title">🍕 Produtos</div>
-                    <button class="menu-item" data-tab="ingredientes" onclick="showTab('ingredientes')">
-                        <span class="icon">🥬</span>
-                        Ingredientes
-                        <span class="badge">2</span>
-                    </button>
-                    <button class="menu-item" data-tab="receitas" onclick="showTab('receitas')">
-                        <span class="icon">📝</span>
-                        Receitas
-                        <span class="badge">3</span>
-                    </button>
-                    <button class="menu-item" data-tab="cardapio" onclick="showTab('cardapio')">
-                        <span class="icon">📋</span>
-                        Cardápio
-                        <span class="badge">4</span>
-                    </button>
-                </div>
+                <li class="nav-section">
+                    <div class="nav-section-title">🍕 Produtos</div>
+                    <ul>
+                        <li class="nav-item">
+                            <a href="#ingredientes" class="nav-link" data-module="ingredientes">
+                                <span class="icon">🥬</span>
+                                Ingredientes
+                                <span class="badge">2</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#receitas" class="nav-link" data-module="receitas">
+                                <span class="icon">📝</span>
+                                Receitas
+                                <span class="badge">3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#cardapio" class="nav-link" data-module="cardapio">
+                                <span class="icon">📋</span>
+                                Cardápio
+                                <span class="badge">4</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 
-                <!-- Estoque -->
-                <div class="menu-group">
-                    <div class="menu-group-title">📦 Estoque</div>
-                    <button class="menu-item" data-tab="estoque" onclick="showTab('estoque')">
-                        <span class="icon">📦</span>
-                        Controle de Estoque
-                        <span class="badge">5</span>
-                    </button>
-                    <button class="menu-item" data-tab="compras" onclick="showTab('compras')">
-                        <span class="icon">🛒</span>
-                        Compras
-                        <span class="badge">6</span>
-                    </button>
-                </div>
+                <li class="nav-section">
+                    <div class="nav-section-title">📦 Estoque</div>
+                    <ul>
+                        <li class="nav-item">
+                            <a href="#estoque" class="nav-link" data-module="estoque">
+                                <span class="icon">📦</span>
+                                Controle de Estoque
+                                <span class="badge">5</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#compras" class="nav-link" data-module="compras">
+                                <span class="icon">🛒</span>
+                                Compras
+                                <span class="badge">6</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 
-                <!-- Vendas -->
-                <div class="menu-group">
-                    <div class="menu-group-title">💰 Vendas</div>
-                    <button class="menu-item" data-tab="vendas" onclick="showTab('vendas')">
-                        <span class="icon">💳</span>
-                        Registrar Vendas
-                        <span class="badge">7</span>
-                    </button>
-                    <button class="menu-item" data-tab="resultados" onclick="showTab('resultados')">
-                        <span class="icon">📊</span>
-                        Resultados Diários
-                        <span class="badge">8</span>
-                    </button>
-                    <button class="menu-item" data-tab="custos" onclick="showTab('custos')">
-                        <span class="icon">💰</span>
-                        Custos Operacionais
-                        <span class="badge">9</span>
-                    </button>
-                </div>
-            </div>
+                <li class="nav-section">
+                    <div class="nav-section-title">💰 Vendas</div>
+                    <ul>
+                        <li class="nav-item">
+                            <a href="#vendas" class="nav-link" data-module="vendas">
+                                <span class="icon">💳</span>
+                                Registrar Vendas
+                                <span class="badge">7</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#resultados" class="nav-link" data-module="resultados">
+                                <span class="icon">📊</span>
+                                Resultados Diários
+                                <span class="badge">8</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#custos" class="nav-link" data-module="custos">
+                                <span class="icon">💰</span>
+                                Custos Operacionais
+                                <span class="badge">9</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </nav>
 
         <!-- Main Content -->
         <main class="main-content">
             <!-- Header -->
-            <header class="content-header">
-                <h1 id="content-title">📊 Dashboard - Visão Geral</h1>
-                <p id="content-subtitle">Monitore os indicadores-chave da sua operação</p>
+            <header class="header">
+                <div class="header-content">
+                    <div class="header-title">
+                        <h2 id="page-title">Dashboard</h2>
+                        <p id="page-subtitle">Visão geral do seu negócio</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="quick-action-btn">
+                            ⚡ Venda Rápida
+                            <span class="badge">10</span>
+                        </button>
+                    </div>
+                </div>
             </header>
 
-            <!-- Content Body -->
-            <div class="content-body">
-                <!-- Dashboard Tab -->
-                <div id="dashboard" class="tab-content active">
+            <!-- Content -->
+            <div class="content" id="main-content">
+                <!-- Dashboard Content -->
+                <div id="dashboard-content">
                     <!-- KPIs -->
                     <div class="kpi-grid">
-                        <div class="kpi-card success">
-                            <div class="kpi-value" id="vendas-hoje">0</div>
-                            <div class="kpi-label">Vendas Hoje</div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">🛒</div>
+                            <div class="kpi-content">
+                                <h3>Vendas Hoje</h3>
+                                <div class="kpi-value" id="vendas-hoje">0</div>
+                            </div>
                         </div>
-                        <div class="kpi-card info">
-                            <div class="kpi-value" id="faturamento-hoje">R$ 0,00</div>
-                            <div class="kpi-label">Faturamento Hoje</div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">💰</div>
+                            <div class="kpi-content">
+                                <h3>Faturamento Hoje</h3>
+                                <div class="kpi-value" id="faturamento-hoje">R$ 0,00</div>
+                            </div>
                         </div>
-                        <div class="kpi-card warning">
-                            <div class="kpi-value" id="ticket-medio">R$ 0,00</div>
-                            <div class="kpi-label">Ticket Médio</div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">🎯</div>
+                            <div class="kpi-content">
+                                <h3>Ticket Médio</h3>
+                                <div class="kpi-value" id="ticket-medio">R$ 0,00</div>
+                            </div>
                         </div>
-                        <div class="kpi-card danger">
-                            <div class="kpi-value" id="margem-media">0%</div>
-                            <div class="kpi-label">Margem Média</div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">📈</div>
+                            <div class="kpi-content">
+                                <h3>Margem Média</h3>
+                                <div class="kpi-value" id="margem-media">0%</div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Dashboard Cards -->
+                    <!-- Sections Grid -->
                     <div class="grid grid-2">
+                        <!-- Vendas Recentes -->
                         <div class="card">
                             <div class="card-header">
                                 <h3>📊 Vendas Recentes</h3>
-                                <button class="btn btn-primary btn-sm" onclick="showTab('vendas')">
+                                <button class="btn btn-primary btn-sm" onclick="loadModule('vendas')">
                                     Nova Venda
                                 </button>
                             </div>
                             <div class="card-body" id="vendas-recentes">
                                 <div class="empty-state">
-                                    <div class="empty-icon">🛒</div>
-                                    <h3>Nenhuma venda registrada</h3>
-                                    <p>Comece registrando sua primeira venda.</p>
-                                    <button class="btn btn-primary" onclick="showTab('vendas')">
+                                    <p>Nenhuma venda registrada ainda.</p>
+                                    <button class="btn btn-primary" onclick="loadModule('vendas')">
                                         Registrar Primeira Venda
                                     </button>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Status do Estoque -->
                         <div class="card">
                             <div class="card-header">
                                 <h3>📦 Status do Estoque</h3>
-                                <button class="btn btn-secondary btn-sm" onclick="showTab('estoque')">
+                                <button class="btn btn-secondary btn-sm" onclick="loadModule('estoque')">
                                     Ver Estoque
                                 </button>
                             </div>
                             <div class="card-body" id="status-estoque">
+                                <div class="alert alert-success">
+                                    <strong>✅ Estoque OK!</strong><br>
+                                    Todos os ingredientes estão com estoque adequado.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Receitas Populares -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>🍕 Receitas Populares</h3>
+                                <button class="btn btn-secondary btn-sm" onclick="loadModule('receitas')">
+                                    Ver Receitas
+                                </button>
+                            </div>
+                            <div class="card-body" id="receitas-populares">
                                 <div class="empty-state">
-                                    <div class="empty-icon">📦</div>
-                                    <h3>Estoque não configurado</h3>
-                                    <p>Configure seus ingredientes primeiro.</p>
-                                    <button class="btn btn-primary" onclick="showTab('ingredientes')">
-                                        Configurar Ingredientes
+                                    <p>Nenhuma receita cadastrada ainda.</p>
+                                    <button class="btn btn-primary" onclick="loadModule('receitas')">
+                                        Criar Primeira Receita
                                     </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Análise por Canal -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>📱 Vendas por Canal</h3>
+                                <button class="btn btn-secondary btn-sm" onclick="loadModule('analises')">
+                                    Ver Análises
+                                </button>
+                            </div>
+                            <div class="card-body" id="vendas-por-canal">
+                                <div class="empty-state">
+                                    <p>Nenhuma venda para análise ainda.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Ingredientes Tab -->
-                <div id="ingredientes" class="tab-content">
-                    <div class="card">
+                <!-- Ingredientes Content -->
+                <div id="ingredientes-content" class="d-none">
+                    <div class="card mb-lg">
                         <div class="card-header">
-                            <h3>🥬 Gestão de Ingredientes</h3>
-                            <button class="btn btn-primary" onclick="showAddIngredienteModal()">
-                                ➕ Novo Ingrediente
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <!-- Filtros -->
-                            <div class="grid grid-3 mb-20">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Buscar ingredientes..." id="search-ingredientes" onkeyup="filterIngredientes()">
-                                </div>
-                                <div class="form-group">
-                                    <select class="form-control" id="category-filter" onchange="filterIngredientes()">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex gap-md">
+                                    <input type="text" class="form-control" placeholder="Buscar ingredientes..." id="search-ingredientes">
+                                    <select class="form-control" id="category-filter">
                                         <option value="">Todas as categorias</option>
                                         <option value="queijos">Queijos</option>
                                         <option value="carnes">Carnes</option>
@@ -702,20 +817,16 @@
                                         <option value="outros">Outros</option>
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <select class="form-control" id="sort-by" onchange="filterIngredientes()">
-                                        <option value="nome">Ordenar por Nome</option>
-                                        <option value="categoria">Ordenar por Categoria</option>
-                                        <option value="preco">Ordenar por Preço</option>
-                                    </select>
-                                </div>
+                                <button class="btn btn-primary" onclick="showAddIngredienteModal()">
+                                    ➕ Novo Ingrediente
+                                </button>
                             </div>
-
-                            <!-- Lista de Ingredientes -->
+                        </div>
+                        <div class="card-body">
                             <div id="ingredientes-list">
                                 <div class="empty-state">
                                     <div class="empty-icon">🥬</div>
-                                    <h3>Nenhum ingrediente cadastrado</h3>
+                                    <h3>Nenhum ingrediente encontrado</h3>
                                     <p>Comece adicionando seus primeiros ingredientes ao sistema.</p>
                                     <button class="btn btn-primary" onclick="showAddIngredienteModal()">
                                         Adicionar Primeiro Ingrediente
@@ -726,8 +837,8 @@
                     </div>
                 </div>
 
-                <!-- Receitas Tab -->
-                <div id="receitas" class="tab-content">
+                <!-- Other module contents will be added here -->
+                <div id="receitas-content" class="d-none">
                     <div class="empty-state">
                         <div class="empty-icon">📝</div>
                         <h3>Módulo de Receitas</h3>
@@ -735,8 +846,7 @@
                     </div>
                 </div>
 
-                <!-- Cardápio Tab -->
-                <div id="cardapio" class="tab-content">
+                <div id="cardapio-content" class="d-none">
                     <div class="empty-state">
                         <div class="empty-icon">📋</div>
                         <h3>Módulo de Cardápio</h3>
@@ -744,8 +854,7 @@
                     </div>
                 </div>
 
-                <!-- Estoque Tab -->
-                <div id="estoque" class="tab-content">
+                <div id="estoque-content" class="d-none">
                     <div class="empty-state">
                         <div class="empty-icon">📦</div>
                         <h3>Módulo de Estoque</h3>
@@ -753,8 +862,7 @@
                     </div>
                 </div>
 
-                <!-- Compras Tab -->
-                <div id="compras" class="tab-content">
+                <div id="compras-content" class="d-none">
                     <div class="empty-state">
                         <div class="empty-icon">🛒</div>
                         <h3>Módulo de Compras</h3>
@@ -762,8 +870,7 @@
                     </div>
                 </div>
 
-                <!-- Vendas Tab -->
-                <div id="vendas" class="tab-content">
+                <div id="vendas-content" class="d-none">
                     <div class="empty-state">
                         <div class="empty-icon">💳</div>
                         <h3>Módulo de Vendas</h3>
@@ -771,8 +878,7 @@
                     </div>
                 </div>
 
-                <!-- Resultados Tab -->
-                <div id="resultados" class="tab-content">
+                <div id="resultados-content" class="d-none">
                     <div class="empty-state">
                         <div class="empty-icon">📊</div>
                         <h3>Módulo de Resultados</h3>
@@ -780,8 +886,7 @@
                     </div>
                 </div>
 
-                <!-- Custos Tab -->
-                <div id="custos" class="tab-content">
+                <div id="custos-content" class="d-none">
                     <div class="empty-state">
                         <div class="empty-icon">💰</div>
                         <h3>Módulo de Custos</h3>
@@ -799,18 +904,14 @@
     <script>
         console.log('Inicializando Pizzaria Pro v2.0.0');
 
-        // ========================================
-        // VARIÁVEIS GLOBAIS
-        // ========================================
+        // Global variables
+        let currentModule = 'dashboard';
         let ingredientes = [];
         let receitas = [];
         let vendas = [];
         let estoque = {};
-        let currentTab = 'dashboard';
 
-        // ========================================
-        // UTILITÁRIOS DE STORAGE
-        // ========================================
+        // Storage utilities
         const storage = {
             save: function(key, data) {
                 try {
@@ -843,9 +944,7 @@
             }
         };
 
-        // ========================================
-        // SISTEMA DE TOAST
-        // ========================================
+        // Toast notifications
         const toast = {
             show: function(message, type = 'success') {
                 const container = document.getElementById('toast-container');
@@ -878,16 +977,10 @@
             
             warning: function(message) {
                 this.show(message, 'warning');
-            },
-            
-            info: function(message) {
-                this.show(message, 'info');
             }
         };
 
-        // ========================================
-        // SISTEMA DE MODAL
-        // ========================================
+        // Modal utilities
         const modal = {
             show: function(title, content, onConfirm = null, onCancel = null) {
                 const overlay = document.createElement('div');
@@ -927,9 +1020,7 @@
             }
         };
 
-        // ========================================
-        // FUNÇÕES UTILITÁRIAS
-        // ========================================
+        // Utility functions
         function formatCurrency(value) {
             return new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
@@ -949,122 +1040,57 @@
             return new Date().toISOString().split('T')[0];
         }
 
-        // ========================================
-        // SISTEMA DE NAVEGAÇÃO
-        // ========================================
-        function showTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
+        // Navigation
+        function loadModule(moduleName) {
+            // Hide all content divs
+            const contentDivs = document.querySelectorAll('[id$="-content"]');
+            contentDivs.forEach(div => div.classList.add('d-none'));
+            
+            // Show selected module content
+            const moduleContent = document.getElementById(`${moduleName}-content`);
+            if (moduleContent) {
+                moduleContent.classList.remove('d-none');
+            }
+            
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
             });
             
-            // Show selected tab
-            const selectedTab = document.getElementById(tabName);
-            if (selectedTab) {
-                selectedTab.classList.add('active');
+            const activeLink = document.querySelector(`[data-module="${moduleName}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
             }
             
-            // Update sidebar
-            updateSidebarActive(tabName);
-            updateContentHeader(tabName);
-            
-            // Close mobile sidebar
-            closeMobileSidebar();
-            
-            currentTab = tabName;
-            
-            // Load tab specific data
-            if (tabName === 'ingredientes') {
-                loadIngredientes();
-            } else if (tabName === 'dashboard') {
-                updateDashboardKPIs();
-            }
-        }
-
-        function updateSidebarActive(tabName) {
-            // Remove active class from all items
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            // Add active class to selected item
-            const activeItem = document.querySelector(`[data-tab="${tabName}"]`);
-            if (activeItem) {
-                activeItem.classList.add('active');
-            }
-        }
-
-        function updateContentHeader(tabName) {
+            // Update header
             const titles = {
-                'dashboard': {
-                    title: '📊 Dashboard - Visão Geral',
-                    subtitle: 'Monitore os indicadores-chave da sua operação'
-                },
-                'ingredientes': {
-                    title: '🥬 Gestão de Ingredientes',
-                    subtitle: 'Controle de ingredientes e matérias-primas'
-                },
-                'receitas': {
-                    title: '📝 Receitas das Pizzas',
-                    subtitle: 'Configure receitas e ingredientes'
-                },
-                'cardapio': {
-                    title: '📋 Cardápio',
-                    subtitle: 'Visualize e gerencie o cardápio'
-                },
-                'estoque': {
-                    title: '📦 Controle de Estoque',
-                    subtitle: 'Gerencie o estoque de ingredientes'
-                },
-                'compras': {
-                    title: '🛒 Compras',
-                    subtitle: 'Gestão de compras e fornecedores'
-                },
-                'vendas': {
-                    title: '💳 Registrar Vendas',
-                    subtitle: 'Registre vendas e acompanhe a performance'
-                },
-                'resultados': {
-                    title: '📊 Resultados Diários',
-                    subtitle: 'Controle de faturamento e metas diárias'
-                },
-                'custos': {
-                    title: '💰 Custos Operacionais',
-                    subtitle: 'Configure custos fixos e variáveis'
-                }
+                dashboard: { title: 'Dashboard', subtitle: 'Visão geral do seu negócio' },
+                ingredientes: { title: 'Ingredientes', subtitle: 'Gestão de ingredientes e matérias-primas' },
+                receitas: { title: 'Receitas', subtitle: 'Criação e gestão de receitas' },
+                cardapio: { title: 'Cardápio', subtitle: 'Montagem do cardápio de vendas' },
+                estoque: { title: 'Estoque', subtitle: 'Controle de estoque e inventário' },
+                compras: { title: 'Compras', subtitle: 'Gestão de compras e fornecedores' },
+                vendas: { title: 'Vendas', subtitle: 'Registro e controle de vendas' },
+                resultados: { title: 'Resultados', subtitle: 'Análise de resultados diários' },
+                custos: { title: 'Custos', subtitle: 'Controle de custos operacionais' }
             };
             
-            const config = titles[tabName] || {
-                title: 'Sistema de Gestão',
-                subtitle: 'Gerencie sua pizzaria'
-            };
+            const moduleInfo = titles[moduleName] || { title: 'Módulo', subtitle: 'Descrição do módulo' };
+            document.getElementById('page-title').textContent = moduleInfo.title;
+            document.getElementById('page-subtitle').textContent = moduleInfo.subtitle;
             
-            document.getElementById('content-title').textContent = config.title;
-            document.getElementById('content-subtitle').textContent = config.subtitle;
+            currentModule = moduleName;
+            
+            // Update URL hash
+            window.location.hash = moduleName;
+            
+            // Load module specific data
+            if (moduleName === 'ingredientes') {
+                loadIngredientes();
+            }
         }
 
-        // ========================================
-        // SISTEMA MOBILE
-        // ========================================
-        function toggleMobileSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
-            
-            sidebar.classList.toggle('mobile-open');
-            overlay.classList.toggle('active');
-        }
-
-        function closeMobileSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
-            
-            sidebar.classList.remove('mobile-open');
-            overlay.classList.remove('active');
-        }
-
-        // ========================================
-        // MÓDULO DE INGREDIENTES
-        // ========================================
+        // Ingredientes module
         function loadIngredientes() {
             ingredientes = storage.load('ingredientes', []);
             renderIngredientesList();
@@ -1077,7 +1103,7 @@
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">🥬</div>
-                        <h3>Nenhum ingrediente cadastrado</h3>
+                        <h3>Nenhum ingrediente encontrado</h3>
                         <p>Comece adicionando seus primeiros ingredientes ao sistema.</p>
                         <button class="btn btn-primary" onclick="showAddIngredienteModal()">
                             Adicionar Primeiro Ingrediente
@@ -1096,7 +1122,6 @@
                                 <th>Categoria</th>
                                 <th>Unidade</th>
                                 <th>Preço</th>
-                                <th>Fornecedor</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
@@ -1110,102 +1135,8 @@
                                     <td>${ingrediente.categoria}</td>
                                     <td>${ingrediente.unidade}</td>
                                     <td class="text-right font-weight-bold">${formatCurrency(ingrediente.preco)}</td>
-                                    <td>${ingrediente.fornecedor || '-'}</td>
                                     <td>
-                                        <div class="d-flex gap-10">
-                                            <button class="btn btn-sm btn-secondary" onclick="editIngrediente('${ingrediente.id}')">✏️</button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteIngrediente('${ingrediente.id}')">🗑️</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            
-            container.innerHTML = tableHTML;
-        }
-
-        function filterIngredientes() {
-            const searchTerm = document.getElementById('search-ingredientes').value.toLowerCase();
-            const categoryFilter = document.getElementById('category-filter').value;
-            const sortBy = document.getElementById('sort-by').value;
-            
-            let filtered = [...ingredientes];
-            
-            // Apply search filter
-            if (searchTerm) {
-                filtered = filtered.filter(ingrediente => 
-                    ingrediente.nome.toLowerCase().includes(searchTerm) ||
-                    (ingrediente.descricao && ingrediente.descricao.toLowerCase().includes(searchTerm)) ||
-                    (ingrediente.fornecedor && ingrediente.fornecedor.toLowerCase().includes(searchTerm))
-                );
-            }
-            
-            // Apply category filter
-            if (categoryFilter) {
-                filtered = filtered.filter(ingrediente => ingrediente.categoria === categoryFilter);
-            }
-            
-            // Apply sorting
-            filtered.sort((a, b) => {
-                let aVal = a[sortBy];
-                let bVal = b[sortBy];
-                
-                if (sortBy === 'preco') {
-                    aVal = parseFloat(aVal) || 0;
-                    bVal = parseFloat(bVal) || 0;
-                } else {
-                    aVal = String(aVal).toLowerCase();
-                    bVal = String(bVal).toLowerCase();
-                }
-                
-                if (aVal < bVal) return -1;
-                if (aVal > bVal) return 1;
-                return 0;
-            });
-            
-            // Update display with filtered results
-            const container = document.getElementById('ingredientes-list');
-            
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">🔍</div>
-                        <h3>Nenhum ingrediente encontrado</h3>
-                        <p>Tente ajustar os filtros de busca.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            const tableHTML = `
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Categoria</th>
-                                <th>Unidade</th>
-                                <th>Preço</th>
-                                <th>Fornecedor</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${filtered.map(ingrediente => `
-                                <tr>
-                                    <td>
-                                        <strong>${ingrediente.nome}</strong>
-                                        ${ingrediente.descricao ? `<br><small class="text-muted">${ingrediente.descricao}</small>` : ''}
-                                    </td>
-                                    <td>${ingrediente.categoria}</td>
-                                    <td>${ingrediente.unidade}</td>
-                                    <td class="text-right font-weight-bold">${formatCurrency(ingrediente.preco)}</td>
-                                    <td>${ingrediente.fornecedor || '-'}</td>
-                                    <td>
-                                        <div class="d-flex gap-10">
+                                        <div class="d-flex gap-md">
                                             <button class="btn btn-sm btn-secondary" onclick="editIngrediente('${ingrediente.id}')">✏️</button>
                                             <button class="btn btn-sm btn-danger" onclick="deleteIngrediente('${ingrediente.id}')">🗑️</button>
                                         </div>
@@ -1268,7 +1199,7 @@
                 </form>
             `;
             
-            modal.show('Novo Ingrediente', formHTML, function() {
+            const modalEl = modal.show('Novo Ingrediente', formHTML, function() {
                 const form = document.getElementById('ingrediente-form');
                 const formData = new FormData(form);
                 
@@ -1409,9 +1340,36 @@
             );
         }
 
-        // ========================================
-        // DASHBOARD
-        // ========================================
+        // Initialize app
+        function initApp() {
+            console.log('Aplicação inicializada com sucesso');
+            
+            // Load initial data
+            ingredientes = storage.load('ingredientes', []);
+            receitas = storage.load('receitas', []);
+            vendas = storage.load('vendas', []);
+            estoque = storage.load('estoque', {});
+            
+            // Setup navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const module = this.getAttribute('data-module');
+                    if (module) {
+                        loadModule(module);
+                    }
+                });
+            });
+            
+            // Load initial module from hash or default to dashboard
+            const hash = window.location.hash.substring(1);
+            const initialModule = hash || 'dashboard';
+            loadModule(initialModule);
+            
+            // Update KPIs
+            updateDashboardKPIs();
+        }
+
         function updateDashboardKPIs() {
             const hoje = getCurrentDate();
             const vendasHoje = vendas.filter(v => v.data === hoje);
@@ -1429,49 +1387,20 @@
             document.getElementById('margem-media').textContent = '0%'; // Will be calculated when we have recipes
         }
 
-        // ========================================
-        // INICIALIZAÇÃO
-        // ========================================
-        function initApp() {
-            console.log('Aplicação inicializada com sucesso');
-            
-            // Load initial data
-            ingredientes = storage.load('ingredientes', []);
-            receitas = storage.load('receitas', []);
-            vendas = storage.load('vendas', []);
-            estoque = storage.load('estoque', {});
-            
-            // Setup responsive
-            setupResponsive();
-            
-            // Update initial tab
-            updateSidebarActive('dashboard');
-            updateContentHeader('dashboard');
-            updateDashboardKPIs();
-        }
-
-        function setupResponsive() {
-            // Show mobile menu button on small screens
-            function checkScreenSize() {
-                const mobileBtn = document.querySelector('.mobile-menu-btn');
-                if (window.innerWidth <= 768) {
-                    mobileBtn.classList.remove('d-none');
-                } else {
-                    mobileBtn.classList.add('d-none');
-                    closeMobileSidebar();
-                }
-            }
-            
-            checkScreenSize();
-            window.addEventListener('resize', checkScreenSize);
-        }
-
         // Initialize when DOM is ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initApp);
         } else {
             initApp();
         }
+
+        // Handle browser back/forward
+        window.addEventListener('hashchange', function() {
+            const hash = window.location.hash.substring(1);
+            if (hash && hash !== currentModule) {
+                loadModule(hash);
+            }
+        });
 
         // Global error handler
         window.addEventListener('error', function(event) {
