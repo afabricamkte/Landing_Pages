@@ -2651,13 +2651,27 @@
 
         function showNovaVendaModal() {
             if (receitas.length === 0) {
-                toast.error('Cadastre receitas primeiro para registrar vendas');
+                modal.confirm(
+                    'Nenhuma receita cadastrada. Deseja criar uma receita agora?',
+                    function() {
+                        showSection('receitas');
+                    },
+                    'Ir para Receitas',
+                    'Cancelar'
+                );
                 return;
             }
 
             const receitasAtivas = receitas.filter(r => r.ativa);
             if (receitasAtivas.length === 0) {
-                toast.error('Ative pelo menos uma receita para registrar vendas');
+                modal.confirm(
+                    'Nenhuma receita ativa encontrada. Deseja ativar uma receita?',
+                    function() {
+                        showSection('receitas');
+                    },
+                    'Ir para Receitas',
+                    'Cancelar'
+                );
                 return;
             }
 
@@ -3297,6 +3311,82 @@
         }
 
         // ========================================
+        // DADOS DE EXEMPLO
+        // ========================================
+        function addSampleData() {
+            console.log('Adicionando dados de exemplo...');
+            
+            // Ingredientes de exemplo
+            const sampleIngredientes = [
+                {
+                    id: generateId(),
+                    nome: 'Mussarela',
+                    categoria: 'queijos',
+                    unidade: 'kg',
+                    preco: 25.50,
+                    fornecedor: 'Laticínios ABC'
+                },
+                {
+                    id: generateId(),
+                    nome: 'Molho de Tomate',
+                    categoria: 'molhos',
+                    unidade: 'kg',
+                    preco: 8.90,
+                    fornecedor: 'Conservas XYZ'
+                },
+                {
+                    id: generateId(),
+                    nome: 'Massa de Pizza',
+                    categoria: 'massas',
+                    unidade: 'kg',
+                    preco: 12.00,
+                    fornecedor: 'Massas Premium'
+                },
+                {
+                    id: generateId(),
+                    nome: 'Orégano',
+                    categoria: 'temperos',
+                    unidade: 'kg',
+                    preco: 45.00,
+                    fornecedor: 'Temperos Naturais'
+                }
+            ];
+            
+            // Receita de exemplo
+            const sampleReceita = {
+                id: generateId(),
+                nome: 'Pizza Marguerita',
+                categoria: 'tradicional',
+                descricao: 'Pizza clássica com mussarela, molho de tomate e orégano',
+                ingredientes: [
+                    { ingredienteId: sampleIngredientes[0].id, quantidade: 0.15 }, // Mussarela
+                    { ingredienteId: sampleIngredientes[1].id, quantidade: 0.08 }, // Molho
+                    { ingredienteId: sampleIngredientes[2].id, quantidade: 0.25 }, // Massa
+                    { ingredienteId: sampleIngredientes[3].id, quantidade: 0.002 } // Orégano
+                ],
+                tamanhos: {
+                    pequena: { ativo: true, multiplicador: 1.0, custoTotal: 0 },
+                    media: { ativo: true, multiplicador: 1.5, custoTotal: 0 },
+                    grande: { ativo: true, multiplicador: 2.0, custoTotal: 0 }
+                },
+                ativa: true
+            };
+            
+            // Salvar dados de exemplo
+            ingredientes = sampleIngredientes;
+            receitas = [sampleReceita];
+            
+            storage.save('ingredientes', ingredientes);
+            storage.save('receitas', receitas);
+            
+            // Calcular custos da receita
+            calcularCustosReceita(sampleReceita);
+            storage.save('receitas', receitas);
+            
+            toast.success('Dados de exemplo adicionados! Sistema pronto para uso.');
+        }
+
+        // ========================================
         // INICIALIZAÇÃO
         // ========================================
         function initApp() {
@@ -3307,6 +3397,11 @@
             receitas = storage.load('receitas', []);
             vendas = storage.load('vendas', []);
             estoque = storage.load('estoque', {});
+            
+            // Add sample data if empty (for testing)
+            if (ingredientes.length === 0) {
+                addSampleData();
+            }
             
             // Setup responsive
             setupResponsive();
