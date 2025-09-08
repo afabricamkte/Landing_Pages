@@ -1,0 +1,3453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzaria Pro - Sistema de Gestão Completo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR LATERAL */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.4em;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-group {
+            margin-bottom: 30px;
+        }
+
+        .menu-group-title {
+            padding: 10px 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #bdc3c7;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 10px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+            padding-left: 30px;
+        }
+
+        .menu-item.active {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            border-right: 4px solid #fff;
+            font-weight: 600;
+        }
+
+        .menu-item .icon {
+            margin-right: 12px;
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-item .badge {
+            margin-left: auto;
+            background: #e74c3c;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 16px;
+            text-align: center;
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            background: #f8f9fa;
+        }
+
+        .content-header {
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            color: white;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .content-header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .content-header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content-body {
+            padding: 30px;
+        }
+
+        /* TABS */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* CARDS */
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* BOTÕES */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* FORMULÁRIOS */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        /* TABELAS */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* GRID */
+        .grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+        /* KPI CARDS */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 5px solid #3498db;
+            transition: transform 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .kpi-card.success { border-left-color: #2ecc71; }
+        .kpi-card.warning { border-left-color: #f39c12; }
+        .kpi-card.danger { border-left-color: #e74c3c; }
+        .kpi-card.info { border-left-color: #3498db; }
+
+        .kpi-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .kpi-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* TOAST */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            min-width: 300px;
+            border-left: 4px solid #2ecc71;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.error { border-left-color: #e74c3c; }
+        .toast.warning { border-left-color: #f39c12; }
+        .toast.info { border-left-color: #3498db; }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .empty-state p {
+            margin-bottom: 20px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                display: none;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+            .mobile-menu-btn {
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1001;
+                background: #3498db;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 10px;
+                cursor: pointer;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-2,
+            .grid-3,
+            .grid-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* UTILITIES */
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .font-weight-bold { font-weight: bold; }
+        .text-muted { color: #7f8c8d; }
+        .d-none { display: none; }
+        .d-block { display: block; }
+        .d-flex { display: flex; }
+        .justify-content-between { justify-content: space-between; }
+        .align-items-center { align-items: center; }
+        .gap-10 { gap: 10px; }
+        .mb-20 { margin-bottom: 20px; }
+        .mt-20 { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn d-none" onclick="toggleMobileSidebar()">☰</button>
+        
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+        
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>🍕 Pizzaria Pro</h1>
+                <p>Sistema de Gestão Completo</p>
+            </div>
+            
+            <div class="sidebar-menu">
+                <!-- Dashboard -->
+                <div class="menu-group">
+                    <div class="menu-group-title">📊 Dashboard</div>
+                    <button class="menu-item active" data-tab="dashboard" onclick="showTab('dashboard')">
+                        <span class="icon">📈</span>
+                        Visão Geral
+                        <span class="badge">1</span>
+                    </button>
+                </div>
+                
+                <!-- Produtos -->
+                <div class="menu-group">
+                    <div class="menu-group-title">🍕 Produtos</div>
+                    <button class="menu-item" data-tab="ingredientes" onclick="showTab('ingredientes')">
+                        <span class="icon">🥬</span>
+                        Ingredientes
+                        <span class="badge">2</span>
+                    </button>
+                    <button class="menu-item" data-tab="receitas" onclick="showTab('receitas')">
+                        <span class="icon">📝</span>
+                        Receitas
+                        <span class="badge">3</span>
+                    </button>
+                    <button class="menu-item" data-tab="cardapio" onclick="showTab('cardapio')">
+                        <span class="icon">📋</span>
+                        Cardápio
+                        <span class="badge">4</span>
+                    </button>
+                </div>
+                
+                <!-- Estoque -->
+                <div class="menu-group">
+                    <div class="menu-group-title">📦 Estoque</div>
+                    <button class="menu-item" data-tab="estoque" onclick="showTab('estoque')">
+                        <span class="icon">📦</span>
+                        Controle de Estoque
+                        <span class="badge">5</span>
+                    </button>
+                    <button class="menu-item" data-tab="compras" onclick="showTab('compras')">
+                        <span class="icon">🛒</span>
+                        Compras
+                        <span class="badge">6</span>
+                    </button>
+                </div>
+                
+                <!-- Vendas -->
+                <div class="menu-group">
+                    <div class="menu-group-title">💰 Vendas</div>
+                    <button class="menu-item" data-tab="vendas" onclick="showTab('vendas')">
+                        <span class="icon">💳</span>
+                        Registrar Vendas
+                        <span class="badge">7</span>
+                    </button>
+                    <button class="menu-item" data-tab="resultados" onclick="showTab('resultados')">
+                        <span class="icon">📊</span>
+                        Resultados Diários
+                        <span class="badge">8</span>
+                    </button>
+                    <button class="menu-item" data-tab="custos" onclick="showTab('custos')">
+                        <span class="icon">💰</span>
+                        Custos Operacionais
+                        <span class="badge">9</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <h1 id="content-title">📊 Dashboard - Visão Geral</h1>
+                <p id="content-subtitle">Monitore os indicadores-chave da sua operação</p>
+            </header>
+
+            <!-- Content Body -->
+            <div class="content-body">
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content active">
+                    <!-- KPIs -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card success">
+                            <div class="kpi-value" id="vendas-hoje">0</div>
+                            <div class="kpi-label">Vendas Hoje</div>
+                        </div>
+                        <div class="kpi-card info">
+                            <div class="kpi-value" id="faturamento-hoje">R$ 0,00</div>
+                            <div class="kpi-label">Faturamento Hoje</div>
+                        </div>
+                        <div class="kpi-card warning">
+                            <div class="kpi-value" id="ticket-medio">R$ 0,00</div>
+                            <div class="kpi-label">Ticket Médio</div>
+                        </div>
+                        <div class="kpi-card danger">
+                            <div class="kpi-value" id="margem-media">0%</div>
+                            <div class="kpi-label">Margem Média</div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Cards -->
+                    <div class="grid grid-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>📊 Vendas Recentes</h3>
+                                <button class="btn btn-primary btn-sm" onclick="showTab('vendas')">
+                                    Nova Venda
+                                </button>
+                            </div>
+                            <div class="card-body" id="vendas-recentes">
+                                <div class="empty-state">
+                                    <div class="empty-icon">🛒</div>
+                                    <h3>Nenhuma venda registrada</h3>
+                                    <p>Comece registrando sua primeira venda.</p>
+                                    <button class="btn btn-primary" onclick="showTab('vendas')">
+                                        Registrar Primeira Venda
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>📦 Status do Estoque</h3>
+                                <button class="btn btn-secondary btn-sm" onclick="showTab('estoque')">
+                                    Ver Estoque
+                                </button>
+                            </div>
+                            <div class="card-body" id="status-estoque">
+                                <div class="empty-state">
+                                    <div class="empty-icon">📦</div>
+                                    <h3>Estoque não configurado</h3>
+                                    <p>Configure seus ingredientes primeiro.</p>
+                                    <button class="btn btn-primary" onclick="showTab('ingredientes')">
+                                        Configurar Ingredientes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ingredientes Tab -->
+                <div id="ingredientes" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>🥬 Gestão de Ingredientes</h3>
+                            <button class="btn btn-primary" onclick="showAddIngredienteModal()">
+                                ➕ Novo Ingrediente
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <!-- Filtros -->
+                            <div class="grid grid-3 mb-20">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Buscar ingredientes..." id="search-ingredientes" onkeyup="filterIngredientes()">
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" id="category-filter" onchange="filterIngredientes()">
+                                        <option value="">Todas as categorias</option>
+                                        <option value="queijos">Queijos</option>
+                                        <option value="carnes">Carnes</option>
+                                        <option value="vegetais">Vegetais</option>
+                                        <option value="temperos">Temperos</option>
+                                        <option value="massas">Massas</option>
+                                        <option value="molhos">Molhos</option>
+                                        <option value="bebidas">Bebidas</option>
+                                        <option value="outros">Outros</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" id="sort-by" onchange="filterIngredientes()">
+                                        <option value="nome">Ordenar por Nome</option>
+                                        <option value="categoria">Ordenar por Categoria</option>
+                                        <option value="preco">Ordenar por Preço</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Lista de Ingredientes -->
+                            <div id="ingredientes-list">
+                                <div class="empty-state">
+                                    <div class="empty-icon">🥬</div>
+                                    <h3>Nenhum ingrediente cadastrado</h3>
+                                    <p>Comece adicionando seus primeiros ingredientes ao sistema.</p>
+                                    <button class="btn btn-primary" onclick="showAddIngredienteModal()">
+                                        Adicionar Primeiro Ingrediente
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Receitas Tab -->
+                <div id="receitas" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>📝 Receitas das Pizzas</h3>
+                            <button class="btn btn-primary" onclick="showAddReceitaModal()">
+                                ➕ Nova Receita
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <!-- Filtros -->
+                            <div class="grid grid-3 mb-20">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Buscar receitas..." id="search-receitas" onkeyup="filterReceitas()">
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" id="category-filter-receitas" onchange="filterReceitas()">
+                                        <option value="">Todas as categorias</option>
+                                        <option value="tradicional">Tradicional</option>
+                                        <option value="especial">Especial</option>
+                                        <option value="doce">Doce</option>
+                                        <option value="vegana">Vegana</option>
+                                        <option value="vegetariana">Vegetariana</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" id="sort-receitas" onchange="filterReceitas()">
+                                        <option value="nome">Ordenar por Nome</option>
+                                        <option value="categoria">Ordenar por Categoria</option>
+                                        <option value="custo">Ordenar por Custo</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Lista de Receitas -->
+                            <div id="receitas-list">
+                                <div class="empty-state">
+                                    <div class="empty-icon">📝</div>
+                                    <h3>Nenhuma receita cadastrada</h3>
+                                    <p>Comece criando suas primeiras receitas de pizza.</p>
+                                    <button class="btn btn-primary" onclick="showAddReceitaModal()">
+                                        Criar Primeira Receita
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cardápio Tab -->
+                <div id="cardapio" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>📋 Cardápio e Precificação</h3>
+                            <button class="btn btn-secondary" onclick="showConfiguracaoMargens()">
+                                ⚙️ Configurar Margens
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <!-- Filtros -->
+                            <div class="grid grid-3 mb-20">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Buscar no cardápio..." id="search-cardapio" onkeyup="filterCardapio()">
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" id="category-filter-cardapio" onchange="filterCardapio()">
+                                        <option value="">Todas as categorias</option>
+                                        <option value="tradicional">Tradicional</option>
+                                        <option value="especial">Especial</option>
+                                        <option value="doce">Doce</option>
+                                        <option value="vegana">Vegana</option>
+                                        <option value="vegetariana">Vegetariana</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" id="sort-cardapio" onchange="filterCardapio()">
+                                        <option value="nome">Ordenar por Nome</option>
+                                        <option value="categoria">Ordenar por Categoria</option>
+                                        <option value="preco-direto">Ordenar por Preço Direto</option>
+                                        <option value="preco-ifood">Ordenar por Preço iFood</option>
+                                        <option value="margem">Ordenar por Margem</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Resumo de Configurações -->
+                            <div class="grid grid-2 mb-20">
+                                <div class="card info">
+                                    <div class="card-body">
+                                        <h4>🚚 Delivery Direto</h4>
+                                        <p><strong>Margem:</strong> <span id="margem-direto-display">150%</span></p>
+                                        <p><strong>Taxa Entrega:</strong> <span id="taxa-entrega-display">R$ 5,00</span></p>
+                                    </div>
+                                </div>
+                                <div class="card warning">
+                                    <div class="card-body">
+                                        <h4>🍕 iFood</h4>
+                                        <p><strong>Margem Líquida:</strong> <span id="margem-ifood-display">49%</span></p>
+                                        <p><strong>Taxa iFood:</strong> <span id="taxa-ifood-display">27%</span></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Lista do Cardápio -->
+                            <div id="cardapio-list">
+                                <div class="empty-state">
+                                    <div class="empty-icon">📋</div>
+                                    <h3>Nenhuma receita no cardápio</h3>
+                                    <p>Crie receitas primeiro para gerar o cardápio automaticamente.</p>
+                                    <button class="btn btn-primary" onclick="showTab('receitas')">
+                                        Criar Receitas
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estoque Tab -->
+                <div id="estoque" class="tab-content">
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <h3>Módulo de Estoque</h3>
+                        <p>Em desenvolvimento...</p>
+                    </div>
+                </div>
+
+                <!-- Compras Tab -->
+                <div id="compras" class="tab-content">
+                    <div class="empty-state">
+                        <div class="empty-icon">🛒</div>
+                        <h3>Módulo de Compras</h3>
+                        <p>Em desenvolvimento...</p>
+                    </div>
+                </div>
+
+                <!-- Vendas Tab -->
+                <div id="vendas" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>💳 Registrar Vendas</h3>
+                            <button class="btn btn-primary" onclick="showNovaVendaModal()">
+                                ➕ Nova Venda
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <!-- Filtros -->
+                            <div class="grid grid-4 mb-20">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Buscar vendas..." id="search-vendas" onkeyup="filterVendas()">
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" id="canal-filter" onchange="filterVendas()">
+                                        <option value="">Todos os canais</option>
+                                        <option value="direto">Delivery Direto</option>
+                                        <option value="ifood">iFood</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="date" class="form-control" id="data-filter" onchange="filterVendas()">
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" id="sort-vendas" onchange="filterVendas()">
+                                        <option value="data-desc">Mais recentes</option>
+                                        <option value="data-asc">Mais antigas</option>
+                                        <option value="valor-desc">Maior valor</option>
+                                        <option value="valor-asc">Menor valor</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- KPIs de Vendas -->
+                            <div class="grid grid-3 mb-20">
+                                <div class="kpi-card success">
+                                    <div class="kpi-value" id="vendas-hoje-count">0</div>
+                                    <div class="kpi-label">Vendas Hoje</div>
+                                </div>
+                                <div class="kpi-card info">
+                                    <div class="kpi-value" id="vendas-direto-total">R$ 0,00</div>
+                                    <div class="kpi-label">Direto Hoje</div>
+                                </div>
+                                <div class="kpi-card warning">
+                                    <div class="kpi-value" id="vendas-ifood-total">R$ 0,00</div>
+                                    <div class="kpi-label">iFood Hoje</div>
+                                </div>
+                            </div>
+
+                            <!-- Lista de Vendas -->
+                            <div id="vendas-list">
+                                <div class="empty-state">
+                                    <div class="empty-icon">💳</div>
+                                    <h3>Nenhuma venda registrada</h3>
+                                    <p>Comece registrando sua primeira venda do dia.</p>
+                                    <button class="btn btn-primary" onclick="showNovaVendaModal()">
+                                        Registrar Primeira Venda
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resultados Tab -->
+                <div id="resultados" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>📊 Resultados Diários</h3>
+                            <div class="d-flex gap-10">
+                                <button class="btn btn-secondary" onclick="exportarRelatorio()">
+                                    📄 Exportar
+                                </button>
+                                <button class="btn btn-primary" onclick="atualizarRelatorios()">
+                                    🔄 Atualizar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Filtros de Período -->
+                            <div class="grid grid-3 mb-20">
+                                <div class="form-group">
+                                    <label class="form-label">Data Inicial</label>
+                                    <input type="date" class="form-control" id="filter-data-inicial" onchange="atualizarRelatorios()">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Data Final</label>
+                                    <input type="date" class="form-control" id="filter-data-final" onchange="atualizarRelatorios()">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Período</label>
+                                    <select class="form-control" id="filter-periodo" onchange="setPeriodoRapido()">
+                                        <option value="custom">Personalizado</option>
+                                        <option value="hoje">Hoje</option>
+                                        <option value="ontem">Ontem</option>
+                                        <option value="semana">Esta Semana</option>
+                                        <option value="mes">Este Mês</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- KPIs Detalhados -->
+                            <div class="grid grid-4 mb-20">
+                                <div class="kpi-card success">
+                                    <div class="kpi-value" id="kpi-faturamento">R$ 0,00</div>
+                                    <div class="kpi-label">Faturamento</div>
+                                    <div class="kpi-change" id="kpi-faturamento-variacao">--</div>
+                                </div>
+                                <div class="kpi-card info">
+                                    <div class="kpi-value" id="kpi-vendas">0</div>
+                                    <div class="kpi-label">Vendas</div>
+                                    <div class="kpi-change" id="kpi-vendas-variacao">--</div>
+                                </div>
+                                <div class="kpi-card warning">
+                                    <div class="kpi-value" id="kpi-ticket-medio">R$ 0,00</div>
+                                    <div class="kpi-label">Ticket Médio</div>
+                                    <div class="kpi-change" id="kpi-ticket-variacao">--</div>
+                                </div>
+                                <div class="kpi-card danger">
+                                    <div class="kpi-value" id="kpi-margem-media">0%</div>
+                                    <div class="kpi-label">Margem Média</div>
+                                    <div class="kpi-change" id="kpi-margem-variacao">--</div>
+                                </div>
+                            </div>
+
+                            <!-- Análise por Canal -->
+                            <div class="grid grid-2 mb-20">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4>📊 Análise por Canal</h4>
+                                    </div>
+                                    <div class="card-body" id="analise-canais">
+                                        <div class="empty-state">
+                                            <p>Nenhuma venda no período selecionado</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4>🏆 Top 5 Produtos</h4>
+                                    </div>
+                                    <div class="card-body" id="top-produtos">
+                                        <div class="empty-state">
+                                            <p>Nenhuma venda registrada</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custos Tab -->
+                <div id="custos" class="tab-content">
+                    <div class="empty-state">
+                        <div class="empty-icon">💰</div>
+                        <h3>Módulo de Custos</h3>
+                        <p>Em desenvolvimento...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- JavaScript -->
+    <script>
+        console.log('Inicializando Pizzaria Pro v2.0.0');
+
+        // ========================================
+        // VARIÁVEIS GLOBAIS
+        // ========================================
+        let ingredientes = [];
+        let receitas = [];
+        let vendas = [];
+        let estoque = {};
+        let currentTab = 'dashboard';
+
+        // ========================================
+        // UTILITÁRIOS DE STORAGE
+        // ========================================
+        const storage = {
+            save: function(key, data) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(data));
+                    return true;
+                } catch (error) {
+                    console.error('Erro ao salvar dados:', error);
+                    return false;
+                }
+            },
+            
+            load: function(key, defaultValue = null) {
+                try {
+                    const data = localStorage.getItem(key);
+                    return data ? JSON.parse(data) : defaultValue;
+                } catch (error) {
+                    console.error('Erro ao carregar dados:', error);
+                    return defaultValue;
+                }
+            },
+            
+            remove: function(key) {
+                try {
+                    localStorage.removeItem(key);
+                    return true;
+                } catch (error) {
+                    console.error('Erro ao remover dados:', error);
+                    return false;
+                }
+            }
+        };
+
+        // ========================================
+        // SISTEMA DE TOAST
+        // ========================================
+        const toast = {
+            show: function(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                const toastEl = document.createElement('div');
+                toastEl.className = `toast ${type}`;
+                toastEl.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>${message}</span>
+                        <button class="modal-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                    </div>
+                `;
+                
+                container.appendChild(toastEl);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (toastEl.parentElement) {
+                        toastEl.remove();
+                    }
+                }, 5000);
+            },
+            
+            success: function(message) {
+                this.show(message, 'success');
+            },
+            
+            error: function(message) {
+                this.show(message, 'error');
+            },
+            
+            warning: function(message) {
+                this.show(message, 'warning');
+            },
+            
+            info: function(message) {
+                this.show(message, 'info');
+            }
+        };
+
+        // ========================================
+        // SISTEMA DE MODAL
+        // ========================================
+        const modal = {
+            show: function(title, content, onConfirm = null, onCancel = null) {
+                const overlay = document.createElement('div');
+                overlay.className = 'modal-overlay';
+                overlay.innerHTML = `
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h3 class="modal-title">${title}</h3>
+                            <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                        </div>
+                        <div class="modal-body">
+                            ${content}
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
+                            <button class="btn btn-primary" id="modal-confirm">Confirmar</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(overlay);
+                
+                // Handle confirm button
+                const confirmBtn = overlay.querySelector('#modal-confirm');
+                if (onConfirm) {
+                    confirmBtn.onclick = function() {
+                        onConfirm();
+                        overlay.remove();
+                    };
+                }
+                
+                return overlay;
+            },
+            
+            confirm: function(message, onConfirm, onCancel = null) {
+                return this.show('Confirmação', `<p>${message}</p>`, onConfirm, onCancel);
+            }
+        };
+
+        // ========================================
+        // FUNÇÕES UTILITÁRIAS
+        // ========================================
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value || 0);
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('pt-BR');
+        }
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function getCurrentDate() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        // ========================================
+        // SISTEMA DE NAVEGAÇÃO
+        // ========================================
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            const selectedTab = document.getElementById(tabName);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+            
+            // Update sidebar
+            updateSidebarActive(tabName);
+            updateContentHeader(tabName);
+            
+            // Close mobile sidebar
+            closeMobileSidebar();
+            
+            currentTab = tabName;
+            
+            // Load tab specific data
+            if (tabName === 'ingredientes') {
+                loadIngredientes();
+            } else if (tabName === 'dashboard') {
+                updateDashboardKPIs();
+            }
+        }
+
+        function updateSidebarActive(tabName) {
+            // Remove active class from all items
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to selected item
+            const activeItem = document.querySelector(`[data-tab="${tabName}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+        }
+
+        function updateContentHeader(tabName) {
+            const titles = {
+                'dashboard': {
+                    title: '📊 Dashboard - Visão Geral',
+                    subtitle: 'Monitore os indicadores-chave da sua operação'
+                },
+                'ingredientes': {
+                    title: '🥬 Gestão de Ingredientes',
+                    subtitle: 'Controle de ingredientes e matérias-primas'
+                },
+                'receitas': {
+                    title: '📝 Receitas das Pizzas',
+                    subtitle: 'Configure receitas e ingredientes'
+                },
+                'cardapio': {
+                    title: '📋 Cardápio',
+                    subtitle: 'Visualize e gerencie o cardápio'
+                },
+                'estoque': {
+                    title: '📦 Controle de Estoque',
+                    subtitle: 'Gerencie o estoque de ingredientes'
+                },
+                'compras': {
+                    title: '🛒 Compras',
+                    subtitle: 'Gestão de compras e fornecedores'
+                },
+                'vendas': {
+                    title: '💳 Registrar Vendas',
+                    subtitle: 'Registre vendas e acompanhe a performance'
+                },
+                'resultados': {
+                    title: '📊 Resultados Diários',
+                    subtitle: 'Controle de faturamento e metas diárias'
+                },
+                'custos': {
+                    title: '💰 Custos Operacionais',
+                    subtitle: 'Configure custos fixos e variáveis'
+                }
+            };
+            
+            const config = titles[tabName] || {
+                title: 'Sistema de Gestão',
+                subtitle: 'Gerencie sua pizzaria'
+            };
+            
+            document.getElementById('content-title').textContent = config.title;
+            document.getElementById('content-subtitle').textContent = config.subtitle;
+        }
+
+        // ========================================
+        // SISTEMA MOBILE
+        // ========================================
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('active');
+        }
+
+        function closeMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('active');
+        }
+
+        // ========================================
+        // MÓDULO DE INGREDIENTES
+        // ========================================
+        function loadIngredientes() {
+            ingredientes = storage.load('ingredientes', []);
+            renderIngredientesList();
+        }
+
+        function renderIngredientesList() {
+            const container = document.getElementById('ingredientes-list');
+            
+            if (ingredientes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🥬</div>
+                        <h3>Nenhum ingrediente cadastrado</h3>
+                        <p>Comece adicionando seus primeiros ingredientes ao sistema.</p>
+                        <button class="btn btn-primary" onclick="showAddIngredienteModal()">
+                            Adicionar Primeiro Ingrediente
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const tableHTML = `
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Unidade</th>
+                                <th>Preço</th>
+                                <th>Fornecedor</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${ingredientes.map(ingrediente => `
+                                <tr>
+                                    <td>
+                                        <strong>${ingrediente.nome}</strong>
+                                        ${ingrediente.descricao ? `<br><small class="text-muted">${ingrediente.descricao}</small>` : ''}
+                                    </td>
+                                    <td>${ingrediente.categoria}</td>
+                                    <td>${ingrediente.unidade}</td>
+                                    <td class="text-right font-weight-bold">${formatCurrency(ingrediente.preco)}</td>
+                                    <td>${ingrediente.fornecedor || '-'}</td>
+                                    <td>
+                                        <div class="d-flex gap-10">
+                                            <button class="btn btn-sm btn-secondary" onclick="editIngrediente('${ingrediente.id}')">✏️</button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteIngrediente('${ingrediente.id}')">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML = tableHTML;
+        }
+
+        function filterIngredientes() {
+            const searchTerm = document.getElementById('search-ingredientes').value.toLowerCase();
+            const categoryFilter = document.getElementById('category-filter').value;
+            const sortBy = document.getElementById('sort-by').value;
+            
+            let filtered = [...ingredientes];
+            
+            // Apply search filter
+            if (searchTerm) {
+                filtered = filtered.filter(ingrediente => 
+                    ingrediente.nome.toLowerCase().includes(searchTerm) ||
+                    (ingrediente.descricao && ingrediente.descricao.toLowerCase().includes(searchTerm)) ||
+                    (ingrediente.fornecedor && ingrediente.fornecedor.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            // Apply category filter
+            if (categoryFilter) {
+                filtered = filtered.filter(ingrediente => ingrediente.categoria === categoryFilter);
+            }
+            
+            // Apply sorting
+            filtered.sort((a, b) => {
+                let aVal = a[sortBy];
+                let bVal = b[sortBy];
+                
+                if (sortBy === 'preco') {
+                    aVal = parseFloat(aVal) || 0;
+                    bVal = parseFloat(bVal) || 0;
+                } else {
+                    aVal = String(aVal).toLowerCase();
+                    bVal = String(bVal).toLowerCase();
+                }
+                
+                if (aVal < bVal) return -1;
+                if (aVal > bVal) return 1;
+                return 0;
+            });
+            
+            // Update display with filtered results
+            const container = document.getElementById('ingredientes-list');
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <h3>Nenhum ingrediente encontrado</h3>
+                        <p>Tente ajustar os filtros de busca.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const tableHTML = `
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Unidade</th>
+                                <th>Preço</th>
+                                <th>Fornecedor</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${filtered.map(ingrediente => `
+                                <tr>
+                                    <td>
+                                        <strong>${ingrediente.nome}</strong>
+                                        ${ingrediente.descricao ? `<br><small class="text-muted">${ingrediente.descricao}</small>` : ''}
+                                    </td>
+                                    <td>${ingrediente.categoria}</td>
+                                    <td>${ingrediente.unidade}</td>
+                                    <td class="text-right font-weight-bold">${formatCurrency(ingrediente.preco)}</td>
+                                    <td>${ingrediente.fornecedor || '-'}</td>
+                                    <td>
+                                        <div class="d-flex gap-10">
+                                            <button class="btn btn-sm btn-secondary" onclick="editIngrediente('${ingrediente.id}')">✏️</button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteIngrediente('${ingrediente.id}')">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML = tableHTML;
+        }
+
+        function showAddIngredienteModal() {
+            const formHTML = `
+                <form id="ingrediente-form">
+                    <div class="form-group">
+                        <label class="form-label">Nome do Ingrediente *</label>
+                        <input type="text" class="form-control" name="nome" required placeholder="Ex: Mussarela">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Categoria *</label>
+                        <select class="form-control" name="categoria" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="queijos">Queijos</option>
+                            <option value="carnes">Carnes</option>
+                            <option value="vegetais">Vegetais</option>
+                            <option value="temperos">Temperos</option>
+                            <option value="massas">Massas</option>
+                            <option value="molhos">Molhos</option>
+                            <option value="bebidas">Bebidas</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Unidade de Medida *</label>
+                        <select class="form-control" name="unidade" required>
+                            <option value="">Selecione uma unidade</option>
+                            <option value="kg">Quilograma (kg)</option>
+                            <option value="g">Grama (g)</option>
+                            <option value="l">Litro (l)</option>
+                            <option value="ml">Mililitro (ml)</option>
+                            <option value="un">Unidade (un)</option>
+                            <option value="pct">Pacote (pct)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Preço por Unidade *</label>
+                        <input type="number" class="form-control" name="preco" required step="0.01" min="0" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fornecedor</label>
+                        <input type="text" class="form-control" name="fornecedor" placeholder="Nome do fornecedor">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" name="descricao" rows="3" placeholder="Descrição opcional do ingrediente"></textarea>
+                    </div>
+                </form>
+            `;
+            
+            modal.show('Novo Ingrediente', formHTML, function() {
+                const form = document.getElementById('ingrediente-form');
+                const formData = new FormData(form);
+                
+                const ingrediente = {
+                    id: generateId(),
+                    nome: formData.get('nome'),
+                    categoria: formData.get('categoria'),
+                    unidade: formData.get('unidade'),
+                    preco: parseFloat(formData.get('preco')),
+                    fornecedor: formData.get('fornecedor') || '',
+                    descricao: formData.get('descricao') || '',
+                    criadoEm: new Date().toISOString()
+                };
+                
+                // Validate
+                if (!ingrediente.nome || !ingrediente.categoria || !ingrediente.unidade || !ingrediente.preco) {
+                    toast.error('Preencha todos os campos obrigatórios');
+                    return;
+                }
+                
+                // Check if already exists
+                const exists = ingredientes.some(i => 
+                    i.nome.toLowerCase() === ingrediente.nome.toLowerCase() &&
+                    i.categoria === ingrediente.categoria
+                );
+                
+                if (exists) {
+                    toast.error('Já existe um ingrediente com este nome nesta categoria');
+                    return;
+                }
+                
+                // Add to list
+                ingredientes.push(ingrediente);
+                storage.save('ingredientes', ingredientes);
+                renderIngredientesList();
+                toast.success('Ingrediente adicionado com sucesso!');
+            });
+        }
+
+        function editIngrediente(id) {
+            const ingrediente = ingredientes.find(i => i.id === id);
+            if (!ingrediente) {
+                toast.error('Ingrediente não encontrado');
+                return;
+            }
+            
+            const formHTML = `
+                <form id="ingrediente-form">
+                    <div class="form-group">
+                        <label class="form-label">Nome do Ingrediente *</label>
+                        <input type="text" class="form-control" name="nome" required value="${ingrediente.nome}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Categoria *</label>
+                        <select class="form-control" name="categoria" required>
+                            <option value="queijos" ${ingrediente.categoria === 'queijos' ? 'selected' : ''}>Queijos</option>
+                            <option value="carnes" ${ingrediente.categoria === 'carnes' ? 'selected' : ''}>Carnes</option>
+                            <option value="vegetais" ${ingrediente.categoria === 'vegetais' ? 'selected' : ''}>Vegetais</option>
+                            <option value="temperos" ${ingrediente.categoria === 'temperos' ? 'selected' : ''}>Temperos</option>
+                            <option value="massas" ${ingrediente.categoria === 'massas' ? 'selected' : ''}>Massas</option>
+                            <option value="molhos" ${ingrediente.categoria === 'molhos' ? 'selected' : ''}>Molhos</option>
+                            <option value="bebidas" ${ingrediente.categoria === 'bebidas' ? 'selected' : ''}>Bebidas</option>
+                            <option value="outros" ${ingrediente.categoria === 'outros' ? 'selected' : ''}>Outros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Unidade de Medida *</label>
+                        <select class="form-control" name="unidade" required>
+                            <option value="kg" ${ingrediente.unidade === 'kg' ? 'selected' : ''}>Quilograma (kg)</option>
+                            <option value="g" ${ingrediente.unidade === 'g' ? 'selected' : ''}>Grama (g)</option>
+                            <option value="l" ${ingrediente.unidade === 'l' ? 'selected' : ''}>Litro (l)</option>
+                            <option value="ml" ${ingrediente.unidade === 'ml' ? 'selected' : ''}>Mililitro (ml)</option>
+                            <option value="un" ${ingrediente.unidade === 'un' ? 'selected' : ''}>Unidade (un)</option>
+                            <option value="pct" ${ingrediente.unidade === 'pct' ? 'selected' : ''}>Pacote (pct)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Preço por Unidade *</label>
+                        <input type="number" class="form-control" name="preco" required step="0.01" min="0" value="${ingrediente.preco}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fornecedor</label>
+                        <input type="text" class="form-control" name="fornecedor" value="${ingrediente.fornecedor || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" name="descricao" rows="3">${ingrediente.descricao || ''}</textarea>
+                    </div>
+                </form>
+            `;
+            
+            modal.show('Editar Ingrediente', formHTML, function() {
+                const form = document.getElementById('ingrediente-form');
+                const formData = new FormData(form);
+                
+                const updatedIngrediente = {
+                    ...ingrediente,
+                    nome: formData.get('nome'),
+                    categoria: formData.get('categoria'),
+                    unidade: formData.get('unidade'),
+                    preco: parseFloat(formData.get('preco')),
+                    fornecedor: formData.get('fornecedor') || '',
+                    descricao: formData.get('descricao') || '',
+                    atualizadoEm: new Date().toISOString()
+                };
+                
+                // Validate
+                if (!updatedIngrediente.nome || !updatedIngrediente.categoria || !updatedIngrediente.unidade || !updatedIngrediente.preco) {
+                    toast.error('Preencha todos os campos obrigatórios');
+                    return;
+                }
+                
+                // Update in list
+                const index = ingredientes.findIndex(i => i.id === id);
+                ingredientes[index] = updatedIngrediente;
+                storage.save('ingredientes', ingredientes);
+                renderIngredientesList();
+                toast.success('Ingrediente atualizado com sucesso!');
+            });
+        }
+
+        function deleteIngrediente(id) {
+            const ingrediente = ingredientes.find(i => i.id === id);
+            if (!ingrediente) {
+                toast.error('Ingrediente não encontrado');
+                return;
+            }
+            
+            modal.confirm(
+                `Tem certeza que deseja excluir o ingrediente "${ingrediente.nome}"?`,
+                function() {
+                    const index = ingredientes.findIndex(i => i.id === id);
+                    ingredientes.splice(index, 1);
+                    storage.save('ingredientes', ingredientes);
+                    renderIngredientesList();
+                    toast.success('Ingrediente excluído com sucesso!');
+                }
+            );
+        }
+
+        // ========================================
+        // MÓDULO DE RECEITAS
+        // ========================================
+        function loadReceitas() {
+            receitas = storage.load('receitas', []);
+            renderReceitasList();
+        }
+
+        function renderReceitasList() {
+            const container = document.getElementById('receitas-list');
+            
+            if (receitas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📝</div>
+                        <h3>Nenhuma receita cadastrada</h3>
+                        <p>Comece criando suas primeiras receitas de pizza.</p>
+                        <button class="btn btn-primary" onclick="showAddReceitaModal()">
+                            Criar Primeira Receita
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const tableHTML = `
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Tamanhos</th>
+                                <th>Custo Médio</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${receitas.map(receita => {
+                                const custoMedio = calcularCustoMedioReceita(receita);
+                                const tamanhos = Object.keys(receita.tamanhos).filter(t => receita.tamanhos[t].ativo).join(', ');
+                                return `
+                                    <tr>
+                                        <td>
+                                            <strong>${receita.nome}</strong>
+                                            ${receita.descricao ? `<br><small class="text-muted">${receita.descricao}</small>` : ''}
+                                        </td>
+                                        <td><span class="badge ${getCategoryBadgeClass(receita.categoria)}">${receita.categoria}</span></td>
+                                        <td>${tamanhos || 'Nenhum'}</td>
+                                        <td class="text-right font-weight-bold">${formatCurrency(custoMedio)}</td>
+                                        <td>
+                                            <span class="badge ${receita.ativa ? 'success' : 'secondary'}">
+                                                ${receita.ativa ? 'Ativa' : 'Inativa'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex gap-10">
+                                                <button class="btn btn-sm btn-secondary" onclick="viewReceita('${receita.id}')" title="Visualizar">👁️</button>
+                                                <button class="btn btn-sm btn-primary" onclick="editReceita('${receita.id}')" title="Editar">✏️</button>
+                                                <button class="btn btn-sm btn-danger" onclick="deleteReceita('${receita.id}')" title="Excluir">🗑️</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML = tableHTML;
+        }
+
+        function calcularCustoMedioReceita(receita) {
+            const tamanhos = Object.keys(receita.tamanhos).filter(t => receita.tamanhos[t].ativo);
+            if (tamanhos.length === 0) return 0;
+            
+            const custoTotal = tamanhos.reduce((total, tamanho) => {
+                return total + (receita.tamanhos[tamanho].custoTotal || 0);
+            }, 0);
+            
+            return custoTotal / tamanhos.length;
+        }
+
+        function getCategoryBadgeClass(categoria) {
+            const classes = {
+                'tradicional': 'primary',
+                'especial': 'warning',
+                'doce': 'info',
+                'vegana': 'success',
+                'vegetariana': 'secondary'
+            };
+            return classes[categoria] || 'secondary';
+        }
+
+        function filterReceitas() {
+            const searchTerm = document.getElementById('search-receitas').value.toLowerCase();
+            const categoryFilter = document.getElementById('category-filter-receitas').value;
+            const sortBy = document.getElementById('sort-receitas').value;
+            
+            let filtered = [...receitas];
+            
+            // Apply search filter
+            if (searchTerm) {
+                filtered = filtered.filter(receita => 
+                    receita.nome.toLowerCase().includes(searchTerm) ||
+                    (receita.descricao && receita.descricao.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            // Apply category filter
+            if (categoryFilter) {
+                filtered = filtered.filter(receita => receita.categoria === categoryFilter);
+            }
+            
+            // Apply sorting
+            filtered.sort((a, b) => {
+                let aVal, bVal;
+                
+                if (sortBy === 'custo') {
+                    aVal = calcularCustoMedioReceita(a);
+                    bVal = calcularCustoMedioReceita(b);
+                } else {
+                    aVal = String(a[sortBy]).toLowerCase();
+                    bVal = String(b[sortBy]).toLowerCase();
+                }
+                
+                if (aVal < bVal) return -1;
+                if (aVal > bVal) return 1;
+                return 0;
+            });
+            
+            // Update display with filtered results
+            const container = document.getElementById('receitas-list');
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <h3>Nenhuma receita encontrada</h3>
+                        <p>Tente ajustar os filtros de busca.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Render filtered results (same logic as renderReceitasList but with filtered array)
+            const tableHTML = `
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Tamanhos</th>
+                                <th>Custo Médio</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${filtered.map(receita => {
+                                const custoMedio = calcularCustoMedioReceita(receita);
+                                const tamanhos = Object.keys(receita.tamanhos).filter(t => receita.tamanhos[t].ativo).join(', ');
+                                return `
+                                    <tr>
+                                        <td>
+                                            <strong>${receita.nome}</strong>
+                                            ${receita.descricao ? `<br><small class="text-muted">${receita.descricao}</small>` : ''}
+                                        </td>
+                                        <td><span class="badge ${getCategoryBadgeClass(receita.categoria)}">${receita.categoria}</span></td>
+                                        <td>${tamanhos || 'Nenhum'}</td>
+                                        <td class="text-right font-weight-bold">${formatCurrency(custoMedio)}</td>
+                                        <td>
+                                            <span class="badge ${receita.ativa ? 'success' : 'secondary'}">
+                                                ${receita.ativa ? 'Ativa' : 'Inativa'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex gap-10">
+                                                <button class="btn btn-sm btn-secondary" onclick="viewReceita('${receita.id}')" title="Visualizar">👁️</button>
+                                                <button class="btn btn-sm btn-primary" onclick="editReceita('${receita.id}')" title="Editar">✏️</button>
+                                                <button class="btn btn-sm btn-danger" onclick="deleteReceita('${receita.id}')" title="Excluir">🗑️</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML = tableHTML;
+        }
+
+        function showAddReceitaModal() {
+            if (ingredientes.length === 0) {
+                toast.warning('Cadastre ingredientes primeiro antes de criar receitas');
+                return;
+            }
+            
+            const formHTML = `
+                <form id="receita-form">
+                    <div class="form-group">
+                        <label class="form-label">Nome da Pizza *</label>
+                        <input type="text" class="form-control" name="nome" required placeholder="Ex: Pizza Marguerita">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Categoria *</label>
+                        <select class="form-control" name="categoria" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="tradicional">Tradicional</option>
+                            <option value="especial">Especial</option>
+                            <option value="doce">Doce</option>
+                            <option value="vegana">Vegana</option>
+                            <option value="vegetariana">Vegetariana</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" name="descricao" rows="2" placeholder="Descrição da pizza"></textarea>
+                    </div>
+                    
+                    <!-- Tamanhos -->
+                    <div class="form-group">
+                        <label class="form-label">Tamanhos Disponíveis *</label>
+                        <div class="d-flex gap-10">
+                            <label><input type="checkbox" name="tamanhos" value="pequena" checked> Pequena</label>
+                            <label><input type="checkbox" name="tamanhos" value="media" checked> Média</label>
+                            <label><input type="checkbox" name="tamanhos" value="grande" checked> Grande</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-control" name="ativa">
+                            <option value="true">Ativa</option>
+                            <option value="false">Inativa</option>
+                        </select>
+                    </div>
+                </form>
+            `;
+            
+            modal.show('Nova Receita', formHTML, function() {
+                const form = document.getElementById('receita-form');
+                const formData = new FormData(form);
+                
+                const tamanhosSelecionados = Array.from(form.querySelectorAll('input[name="tamanhos"]:checked')).map(cb => cb.value);
+                
+                if (tamanhosSelecionados.length === 0) {
+                    toast.error('Selecione pelo menos um tamanho');
+                    return;
+                }
+                
+                const receita = {
+                    id: generateId(),
+                    nome: formData.get('nome'),
+                    categoria: formData.get('categoria'),
+                    descricao: formData.get('descricao') || '',
+                    ativa: formData.get('ativa') === 'true',
+                    tamanhos: {},
+                    criadaEm: new Date().toISOString()
+                };
+                
+                // Initialize tamanhos
+                tamanhosSelecionados.forEach(tamanho => {
+                    receita.tamanhos[tamanho] = {
+                        ativo: true,
+                        ingredientes: [],
+                        custoTotal: 0
+                    };
+                });
+                
+                // Validate
+                if (!receita.nome || !receita.categoria) {
+                    toast.error('Preencha todos os campos obrigatórios');
+                    return;
+                }
+                
+                // Check if already exists
+                const exists = receitas.some(r => 
+                    r.nome.toLowerCase() === receita.nome.toLowerCase()
+                );
+                
+                if (exists) {
+                    toast.error('Já existe uma receita com este nome');
+                    return;
+                }
+                
+                // Add to list
+                receitas.push(receita);
+                storage.save('receitas', receitas);
+                renderReceitasList();
+                toast.success('Receita criada com sucesso! Agora configure os ingredientes.');
+                
+                // Open ingredients modal
+                setTimeout(() => editReceita(receita.id), 500);
+            });
+        }
+
+        function editReceita(id) {
+            const receita = receitas.find(r => r.id === id);
+            if (!receita) {
+                toast.error('Receita não encontrada');
+                return;
+            }
+            
+            showReceitaIngredientsModal(receita);
+        }
+
+        function showReceitaIngredientsModal(receita) {
+            const tamanhos = Object.keys(receita.tamanhos).filter(t => receita.tamanhos[t].ativo);
+            
+            const formHTML = `
+                <div id="receita-ingredients-form">
+                    <div class="form-group">
+                        <h4>${receita.nome}</h4>
+                        <p class="text-muted">${receita.descricao}</p>
+                    </div>
+                    
+                    <!-- Tabs para tamanhos -->
+                    <div class="tabs-container">
+                        <div class="tabs-header">
+                            ${tamanhos.map((tamanho, index) => `
+                                <button type="button" class="tab-btn ${index === 0 ? 'active' : ''}" 
+                                        onclick="switchTamanhoTab('${tamanho}')" data-tab="${tamanho}">
+                                    ${tamanho.charAt(0).toUpperCase() + tamanho.slice(1)}
+                                </button>
+                            `).join('')}
+                        </div>
+                        
+                        ${tamanhos.map((tamanho, index) => `
+                            <div class="tab-content-receita ${index === 0 ? 'active' : ''}" id="tab-${tamanho}">
+                                <div class="form-group">
+                                    <label class="form-label">Ingredientes - ${tamanho.charAt(0).toUpperCase() + tamanho.slice(1)}</label>
+                                    <div id="ingredientes-${tamanho}">
+                                        ${renderIngredientesReceita(receita.tamanhos[tamanho].ingredientes, tamanho)}
+                                    </div>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="addIngredienteToReceita('${tamanho}')">
+                                        ➕ Adicionar Ingrediente
+                                    </button>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Custo Total: <span id="custo-${tamanho}" class="font-weight-bold">${formatCurrency(receita.tamanhos[tamanho].custoTotal)}</span></label>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <style>
+                    .tabs-container { margin: 20px 0; }
+                    .tabs-header { display: flex; border-bottom: 2px solid #e9ecef; margin-bottom: 20px; }
+                    .tab-btn { 
+                        padding: 10px 20px; 
+                        border: none; 
+                        background: none; 
+                        cursor: pointer; 
+                        border-bottom: 2px solid transparent;
+                        font-weight: 500;
+                    }
+                    .tab-btn.active { 
+                        border-bottom-color: #3498db; 
+                        color: #3498db; 
+                        font-weight: 600;
+                    }
+                    .tab-content-receita { display: none; }
+                    .tab-content-receita.active { display: block; }
+                    .ingrediente-row { 
+                        display: flex; 
+                        gap: 10px; 
+                        align-items: center; 
+                        margin-bottom: 10px; 
+                        padding: 10px;
+                        background: #f8f9fa;
+                        border-radius: 5px;
+                    }
+                    .ingrediente-row select { flex: 2; }
+                    .ingrediente-row input { flex: 1; }
+                    .ingrediente-row button { flex: 0; }
+                </style>
+            `;
+            
+            // Store current receita for modal functions
+            window.currentEditingReceita = receita;
+            
+            modal.show('Configurar Ingredientes', formHTML, function() {
+                // Save receita
+                const index = receitas.findIndex(r => r.id === receita.id);
+                receitas[index] = receita;
+                storage.save('receitas', receitas);
+                renderReceitasList();
+                toast.success('Receita atualizada com sucesso!');
+                delete window.currentEditingReceita;
+            });
+        }
+
+        function renderIngredientesReceita(ingredientesReceita, tamanho) {
+            if (ingredientesReceita.length === 0) {
+                return '<p class="text-muted">Nenhum ingrediente adicionado</p>';
+            }
+            
+            return ingredientesReceita.map((item, index) => {
+                const ingrediente = ingredientes.find(i => i.id === item.ingredienteId);
+                return `
+                    <div class="ingrediente-row">
+                        <select onchange="updateIngredienteReceita('${tamanho}', ${index}, 'ingredienteId', this.value)">
+                            ${ingredientes.map(ing => `
+                                <option value="${ing.id}" ${ing.id === item.ingredienteId ? 'selected' : ''}>
+                                    ${ing.nome} (${formatCurrency(ing.preco)}/${ing.unidade})
+                                </option>
+                            `).join('')}
+                        </select>
+                        <input type="number" step="0.01" min="0" value="${item.quantidade}" 
+                               placeholder="Qtd" 
+                               onchange="updateIngredienteReceita('${tamanho}', ${index}, 'quantidade', this.value)">
+                        <span>${ingrediente ? ingrediente.unidade : ''}</span>
+                        <span class="font-weight-bold">${formatCurrency(item.custoUnitario)}</span>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="removeIngredienteFromReceita('${tamanho}', ${index})">🗑️</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function switchTamanhoTab(tamanho) {
+            // Remove active from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content-receita').forEach(content => content.classList.remove('active'));
+            
+            // Add active to selected
+            document.querySelector(`[data-tab="${tamanho}"]`).classList.add('active');
+            document.getElementById(`tab-${tamanho}`).classList.add('active');
+        }
+
+        function addIngredienteToReceita(tamanho) {
+            const receita = window.currentEditingReceita;
+            if (!receita) return;
+            
+            if (ingredientes.length === 0) {
+                toast.warning('Nenhum ingrediente disponível');
+                return;
+            }
+            
+            const novoItem = {
+                ingredienteId: ingredientes[0].id,
+                quantidade: 0,
+                custoUnitario: 0
+            };
+            
+            receita.tamanhos[tamanho].ingredientes.push(novoItem);
+            
+            // Re-render ingredients for this tamanho
+            document.getElementById(`ingredientes-${tamanho}`).innerHTML = 
+                renderIngredientesReceita(receita.tamanhos[tamanho].ingredientes, tamanho);
+        }
+
+        function updateIngredienteReceita(tamanho, index, field, value) {
+            const receita = window.currentEditingReceita;
+            if (!receita) return;
+            
+            const item = receita.tamanhos[tamanho].ingredientes[index];
+            
+            if (field === 'ingredienteId') {
+                item.ingredienteId = value;
+            } else if (field === 'quantidade') {
+                item.quantidade = parseFloat(value) || 0;
+            }
+            
+            // Recalculate cost
+            const ingrediente = ingredientes.find(i => i.id === item.ingredienteId);
+            if (ingrediente) {
+                item.custoUnitario = ingrediente.preco * item.quantidade;
+            }
+            
+            // Update total cost for this tamanho
+            receita.tamanhos[tamanho].custoTotal = receita.tamanhos[tamanho].ingredientes.reduce((total, ing) => {
+                return total + (ing.custoUnitario || 0);
+            }, 0);
+            
+            // Re-render ingredients for this tamanho
+            document.getElementById(`ingredientes-${tamanho}`).innerHTML = 
+                renderIngredientesReceita(receita.tamanhos[tamanho].ingredientes, tamanho);
+            
+            // Update cost display
+            document.getElementById(`custo-${tamanho}`).textContent = formatCurrency(receita.tamanhos[tamanho].custoTotal);
+        }
+
+        function removeIngredienteFromReceita(tamanho, index) {
+            const receita = window.currentEditingReceita;
+            if (!receita) return;
+            
+            receita.tamanhos[tamanho].ingredientes.splice(index, 1);
+            
+            // Recalculate total cost
+            receita.tamanhos[tamanho].custoTotal = receita.tamanhos[tamanho].ingredientes.reduce((total, ing) => {
+                return total + (ing.custoUnitario || 0);
+            }, 0);
+            
+            // Re-render ingredients for this tamanho
+            document.getElementById(`ingredientes-${tamanho}`).innerHTML = 
+                renderIngredientesReceita(receita.tamanhos[tamanho].ingredientes, tamanho);
+            
+            // Update cost display
+            document.getElementById(`custo-${tamanho}`).textContent = formatCurrency(receita.tamanhos[tamanho].custoTotal);
+        }
+
+        function viewReceita(id) {
+            const receita = receitas.find(r => r.id === id);
+            if (!receita) {
+                toast.error('Receita não encontrada');
+                return;
+            }
+            
+            const tamanhos = Object.keys(receita.tamanhos).filter(t => receita.tamanhos[t].ativo);
+            
+            const viewHTML = `
+                <div class="receita-view">
+                    <h4>${receita.nome}</h4>
+                    <p><strong>Categoria:</strong> ${receita.categoria}</p>
+                    ${receita.descricao ? `<p><strong>Descrição:</strong> ${receita.descricao}</p>` : ''}
+                    <p><strong>Status:</strong> ${receita.ativa ? 'Ativa' : 'Inativa'}</p>
+                    
+                    <h5>Tamanhos e Ingredientes:</h5>
+                    ${tamanhos.map(tamanho => {
+                        const dados = receita.tamanhos[tamanho];
+                        return `
+                            <div class="tamanho-info">
+                                <h6>${tamanho.charAt(0).toUpperCase() + tamanho.slice(1)} - ${formatCurrency(dados.custoTotal)}</h6>
+                                ${dados.ingredientes.length > 0 ? `
+                                    <ul>
+                                        ${dados.ingredientes.map(item => {
+                                            const ingrediente = ingredientes.find(i => i.id === item.ingredienteId);
+                                            return `<li>${ingrediente ? ingrediente.nome : 'Ingrediente removido'}: ${item.quantidade} ${ingrediente ? ingrediente.unidade : ''} - ${formatCurrency(item.custoUnitario)}</li>`;
+                                        }).join('')}
+                                    </ul>
+                                ` : '<p class="text-muted">Nenhum ingrediente configurado</p>'}
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                
+                <style>
+                    .tamanho-info { 
+                        margin: 15px 0; 
+                        padding: 15px; 
+                        background: #f8f9fa; 
+                        border-radius: 5px; 
+                    }
+                    .tamanho-info h6 { 
+                        margin-bottom: 10px; 
+                        color: #3498db; 
+                    }
+                    .tamanho-info ul { 
+                        margin: 0; 
+                        padding-left: 20px; 
+                    }
+                </style>
+            `;
+            
+            modal.show('Visualizar Receita', viewHTML);
+        }
+
+        function deleteReceita(id) {
+            const receita = receitas.find(r => r.id === id);
+            if (!receita) {
+                toast.error('Receita não encontrada');
+                return;
+            }
+            
+            modal.confirm(
+                `Tem certeza que deseja excluir a receita "${receita.nome}"?`,
+                function() {
+                    const index = receitas.findIndex(r => r.id === id);
+                    receitas.splice(index, 1);
+                    storage.save('receitas', receitas);
+                    renderReceitasList();
+                    toast.success('Receita excluída com sucesso!');
+                }
+            );
+        }
+
+        // ========================================
+        // SISTEMA DE PRECIFICAÇÃO
+        // ========================================
+        
+        // Configurações padrão de precificação
+        let configuracoesPrecificacao = {
+            margemDireto: 150, // 150%
+            taxaEntrega: 5.00, // R$ 5,00
+            margemIfood: 49,   // 49% margem líquida
+            taxaIfood: 27      // 27% taxa do iFood
+        };
+
+        function loadConfiguracoesPrecificacao() {
+            configuracoesPrecificacao = storage.load('configuracoesPrecificacao', configuracoesPrecificacao);
+            updateMargensDisplay();
+        }
+
+        function updateMargensDisplay() {
+            document.getElementById('margem-direto-display').textContent = configuracoesPrecificacao.margemDireto + '%';
+            document.getElementById('taxa-entrega-display').textContent = formatCurrency(configuracoesPrecificacao.taxaEntrega);
+            document.getElementById('margem-ifood-display').textContent = configuracoesPrecificacao.margemIfood + '%';
+            document.getElementById('taxa-ifood-display').textContent = configuracoesPrecificacao.taxaIfood + '%';
+        }
+
+        function calcularPrecoVenda(custoReceita, canal, tamanho) {
+            if (!custoReceita || custoReceita <= 0) return 0;
+            
+            let precoFinal = 0;
+            
+            if (canal === 'direto') {
+                // Delivery Direto: Custo + Margem% + Taxa de Entrega
+                precoFinal = custoReceita * (1 + configuracoesPrecificacao.margemDireto / 100) + configuracoesPrecificacao.taxaEntrega;
+            } else if (canal === 'ifood') {
+                // iFood: Calcular preço para atingir margem líquida desejada
+                // Preço = (Custo + Margem Desejada) / (1 - Taxa iFood)
+                const margemDesejada = custoReceita * (configuracoesPrecificacao.margemIfood / 100);
+                precoFinal = (custoReceita + margemDesejada) / (1 - configuracoesPrecificacao.taxaIfood / 100);
+            }
+            
+            return Math.round(precoFinal * 100) / 100; // Arredondar para 2 casas decimais
+        }
+
+        function calcularMargemReal(custoReceita, precoVenda, canal) {
+            if (!custoReceita || !precoVenda || custoReceita <= 0 || precoVenda <= 0) return 0;
+            
+            let lucroLiquido = 0;
+            
+            if (canal === 'direto') {
+                lucroLiquido = precoVenda - custoReceita - configuracoesPrecificacao.taxaEntrega;
+            } else if (canal === 'ifood') {
+                const taxaIfoodValor = precoVenda * (configuracoesPrecificacao.taxaIfood / 100);
+                lucroLiquido = precoVenda - custoReceita - taxaIfoodValor;
+            }
+            
+            return (lucroLiquido / custoReceita) * 100;
+        }
+
+        function renderCardapioList() {
+            const container = document.getElementById('cardapio-list');
+            
+            if (!receitas || receitas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <h3>Nenhuma receita no cardápio</h3>
+                        <p>Crie receitas primeiro para gerar o cardápio automaticamente.</p>
+                        <button class="btn btn-primary" onclick="showTab('receitas')">
+                            Criar Receitas
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const receitasAtivas = receitas.filter(r => r.ativa);
+            
+            if (receitasAtivas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <h3>Nenhuma receita ativa</h3>
+                        <p>Ative suas receitas para incluí-las no cardápio.</p>
+                        <button class="btn btn-primary" onclick="showTab('receitas')">
+                            Gerenciar Receitas
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Pizza</th>
+                                <th>Categoria</th>
+                                <th>Tamanho</th>
+                                <th>Custo</th>
+                                <th>Preço Direto</th>
+                                <th>Preço iFood</th>
+                                <th>Margem Direto</th>
+                                <th>Margem iFood</th>
+                                <th>Melhor Canal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            receitasAtivas.forEach(receita => {
+                Object.keys(receita.tamanhos).forEach(tamanho => {
+                    if (receita.tamanhos[tamanho].ativo) {
+                        const dados = receita.tamanhos[tamanho];
+                        const custo = dados.custoTotal || 0;
+                        
+                        const precoDireto = calcularPrecoVenda(custo, 'direto', tamanho);
+                        const precoIfood = calcularPrecoVenda(custo, 'ifood', tamanho);
+                        
+                        const margemDireto = calcularMargemReal(custo, precoDireto, 'direto');
+                        const margemIfood = calcularMargemReal(custo, precoIfood, 'ifood');
+                        
+                        const melhorCanal = margemDireto > margemIfood ? 'Direto' : 'iFood';
+                        const melhorMargem = Math.max(margemDireto, margemIfood);
+
+                        html += `
+                            <tr>
+                                <td>
+                                    <strong>${receita.nome}</strong>
+                                    ${receita.descricao ? `<br><small class="text-muted">${receita.descricao}</small>` : ''}
+                                </td>
+                                <td><span class="badge badge-secondary">${receita.categoria}</span></td>
+                                <td><span class="badge badge-info">${tamanho.charAt(0).toUpperCase() + tamanho.slice(1)}</span></td>
+                                <td>${formatCurrency(custo)}</td>
+                                <td class="text-success"><strong>${formatCurrency(precoDireto)}</strong></td>
+                                <td class="text-warning"><strong>${formatCurrency(precoIfood)}</strong></td>
+                                <td class="text-success">${margemDireto.toFixed(1)}%</td>
+                                <td class="text-warning">${margemIfood.toFixed(1)}%</td>
+                                <td>
+                                    <span class="badge ${melhorCanal === 'Direto' ? 'badge-success' : 'badge-warning'}">
+                                        ${melhorCanal} (${melhorMargem.toFixed(1)}%)
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                });
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-20">
+                    <div class="grid grid-3">
+                        <div class="card success">
+                            <div class="card-body text-center">
+                                <h4>📊 Resumo Geral</h4>
+                                <p><strong>Total de Itens:</strong> ${receitasAtivas.reduce((total, r) => total + Object.keys(r.tamanhos).filter(t => r.tamanhos[t].ativo).length, 0)}</p>
+                                <p><strong>Receitas Ativas:</strong> ${receitasAtivas.length}</p>
+                            </div>
+                        </div>
+                        <div class="card info">
+                            <div class="card-body text-center">
+                                <h4>🚚 Delivery Direto</h4>
+                                <p><strong>Margem Média:</strong> ${calcularMargemMediaCanal('direto').toFixed(1)}%</p>
+                                <p><strong>Ticket Médio:</strong> ${formatCurrency(calcularTicketMedioCanal('direto'))}</p>
+                            </div>
+                        </div>
+                        <div class="card warning">
+                            <div class="card-body text-center">
+                                <h4>🍕 iFood</h4>
+                                <p><strong>Margem Média:</strong> ${calcularMargemMediaCanal('ifood').toFixed(1)}%</p>
+                                <p><strong>Ticket Médio:</strong> ${formatCurrency(calcularTicketMedioCanal('ifood'))}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function calcularMargemMediaCanal(canal) {
+            const receitasAtivas = receitas.filter(r => r.ativa);
+            if (receitasAtivas.length === 0) return 0;
+            
+            let totalMargem = 0;
+            let totalItens = 0;
+            
+            receitasAtivas.forEach(receita => {
+                Object.keys(receita.tamanhos).forEach(tamanho => {
+                    if (receita.tamanhos[tamanho].ativo) {
+                        const custo = receita.tamanhos[tamanho].custoTotal || 0;
+                        const preco = calcularPrecoVenda(custo, canal, tamanho);
+                        const margem = calcularMargemReal(custo, preco, canal);
+                        
+                        totalMargem += margem;
+                        totalItens++;
+                    }
+                });
+            });
+            
+            return totalItens > 0 ? totalMargem / totalItens : 0;
+        }
+
+        function calcularTicketMedioCanal(canal) {
+            const receitasAtivas = receitas.filter(r => r.ativa);
+            if (receitasAtivas.length === 0) return 0;
+            
+            let totalPreco = 0;
+            let totalItens = 0;
+            
+            receitasAtivas.forEach(receita => {
+                Object.keys(receita.tamanhos).forEach(tamanho => {
+                    if (receita.tamanhos[tamanho].ativo) {
+                        const custo = receita.tamanhos[tamanho].custoTotal || 0;
+                        const preco = calcularPrecoVenda(custo, canal, tamanho);
+                        
+                        totalPreco += preco;
+                        totalItens++;
+                    }
+                });
+            });
+            
+            return totalItens > 0 ? totalPreco / totalItens : 0;
+        }
+
+        function filterCardapio() {
+            // Implementar filtros do cardápio se necessário
+            renderCardapioList();
+        }
+
+        function showConfiguracaoMargens() {
+            const formHTML = `
+                <div id="configuracao-margens-form">
+                    <div class="grid grid-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>🚚 Delivery Direto</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label">Margem de Lucro (%)</label>
+                                    <input type="number" class="form-control" id="margem-direto" 
+                                           value="${configuracoesPrecificacao.margemDireto}" min="0" max="1000" step="1">
+                                    <small class="form-text">Margem aplicada sobre o custo da receita</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Taxa de Entrega (R$)</label>
+                                    <input type="number" class="form-control" id="taxa-entrega" 
+                                           value="${configuracoesPrecificacao.taxaEntrega}" min="0" max="50" step="0.50">
+                                    <small class="form-text">Valor fixo cobrado por entrega</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>🍕 iFood</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label">Margem Líquida Desejada (%)</label>
+                                    <input type="number" class="form-control" id="margem-ifood" 
+                                           value="${configuracoesPrecificacao.margemIfood}" min="0" max="200" step="1">
+                                    <small class="form-text">Margem líquida após descontar taxa do iFood</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Taxa do iFood (%)</label>
+                                    <input type="number" class="form-control" id="taxa-ifood" 
+                                           value="${configuracoesPrecificacao.taxaIfood}" min="0" max="50" step="0.1">
+                                    <small class="form-text">Percentual cobrado pelo iFood</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-20">
+                        <div class="card info">
+                            <div class="card-body">
+                                <h5>💡 Como Funciona o Cálculo:</h5>
+                                <div class="grid grid-2">
+                                    <div>
+                                        <h6>Delivery Direto:</h6>
+                                        <p><code>Preço = Custo × (1 + Margem%) + Taxa Entrega</code></p>
+                                        <p><strong>Exemplo:</strong> Custo R$ 10,00 + 150% + R$ 5,00 = <strong>R$ 30,00</strong></p>
+                                    </div>
+                                    <div>
+                                        <h6>iFood:</h6>
+                                        <p><code>Preço = (Custo + Margem Desejada) ÷ (1 - Taxa iFood)</code></p>
+                                        <p><strong>Exemplo:</strong> (R$ 10,00 + 49%) ÷ (1 - 27%) = <strong>R$ 20,41</strong></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.show('Configurar Margens e Taxas', formHTML, function() {
+                // Salvar configurações
+                configuracoesPrecificacao.margemDireto = parseFloat(document.getElementById('margem-direto').value) || 150;
+                configuracoesPrecificacao.taxaEntrega = parseFloat(document.getElementById('taxa-entrega').value) || 5.00;
+                configuracoesPrecificacao.margemIfood = parseFloat(document.getElementById('margem-ifood').value) || 49;
+                configuracoesPrecificacao.taxaIfood = parseFloat(document.getElementById('taxa-ifood').value) || 27;
+                
+                storage.save('configuracoesPrecificacao', configuracoesPrecificacao);
+                updateMargensDisplay();
+                renderCardapioList();
+                
+                toast.success('Configurações de precificação salvas com sucesso!');
+            });
+        }
+
+        function loadCardapio() {
+            loadConfiguracoesPrecificacao();
+            renderCardapioList();
+        }
+
+        // ========================================
+        // MÓDULO DE VENDAS
+        // ========================================
+        function loadVendas() {
+            vendas = storage.load('vendas', []);
+            renderVendasList();
+            updateVendasKPIs();
+        }
+
+        function renderVendasList() {
+            const container = document.getElementById('vendas-list');
+            
+            if (vendas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">💳</div>
+                        <h3>Nenhuma venda registrada</h3>
+                        <p>Comece registrando sua primeira venda do dia.</p>
+                        <button class="btn btn-primary" onclick="showNovaVendaModal()">
+                            Registrar Primeira Venda
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const tableHTML = `
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Cliente</th>
+                                <th>Canal</th>
+                                <th>Itens</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${vendas.map(venda => `
+                                <tr>
+                                    <td>
+                                        <strong>${formatDate(venda.data)}</strong><br>
+                                        <small class="text-muted">${venda.hora}</small>
+                                    </td>
+                                    <td>
+                                        <strong>${venda.cliente}</strong><br>
+                                        ${venda.telefone ? `<small class="text-muted">${venda.telefone}</small>` : ''}
+                                    </td>
+                                    <td>
+                                        <span class="badge ${venda.canal === 'direto' ? 'success' : 'warning'}">
+                                            ${venda.canal === 'direto' ? '🚚 Direto' : '🍕 iFood'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small>${venda.itens.length} item(s)</small><br>
+                                        <small class="text-muted">${venda.itens.map(i => i.nome).join(', ')}</small>
+                                    </td>
+                                    <td class="text-right">
+                                        <strong>${formatCurrency(venda.valorTotal)}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge ${getStatusBadgeClass(venda.status)}">
+                                            ${venda.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-10">
+                                            <button class="btn btn-sm btn-secondary" onclick="viewVenda('${venda.id}')" title="Visualizar">👁️</button>
+                                            <button class="btn btn-sm btn-danger" onclick="cancelarVenda('${venda.id}')" title="Cancelar">❌</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            container.innerHTML = tableHTML;
+        }
+
+        function updateVendasKPIs() {
+            const hoje = getCurrentDate();
+            const vendasHoje = vendas.filter(v => v.data === hoje && v.status !== 'Cancelada');
+            
+            const vendasCount = vendasHoje.length;
+            const vendasDireto = vendasHoje.filter(v => v.canal === 'direto');
+            const vendasIFood = vendasHoje.filter(v => v.canal === 'ifood');
+            
+            const totalDireto = vendasDireto.reduce((total, v) => total + parseFloat(v.valorTotal), 0);
+            const totalIFood = vendasIFood.reduce((total, v) => total + parseFloat(v.valorTotal), 0);
+            
+            document.getElementById('vendas-hoje-count').textContent = vendasCount;
+            document.getElementById('vendas-direto-total').textContent = formatCurrency(totalDireto);
+            document.getElementById('vendas-ifood-total').textContent = formatCurrency(totalIFood);
+        }
+
+        function showNovaVendaModal() {
+            if (receitas.length === 0) {
+                modal.confirm(
+                    'Nenhuma receita cadastrada. Deseja criar uma receita agora?',
+                    function() {
+                        showSection('receitas');
+                    },
+                    'Ir para Receitas',
+                    'Cancelar'
+                );
+                return;
+            }
+
+            const receitasAtivas = receitas.filter(r => r.ativa);
+            if (receitasAtivas.length === 0) {
+                modal.confirm(
+                    'Nenhuma receita ativa encontrada. Deseja ativar uma receita?',
+                    function() {
+                        showSection('receitas');
+                    },
+                    'Ir para Receitas',
+                    'Cancelar'
+                );
+                return;
+            }
+
+            const formHTML = `
+                <div id="nova-venda-form">
+                    <div class="grid grid-2 mb-20">
+                        <div class="form-group">
+                            <label class="form-label">Cliente *</label>
+                            <input type="text" class="form-control" id="venda-cliente" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="venda-telefone">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-2 mb-20">
+                        <div class="form-group">
+                            <label class="form-label">Canal *</label>
+                            <select class="form-control" id="venda-canal" required onchange="updatePrecosPorCanal()">
+                                <option value="">Selecione o canal</option>
+                                <option value="direto">🚚 Delivery Direto</option>
+                                <option value="ifood">🍕 iFood</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Data</label>
+                            <input type="date" class="form-control" id="venda-data" value="${getCurrentDate()}">
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-20">
+                        <label class="form-label">Itens do Pedido</label>
+                        <div id="venda-itens">
+                            <div class="venda-item">
+                                <div class="grid grid-4 gap-10 align-items-end">
+                                    <div class="form-group">
+                                        <select class="form-control receita-select" onchange="updateTamanhosDisponiveis(this)">
+                                            <option value="">Selecione a receita</option>
+                                            ${receitasAtivas.map(r => `<option value="${r.id}">${r.nome}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <select class="form-control tamanho-select" disabled>
+                                            <option value="">Selecione o tamanho</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="number" class="form-control quantidade-input" placeholder="Qtd" min="1" value="1" onchange="updateItemTotal(this)">
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="item-preco">R$ 0,00</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm mt-10" onclick="adicionarItemVenda()">
+                            ➕ Adicionar Item
+                        </button>
+                    </div>
+
+                    <div class="venda-total">
+                        <h4>Total: <span id="venda-total-display">R$ 0,00</span></h4>
+                    </div>
+                </div>
+            `;
+
+            modal.show('Nova Venda', formHTML, function() {
+                salvarNovaVenda();
+            });
+        }
+
+        function updatePrecosPorCanal() {
+            const canal = document.getElementById('venda-canal').value;
+            if (!canal) return;
+
+            const itens = document.querySelectorAll('.venda-item');
+            itens.forEach(item => {
+                const receitaSelect = item.querySelector('.receita-select');
+                const tamanhoSelect = item.querySelector('.tamanho-select');
+                
+                if (receitaSelect.value && tamanhoSelect.value) {
+                    updateItemPreco(item, canal);
+                }
+            });
+            
+            updateVendaTotal();
+        }
+
+        function updateTamanhosDisponiveis(receitaSelect) {
+            const item = receitaSelect.closest('.venda-item');
+            const tamanhoSelect = item.querySelector('.tamanho-select');
+            const receita = receitas.find(r => r.id === receitaSelect.value);
+            
+            if (!receita) {
+                tamanhoSelect.innerHTML = '<option value="">Selecione o tamanho</option>';
+                tamanhoSelect.disabled = true;
+                return;
+            }
+
+            const tamanhosAtivos = Object.keys(receita.tamanhos).filter(t => receita.tamanhos[t].ativo);
+            tamanhoSelect.innerHTML = `
+                <option value="">Selecione o tamanho</option>
+                ${tamanhosAtivos.map(t => `<option value="${t}">${t.charAt(0).toUpperCase() + t.slice(1)}</option>`).join('')}
+            `;
+            tamanhoSelect.disabled = false;
+            
+            tamanhoSelect.onchange = function() {
+                const canal = document.getElementById('venda-canal').value;
+                if (canal) {
+                    updateItemPreco(item, canal);
+                    updateVendaTotal();
+                }
+            };
+        }
+
+        function updateItemPreco(item, canal) {
+            const receitaId = item.querySelector('.receita-select').value;
+            const tamanho = item.querySelector('.tamanho-select').value;
+            const quantidade = parseInt(item.querySelector('.quantidade-input').value) || 1;
+            
+            if (!receitaId || !tamanho || !canal) return;
+
+            const receita = receitas.find(r => r.id === receitaId);
+            const custo = receita.tamanhos[tamanho].custoTotal || 0;
+            const precoUnitario = calcularPrecoVenda(custo, canal, tamanho);
+            const precoTotal = precoUnitario * quantidade;
+            
+            item.querySelector('.item-preco').textContent = formatCurrency(precoTotal);
+            item.dataset.precoUnitario = precoUnitario;
+            item.dataset.precoTotal = precoTotal;
+        }
+
+        function updateItemTotal(quantidadeInput) {
+            const item = quantidadeInput.closest('.venda-item');
+            const canal = document.getElementById('venda-canal').value;
+            
+            if (canal) {
+                updateItemPreco(item, canal);
+                updateVendaTotal();
+            }
+        }
+
+        function updateVendaTotal() {
+            const itens = document.querySelectorAll('.venda-item');
+            let total = 0;
+            
+            itens.forEach(item => {
+                const precoTotal = parseFloat(item.dataset.precoTotal) || 0;
+                total += precoTotal;
+            });
+            
+            document.getElementById('venda-total-display').textContent = formatCurrency(total);
+        }
+
+        function adicionarItemVenda() {
+            const container = document.getElementById('venda-itens');
+            const receitasAtivas = receitas.filter(r => r.ativa);
+            
+            const novoItem = document.createElement('div');
+            novoItem.className = 'venda-item';
+            novoItem.innerHTML = `
+                <div class="grid grid-4 gap-10 align-items-end">
+                    <div class="form-group">
+                        <select class="form-control receita-select" onchange="updateTamanhosDisponiveis(this)">
+                            <option value="">Selecione a receita</option>
+                            ${receitasAtivas.map(r => `<option value="${r.id}">${r.nome}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control tamanho-select" disabled>
+                            <option value="">Selecione o tamanho</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="number" class="form-control quantidade-input" placeholder="Qtd" min="1" value="1" onchange="updateItemTotal(this)">
+                    </div>
+                    <div class="form-group">
+                        <div class="d-flex align-items-center gap-10">
+                            <div class="item-preco">R$ 0,00</div>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="removerItemVenda(this)">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(novoItem);
+        }
+
+        function removerItemVenda(button) {
+            const item = button.closest('.venda-item');
+            item.remove();
+            updateVendaTotal();
+        }
+
+        function salvarNovaVenda() {
+            const cliente = document.getElementById('venda-cliente').value.trim();
+            const telefone = document.getElementById('venda-telefone').value.trim();
+            const canal = document.getElementById('venda-canal').value;
+            const data = document.getElementById('venda-data').value;
+            
+            if (!cliente || !canal) {
+                toast.error('Preencha todos os campos obrigatórios');
+                return;
+            }
+
+            const itensElements = document.querySelectorAll('.venda-item');
+            const itens = [];
+            
+            for (let itemEl of itensElements) {
+                const receitaId = itemEl.querySelector('.receita-select').value;
+                const tamanho = itemEl.querySelector('.tamanho-select').value;
+                const quantidade = parseInt(itemEl.querySelector('.quantidade-input').value) || 1;
+                
+                if (!receitaId || !tamanho) {
+                    toast.error('Configure todos os itens do pedido');
+                    return;
+                }
+                
+                const receita = receitas.find(r => r.id === receitaId);
+                const precoUnitario = parseFloat(itemEl.dataset.precoUnitario) || 0;
+                
+                itens.push({
+                    receitaId,
+                    nome: `${receita.nome} (${tamanho.charAt(0).toUpperCase() + tamanho.slice(1)})`,
+                    tamanho,
+                    quantidade,
+                    precoUnitario,
+                    precoTotal: precoUnitario * quantidade
+                });
+            }
+            
+            if (itens.length === 0) {
+                toast.error('Adicione pelo menos um item ao pedido');
+                return;
+            }
+
+            const valorTotal = itens.reduce((total, item) => total + item.precoTotal, 0);
+            
+            const novaVenda = {
+                id: generateId(),
+                cliente,
+                telefone,
+                canal,
+                data,
+                hora: getCurrentTime(),
+                itens,
+                valorTotal,
+                status: 'Confirmada'
+            };
+            
+            vendas.push(novaVenda);
+            storage.save('vendas', vendas);
+            
+            renderVendasList();
+            updateVendasKPIs();
+            updateDashboardKPIs();
+            
+            toast.success('Venda registrada com sucesso!');
+        }
+
+        function viewVenda(id) {
+            const venda = vendas.find(v => v.id === id);
+            if (!venda) {
+                toast.error('Venda não encontrada');
+                return;
+            }
+
+            const viewHTML = `
+                <div class="venda-view">
+                    <div class="grid grid-2 mb-20">
+                        <div>
+                            <h4>Informações do Cliente</h4>
+                            <p><strong>Nome:</strong> ${venda.cliente}</p>
+                            ${venda.telefone ? `<p><strong>Telefone:</strong> ${venda.telefone}</p>` : ''}
+                        </div>
+                        <div>
+                            <h4>Informações do Pedido</h4>
+                            <p><strong>Data:</strong> ${formatDate(venda.data)} às ${venda.hora}</p>
+                            <p><strong>Canal:</strong> <span class="badge ${venda.canal === 'direto' ? 'success' : 'warning'}">${venda.canal === 'direto' ? '🚚 Direto' : '🍕 iFood'}</span></p>
+                            <p><strong>Status:</strong> <span class="badge ${getStatusBadgeClass(venda.status)}">${venda.status}</span></p>
+                        </div>
+                    </div>
+                    
+                    <h4>Itens do Pedido</h4>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Qtd</th>
+                                    <th>Preço Unit.</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${venda.itens.map(item => `
+                                    <tr>
+                                        <td>${item.nome}</td>
+                                        <td>${item.quantidade}</td>
+                                        <td>${formatCurrency(item.precoUnitario)}</td>
+                                        <td>${formatCurrency(item.precoTotal)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3">Total Geral</th>
+                                    <th>${formatCurrency(venda.valorTotal)}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            modal.show('Detalhes da Venda', viewHTML);
+        }
+
+        function cancelarVenda(id) {
+            const venda = vendas.find(v => v.id === id);
+            if (!venda) {
+                toast.error('Venda não encontrada');
+                return;
+            }
+
+            if (venda.status === 'Cancelada') {
+                toast.warning('Esta venda já foi cancelada');
+                return;
+            }
+
+            modal.confirm(
+                `Tem certeza que deseja cancelar a venda de ${venda.cliente}?`,
+                function() {
+                    venda.status = 'Cancelada';
+                    storage.save('vendas', vendas);
+                    renderVendasList();
+                    updateVendasKPIs();
+                    updateDashboardKPIs();
+                    toast.success('Venda cancelada com sucesso!');
+                }
+            );
+        }
+
+        function filterVendas() {
+            // Implementar filtros se necessário
+            renderVendasList();
+        }
+
+        function getStatusBadgeClass(status) {
+            const classes = {
+                'Confirmada': 'success',
+                'Preparando': 'warning',
+                'Entregue': 'info',
+                'Cancelada': 'danger'
+            };
+            return classes[status] || 'secondary';
+        }
+
+        // ========================================
+        // MÓDULO DE RELATÓRIOS
+        // ========================================
+        function loadRelatorios() {
+            const hoje = getCurrentDate();
+            document.getElementById('filter-data-inicial').value = hoje;
+            document.getElementById('filter-data-final').value = hoje;
+            document.getElementById('filter-periodo').value = 'hoje';
+            
+            atualizarRelatorios();
+        }
+
+        function setPeriodoRapido() {
+            const periodo = document.getElementById('filter-periodo').value;
+            const hoje = new Date();
+            let dataInicial, dataFinal;
+
+            switch (periodo) {
+                case 'hoje':
+                    dataInicial = dataFinal = getCurrentDate();
+                    break;
+                case 'ontem':
+                    const ontem = new Date(hoje);
+                    ontem.setDate(ontem.getDate() - 1);
+                    dataInicial = dataFinal = formatDateForInput(ontem);
+                    break;
+                case 'semana':
+                    const inicioSemana = new Date(hoje);
+                    inicioSemana.setDate(hoje.getDate() - hoje.getDay());
+                    dataInicial = formatDateForInput(inicioSemana);
+                    dataFinal = getCurrentDate();
+                    break;
+                case 'mes':
+                    const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+                    dataInicial = formatDateForInput(inicioMes);
+                    dataFinal = getCurrentDate();
+                    break;
+                default:
+                    return;
+            }
+
+            document.getElementById('filter-data-inicial').value = dataInicial;
+            document.getElementById('filter-data-final').value = dataFinal;
+            atualizarRelatorios();
+        }
+
+        function atualizarRelatorios() {
+            const dataInicial = document.getElementById('filter-data-inicial').value;
+            const dataFinal = document.getElementById('filter-data-final').value;
+
+            if (!dataInicial || !dataFinal) {
+                toast.warning('Selecione o período para gerar os relatórios');
+                return;
+            }
+
+            const vendasPeriodo = vendas.filter(v => {
+                return v.data >= dataInicial && v.data <= dataFinal && v.status !== 'Cancelada';
+            });
+
+            updateKPIsRelatorio(vendasPeriodo);
+            updateAnaliseCanais(vendasPeriodo);
+            updateTopProdutos(vendasPeriodo);
+        }
+
+        function updateKPIsRelatorio(vendasPeriodo) {
+            const faturamento = vendasPeriodo.reduce((total, v) => total + parseFloat(v.valorTotal), 0);
+            const vendas = vendasPeriodo.length;
+            const ticketMedio = vendas > 0 ? faturamento / vendas : 0;
+            const margemMedia = calcularMargemMediaPeriodo(vendasPeriodo);
+
+            document.getElementById('kpi-faturamento').textContent = formatCurrency(faturamento);
+            document.getElementById('kpi-vendas').textContent = vendas;
+            document.getElementById('kpi-ticket-medio').textContent = formatCurrency(ticketMedio);
+            document.getElementById('kpi-margem-media').textContent = margemMedia.toFixed(1) + '%';
+
+            // Calcular variações (implementar se necessário)
+            document.getElementById('kpi-faturamento-variacao').textContent = '--';
+            document.getElementById('kpi-vendas-variacao').textContent = '--';
+            document.getElementById('kpi-ticket-variacao').textContent = '--';
+            document.getElementById('kpi-margem-variacao').textContent = '--';
+        }
+
+        function updateAnaliseCanais(vendasPeriodo) {
+            const container = document.getElementById('analise-canais');
+            
+            if (vendasPeriodo.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>Nenhuma venda no período selecionado</p></div>';
+                return;
+            }
+
+            const vendasDireto = vendasPeriodo.filter(v => v.canal === 'direto');
+            const vendasIFood = vendasPeriodo.filter(v => v.canal === 'ifood');
+
+            const faturamentoDireto = vendasDireto.reduce((total, v) => total + parseFloat(v.valorTotal), 0);
+            const faturamentoIFood = vendasIFood.reduce((total, v) => total + parseFloat(v.valorTotal), 0);
+
+            const html = `
+                <div class="canal-stats">
+                    <div class="canal-item">
+                        <div class="canal-header">
+                            <h5>🚚 Delivery Direto</h5>
+                        </div>
+                        <div class="canal-metrics">
+                            <p><strong>Vendas:</strong> ${vendasDireto.length}</p>
+                            <p><strong>Faturamento:</strong> ${formatCurrency(faturamentoDireto)}</p>
+                            <p><strong>Ticket Médio:</strong> ${formatCurrency(vendasDireto.length > 0 ? faturamentoDireto / vendasDireto.length : 0)}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="canal-item">
+                        <div class="canal-header">
+                            <h5>🍕 iFood</h5>
+                        </div>
+                        <div class="canal-metrics">
+                            <p><strong>Vendas:</strong> ${vendasIFood.length}</p>
+                            <p><strong>Faturamento:</strong> ${formatCurrency(faturamentoIFood)}</p>
+                            <p><strong>Ticket Médio:</strong> ${formatCurrency(vendasIFood.length > 0 ? faturamentoIFood / vendasIFood.length : 0)}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function updateTopProdutos(vendasPeriodo) {
+            const container = document.getElementById('top-produtos');
+            
+            if (vendasPeriodo.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>Nenhuma venda registrada</p></div>';
+                return;
+            }
+
+            const produtosCount = {};
+            
+            vendasPeriodo.forEach(venda => {
+                venda.itens.forEach(item => {
+                    if (!produtosCount[item.nome]) {
+                        produtosCount[item.nome] = {
+                            nome: item.nome,
+                            quantidade: 0,
+                            faturamento: 0
+                        };
+                    }
+                    produtosCount[item.nome].quantidade += item.quantidade;
+                    produtosCount[item.nome].faturamento += item.precoTotal;
+                });
+            });
+
+            const topProdutos = Object.values(produtosCount)
+                .sort((a, b) => b.quantidade - a.quantidade)
+                .slice(0, 5);
+
+            const html = `
+                <div class="top-produtos-list">
+                    ${topProdutos.map((produto, index) => `
+                        <div class="produto-item">
+                            <div class="produto-rank">#${index + 1}</div>
+                            <div class="produto-info">
+                                <strong>${produto.nome}</strong><br>
+                                <small>${produto.quantidade} vendas - ${formatCurrency(produto.faturamento)}</small>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function calcularMargemMediaPeriodo(vendasPeriodo) {
+            if (vendasPeriodo.length === 0) return 0;
+
+            let totalMargem = 0;
+            let totalItens = 0;
+
+            vendasPeriodo.forEach(venda => {
+                venda.itens.forEach(item => {
+                    const receita = receitas.find(r => r.id === item.receitaId);
+                    if (receita) {
+                        const custo = receita.tamanhos[item.tamanho].custoTotal || 0;
+                        const margem = calcularMargemReal(custo, item.precoUnitario, venda.canal);
+                        totalMargem += margem * item.quantidade;
+                        totalItens += item.quantidade;
+                    }
+                });
+            });
+
+            return totalItens > 0 ? totalMargem / totalItens : 0;
+        }
+
+        function exportarRelatorio() {
+            const dataInicial = document.getElementById('filter-data-inicial').value;
+            const dataFinal = document.getElementById('filter-data-final').value;
+
+            if (!dataInicial || !dataFinal) {
+                toast.warning('Selecione o período para exportar');
+                return;
+            }
+
+            const vendasPeriodo = vendas.filter(v => {
+                return v.data >= dataInicial && v.data <= dataFinal && v.status !== 'Cancelada';
+            });
+
+            if (vendasPeriodo.length === 0) {
+                toast.warning('Nenhuma venda encontrada no período selecionado');
+                return;
+            }
+
+            // Criar dados para exportação
+            const dadosExportacao = [];
+            
+            vendasPeriodo.forEach(venda => {
+                venda.itens.forEach(item => {
+                    dadosExportacao.push({
+                        'Data': formatDate(venda.data),
+                        'Hora': venda.hora,
+                        'Cliente': venda.cliente,
+                        'Telefone': venda.telefone || '',
+                        'Canal': venda.canal === 'direto' ? 'Delivery Direto' : 'iFood',
+                        'Produto': item.nome,
+                        'Quantidade': item.quantidade,
+                        'Preço Unitário': formatCurrency(item.precoUnitario),
+                        'Total Item': formatCurrency(item.precoTotal),
+                        'Total Venda': formatCurrency(venda.valorTotal),
+                        'Status': venda.status
+                    });
+                });
+            });
+
+            // Exportar como CSV
+            const csv = convertToCSV(dadosExportacao);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `relatorio_vendas_${dataInicial}_${dataFinal}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            toast.success('Relatório exportado com sucesso!');
+        }
+
+        function convertToCSV(data) {
+            if (data.length === 0) return '';
+            
+            const headers = Object.keys(data[0]);
+            const csvContent = [
+                headers.join(','),
+                ...data.map(row => headers.map(header => `"${row[header]}"`).join(','))
+            ].join('\n');
+            
+            return csvContent;
+        }
+
+        // ========================================
+        // DASHBOARD
+        // ========================================
+        function updateDashboardKPIs() {
+            const hoje = getCurrentDate();
+            const vendasHoje = vendas.filter(v => v.data === hoje);
+            
+            const vendasCount = vendasHoje.length;
+            const faturamentoHoje = vendasHoje.reduce((total, venda) => {
+                return total + (parseFloat(venda.valorTotal) || 0);
+            }, 0);
+            
+            const ticketMedio = vendasCount > 0 ? faturamentoHoje / vendasCount : 0;
+            
+            document.getElementById('vendas-hoje').textContent = vendasCount;
+            document.getElementById('faturamento-hoje').textContent = formatCurrency(faturamentoHoje);
+            document.getElementById('ticket-medio').textContent = formatCurrency(ticketMedio);
+            document.getElementById('margem-media').textContent = '0%'; // Will be calculated when we have recipes
+        }
+
+        // ========================================
+        // DADOS DE EXEMPLO
+        // ========================================
+        function addSampleData() {
+            console.log('Adicionando dados de exemplo...');
+            
+            // Ingredientes de exemplo
+            const sampleIngredientes = [
+                {
+                    id: generateId(),
+                    nome: 'Mussarela',
+                    categoria: 'queijos',
+                    unidade: 'kg',
+                    preco: 25.50,
+                    fornecedor: 'Laticínios ABC'
+                },
+                {
+                    id: generateId(),
+                    nome: 'Molho de Tomate',
+                    categoria: 'molhos',
+                    unidade: 'kg',
+                    preco: 8.90,
+                    fornecedor: 'Conservas XYZ'
+                },
+                {
+                    id: generateId(),
+                    nome: 'Massa de Pizza',
+                    categoria: 'massas',
+                    unidade: 'kg',
+                    preco: 12.00,
+                    fornecedor: 'Massas Premium'
+                },
+                {
+                    id: generateId(),
+                    nome: 'Orégano',
+                    categoria: 'temperos',
+                    unidade: 'kg',
+                    preco: 45.00,
+                    fornecedor: 'Temperos Naturais'
+                }
+            ];
+            
+            // Receita de exemplo
+            const sampleReceita = {
+                id: generateId(),
+                nome: 'Pizza Marguerita',
+                categoria: 'tradicional',
+                descricao: 'Pizza clássica com mussarela, molho de tomate e orégano',
+                ingredientes: [
+                    { ingredienteId: sampleIngredientes[0].id, quantidade: 0.15 }, // Mussarela
+                    { ingredienteId: sampleIngredientes[1].id, quantidade: 0.08 }, // Molho
+                    { ingredienteId: sampleIngredientes[2].id, quantidade: 0.25 }, // Massa
+                    { ingredienteId: sampleIngredientes[3].id, quantidade: 0.002 } // Orégano
+                ],
+                tamanhos: {
+                    pequena: { ativo: true, multiplicador: 1.0, custoTotal: 0 },
+                    media: { ativo: true, multiplicador: 1.5, custoTotal: 0 },
+                    grande: { ativo: true, multiplicador: 2.0, custoTotal: 0 }
+                },
+                ativa: true
+            };
+            
+            // Salvar dados de exemplo
+            ingredientes = sampleIngredientes;
+            receitas = [sampleReceita];
+            
+            storage.save('ingredientes', ingredientes);
+            storage.save('receitas', receitas);
+            
+            // Calcular custos da receita
+            calcularCustosReceita(sampleReceita);
+            storage.save('receitas', receitas);
+            
+            toast.success('Dados de exemplo adicionados! Sistema pronto para uso.');
+        }
+
+        // ========================================
+        // INICIALIZAÇÃO
+        // ========================================
+        function initApp() {
+            console.log('Aplicação inicializada com sucesso');
+            
+            // Load initial data
+            ingredientes = storage.load('ingredientes', []);
+            receitas = storage.load('receitas', []);
+            vendas = storage.load('vendas', []);
+            estoque = storage.load('estoque', {});
+            
+            // Add sample data if empty (for testing)
+            if (ingredientes.length === 0) {
+                addSampleData();
+            }
+            
+            // Setup responsive
+            setupResponsive();
+            
+            // Load and render data
+            loadIngredientes();
+            loadReceitas();
+            loadCardapio();
+            loadVendas();
+            loadRelatorios();
+            
+            // Update initial tab
+            updateSidebarActive('dashboard');
+            updateContentHeader('dashboard');
+            updateDashboardKPIs();
+        }
+
+        function setupResponsive() {
+            // Show mobile menu button on small screens
+            function checkScreenSize() {
+                const mobileBtn = document.querySelector('.mobile-menu-btn');
+                if (window.innerWidth <= 768) {
+                    mobileBtn.classList.remove('d-none');
+                } else {
+                    mobileBtn.classList.add('d-none');
+                    closeMobileSidebar();
+                }
+            }
+            
+            checkScreenSize();
+            window.addEventListener('resize', checkScreenSize);
+        }
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+
+        // Global error handler
+        window.addEventListener('error', function(event) {
+            console.error('Erro global:', event.error);
+            toast.error('Ocorreu um erro inesperado');
+        });
+    </script>
+</body>
+</html>
+
