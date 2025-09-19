@@ -1,0 +1,16 @@
+Insumo,Categoria,Unidade,Estoque_Atual,Estoque_Minimo,Custo_Unitario,Fornecedor,Data_Ultima_Compra,Quantidade_Ultima_Compra
+Farinha de Trigo,Massa,Kg,25,10,4.50,Moinho ABC,2024-09-15,50
+Queijo Mussarela,Queijo,Kg,8,5,28.90,Laticinios XYZ,2024-09-18,20
+Molho de Tomate,Molho,Kg,12,8,6.80,Conservas 123,2024-09-16,30
+Calabresa,Embutido,Kg,6,3,18.50,Frigorifico DEF,2024-09-17,15
+Presunto,Embutido,Kg,4,2,22.90,Frigorifico DEF,2024-09-17,10
+Champignon,Vegetal,Kg,3,2,12.50,Hortifruti GHI,2024-09-19,5
+Azeitona,Vegetal,Kg,2,1,15.80,Importadora JKL,2024-09-10,8
+Oregano,Tempero,Kg,1.5,0.5,25.00,Temperos MNO,2024-09-12,2
+Azeite,Oleo,L,8,3,18.90,Azeites PQR,2024-09-14,12
+Fermento,Massa,Kg,2,1,8.50,Fermentos STU,2024-09-13,5
+Frango Desfiado,Proteina,Kg,5,3,16.90,Frigorifico DEF,2024-09-18,12
+Bacon,Embutido,Kg,3,2,24.50,Frigorifico DEF,2024-09-17,8
+Catupiry,Queijo,Kg,4,2,32.90,Laticinios XYZ,2024-09-18,10
+Cebola,Vegetal,Kg,8,4,3.20,Hortifruti GHI,2024-09-19,15
+Tomate,Vegetal,Kg,6,3,4.80,Hortifruti GHI,2024-09-19,12

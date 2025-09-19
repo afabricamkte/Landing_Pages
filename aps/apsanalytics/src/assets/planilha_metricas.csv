@@ -1,0 +1,20 @@
+Metrica,Valor,Data_Calculo,Periodo
+Total Pedidos Hoje,15,2024-09-20,Diario
+Faturamento Hoje,687.50,2024-09-20,Diario
+Ticket Medio Hoje,45.83,2024-09-20,Diario
+Total Pedidos Ontem,10,2024-09-19,Diario
+Faturamento Ontem,459.80,2024-09-19,Diario
+Ticket Medio Ontem,45.98,2024-09-19,Diario
+Crescimento Pedidos,50.0%,2024-09-20,Comparativo
+Crescimento Faturamento,49.5%,2024-09-20,Comparativo
+Pedidos iFood Hoje,4,2024-09-20,Canal
+Pedidos WhatsApp Hoje,5,2024-09-20,Canal
+Pedidos Balcao Hoje,3,2024-09-20,Canal
+Pedidos 99Food Hoje,2,2024-09-20,Canal
+Pedidos Rappi Hoje,1,2024-09-20,Canal
+Margem Lucro Media,58.7%,2024-09-20,Financeiro
+Custo Total Ingredientes,278.90,2024-09-20,Financeiro
+Lucro Bruto,408.60,2024-09-20,Financeiro
+Pizza Mais Vendida,Margherita,2024-09-20,Produto
+Tamanho Mais Vendido,M,2024-09-20,Produto
+Horario Pico,19:00-21:00,2024-09-20,Operacional

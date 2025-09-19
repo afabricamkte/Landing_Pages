@@ -1,0 +1,16 @@
+Data,Pedido_ID,Canal,Produto,Quantidade,Valor_Unitario,Valor_Total,Cliente,Observacoes
+2024-09-19,001,iFood,Pizza Margherita G,1,45.90,45.90,João Silva,Sem cebola
+2024-09-19,002,WhatsApp,Pizza Calabresa M,2,35.90,71.80,Maria Santos,Extra queijo
+2024-09-19,003,Balcao,Pizza Portuguesa G,1,48.90,48.90,Pedro Costa,Retirada
+2024-09-19,004,99Food,Pizza Frango Catupiry M,1,42.90,42.90,Ana Lima,
+2024-09-19,005,Rappi,Pizza Quatro Queijos G,1,52.90,52.90,Carlos Oliveira,Massa fina
+2024-09-19,006,WhatsApp,Pizza Pepperoni M,1,39.90,39.90,Lucia Ferreira,
+2024-09-19,007,iFood,Pizza Vegetariana G,1,46.90,46.90,Roberto Alves,Sem azeitona
+2024-09-19,008,Balcao,Pizza Bacon M,2,37.90,75.80,Sandra Rocha,Retirada
+2024-09-19,009,99Food,Pizza Napolitana G,1,44.90,44.90,Fernando Silva,
+2024-09-19,010,WhatsApp,Pizza Toscana M,1,41.90,41.90,Patricia Lima,Extra oregano
+2024-09-20,011,iFood,Pizza Margherita M,1,35.90,35.90,Jose Santos,
+2024-09-20,012,Rappi,Pizza Calabresa G,1,42.90,42.90,Mariana Costa,Borda recheada
+2024-09-20,013,WhatsApp,Pizza Portuguesa M,2,38.90,77.80,Antonio Oliveira,
+2024-09-20,014,Balcao,Pizza Frango Catupiry G,1,49.90,49.90,Claudia Ferreira,Retirada
+2024-09-20,015,99Food,Pizza Quatro Queijos M,1,42.90,42.90,Ricardo Alves,

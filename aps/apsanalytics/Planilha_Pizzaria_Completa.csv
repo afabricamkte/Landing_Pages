@@ -1,0 +1,82 @@
+# PLANILHA PIZZARIA - MODELO COMPLETO
+# Esta é uma planilha modelo com 4 abas para gestão completa da pizzaria
+# Importe este arquivo no Google Sheets e ele criará automaticamente as abas
+
+# ===== ABA 1: VENDAS =====
+# Registre aqui todos os pedidos realizados
+Data,Hora,Produto,Quantidade,Valor_Unitario,Valor_Total,Canal,Cliente,Status,Observacoes
+2024-09-19,12:30,Pizza Margherita,1,42.90,42.90,iFood,João Silva,Entregue,Sem cebola
+2024-09-19,12:45,Pizza Calabresa,2,38.50,77.00,WhatsApp,Maria Santos,Entregue,Extra queijo
+2024-09-19,13:15,Pizza Portuguesa,1,45.90,45.90,Balcão,Carlos Lima,Entregue,
+2024-09-19,13:30,Pizza Frango Catupiry,1,41.50,41.50,Rappi,Ana Costa,Entregue,Borda recheada
+2024-09-19,14:00,Pizza Quatro Queijos,1,48.90,48.90,99Food,Pedro Oliveira,Entregue,
+2024-09-19,14:15,Pizza Margherita,1,42.90,42.90,iFood,Lucia Ferreira,Entregue,
+2024-09-19,14:45,Pizza Calabresa,1,38.50,38.50,WhatsApp,Roberto Silva,Entregue,Sem azeitona
+2024-09-19,15:30,Pizza Portuguesa,1,45.90,45.90,iFood,Fernanda Lima,Entregue,
+2024-09-19,16:00,Pizza Frango Catupiry,1,41.50,41.50,Balcão,Marcos Santos,Entregue,
+2024-09-19,16:30,Pizza Margherita,1,42.90,42.90,WhatsApp,Julia Costa,Entregue,
+2024-09-19,17:00,Pizza Calabresa,1,38.50,38.50,iFood,Diego Alves,Entregue,
+2024-09-19,17:30,Pizza Quatro Queijos,1,48.90,48.90,Rappi,Carla Souza,Entregue,
+2024-09-19,18:00,Pizza Portuguesa,1,45.90,45.90,99Food,Bruno Lima,Entregue,
+2024-09-19,18:30,Pizza Margherita,2,42.90,85.80,WhatsApp,Familia Silva,Entregue,2 pizzas
+2024-09-19,19:00,Pizza Frango Catupiry,1,41.50,41.50,iFood,Amanda Santos,Entregue,
+
+# ===== ABA 2: INSUMOS =====
+# Controle de estoque de ingredientes
+Item,Quantidade_Atual,Quantidade_Minima,Unidade,Custo_Unitario,Fornecedor,Ultima_Compra,Validade,Categoria
+Queijo Mussarela,8,5,kg,28.50,Laticínios ABC,2024-09-18,2024-10-15,Laticínio
+Farinha de Trigo,25,10,kg,3.20,Moinho São Paulo,2024-09-15,2024-12-30,Massa
+Champignon,2,2,kg,18.90,Hortifruti Central,2024-09-19,2024-09-25,Vegetal
+Azeitona,1,1,kg,22.50,Conservas Brasil,2024-09-17,2025-03-20,Conserva
+Calabresa,6,3,kg,15.80,Frigorífico Sul,2024-09-18,2024-10-01,Carne
+Molho de Tomate,12,8,kg,4.50,Conservas Brasil,2024-09-16,2025-01-15,Molho
+Oregano,3,1,kg,35.00,Temperos Naturais,2024-09-10,2025-06-10,Tempero
+Cebola,8,5,kg,2.80,Hortifruti Central,2024-09-19,2024-10-05,Vegetal
+Pimentão,4,3,kg,4.20,Hortifruti Central,2024-09-19,2024-09-30,Vegetal
+Presunto,5,3,kg,18.90,Frigorífico Sul,2024-09-18,2024-10-02,Carne
+Catupiry,6,4,kg,32.50,Laticínios ABC,2024-09-17,2024-10-20,Laticínio
+Massa de Pizza,20,15,unidade,2.80,Massas Artesanais,2024-09-18,2024-09-28,Massa
+
+# ===== ABA 3: CARDAPIO =====
+# Produtos, preços e custos
+Produto,Categoria,Preco,Custo,Margem,Ativo,Descricao,Tempo_Preparo,Ingredientes_Principais
+Pizza Margherita,Pizza Tradicional,42.90,16.20,62.2,Sim,Molho de tomate e queijo mussarela,15,Massa|Molho|Mussarela|Oregano
+Pizza Calabresa,Pizza Tradicional,38.50,14.80,61.6,Sim,Molho de tomate calabresa e cebola,15,Massa|Molho|Calabresa|Cebola|Mussarela
+Pizza Portuguesa,Pizza Especial,45.90,18.50,59.7,Sim,Presunto ovos ervilha e cebola,18,Massa|Molho|Presunto|Ovos|Ervilha|Cebola|Mussarela
+Pizza Frango Catupiry,Pizza Especial,41.50,16.80,59.5,Sim,Frango desfiado com catupiry,17,Massa|Molho|Frango|Catupiry|Mussarela
+Pizza Quatro Queijos,Pizza Gourmet,48.90,20.50,58.1,Sim,Mussarela provolone gorgonzola e parmesão,16,Massa|Molho|Mussarela|Provolone|Gorgonzola|Parmesao
+Pizza Vegetariana,Pizza Especial,44.90,17.20,61.7,Sim,Champignon pimentão cebola e azeitona,16,Massa|Molho|Champignon|Pimentao|Cebola|Azeitona|Mussarela
+Pizza Napolitana,Pizza Gourmet,46.90,19.80,57.8,Sim,Mussarela tomate e manjericão,15,Massa|Molho|Mussarela|Tomate|Manjericao
+Pizza Pepperoni,Pizza Especial,43.90,17.90,59.2,Sim,Pepperoni e queijo mussarela,15,Massa|Molho|Pepperoni|Mussarela
+Coca-Cola 350ml,Bebida,6.50,3.20,50.8,Sim,Refrigerante gelado,0,
+Guaraná 350ml,Bebida,6.00,3.00,50.0,Sim,Refrigerante gelado,0,
+Água 500ml,Bebida,3.50,1.80,48.6,Sim,Água mineral gelada,0,
+Suco Natural 300ml,Bebida,8.50,4.20,50.6,Sim,Suco natural da fruta,3,
+
+# ===== ABA 4: METRICAS =====
+# Indicadores e KPIs calculados
+Data,Pedidos_Total,Faturamento_Total,Ticket_Medio,Crescimento_Pedidos,Crescimento_Faturamento,Margem_Media,Eficiencia_Operacional,Tempo_Medio_Preparo,Taxa_Conversao,ROI_Marketing
+2024-09-17,10,420.50,42.05,-16.7,-12.5,58.5,89,22,82,285
+2024-09-18,12,498.80,41.57,20.0,18.6,59.2,91,20,85,310
+2024-09-19,15,687.50,45.83,25.0,37.8,60.1,94,18,87,340
+2024-09-20,0,0.00,0.00,0.0,0.0,0.0,0,0,0,0
+2024-09-21,0,0.00,0.00,0.0,0.0,0.0,0,0,0,0
+2024-09-22,0,0.00,0.00,0.0,0.0,0.0,0,0,0,0
+
+# ===== INSTRUÇÕES DE USO =====
+# 1. Copie todo este conteúdo
+# 2. Crie uma nova planilha no Google Sheets
+# 3. Cole o conteúdo na primeira aba
+# 4. Separe manualmente em 4 abas:
+#    - ABA 1: "Vendas" (dados de vendas)
+#    - ABA 2: "Insumos" (controle de estoque)  
+#    - ABA 3: "Cardapio" (produtos e preços)
+#    - ABA 4: "Metricas" (indicadores)
+# 5. Publique cada aba como CSV público
+# 6. Configure no dashboard da pizzaria
+
+# ===== CAMPOS OBRIGATÓRIOS =====
+# VENDAS: Data, Hora, Produto, Quantidade, Valor_Total, Canal, Status
+# INSUMOS: Item, Quantidade_Atual, Quantidade_Minima, Custo_Unitario
+# CARDAPIO: Produto, Categoria, Preco, Custo, Ativo
+# METRICAS: Data, Pedidos_Total, Faturamento_Total, Ticket_Medio

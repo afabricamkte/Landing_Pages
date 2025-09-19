@@ -1,0 +1,21 @@
+Produto,Categoria,Tamanho,Preco,Custo_Ingredientes,Margem_Lucro,Tempo_Preparo,Disponivel
+Pizza Margherita,Pizza Tradicional,M,35.90,12.50,65.2%,15,Sim
+Pizza Margherita,Pizza Tradicional,G,45.90,16.80,63.4%,18,Sim
+Pizza Calabresa,Pizza Tradicional,M,35.90,13.20,63.2%,15,Sim
+Pizza Calabresa,Pizza Tradicional,G,42.90,17.50,59.2%,18,Sim
+Pizza Portuguesa,Pizza Tradicional,M,38.90,14.80,62.0%,16,Sim
+Pizza Portuguesa,Pizza Tradicional,G,48.90,19.20,60.7%,20,Sim
+Pizza Frango Catupiry,Pizza Especial,M,42.90,16.50,61.5%,17,Sim
+Pizza Frango Catupiry,Pizza Especial,G,49.90,21.20,57.5%,22,Sim
+Pizza Quatro Queijos,Pizza Especial,M,42.90,18.90,56.0%,16,Sim
+Pizza Quatro Queijos,Pizza Especial,G,52.90,24.50,53.7%,20,Sim
+Pizza Pepperoni,Pizza Especial,M,39.90,15.80,60.4%,15,Sim
+Pizza Pepperoni,Pizza Especial,G,47.90,20.40,57.4%,18,Sim
+Pizza Vegetariana,Pizza Especial,M,38.90,13.90,64.3%,16,Sim
+Pizza Vegetariana,Pizza Especial,G,46.90,18.20,61.2%,20,Sim
+Pizza Bacon,Pizza Especial,M,37.90,14.60,61.5%,15,Sim
+Pizza Bacon,Pizza Especial,G,45.90,19.10,58.4%,18,Sim
+Pizza Napolitana,Pizza Gourmet,M,41.90,16.20,61.3%,17,Sim
+Pizza Napolitana,Pizza Gourmet,G,44.90,21.80,51.4%,22,Sim
+Pizza Toscana,Pizza Gourmet,M,41.90,17.50,58.2%,18,Sim
+Pizza Toscana,Pizza Gourmet,G,49.90,22.90,54.1%,23,Sim
