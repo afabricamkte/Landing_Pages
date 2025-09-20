@@ -439,6 +439,68 @@
             font-size: 0.9rem;
         }
 
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .ingredient-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .ingredient-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .ingredient-item:last-child {
+            border-bottom: none;
+        }
+
+        .quantity-input {
+            width: 100px;
+            padding: 0.25rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -600,8 +662,9 @@
             </div>
 
             <div style="margin-bottom: 2rem;">
-                <button class="btn btn-primary" onclick="adicionarIngrediente()">➕ Adicionar Ingrediente</button>
+                <button class="btn btn-primary" onclick="adicionarIngrediente()" id="btnAdicionarIngrediente">➕ Adicionar Ingrediente</button>
                 <button class="btn btn-warning" onclick="atualizarPrecos()">📈 Atualizar Preços</button>
+                <button class="btn btn-secondary" onclick="cancelarEdicao()" id="btnCancelarEdicao" style="display: none;">❌ Cancelar Edição</button>
             </div>
 
             <table class="table" id="tabelaIngredientes">
@@ -666,6 +729,34 @@
             <div id="listaReceitas">
                 <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
                     Nenhuma receita cadastrada. Crie receitas para começar.
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Composição de Receita -->
+        <div id="modalReceita" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="fecharModalReceita()">&times;</span>
+                <h2 id="tituloModalReceita">Composição da Receita</h2>
+                
+                <div class="form-group">
+                    <label>Adicionar Ingrediente:</label>
+                    <select id="selectIngredienteReceita">
+                        <option value="">Selecione um ingrediente</option>
+                    </select>
+                </div>
+
+                <div id="ingredientesReceita" class="ingredient-list">
+                    <p style="text-align: center; color: #7f8c8d;">Nenhum ingrediente adicionado</p>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <strong>Custo Total: R$ <span id="custoTotalReceita">0,00</span></strong>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <button class="btn btn-primary" onclick="salvarReceita()">💾 Salvar Receita</button>
+                    <button class="btn btn-secondary" onclick="fecharModalReceita()">❌ Cancelar</button>
                 </div>
             </div>
         </div>
@@ -761,21 +852,21 @@
                 </div>
                 <div class="form-group">
                     <label>Margem Desejada (%)</label>
-                    <input type="number" id="margemDesejada" step="1" placeholder="Ex: 150">
+                    <input type="number" id="margemDesejada" step="1" placeholder="Ex: 150" value="150">
                 </div>
                 <div class="form-group">
                     <label>Taxa de Entrega (R$)</label>
-                    <input type="number" id="taxaEntrega" step="0.01" placeholder="Ex: 5,00">
+                    <input type="number" id="taxaEntrega" step="0.01" placeholder="Ex: 5,00" value="5.00">
                 </div>
                 <div class="form-group">
                     <label>Custo de Embalagem (R$)</label>
-                    <input type="number" id="custoEmbalagem" step="0.01" placeholder="Ex: 2,50">
+                    <input type="number" id="custoEmbalagem" step="0.01" placeholder="Ex: 2,50" value="2.50">
                 </div>
             </div>
 
             <div style="margin-bottom: 2rem;">
                 <button class="btn btn-primary" onclick="calcularPrecos()">💰 Calcular Preços</button>
-                <button class="btn btn-info" onclick="exportarTabela()">📊 Exportar Tabela</button>
+                <button class="btn btn-info" onclick="exportarTabelaPrecificacao()">📊 Exportar Tabela</button>
             </div>
 
             <div class="pricing-grid" id="precificacaoResultados">
@@ -790,8 +881,8 @@
                         <label>Margem (%)</label>
                         <input type="number" value="150" placeholder="150">
                     </div>
-                    <div class="price-display">R$ 0,00</div>
-                    <div class="margin-info">Margem Real: 0%</div>
+                    <div class="price-display" id="precoBalcao">R$ 0,00</div>
+                    <div class="margin-info" id="margemBalcao">Margem Real: 0%</div>
                 </div>
 
                 <!-- Delivery Direto -->
@@ -805,8 +896,8 @@
                         <label>Margem (%)</label>
                         <input type="number" value="150" placeholder="150">
                     </div>
-                    <div class="price-display">R$ 0,00</div>
-                    <div class="margin-info">Margem Real: 0%</div>
+                    <div class="price-display" id="precoDelivery">R$ 0,00</div>
+                    <div class="margin-info" id="margemDelivery">Margem Real: 0%</div>
                 </div>
 
                 <!-- iFood -->
@@ -820,8 +911,8 @@
                         <label>Margem (%)</label>
                         <input type="number" value="150" placeholder="150">
                     </div>
-                    <div class="price-display">R$ 0,00</div>
-                    <div class="margin-info">Margem Real: 0%</div>
+                    <div class="price-display" id="precoIfood">R$ 0,00</div>
+                    <div class="margin-info" id="margemIfood">Margem Real: 0%</div>
                 </div>
 
                 <!-- 99Food -->
@@ -835,8 +926,8 @@
                         <label>Margem (%)</label>
                         <input type="number" value="150" placeholder="150">
                     </div>
-                    <div class="price-display">R$ 0,00</div>
-                    <div class="margin-info">Margem Real: 0%</div>
+                    <div class="price-display" id="preco99Food">R$ 0,00</div>
+                    <div class="margin-info" id="margem99Food">Margem Real: 0%</div>
                 </div>
 
                 <!-- Rappi -->
@@ -850,8 +941,8 @@
                         <label>Margem (%)</label>
                         <input type="number" value="150" placeholder="150">
                     </div>
-                    <div class="price-display">R$ 0,00</div>
-                    <div class="margin-info">Margem Real: 0%</div>
+                    <div class="price-display" id="precoRappi">R$ 0,00</div>
+                    <div class="margin-info" id="margemRappi">Margem Real: 0%</div>
                 </div>
 
                 <!-- Uber Eats -->
@@ -865,8 +956,8 @@
                         <label>Margem (%)</label>
                         <input type="number" value="150" placeholder="150">
                     </div>
-                    <div class="price-display">R$ 0,00</div>
-                    <div class="margin-info">Margem Real: 0%</div>
+                    <div class="price-display" id="precoUber">R$ 0,00</div>
+                    <div class="margin-info" id="margemUber">Margem Real: 0%</div>
                 </div>
             </div>
 
@@ -920,6 +1011,7 @@
 
                 <div style="margin-bottom: 2rem;">
                     <button class="btn btn-primary" onclick="simularCenario()">🎯 Simular Cenário</button>
+                    <button class="btn btn-info" onclick="gerarRelatorioSimulacao()">📊 Gerar Relatório</button>
                 </div>
 
                 <div class="simulator-grid">
@@ -945,7 +1037,7 @@
             <h3>📊 Análise de Sensibilidade</h3>
             <p>Veja como mudanças nos parâmetros afetam sua rentabilidade.</p>
 
-            <table class="table">
+            <table class="table" id="tabelaSensibilidade">
                 <thead>
                     <tr>
                         <th>Cenário</th>
@@ -1020,7 +1112,7 @@
                 </div>
             </div>
 
-            <table class="table" style="margin-top: 2rem;">
+            <table class="table" style="margin-top: 2rem;" id="tabelaAnalises">
                 <thead>
                     <tr>
                         <th>Período</th>
@@ -1034,31 +1126,9 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Setembro 2024</td>
-                        <td>15</td>
-                        <td>R$ 12,50</td>
-                        <td>145%</td>
-                        <td>Delivery Direto</td>
-                        <td>+2,5%</td>
-                        <td><span class="badge badge-success">Ótimo</span></td>
-                    </tr>
-                    <tr>
-                        <td>Agosto 2024</td>
-                        <td>12</td>
-                        <td>R$ 11,80</td>
-                        <td>150%</td>
-                        <td>99Food</td>
-                        <td>-1,2%</td>
-                        <td><span class="badge badge-success">Bom</span></td>
-                    </tr>
-                    <tr>
-                        <td>Julho 2024</td>
-                        <td>8</td>
-                        <td>R$ 13,20</td>
-                        <td>135%</td>
-                        <td>Balcão</td>
-                        <td>+5,8%</td>
-                        <td><span class="badge badge-warning">Regular</span></td>
+                        <td colspan="7" style="text-align: center; color: #7f8c8d;">
+                            Dados de análise serão gerados conforme o uso do sistema.
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -1172,7 +1242,7 @@
     </div>
 
     <footer class="footer">
-        <p>© 2024 APS - Sistema de Precificação v2.0</p>
+        <p>© 2024 APS - Sistema de Precificação v3.0</p>
         <p>Desenvolvido para pizzarias que buscam gestão profissional e precificação inteligente</p>
     </footer>
 
@@ -1183,6 +1253,8 @@
         let custosOperacionais = JSON.parse(localStorage.getItem('custosOperacionais')) || {};
         let configuracoes = JSON.parse(localStorage.getItem('configuracoes')) || {};
         let historicoBackups = JSON.parse(localStorage.getItem('historicoBackups')) || [];
+        let receitaEditando = null;
+        let ingredienteEditando = null;
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
@@ -1220,36 +1292,99 @@
                 return;
             }
 
-            const ingrediente = {
-                id: Date.now(),
-                nome,
-                unidade,
-                preco,
-                quantidade,
-                fornecedor,
-                categoria,
-                historico: [{
-                    data: new Date().toISOString().split('T')[0],
-                    preco: preco
-                }],
-                dataCriacao: new Date().toISOString()
-            };
+            if (ingredienteEditando) {
+                // Atualizar ingrediente existente
+                const index = ingredientes.findIndex(ing => ing.id === ingredienteEditando);
+                if (index !== -1) {
+                    // Adicionar ao histórico se o preço mudou
+                    if (ingredientes[index].preco !== preco) {
+                        if (!ingredientes[index].historico) ingredientes[index].historico = [];
+                        ingredientes[index].historico.push({
+                            data: new Date().toISOString().split('T')[0],
+                            preco: preco
+                        });
+                    }
+                    
+                    ingredientes[index] = {
+                        ...ingredientes[index],
+                        nome,
+                        unidade,
+                        preco,
+                        quantidade,
+                        fornecedor,
+                        categoria
+                    };
+                }
+                ingredienteEditando = null;
+                document.getElementById('btnAdicionarIngrediente').textContent = '➕ Adicionar Ingrediente';
+                document.getElementById('btnCancelarEdicao').style.display = 'none';
+            } else {
+                // Adicionar novo ingrediente
+                const ingrediente = {
+                    id: Date.now(),
+                    nome,
+                    unidade,
+                    preco,
+                    quantidade,
+                    fornecedor,
+                    categoria,
+                    historico: [{
+                        data: new Date().toISOString().split('T')[0],
+                        preco: preco
+                    }],
+                    dataCriacao: new Date().toISOString()
+                };
+                ingredientes.push(ingrediente);
+            }
 
-            ingredientes.push(ingrediente);
             salvarDados();
             atualizarTabelaIngredientes();
             limparFormularioIngrediente();
             atualizarEstatisticas();
+            atualizarSelectIngredientes();
 
             // Feedback visual
-            const btn = event.target;
+            const btn = document.getElementById('btnAdicionarIngrediente');
             const textoOriginal = btn.textContent;
-            btn.textContent = 'Adicionado!';
+            btn.textContent = ingredienteEditando ? 'Atualizado!' : 'Adicionado!';
             btn.style.background = '#27ae60';
             setTimeout(() => {
                 btn.textContent = textoOriginal;
                 btn.style.background = '';
             }, 2000);
+        }
+
+        function editarIngrediente(id) {
+            const ingrediente = ingredientes.find(ing => ing.id === id);
+            if (!ingrediente) return;
+
+            document.getElementById('nomeIngrediente').value = ingrediente.nome;
+            document.getElementById('unidadeIngrediente').value = ingrediente.unidade;
+            document.getElementById('precoIngrediente').value = ingrediente.preco;
+            document.getElementById('quantidadeIngrediente').value = ingrediente.quantidade;
+            document.getElementById('fornecedorIngrediente').value = ingrediente.fornecedor || '';
+            document.getElementById('categoriaIngrediente').value = ingrediente.categoria;
+
+            ingredienteEditando = id;
+            document.getElementById('btnAdicionarIngrediente').textContent = '💾 Salvar Alterações';
+            document.getElementById('btnCancelarEdicao').style.display = 'inline-flex';
+        }
+
+        function cancelarEdicao() {
+            ingredienteEditando = null;
+            limparFormularioIngrediente();
+            document.getElementById('btnAdicionarIngrediente').textContent = '➕ Adicionar Ingrediente';
+            document.getElementById('btnCancelarEdicao').style.display = 'none';
+        }
+
+        function excluirIngrediente(id) {
+            if (confirm('Tem certeza que deseja excluir este ingrediente?')) {
+                ingredientes = ingredientes.filter(ing => ing.id !== id);
+                salvarDados();
+                atualizarTabelaIngredientes();
+                atualizarEstatisticas();
+                atualizarSelectIngredientes();
+            }
         }
 
         function limparFormularioIngrediente() {
@@ -1296,30 +1431,6 @@
             }).join('');
         }
 
-        function editarIngrediente(id) {
-            const ingrediente = ingredientes.find(ing => ing.id === id);
-            if (!ingrediente) return;
-
-            document.getElementById('nomeIngrediente').value = ingrediente.nome;
-            document.getElementById('unidadeIngrediente').value = ingrediente.unidade;
-            document.getElementById('precoIngrediente').value = ingrediente.preco;
-            document.getElementById('quantidadeIngrediente').value = ingrediente.quantidade;
-            document.getElementById('fornecedorIngrediente').value = ingrediente.fornecedor || '';
-            document.getElementById('categoriaIngrediente').value = ingrediente.categoria;
-
-            // Remover ingrediente para re-adicionar editado
-            excluirIngrediente(id);
-        }
-
-        function excluirIngrediente(id) {
-            if (confirm('Tem certeza que deseja excluir este ingrediente?')) {
-                ingredientes = ingredientes.filter(ing => ing.id !== id);
-                salvarDados();
-                atualizarTabelaIngredientes();
-                atualizarEstatisticas();
-            }
-        }
-
         function atualizarPrecos() {
             const novoPreco = prompt('Digite o novo preço para atualização em massa:');
             if (!novoPreco || isNaN(novoPreco)) return;
@@ -1350,7 +1461,7 @@
                 return;
             }
 
-            const receita = {
+            receitaEditando = {
                 id: Date.now(),
                 nome,
                 tamanho,
@@ -1360,11 +1471,107 @@
                 dataCriacao: new Date().toISOString()
             };
 
-            receitas.push(receita);
+            abrirModalReceita();
+            limparFormularioReceita();
+        }
+
+        function abrirModalReceita() {
+            document.getElementById('modalReceita').style.display = 'block';
+            document.getElementById('tituloModalReceita').textContent = 
+                `Composição da Receita: ${receitaEditando.nome} (${receitaEditando.tamanho})`;
+            atualizarSelectIngredientes();
+            atualizarListaIngredientesReceita();
+        }
+
+        function fecharModalReceita() {
+            document.getElementById('modalReceita').style.display = 'none';
+            receitaEditando = null;
+        }
+
+        function atualizarSelectIngredientes() {
+            const select = document.getElementById('selectIngredienteReceita');
+            select.innerHTML = '<option value="">Selecione um ingrediente</option>' +
+                ingredientes.map(ing => 
+                    `<option value="${ing.id}">${ing.nome} (${ing.unidade}) - R$ ${ing.preco.toFixed(2)}</option>`
+                ).join('');
+
+            select.onchange = function() {
+                if (this.value) {
+                    adicionarIngredienteReceita(parseInt(this.value));
+                    this.value = '';
+                }
+            };
+        }
+
+        function adicionarIngredienteReceita(ingredienteId) {
+            const ingrediente = ingredientes.find(ing => ing.id === ingredienteId);
+            if (!ingrediente) return;
+
+            // Verificar se já existe
+            const jaExiste = receitaEditando.ingredientes.find(ing => ing.ingredienteId === ingredienteId);
+            if (jaExiste) {
+                alert('Este ingrediente já foi adicionado à receita!');
+                return;
+            }
+
+            const quantidade = prompt(`Quantidade de ${ingrediente.nome} (${ingrediente.unidade}):`, ingrediente.quantidade);
+            if (!quantidade || isNaN(quantidade)) return;
+
+            receitaEditando.ingredientes.push({
+                ingredienteId: ingredienteId,
+                nome: ingrediente.nome,
+                quantidade: parseFloat(quantidade),
+                preco: ingrediente.preco,
+                custo: ingrediente.preco * parseFloat(quantidade)
+            });
+
+            atualizarListaIngredientesReceita();
+        }
+
+        function atualizarListaIngredientesReceita() {
+            const container = document.getElementById('ingredientesReceita');
+            
+            if (receitaEditando.ingredientes.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #7f8c8d;">Nenhum ingrediente adicionado</p>';
+                document.getElementById('custoTotalReceita').textContent = '0,00';
+                return;
+            }
+
+            let custoTotal = 0;
+            container.innerHTML = receitaEditando.ingredientes.map((ing, index) => {
+                custoTotal += ing.custo;
+                return `
+                    <div class="ingredient-item">
+                        <div>
+                            <strong>${ing.nome}</strong><br>
+                            <small>Qtd: ${ing.quantidade} | Preço: R$ ${ing.preco.toFixed(2)} | Custo: R$ ${ing.custo.toFixed(2)}</small>
+                        </div>
+                        <button class="btn btn-danger" onclick="removerIngredienteReceita(${index})" style="padding: 0.25rem 0.5rem;">🗑️</button>
+                    </div>
+                `;
+            }).join('');
+
+            receitaEditando.custoTotal = custoTotal;
+            document.getElementById('custoTotalReceita').textContent = custoTotal.toFixed(2);
+        }
+
+        function removerIngredienteReceita(index) {
+            receitaEditando.ingredientes.splice(index, 1);
+            atualizarListaIngredientesReceita();
+        }
+
+        function salvarReceita() {
+            if (receitaEditando.ingredientes.length === 0) {
+                alert('Adicione pelo menos um ingrediente à receita!');
+                return;
+            }
+
+            receitas.push(receitaEditando);
             salvarDados();
             atualizarListaReceitas();
-            limparFormularioReceita();
             atualizarEstatisticas();
+            fecharModalReceita();
+            alert('Receita salva com sucesso!');
         }
 
         function limparFormularioReceita() {
@@ -1389,8 +1596,9 @@
                     <p><strong>Categoria:</strong> ${receita.categoria}</p>
                     <p><strong>Custo Total:</strong> R$ ${receita.custoTotal.toFixed(2)}</p>
                     <p><strong>Ingredientes:</strong> ${receita.ingredientes.length}</p>
-                    <div>
-                        <button class="btn btn-primary" onclick="editarReceita(${receita.id})">✏️ Editar</button>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-info" onclick="verDetalhesReceita(${receita.id})">👁️ Ver Detalhes</button>
+                        <button class="btn btn-warning" onclick="editarReceita(${receita.id})">✏️ Editar</button>
                         <button class="btn btn-danger" onclick="excluirReceita(${receita.id})">🗑️ Excluir</button>
                     </div>
                 </div>
@@ -1400,11 +1608,34 @@
             atualizarSelectReceitas();
         }
 
+        function verDetalhesReceita(id) {
+            const receita = receitas.find(r => r.id === id);
+            if (!receita) return;
+
+            let detalhes = `Receita: ${receita.nome} (${receita.tamanho})\n`;
+            detalhes += `Categoria: ${receita.categoria}\n\n`;
+            detalhes += `Ingredientes:\n`;
+            receita.ingredientes.forEach(ing => {
+                detalhes += `- ${ing.nome}: ${ing.quantidade} (R$ ${ing.custo.toFixed(2)})\n`;
+            });
+            detalhes += `\nCusto Total: R$ ${receita.custoTotal.toFixed(2)}`;
+
+            alert(detalhes);
+        }
+
+        function editarReceita(id) {
+            const receita = receitas.find(r => r.id === id);
+            if (!receita) return;
+
+            receitaEditando = { ...receita };
+            abrirModalReceita();
+        }
+
         function atualizarSelectReceitas() {
             const select = document.getElementById('receitaPrecificar');
             select.innerHTML = '<option value="">Selecione uma receita</option>' +
                 receitas.map(receita => 
-                    `<option value="${receita.id}">${receita.nome} (${receita.tamanho})</option>`
+                    `<option value="${receita.id}">${receita.nome} (${receita.tamanho}) - R$ ${receita.custoTotal.toFixed(2)}</option>`
                 ).join('');
         }
 
@@ -1415,6 +1646,41 @@
                 atualizarListaReceitas();
                 atualizarEstatisticas();
             }
+        }
+
+        function duplicarReceita() {
+            if (receitas.length === 0) {
+                alert('Nenhuma receita disponível para duplicar!');
+                return;
+            }
+
+            const opcoes = receitas.map((r, i) => `${i + 1}. ${r.nome} (${r.tamanho})`).join('\n');
+            const escolha = prompt(`Escolha a receita para duplicar:\n${opcoes}\n\nDigite o número:`);
+            
+            if (!escolha || isNaN(escolha)) return;
+            
+            const index = parseInt(escolha) - 1;
+            if (index < 0 || index >= receitas.length) {
+                alert('Opção inválida!');
+                return;
+            }
+
+            const receitaOriginal = receitas[index];
+            const novoNome = prompt('Nome da nova receita:', `${receitaOriginal.nome} - Cópia`);
+            if (!novoNome) return;
+
+            const novaReceita = {
+                ...receitaOriginal,
+                id: Date.now(),
+                nome: novoNome,
+                dataCriacao: new Date().toISOString()
+            };
+
+            receitas.push(novaReceita);
+            salvarDados();
+            atualizarListaReceitas();
+            atualizarEstatisticas();
+            alert('Receita duplicada com sucesso!');
         }
 
         // Custos Operacionais
@@ -1450,7 +1716,7 @@
             const custoPorPizza = custoTotal / custosOperacionais.pizzasVendidasMes;
             const margemNecessaria = ((custosOperacionais.metaLucro / custosOperacionais.pizzasVendidasMes) / custosOperacionais.ticketMedio) * 100;
 
-            document.getElementById('custoOperacionalTotal').textContent = `R$ ${custoTotal.toFixed(2)}`;
+            document.getElementById('custoOperacionalTotal').textContent = `R$ ${custoTotal.toLocaleString('pt-BR')}`;
             document.getElementById('custoPorPizza').textContent = `R$ ${custoPorPizza.toFixed(2)}`;
             document.getElementById('margemNecessaria').textContent = `${margemNecessaria.toFixed(1)}%`;
         }
@@ -1471,13 +1737,7 @@
             if (!receita) return;
 
             // Calcular custo base da receita
-            let custoBase = 0;
-            receita.ingredientes.forEach(ing => {
-                const ingrediente = ingredientes.find(i => i.id === ing.ingredienteId);
-                if (ingrediente) {
-                    custoBase += ingrediente.preco * ing.quantidade;
-                }
-            });
+            let custoBase = receita.custoTotal;
 
             // Adicionar custo operacional por pizza
             const custoPorPizza = custosOperacionais.pizzasVendidasMes ? 
@@ -1490,12 +1750,12 @@
 
             // Calcular preços por canal
             const canais = [
-                { nome: 'Balcão', taxa: 0, delivery: false },
-                { nome: 'Delivery Direto', taxa: 0, delivery: true },
-                { nome: 'iFood', taxa: 27, delivery: true },
-                { nome: '99Food', taxa: 12, delivery: true },
-                { nome: 'Rappi', taxa: 14, delivery: true },
-                { nome: 'Uber Eats', taxa: 15, delivery: true }
+                { nome: 'Balcão', taxa: 0, delivery: false, elemento: 'Balcao' },
+                { nome: 'Delivery Direto', taxa: 0, delivery: true, elemento: 'Delivery' },
+                { nome: 'iFood', taxa: 27, delivery: true, elemento: 'Ifood' },
+                { nome: '99Food', taxa: 12, delivery: true, elemento: '99Food' },
+                { nome: 'Rappi', taxa: 14, delivery: true, elemento: 'Rappi' },
+                { nome: 'Uber Eats', taxa: 15, delivery: true, elemento: 'Uber' }
             ];
 
             const resultados = canais.map(canal => {
@@ -1506,6 +1766,10 @@
                 const lucroLiquido = precoFinal - custoTotal;
                 const margemReal = (lucroLiquido / precoFinal) * 100;
 
+                // Atualizar interface
+                document.getElementById(`preco${canal.elemento}`).textContent = `R$ ${precoFinal.toFixed(2)}`;
+                document.getElementById(`margem${canal.elemento}`).textContent = `Margem Real: ${margemReal.toFixed(1)}%`;
+
                 return {
                     canal: canal.nome,
                     custoTotal,
@@ -1515,16 +1779,6 @@
                     lucroLiquido,
                     margemReal
                 };
-            });
-
-            // Atualizar cards de precificação
-            const cards = document.querySelectorAll('.pricing-card');
-            cards.forEach((card, index) => {
-                if (resultados[index]) {
-                    const resultado = resultados[index];
-                    card.querySelector('.price-display').textContent = `R$ ${resultado.precoFinal.toFixed(2)}`;
-                    card.querySelector('.margin-info').textContent = `Margem Real: ${resultado.margemReal.toFixed(1)}%`;
-                }
             });
 
             // Atualizar tabela de comparação
@@ -1573,6 +1827,165 @@
             document.getElementById('lucroLiquido').textContent = `R$ ${lucro.toLocaleString('pt-BR')}`;
             document.getElementById('margemLucro').textContent = `${margem.toFixed(1)}%`;
             document.getElementById('pontoEquilibrio').textContent = pontoEquilibrio;
+
+            // Atualizar tabela de sensibilidade com dados reais
+            atualizarTabelaSensibilidade(vendas, ticket, custo, fixos);
+        }
+
+        function atualizarTabelaSensibilidade(vendasBase, ticketBase, custoBase, fixosBase) {
+            const cenarios = [
+                { nome: 'Conservador', vendas: Math.round(vendasBase * 0.8), ticket: ticketBase * 0.85 },
+                { nome: 'Realista', vendas: vendasBase, ticket: ticketBase },
+                { nome: 'Otimista', vendas: Math.round(vendasBase * 1.2), ticket: ticketBase * 1.15 }
+            ];
+
+            const tbody = document.querySelector('#tabelaSensibilidade tbody');
+            tbody.innerHTML = cenarios.map(cenario => {
+                const receita = cenario.vendas * cenario.ticket;
+                const custoTotal = (cenario.vendas * custoBase) + fixosBase;
+                const lucro = receita - custoTotal;
+                const margem = (lucro / receita) * 100;
+                const viavel = margem > 20;
+
+                return `
+                    <tr>
+                        <td>${cenario.nome}</td>
+                        <td>${cenario.vendas}</td>
+                        <td>R$ ${cenario.ticket.toFixed(2)}</td>
+                        <td>R$ ${receita.toLocaleString('pt-BR')}</td>
+                        <td>R$ ${lucro.toLocaleString('pt-BR')}</td>
+                        <td>${margem.toFixed(1)}%</td>
+                        <td><span class="badge ${viavel ? 'badge-success' : 'badge-warning'}">${viavel ? 'Viável' : 'Atenção'}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function gerarRelatorioSimulacao() {
+            const vendas = parseInt(document.getElementById('vendasMensais').value) || 1000;
+            const ticket = parseFloat(document.getElementById('ticketMedioSim').value) || 35;
+            const custo = parseFloat(document.getElementById('custoMedioPizza').value) || 15;
+            const fixos = parseFloat(document.getElementById('custosFixosSim').value) || 10000;
+
+            const receita = vendas * ticket;
+            const custoTotal = (vendas * custo) + fixos;
+            const lucro = receita - custoTotal;
+            const margem = (lucro / receita) * 100;
+
+            let relatorio = `RELATÓRIO DE SIMULAÇÃO DE CENÁRIOS\n`;
+            relatorio += `Data: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+            relatorio += `PARÂMETROS:\n`;
+            relatorio += `- Vendas mensais: ${vendas} pizzas\n`;
+            relatorio += `- Ticket médio: R$ ${ticket.toFixed(2)}\n`;
+            relatorio += `- Custo médio/pizza: R$ ${custo.toFixed(2)}\n`;
+            relatorio += `- Custos fixos: R$ ${fixos.toLocaleString('pt-BR')}\n\n`;
+            relatorio += `RESULTADOS:\n`;
+            relatorio += `- Receita mensal: R$ ${receita.toLocaleString('pt-BR')}\n`;
+            relatorio += `- Lucro líquido: R$ ${lucro.toLocaleString('pt-BR')}\n`;
+            relatorio += `- Margem de lucro: ${margem.toFixed(1)}%\n`;
+            relatorio += `- Ponto de equilíbrio: ${Math.ceil(fixos / (ticket - custo))} pizzas\n`;
+
+            alert(relatorio);
+        }
+
+        // Análises
+        function gerarRelatorioRentabilidade() {
+            if (receitas.length === 0) {
+                alert('Cadastre receitas primeiro para gerar análises!');
+                return;
+            }
+
+            let relatorio = `ANÁLISE DE RENTABILIDADE\n`;
+            relatorio += `Data: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+            
+            relatorio += `RECEITAS CADASTRADAS:\n`;
+            receitas.forEach(receita => {
+                relatorio += `- ${receita.nome} (${receita.tamanho}): R$ ${receita.custoTotal.toFixed(2)}\n`;
+            });
+
+            relatorio += `\nINGREDIENTES MAIS CAROS:\n`;
+            const ingredientesOrdenados = [...ingredientes].sort((a, b) => (b.preco * b.quantidade) - (a.preco * a.quantidade));
+            ingredientesOrdenados.slice(0, 5).forEach(ing => {
+                relatorio += `- ${ing.nome}: R$ ${(ing.preco * ing.quantidade).toFixed(2)} por pizza\n`;
+            });
+
+            alert(relatorio);
+        }
+
+        function verHistoricoPrecos() {
+            if (ingredientes.length === 0) {
+                alert('Cadastre ingredientes primeiro!');
+                return;
+            }
+
+            let historico = `HISTÓRICO DE PREÇOS\n`;
+            historico += `Data: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+
+            ingredientes.forEach(ing => {
+                if (ing.historico && ing.historico.length > 1) {
+                    historico += `${ing.nome}:\n`;
+                    ing.historico.forEach(h => {
+                        historico += `  ${h.data}: R$ ${h.preco.toFixed(2)}\n`;
+                    });
+                    historico += '\n';
+                }
+            });
+
+            if (historico.split('\n').length <= 4) {
+                historico += 'Nenhuma variação de preço registrada ainda.';
+            }
+
+            alert(historico);
+        }
+
+        function analisarMargem() {
+            if (receitas.length === 0) {
+                alert('Cadastre receitas primeiro!');
+                return;
+            }
+
+            let analise = `ANÁLISE DE MARGEM POR CANAL\n`;
+            analise += `Data: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+
+            const canais = ['Balcão', 'Delivery Direto', 'iFood', '99Food', 'Rappi', 'Uber Eats'];
+            const taxas = [0, 0, 27, 12, 14, 15];
+
+            analise += `RECOMENDAÇÕES:\n`;
+            analise += `- Balcão e Delivery Direto: Sem taxas, maior margem\n`;
+            analise += `- 99Food: Taxa baixa (12%), boa opção\n`;
+            analise += `- Rappi: Taxa média (14%), aceitável\n`;
+            analise += `- Uber Eats: Taxa média (15%), aceitável\n`;
+            analise += `- iFood: Taxa alta (27%), ajustar preços\n`;
+
+            alert(analise);
+        }
+
+        function exportarPDF() {
+            alert('Funcionalidade de exportação PDF será implementada em breve!');
+        }
+
+        function exportarTabelaPrecificacao() {
+            const receitaId = document.getElementById('receitaPrecificar').value;
+            if (!receitaId) {
+                alert('Calcule os preços primeiro!');
+                return;
+            }
+
+            const receita = receitas.find(r => r.id == receitaId);
+            const dados = [
+                ['Canal', 'Taxa (%)', 'Preço Final', 'Margem Real (%)'],
+                ['Balcão', '0', document.getElementById('precoBalcao').textContent, document.getElementById('margemBalcao').textContent.replace('Margem Real: ', '').replace('%', '')],
+                ['Delivery Direto', '0', document.getElementById('precoDelivery').textContent, document.getElementById('margemDelivery').textContent.replace('Margem Real: ', '').replace('%', '')],
+                ['iFood', '27', document.getElementById('precoIfood').textContent, document.getElementById('margemIfood').textContent.replace('Margem Real: ', '').replace('%', '')],
+                ['99Food', '12', document.getElementById('preco99Food').textContent, document.getElementById('margem99Food').textContent.replace('Margem Real: ', '').replace('%', '')],
+                ['Rappi', '14', document.getElementById('precoRappi').textContent, document.getElementById('margemRappi').textContent.replace('Margem Real: ', '').replace('%', '')],
+                ['Uber Eats', '15', document.getElementById('precoUber').textContent, document.getElementById('margemUber').textContent.replace('Margem Real: ', '').replace('%', '')]
+            ];
+
+            const ws = XLSX.utils.aoa_to_sheet(dados);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Precificação");
+            XLSX.writeFile(wb, `precificacao_${receita.nome}_${new Date().toISOString().split('T')[0]}.xlsx`);
         }
 
         // Import/Export
@@ -1644,7 +2057,7 @@
             const dados = prepararDadosExport();
             
             const backup = {
-                versao: '2.0',
+                versao: '3.0',
                 dataExport: new Date().toISOString(),
                 dados: dados
             };
@@ -1696,6 +2109,7 @@
                     
                     if (extensao === 'json') {
                         dados = JSON.parse(e.target.result);
+                        if (dados.dados) dados = dados.dados; // Extrair dados se estiver em formato de backup
                     } else if (extensao === 'xlsx') {
                         const workbook = XLSX.read(e.target.result, { type: 'binary' });
                         dados = processarExcel(workbook);
@@ -1716,6 +2130,58 @@
             } else {
                 reader.readAsText(arquivo);
             }
+        }
+
+        function processarExcel(workbook) {
+            const dados = {};
+            
+            if (workbook.SheetNames.includes('Ingredientes')) {
+                const ws = workbook.Sheets['Ingredientes'];
+                dados.ingredientes = XLSX.utils.sheet_to_json(ws);
+            }
+            
+            if (workbook.SheetNames.includes('Receitas')) {
+                const ws = workbook.Sheets['Receitas'];
+                dados.receitas = XLSX.utils.sheet_to_json(ws);
+            }
+            
+            if (workbook.SheetNames.includes('Custos')) {
+                const ws = workbook.Sheets['Custos'];
+                const custos = XLSX.utils.sheet_to_json(ws);
+                if (custos.length > 0) dados.custosOperacionais = custos[0];
+            }
+            
+            return dados;
+        }
+
+        function processarCSV(texto) {
+            // Implementação básica para CSV
+            const dados = { ingredientes: [] };
+            const linhas = texto.split('\n');
+            
+            let secaoAtual = '';
+            for (let linha of linhas) {
+                if (linha.includes('INGREDIENTES')) {
+                    secaoAtual = 'ingredientes';
+                    continue;
+                }
+                
+                if (secaoAtual === 'ingredientes' && linha.includes(',')) {
+                    const campos = linha.split(',');
+                    if (campos.length >= 6) {
+                        dados.ingredientes.push({
+                            nome: campos[0],
+                            unidade: campos[1],
+                            preco: parseFloat(campos[2]) || 0,
+                            quantidade: parseFloat(campos[3]) || 0,
+                            fornecedor: campos[4],
+                            categoria: campos[5]
+                        });
+                    }
+                }
+            }
+            
+            return dados;
         }
 
         function mostrarPreview(dados) {
@@ -1756,10 +2222,20 @@
             const dados = window.dadosParaImportar;
             
             if (dados.ingredientes) {
+                // Garantir que cada ingrediente tenha um ID único
+                dados.ingredientes.forEach(ing => {
+                    if (!ing.id) ing.id = Date.now() + Math.random();
+                    if (!ing.historico) ing.historico = [{ data: new Date().toISOString().split('T')[0], preco: ing.preco }];
+                });
                 ingredientes = dados.ingredientes;
             }
             
             if (dados.receitas) {
+                // Garantir que cada receita tenha um ID único
+                dados.receitas.forEach(rec => {
+                    if (!rec.id) rec.id = Date.now() + Math.random();
+                    if (!rec.ingredientes) rec.ingredientes = [];
+                });
                 receitas = dados.receitas;
             }
             
@@ -1830,6 +2306,14 @@
             `).join('');
         }
 
+        function removerBackup(data) {
+            if (confirm('Remover este backup?')) {
+                historicoBackups = historicoBackups.filter(b => b.data !== data);
+                localStorage.setItem('historicoBackups', JSON.stringify(historicoBackups));
+                atualizarHistoricoBackups();
+            }
+        }
+
         function mostrarStatus(elementId, mensagem, tipo) {
             const elemento = document.getElementById(elementId);
             const classe = tipo === 'success' ? 'alert-success' : tipo === 'error' ? 'alert-danger' : 'alert-info';
@@ -1866,7 +2350,79 @@
                 document.getElementById('impostos').value = custosOperacionais.impostos;
                 document.getElementById('metaLucro').value = custosOperacionais.metaLucro;
                 document.getElementById('ticketMedio').value = custosOperacionais.ticketMedio;
+                
+                // Calcular automaticamente se há dados
+                calcularCustos();
             }
+
+            // Atualizar campos do simulador com dados dos custos
+            if (custosOperacionais.pizzasVendidasMes) {
+                document.getElementById('vendasMensais').value = custosOperacionais.pizzasVendidasMes;
+                document.getElementById('ticketMedioSim').value = custosOperacionais.ticketMedio || 35;
+                
+                // Calcular custo médio baseado nas receitas
+                if (receitas.length > 0) {
+                    const custoMedio = receitas.reduce((sum, rec) => sum + rec.custoTotal, 0) / receitas.length;
+                    document.getElementById('custoMedioPizza').value = custoMedio.toFixed(2);
+                }
+                
+                const custosFixos = custosOperacionais.salarios + custosOperacionais.aluguel + 
+                                   custosOperacionais.energia + custosOperacionais.gas + 
+                                   custosOperacionais.telefone + custosOperacionais.marketing;
+                document.getElementById('custosFixosSim').value = custosFixos;
+            }
+
+            // Atualizar análises com dados reais
+            atualizarTabelaAnalises();
+        }
+
+        function atualizarTabelaAnalises() {
+            if (receitas.length === 0 || ingredientes.length === 0) return;
+
+            const tbody = document.querySelector('#tabelaAnalises tbody');
+            const hoje = new Date();
+            const mesAtual = hoje.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+            
+            // Calcular estatísticas reais
+            const custoMedio = receitas.reduce((sum, rec) => sum + rec.custoTotal, 0) / receitas.length;
+            const margemMedia = 145; // Margem padrão
+            
+            // Determinar canal mais rentável (menor taxa)
+            const canais = [
+                { nome: 'Balcão', taxa: 0 },
+                { nome: 'Delivery Direto', taxa: 0 },
+                { nome: '99Food', taxa: 12 },
+                { nome: 'Rappi', taxa: 14 },
+                { nome: 'Uber Eats', taxa: 15 },
+                { nome: 'iFood', taxa: 27 }
+            ];
+            const melhorCanal = canais.sort((a, b) => a.taxa - b.taxa)[0].nome;
+
+            // Calcular variação de preços
+            let variacaoPrecos = 0;
+            if (ingredientes.length > 0) {
+                const ingredientesComHistorico = ingredientes.filter(ing => ing.historico && ing.historico.length > 1);
+                if (ingredientesComHistorico.length > 0) {
+                    const variacoes = ingredientesComHistorico.map(ing => {
+                        const primeiro = ing.historico[0].preco;
+                        const ultimo = ing.historico[ing.historico.length - 1].preco;
+                        return ((ultimo - primeiro) / primeiro) * 100;
+                    });
+                    variacaoPrecos = variacoes.reduce((sum, v) => sum + v, 0) / variacoes.length;
+                }
+            }
+
+            tbody.innerHTML = `
+                <tr>
+                    <td>${mesAtual}</td>
+                    <td>${receitas.length}</td>
+                    <td>R$ ${custoMedio.toFixed(2)}</td>
+                    <td>${margemMedia}%</td>
+                    <td>${melhorCanal}</td>
+                    <td>${variacaoPrecos > 0 ? '+' : ''}${variacaoPrecos.toFixed(1)}%</td>
+                    <td><span class="badge ${variacaoPrecos < 5 ? 'badge-success' : variacaoPrecos < 10 ? 'badge-warning' : 'badge-danger'}">${variacaoPrecos < 5 ? 'Ótimo' : variacaoPrecos < 10 ? 'Bom' : 'Atenção'}</span></td>
+                </tr>
+            `;
         }
 
         function atualizarEstatisticas() {
@@ -1874,7 +2430,9 @@
             document.getElementById('totalReceitas').textContent = receitas.length;
             
             // Calcular custo médio
-            const custoMedio = ingredientes.length > 0 ? 
+            const custoMedio = receitas.length > 0 ? 
+                receitas.reduce((sum, rec) => sum + rec.custoTotal, 0) / receitas.length : 
+                ingredientes.length > 0 ? 
                 ingredientes.reduce((sum, ing) => sum + (ing.preco * ing.quantidade), 0) / ingredientes.length : 0;
             document.getElementById('custoMedio').textContent = `R$ ${custoMedio.toFixed(2)}`;
             
@@ -1894,34 +2452,17 @@
             if (alertas === 0) {
                 alertaDiv.className = 'alert alert-success';
                 alertaDiv.innerHTML = '<strong>✅ Sistema Configurado</strong><br>Todos os módulos estão configurados e prontos para uso.';
+            } else {
+                alertaDiv.className = 'alert alert-warning';
+                let mensagem = '<strong>⚠️ Sistema Pronto para Configuração</strong><br>';
+                if (ingredientes.length === 0) mensagem += 'Cadastre ingredientes. ';
+                if (receitas.length === 0) mensagem += 'Crie receitas. ';
+                if (!custosOperacionais.salarios) mensagem += 'Configure custos operacionais. ';
+                alertaDiv.innerHTML = mensagem;
             }
         }
 
-        // Funções de análise (placeholder)
-        function gerarRelatorioRentabilidade() {
-            alert('Relatório de rentabilidade em desenvolvimento!');
-        }
-
-        function verHistoricoPrecos() {
-            alert('Histórico de preços em desenvolvimento!');
-        }
-
-        function analisarMargem() {
-            alert('Análise de margem em desenvolvimento!');
-        }
-
-        function exportarPDF() {
-            alert('Exportação PDF em desenvolvimento!');
-        }
-
-        function exportarTabela() {
-            alert('Exportação de tabela em desenvolvimento!');
-        }
-
-        function duplicarReceita() {
-            alert('Duplicação de receita em desenvolvimento!');
-        }
-
+        // Funções auxiliares para backup
         function backupAutomatico() {
             exportarJSON();
             alert('Backup automático realizado!');
@@ -1939,6 +2480,15 @@
             exportarJSON();
             alert('Backup de segurança criado antes da importação!');
         }
+
+        // Inicializar simulador automaticamente se há dados
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                if (custosOperacionais.pizzasVendidasMes && receitas.length > 0) {
+                    simularCenario();
+                }
+            }, 1000);
+        });
     </script>
 </body>
 </html>
