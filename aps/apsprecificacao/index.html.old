@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzaria Pro - Sistema Avançado de Precificação</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .logo-text h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        
+        .logo-text p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffd700;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #718096;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .tab:hover:not(.active) {
+            background: #f7fafc;
+            color: #4a5568;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-left: 4px solid;
+        }
+        
+        .card.dashboard { border-color: #FF6B35; }
+        .card.ingredients { border-color: #E53E3E; }
+        .card.recipes { border-color: #38A169; }
+        .card.costs { border-color: #D53F8C; }
+        .card.pricing { border-color: #805AD5; }
+        .card.analytics { border-color: #FF8C00; }
+        .card.stock { border-color: #3182CE; }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .card.dashboard .card-icon { background: #FF6B35; }
+        .card.ingredients .card-icon { background: #E53E3E; }
+        .card.recipes .card-icon { background: #38A169; }
+        .card.costs .card-icon { background: #D53F8C; }
+        .card.pricing .card-icon { background: #805AD5; }
+        .card.analytics .card-icon { background: #FF8C00; }
+        .card.stock .card-icon { background: #3182CE; }
+        
+        .card h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .card p {
+            color: #718096;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .alert {
+            background: #fed7d7;
+            border: 1px solid #feb2b2;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .alert-icon {
+            color: #e53e3e;
+            font-size: 24px;
+        }
+        
+        .alert-content h4 {
+            color: #c53030;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .alert-content p {
+            color: #742a2a;
+            font-size: 0.9rem;
+        }
+        
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .form-section h3 {
+            color: #2d3748;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input, .form-group select {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-top: 20px;
+        }
+        
+        .table-container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table-container th {
+            background: #f7fafc;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 0.9rem;
+        }
+        
+        .table-container td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+        }
+        
+        .table-container tr:hover {
+            background: #f7fafc;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .badge.success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .badge.warning {
+            background: #fef5e7;
+            color: #744210;
+        }
+        
+        .badge.danger {
+            background: #fed7d7;
+            color: #c53030;
+        }
+        
+        .badge.info {
+            background: #bee3f8;
+            color: #2a4365;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .pricing-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        
+        .pricing-card h4 {
+            color: #2d3748;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pricing-result {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .pricing-result .price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        .pricing-result .margin {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+        
+        .simulator {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        .simulator h3 {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .simulator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .simulator input {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        
+        .simulator input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .simulator-result {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .simulator-result .value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .simulator-result .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #a0aec0;
+            font-size: 0.9rem;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🍕</div>
+                <div class="logo-text">
+                    <h1>Pizzaria Pro Avançado</h1>
+                    <p>Sistema Completo de Precificação e Estoque</p>
+                </div>
+            </div>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number" id="totalIngredients">0</div>
+                    <div class="stat-label">Ingredientes</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="totalRecipes">0</div>
+                    <div class="stat-label">Receitas</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="stockAlerts">0</div>
+                    <div class="stat-label">Alertas</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="avgCost">R$ 0,00</div>
+                    <div class="stat-label">Custo Médio</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">9</div>
+                    <div class="stat-label">Canais</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="tab" onclick="showTab('ingredients')">🥘 Ingredientes</button>
+            <button class="tab" onclick="showTab('stock')">📦 Estoque</button>
+            <button class="tab" onclick="showTab('recipes')">📝 Receitas</button>
+            <button class="tab" onclick="showTab('costs')">💰 Custos</button>
+            <button class="tab" onclick="showTab('pricing')">💲 Precificação</button>
+            <button class="tab" onclick="showTab('simulator')">🧮 Simulador</button>
+            <button class="tab" onclick="showTab('analytics')">📈 Análises</button>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="tab-content active">
+            <div class="alert">
+                <div class="alert-icon">⚠️</div>
+                <div class="alert-content">
+                    <h4>Sistema Pronto para Configuração Avançada</h4>
+                    <p>Configure custos operacionais, cadastre ingredientes com controle de estoque e use o simulador de cenários para otimizar sua precificação.</p>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card dashboard">
+                    <div class="card-header">
+                        <div class="card-icon">📊</div>
+                        <div>
+                            <h3>Dashboard Inteligente</h3>
+                        </div>
+                    </div>
+                    <p>Visão geral com KPIs avançados, alertas de estoque, variação de preços e sugestões inteligentes para otimização.</p>
+                </div>
+
+                <div class="card ingredients">
+                    <div class="card-header">
+                        <div class="card-icon">🥘</div>
+                        <div>
+                            <h3>Gestão de Ingredientes</h3>
+                        </div>
+                    </div>
+                    <p>CRUD completo com histórico de preços, fornecedores, unidades de medida e quantidade padrão por pizza.</p>
+                </div>
+
+                <div class="card stock">
+                    <div class="card-header">
+                        <div class="card-icon">📦</div>
+                        <div>
+                            <h3>Controle de Estoque</h3>
+                        </div>
+                    </div>
+                    <p>Gestão completa de entrada/saída, estoque mínimo, alertas automáticos e relatórios de movimentação.</p>
+                </div>
+
+                <div class="card recipes">
+                    <div class="card-header">
+                        <div class="card-icon">📝</div>
+                        <div>
+                            <h3>Gestão de Receitas</h3>
+                        </div>
+                    </div>
+                    <p>Criação de receitas por tamanho com composição detalhada, cálculo automático de custos e análise de rentabilidade.</p>
+                </div>
+
+                <div class="card costs">
+                    <div class="card-header">
+                        <div class="card-icon">💰</div>
+                        <div>
+                            <h3>Custos Operacionais</h3>
+                        </div>
+                    </div>
+                    <p>Controle completo de custos fixos, impostos, meta de lucro e rateio automático por volume de vendas.</p>
+                </div>
+
+                <div class="card pricing">
+                    <div class="card-header">
+                        <div class="card-icon">💲</div>
+                        <div>
+                            <h3>Precificação Avançada</h3>
+                        </div>
+                    </div>
+                    <p>Sistema inteligente para 9 canais com cálculo detalhado, margem real, lucro líquido e comparação automática.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ingredientes -->
+        <div id="ingredients" class="tab-content">
+            <div class="form-section">
+                <h3>🥘 Gestão Avançada de Ingredientes</h3>
+                <p style="margin-bottom: 20px; color: #718096;">Cadastre ingredientes com controle completo de estoque e histórico de preços.</p>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome do Ingrediente</label>
+                        <input type="text" id="ingredientName" placeholder="Ex: Mussarela">
+                    </div>
+                    <div class="form-group">
+                        <label>Unidade de Medida</label>
+                        <select id="ingredientUnit">
+                            <option>Quilograma (kg)</option>
+                            <option>Gramas (g)</option>
+                            <option>Litros (l)</option>
+                            <option>Mililitros (ml)</option>
+                            <option>Unidade</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Preço por Unidade (R$)</label>
+                        <input type="number" id="ingredientPrice" placeholder="0,00" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Quantidade por Pizza (padrão)</label>
+                        <input type="number" id="ingredientQty" placeholder="Ex: 0,15" step="0.001">
+                    </div>
+                    <div class="form-group">
+                        <label>Estoque Mínimo</label>
+                        <input type="number" id="ingredientMinStock" placeholder="Ex: 2,000" step="0.001">
+                    </div>
+                    <div class="form-group">
+                        <label>Estoque Inicial</label>
+                        <input type="number" id="ingredientInitialStock" placeholder="Ex: 10,000" step="0.001">
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="addIngredient()">➕ Adicionar Ingrediente</button>
+                    <button class="btn btn-warning" onclick="updatePrices()">📈 Atualizar Preços</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ingrediente</th>
+                            <th>Unidade</th>
+                            <th>Preço/Unidade</th>
+                            <th>Histórico</th>
+                            <th>Qtd/Pizza</th>
+                            <th>Custo/Pizza</th>
+                            <th>Estoque</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ingredientsTable">
+                        <tr>
+                            <td colspan="9" style="text-align: center; color: #718096; padding: 40px;">
+                                Nenhum ingrediente cadastrado. Adicione ingredientes para começar.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Estoque -->
+        <div id="stock" class="tab-content">
+            <div class="form-section">
+                <h3>📦 Controle de Estoque</h3>
+                <p style="margin-bottom: 20px; color: #718096;">Gerencie entradas, saídas e monitore níveis de estoque em tempo real.</p>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Ingrediente</label>
+                        <select id="stockIngredient">
+                            <option>Selecione um ingrediente</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Movimentação</label>
+                        <select id="stockMovement">
+                            <option value="entrada">Entrada</option>
+                            <option value="saida">Saída</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantidade</label>
+                        <input type="number" id="stockQuantity" placeholder="0,000" step="0.001">
+                    </div>
+                    <div class="form-group">
+                        <label>Motivo</label>
+                        <input type="text" id="stockReason" placeholder="Ex: Compra, Produção, Perda">
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="addStockMovement()">📝 Registrar Movimentação</button>
+                    <button class="btn btn-success" onclick="generateStockReport()">📊 Relatório de Estoque</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ingrediente</th>
+                            <th>Estoque Atual</th>
+                            <th>Estoque Mínimo</th>
+                            <th>Status</th>
+                            <th>Última Entrada</th>
+                            <th>Última Saída</th>
+                            <th>Valor Total</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stockTable">
+                        <tr>
+                            <td colspan="8" style="text-align: center; color: #718096; padding: 40px;">
+                                Cadastre ingredientes para visualizar o controle de estoque.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Receitas -->
+        <div id="recipes" class="tab-content">
+            <div class="form-section">
+                <h3>📝 Gestão de Receitas</h3>
+                <p style="margin-bottom: 20px; color: #718096;">Crie receitas detalhadas com cálculo automático de custos e análise de rentabilidade.</p>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome da Receita</label>
+                        <input type="text" id="recipeName" placeholder="Ex: Pizza Margherita">
+                    </div>
+                    <div class="form-group">
+                        <label>Tamanho</label>
+                        <select id="recipeSize">
+                            <option>Pequena (25cm)</option>
+                            <option>Média (30cm)</option>
+                            <option>Grande (35cm)</option>
+                            <option>Gigante (40cm)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <input type="text" id="recipeCategory" placeholder="Ex: Tradicional">
+                    </div>
+                    <div class="form-group">
+                        <label>Tempo de Preparo (min)</label>
+                        <input type="number" id="recipeTime" placeholder="Ex: 15">
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="addRecipe()">➕ Criar Receita</button>
+                    <button class="btn btn-warning" onclick="calculateRecipeCosts()">🧮 Calcular Custos</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Receita</th>
+                            <th>Tamanho</th>
+                            <th>Categoria</th>
+                            <th>Ingredientes</th>
+                            <th>Custo Total</th>
+                            <th>Tempo Preparo</th>
+                            <th>Margem Sugerida</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recipesTable">
+                        <tr>
+                            <td colspan="8" style="text-align: center; color: #718096; padding: 40px;">
+                                Nenhuma receita cadastrada. Crie receitas para começar a precificar.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Custos -->
+        <div id="costs" class="tab-content">
+            <div class="form-section">
+                <h3>💰 Custos Operacionais Avançados</h3>
+                <p style="margin-bottom: 20px; color: #718096;">Configure todos os custos operacionais com simulação de cenários e metas de lucro.</p>
+                
+                <h4 style="margin-bottom: 15px; color: #4a5568;">Custos Fixos Mensais</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Salários e Encargos (R$)</label>
+                        <input type="number" id="costSalaries" placeholder="0,00" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Aluguel (R$)</label>
+                        <input type="number" id="costRent" placeholder="0,00" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Energia Elétrica (R$)</label>
+                        <input type="number" id="costElectricity" placeholder="0,00" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Gás (R$)</label>
+                        <input type="number" id="costGas" placeholder="0,00" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone/Internet (R$)</label>
+                        <input type="number" id="costPhone" placeholder="0,00" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Marketing (R$)</label>
+                        <input type="number" id="costMarketing" placeholder="0,00" step="0.01">
+                    </div>
+                </div>
+
+                <h4 style="margin: 25px 0 15px; color: #4a5568;">Parâmetros de Negócio</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Pizzas Vendidas/Mês</label>
+                        <input type="number" id="monthlyPizzas" placeholder="Ex: 1000">
+                    </div>
+                    <div class="form-group">
+                        <label>Impostos (%)</label>
+                        <input type="number" id="taxRate" placeholder="Ex: 15,5" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>Meta de Lucro Mensal (R$)</label>
+                        <input type="number" id="profitTarget" placeholder="Ex: 15000" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Ticket Médio Desejado (R$)</label>
+                        <input type="number" id="avgTicket" placeholder="Ex: 35,00" step="0.01">
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="saveCosts()">💾 Salvar Custos</button>
+                    <button class="btn btn-success" onclick="calculateOperationalCosts()">🧮 Calcular Custos</button>
+                </div>
+            </div>
+
+            <div class="simulator">
+                <h3>🎯 Simulador de Cenários</h3>
+                <div class="simulator-grid">
+                    <div class="form-group">
+                        <label style="color: white;">Custo Operacional Total</label>
+                        <div class="simulator-result">
+                            <div class="value" id="totalOperationalCost">R$ 0,00</div>
+                            <div class="label">Por mês</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label style="color: white;">Custo por Pizza</label>
+                        <div class="simulator-result">
+                            <div class="value" id="costPerPizza">R$ 0,00</div>
+                            <div class="label">Operacional</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label style="color: white;">Margem Necessária</label>
+                        <div class="simulator-result">
+                            <div class="value" id="requiredMargin">0%</div>
+                            <div class="label">Para atingir meta</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Precificação -->
+        <div id="pricing" class="tab-content">
+            <div class="form-section">
+                <h3>💲 Precificação Multi-Canal Avançada</h3>
+                <p style="margin-bottom: 20px; color: #718096;">Compare preços otimizados para cada canal com análise detalhada de rentabilidade.</p>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Receita para Precificar</label>
+                        <select id="pricingRecipe">
+                            <option>Selecione uma receita</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Margem Desejada (%)</label>
+                        <input type="number" id="desiredMargin" placeholder="Ex: 150" step="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Taxa de Entrega (R$)</label>
+                        <input type="number" id="deliveryFee" placeholder="Ex: 5,00" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Custo de Embalagem (R$)</label>
+                        <input type="number" id="packagingCost" placeholder="Ex: 2,50" step="0.01">
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="calculatePricing()">💰 Calcular Preços</button>
+                    <button class="btn btn-success" onclick="exportPricing()">📊 Exportar Tabela</button>
+                </div>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h4>🏪 Balcão</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Taxa (%)</label>
+                            <input type="number" value="0" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Margem (%)</label>
+                            <input type="number" id="balcaoMargin" placeholder="150">
+                        </div>
+                    </div>
+                    <div class="pricing-result">
+                        <div class="price" id="balcaoPrice">R$ 0,00</div>
+                        <div class="margin">Margem Real: <span id="balcaoRealMargin">0%</span></div>
+                    </div>
+                </div>
+
+                <div class="pricing-card">
+                    <h4>🚚 Delivery Direto</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Taxa (%)</label>
+                            <input type="number" value="0" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Margem (%)</label>
+                            <input type="number" id="deliveryMargin" placeholder="150">
+                        </div>
+                    </div>
+                    <div class="pricing-result">
+                        <div class="price" id="deliveryPrice">R$ 0,00</div>
+                        <div class="margin">Margem Real: <span id="deliveryRealMargin">0%</span></div>
+                    </div>
+                </div>
+
+                <div class="pricing-card">
+                    <h4>🍔 iFood</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Taxa (%)</label>
+                            <input type="number" id="ifoodTax" value="27">
+                        </div>
+                        <div class="form-group">
+                            <label>Margem (%)</label>
+                            <input type="number" id="ifoodMargin" placeholder="150">
+                        </div>
+                    </div>
+                    <div class="pricing-result">
+                        <div class="price" id="ifoodPrice">R$ 0,00</div>
+                        <div class="margin">Margem Real: <span id="ifoodRealMargin">0%</span></div>
+                    </div>
+                </div>
+
+                <div class="pricing-card">
+                    <h4>🥡 99Food</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Taxa (%)</label>
+                            <input type="number" id="food99Tax" value="12">
+                        </div>
+                        <div class="form-group">
+                            <label>Margem (%)</label>
+                            <input type="number" id="food99Margin" placeholder="150">
+                        </div>
+                    </div>
+                    <div class="pricing-result">
+                        <div class="price" id="food99Price">R$ 0,00</div>
+                        <div class="margin">Margem Real: <span id="food99RealMargin">0%</span></div>
+                    </div>
+                </div>
+
+                <div class="pricing-card">
+                    <h4>🛵 Rappi</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Taxa (%)</label>
+                            <input type="number" id="rappiTax" value="14">
+                        </div>
+                        <div class="form-group">
+                            <label>Margem (%)</label>
+                            <input type="number" id="rappiMargin" placeholder="150">
+                        </div>
+                    </div>
+                    <div class="pricing-result">
+                        <div class="price" id="rappiPrice">R$ 0,00</div>
+                        <div class="margin">Margem Real: <span id="rappiRealMargin">0%</span></div>
+                    </div>
+                </div>
+
+                <div class="pricing-card">
+                    <h4>🚗 Uber Eats</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Taxa (%)</label>
+                            <input type="number" id="uberTax" value="15">
+                        </div>
+                        <div class="form-group">
+                            <label>Margem (%)</label>
+                            <input type="number" id="uberMargin" placeholder="150">
+                        </div>
+                    </div>
+                    <div class="pricing-result">
+                        <div class="price" id="uberPrice">R$ 0,00</div>
+                        <div class="margin">Margem Real: <span id="uberRealMargin">0%</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Canal</th>
+                            <th>Custo Total</th>
+                            <th>Taxa (%)</th>
+                            <th>Margem (%)</th>
+                            <th>Preço Final</th>
+                            <th>Lucro Líquido</th>
+                            <th>Margem Real (%)</th>
+                            <th>Ranking</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pricingTable">
+                        <tr>
+                            <td colspan="8" style="text-align: center; color: #718096; padding: 40px;">
+                                Selecione uma receita e calcule os preços para visualizar a comparação.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Simulador -->
+        <div id="simulator" class="tab-content">
+            <div class="simulator">
+                <h3>🧮 Simulador Avançado de Cenários</h3>
+                <p style="margin-bottom: 20px; opacity: 0.9;">Simule diferentes cenários de vendas e custos para otimizar sua estratégia de precificação.</p>
+                
+                <div class="simulator-grid">
+                    <div class="form-group">
+                        <label style="color: white;">Vendas Mensais (pizzas)</label>
+                        <input type="number" id="simSales" placeholder="1000" style="color: white;">
+                    </div>
+                    <div class="form-group">
+                        <label style="color: white;">Ticket Médio (R$)</label>
+                        <input type="number" id="simTicket" placeholder="35,00" step="0.01" style="color: white;">
+                    </div>
+                    <div class="form-group">
+                        <label style="color: white;">Custo Médio/Pizza (R$)</label>
+                        <input type="number" id="simCost" placeholder="15,00" step="0.01" style="color: white;">
+                    </div>
+                    <div class="form-group">
+                        <label style="color: white;">Custos Fixos (R$)</label>
+                        <input type="number" id="simFixedCosts" placeholder="10000" step="0.01" style="color: white;">
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="runSimulation()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">
+                        🎯 Simular Cenário
+                    </button>
+                </div>
+
+                <div class="simulator-grid" style="margin-top: 30px;">
+                    <div class="simulator-result">
+                        <div class="value" id="simRevenue">R$ 0,00</div>
+                        <div class="label">Receita Mensal</div>
+                    </div>
+                    <div class="simulator-result">
+                        <div class="value" id="simProfit">R$ 0,00</div>
+                        <div class="label">Lucro Líquido</div>
+                    </div>
+                    <div class="simulator-result">
+                        <div class="value" id="simMargin">0%</div>
+                        <div class="label">Margem de Lucro</div>
+                    </div>
+                    <div class="simulator-result">
+                        <div class="value" id="simBreakeven">0</div>
+                        <div class="label">Ponto de Equilíbrio</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section" style="margin-top: 30px;">
+                <h3>📊 Análise de Sensibilidade</h3>
+                <p style="margin-bottom: 20px; color: #718096;">Veja como mudanças nos parâmetros afetam sua rentabilidade.</p>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cenário</th>
+                                <th>Vendas/Mês</th>
+                                <th>Ticket Médio</th>
+                                <th>Receita</th>
+                                <th>Lucro</th>
+                                <th>Margem</th>
+                                <th>Viabilidade</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sensitivityTable">
+                            <tr>
+                                <td>Conservador</td>
+                                <td>800</td>
+                                <td>R$ 30,00</td>
+                                <td>R$ 24.000</td>
+                                <td>R$ 8.000</td>
+                                <td>33%</td>
+                                <td><span class="badge success">Viável</span></td>
+                            </tr>
+                            <tr>
+                                <td>Realista</td>
+                                <td>1.000</td>
+                                <td>R$ 35,00</td>
+                                <td>R$ 35.000</td>
+                                <td>R$ 15.000</td>
+                                <td>43%</td>
+                                <td><span class="badge success">Ótimo</span></td>
+                            </tr>
+                            <tr>
+                                <td>Otimista</td>
+                                <td>1.200</td>
+                                <td>R$ 40,00</td>
+                                <td>R$ 48.000</td>
+                                <td>R$ 24.000</td>
+                                <td>50%</td>
+                                <td><span class="badge success">Excelente</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Análises -->
+        <div id="analytics" class="tab-content">
+            <div class="form-section">
+                <h3>📈 Análises Avançadas</h3>
+                <p style="margin-bottom: 20px; color: #718096;">Relatórios detalhados e insights para otimização do negócio.</p>
+                
+                <div class="dashboard-grid">
+                    <div class="card analytics">
+                        <div class="card-header">
+                            <div class="card-icon">📊</div>
+                            <div>
+                                <h3>Análise de Rentabilidade</h3>
+                            </div>
+                        </div>
+                        <p>Compare a rentabilidade entre diferentes receitas e canais de venda.</p>
+                        <button class="btn" style="margin-top: 15px;">Gerar Relatório</button>
+                    </div>
+
+                    <div class="card analytics">
+                        <div class="card-header">
+                            <div class="card-icon">📈</div>
+                            <div>
+                                <h3>Histórico de Preços</h3>
+                            </div>
+                        </div>
+                        <p>Acompanhe a evolução dos preços dos ingredientes ao longo do tempo.</p>
+                        <button class="btn" style="margin-top: 15px;">Ver Histórico</button>
+                    </div>
+
+                    <div class="card analytics">
+                        <div class="card-header">
+                            <div class="card-icon">🎯</div>
+                            <div>
+                                <h3>Análise de Margem</h3>
+                            </div>
+                        </div>
+                        <p>Identifique oportunidades de otimização de margem por canal.</p>
+                        <button class="btn" style="margin-top: 15px;">Analisar</button>
+                    </div>
+
+                    <div class="card analytics">
+                        <div class="card-header">
+                            <div class="card-icon">📋</div>
+                            <div>
+                                <h3>Relatório Completo</h3>
+                            </div>
+                        </div>
+                        <p>Relatório executivo com todos os indicadores e recomendações.</p>
+                        <button class="btn" style="margin-top: 15px;">Exportar PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Período</th>
+                            <th>Receitas</th>
+                            <th>Custo Médio</th>
+                            <th>Margem Média</th>
+                            <th>Canal + Rentável</th>
+                            <th>Variação Preços</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Últimos 7 dias</td>
+                            <td>0</td>
+                            <td>R$ 0,00</td>
+                            <td>0%</td>
+                            <td>-</td>
+                            <td>0%</td>
+                            <td><span class="badge warning">Pendente</span></td>
+                        </tr>
+                        <tr>
+                            <td>Últimos 30 dias</td>
+                            <td>0</td>
+                            <td>R$ 0,00</td>
+                            <td>0%</td>
+                            <td>-</td>
+                            <td>0%</td>
+                            <td><span class="badge warning">Pendente</span></td>
+                        </tr>
+                        <tr>
+                            <td>Últimos 90 dias</td>
+                            <td>0</td>
+                            <td>R$ 0,00</td>
+                            <td>0%</td>
+                            <td>-</td>
+                            <td>0%</td>
+                            <td><span class="badge warning">Pendente</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2024 Pizzaria Pro Avançado - Sistema Completo de Precificação e Estoque v2.0</p>
+        <p>Desenvolvido para pizzarias que buscam gestão profissional e precificação inteligente</p>
+    </footer>
+
+    <script>
+        // Dados globais
+        let ingredients = [];
+        let recipes = [];
+        let stockMovements = [];
+        let operationalCosts = {};
+
+        // Navegação entre abas
+        function showTab(tabName) {
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Gestão de Ingredientes
+        function addIngredient() {
+            const name = document.getElementById('ingredientName').value;
+            const unit = document.getElementById('ingredientUnit').value;
+            const price = parseFloat(document.getElementById('ingredientPrice').value) || 0;
+            const qty = parseFloat(document.getElementById('ingredientQty').value) || 0;
+            const minStock = parseFloat(document.getElementById('ingredientMinStock').value) || 0;
+            const initialStock = parseFloat(document.getElementById('ingredientInitialStock').value) || 0;
+
+            if (!name) {
+                alert('Por favor, insira o nome do ingrediente.');
+                return;
+            }
+
+            const ingredient = {
+                id: Date.now(),
+                name,
+                unit,
+                price,
+                qty,
+                minStock,
+                currentStock: initialStock,
+                priceHistory: [{ date: new Date(), price }]
+            };
+
+            ingredients.push(ingredient);
+            updateIngredientsTable();
+            updateStats();
+            clearIngredientForm();
+            
+            // Feedback visual
+            event.target.textContent = 'Adicionado!';
+            event.target.style.background = '#38a169';
+            setTimeout(() => {
+                event.target.textContent = '➕ Adicionar Ingrediente';
+                event.target.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }, 1500);
+        }
+
+        function clearIngredientForm() {
+            document.getElementById('ingredientName').value = '';
+            document.getElementById('ingredientPrice').value = '';
+            document.getElementById('ingredientQty').value = '';
+            document.getElementById('ingredientMinStock').value = '';
+            document.getElementById('ingredientInitialStock').value = '';
+        }
+
+        function updateIngredientsTable() {
+            const tbody = document.getElementById('ingredientsTable');
+            
+            if (ingredients.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; color: #718096; padding: 40px;">
+                            Nenhum ingrediente cadastrado. Adicione ingredientes para começar.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = ingredients.map(ingredient => {
+                const costPerPizza = (ingredient.price * ingredient.qty).toFixed(2);
+                const stockStatus = ingredient.currentStock <= ingredient.minStock ? 'danger' : 'success';
+                const stockText = ingredient.currentStock <= ingredient.minStock ? 'Baixo' : 'OK';
+                
+                return `
+                    <tr>
+                        <td><strong>${ingredient.name}</strong></td>
+                        <td>${ingredient.unit}</td>
+                        <td>R$ ${ingredient.price.toFixed(2)}</td>
+                        <td><span class="badge info">${ingredient.priceHistory.length} registros</span></td>
+                        <td>${ingredient.qty.toFixed(3)}</td>
+                        <td>R$ ${costPerPizza}</td>
+                        <td>${ingredient.currentStock.toFixed(3)}</td>
+                        <td><span class="badge ${stockStatus}">${stockText}</span></td>
+                        <td>
+                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem;" onclick="editIngredient(${ingredient.id})">✏️</button>
+                            <button class="btn btn-warning" style="padding: 5px 10px; font-size: 0.8rem;" onclick="updatePrice(${ingredient.id})">💰</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Gestão de Estoque
+        function addStockMovement() {
+            const ingredientId = document.getElementById('stockIngredient').value;
+            const movement = document.getElementById('stockMovement').value;
+            const quantity = parseFloat(document.getElementById('stockQuantity').value) || 0;
+            const reason = document.getElementById('stockReason').value;
+
+            if (!ingredientId || quantity <= 0) {
+                alert('Por favor, selecione um ingrediente e insira uma quantidade válida.');
+                return;
+            }
+
+            const ingredient = ingredients.find(i => i.id == ingredientId);
+            if (!ingredient) return;
+
+            if (movement === 'entrada') {
+                ingredient.currentStock += quantity;
+            } else {
+                ingredient.currentStock = Math.max(0, ingredient.currentStock - quantity);
+            }
+
+            stockMovements.push({
+                id: Date.now(),
+                ingredientId,
+                movement,
+                quantity,
+                reason,
+                date: new Date()
+            });
+
+            updateStockTable();
+            updateIngredientsTable();
+            updateStats();
+            
+            // Limpar formulário
+            document.getElementById('stockQuantity').value = '';
+            document.getElementById('stockReason').value = '';
+        }
+
+        function updateStockTable() {
+            const tbody = document.getElementById('stockTable');
+            
+            if (ingredients.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; color: #718096; padding: 40px;">
+                            Cadastre ingredientes para visualizar o controle de estoque.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = ingredients.map(ingredient => {
+                const stockStatus = ingredient.currentStock <= ingredient.minStock ? 'danger' : 'success';
+                const stockText = ingredient.currentStock <= ingredient.minStock ? 'Crítico' : 'Normal';
+                const totalValue = (ingredient.currentStock * ingredient.price).toFixed(2);
+                
+                return `
+                    <tr>
+                        <td><strong>${ingredient.name}</strong></td>
+                        <td>${ingredient.currentStock.toFixed(3)} ${ingredient.unit}</td>
+                        <td>${ingredient.minStock.toFixed(3)} ${ingredient.unit}</td>
+                        <td><span class="badge ${stockStatus}">${stockText}</span></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>R$ ${totalValue}</td>
+                        <td>
+                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem;" onclick="adjustStock(${ingredient.id})">⚖️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Gestão de Receitas
+        function addRecipe() {
+            const name = document.getElementById('recipeName').value;
+            const size = document.getElementById('recipeSize').value;
+            const category = document.getElementById('recipeCategory').value;
+            const time = parseInt(document.getElementById('recipeTime').value) || 0;
+
+            if (!name) {
+                alert('Por favor, insira o nome da receita.');
+                return;
+            }
+
+            const recipe = {
+                id: Date.now(),
+                name,
+                size,
+                category,
+                time,
+                ingredients: [],
+                totalCost: 0
+            };
+
+            recipes.push(recipe);
+            updateRecipesTable();
+            updateStats();
+            clearRecipeForm();
+            
+            event.target.textContent = 'Criada!';
+            event.target.style.background = '#38a169';
+            setTimeout(() => {
+                event.target.textContent = '➕ Criar Receita';
+                event.target.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }, 1500);
+        }
+
+        function clearRecipeForm() {
+            document.getElementById('recipeName').value = '';
+            document.getElementById('recipeCategory').value = '';
+            document.getElementById('recipeTime').value = '';
+        }
+
+        function updateRecipesTable() {
+            const tbody = document.getElementById('recipesTable');
+            
+            if (recipes.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; color: #718096; padding: 40px;">
+                            Nenhuma receita cadastrada. Crie receitas para começar a precificar.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = recipes.map(recipe => {
+                const suggestedMargin = recipe.totalCost > 0 ? Math.round((recipe.totalCost * 2.5 / recipe.totalCost - 1) * 100) : 150;
+                
+                return `
+                    <tr>
+                        <td><strong>${recipe.name}</strong></td>
+                        <td>${recipe.size}</td>
+                        <td>${recipe.category}</td>
+                        <td>${recipe.ingredients.length} itens</td>
+                        <td>R$ ${recipe.totalCost.toFixed(2)}</td>
+                        <td>${recipe.time} min</td>
+                        <td>${suggestedMargin}%</td>
+                        <td>
+                            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem;" onclick="editRecipe(${recipe.id})">✏️</button>
+                            <button class="btn btn-success" style="padding: 5px 10px; font-size: 0.8rem;" onclick="priceRecipe(${recipe.id})">💲</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Custos Operacionais
+        function saveCosts() {
+            operationalCosts = {
+                salaries: parseFloat(document.getElementById('costSalaries').value) || 0,
+                rent: parseFloat(document.getElementById('costRent').value) || 0,
+                electricity: parseFloat(document.getElementById('costElectricity').value) || 0,
+                gas: parseFloat(document.getElementById('costGas').value) || 0,
+                phone: parseFloat(document.getElementById('costPhone').value) || 0,
+                marketing: parseFloat(document.getElementById('costMarketing').value) || 0,
+                monthlyPizzas: parseInt(document.getElementById('monthlyPizzas').value) || 1000,
+                taxRate: parseFloat(document.getElementById('taxRate').value) || 0,
+                profitTarget: parseFloat(document.getElementById('profitTarget').value) || 0,
+                avgTicket: parseFloat(document.getElementById('avgTicket').value) || 0
+            };
+
+            calculateOperationalCosts();
+            
+            event.target.textContent = 'Salvo!';
+            event.target.style.background = '#38a169';
+            setTimeout(() => {
+                event.target.textContent = '💾 Salvar Custos';
+                event.target.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }, 1500);
+        }
+
+        function calculateOperationalCosts() {
+            const totalFixed = operationalCosts.salaries + operationalCosts.rent + 
+                             operationalCosts.electricity + operationalCosts.gas + 
+                             operationalCosts.phone + operationalCosts.marketing;
+            
+            const costPerPizza = totalFixed / operationalCosts.monthlyPizzas;
+            const requiredMargin = operationalCosts.profitTarget > 0 ? 
+                                 (operationalCosts.profitTarget / (operationalCosts.monthlyPizzas * operationalCosts.avgTicket) * 100) : 0;
+
+            document.getElementById('totalOperationalCost').textContent = `R$ ${totalFixed.toFixed(2)}`;
+            document.getElementById('costPerPizza').textContent = `R$ ${costPerPizza.toFixed(2)}`;
+            document.getElementById('requiredMargin').textContent = `${requiredMargin.toFixed(1)}%`;
+        }
+
+        // Precificação
+        function calculatePricing() {
+            const recipeId = document.getElementById('pricingRecipe').value;
+            const margin = parseFloat(document.getElementById('desiredMargin').value) || 150;
+            const deliveryFee = parseFloat(document.getElementById('deliveryFee').value) || 0;
+            const packagingCost = parseFloat(document.getElementById('packagingCost').value) || 0;
+
+            if (!recipeId) {
+                alert('Por favor, selecione uma receita.');
+                return;
+            }
+
+            const recipe = recipes.find(r => r.id == recipeId);
+            if (!recipe) return;
+
+            const baseCost = recipe.totalCost + packagingCost;
+            const operationalCostPerPizza = operationalCosts.monthlyPizzas > 0 ? 
+                (operationalCosts.salaries + operationalCosts.rent + operationalCosts.electricity + 
+                 operationalCosts.gas + operationalCosts.phone + operationalCosts.marketing) / operationalCosts.monthlyPizzas : 0;
+
+            // Cálculos para cada canal
+            const channels = [
+                { name: 'balcao', tax: 0, hasDelivery: false },
+                { name: 'delivery', tax: 0, hasDelivery: true },
+                { name: 'ifood', tax: parseFloat(document.getElementById('ifoodTax').value) || 27, hasDelivery: true },
+                { name: 'food99', tax: parseFloat(document.getElementById('food99Tax').value) || 12, hasDelivery: true },
+                { name: 'rappi', tax: parseFloat(document.getElementById('rappiTax').value) || 14, hasDelivery: true },
+                { name: 'uber', tax: parseFloat(document.getElementById('uberTax').value) || 15, hasDelivery: true }
+            ];
+
+            channels.forEach(channel => {
+                const totalCost = baseCost + operationalCostPerPizza + (channel.hasDelivery ? deliveryFee : 0);
+                const price = totalCost * (1 + margin / 100) / (1 - channel.tax / 100);
+                const realMargin = ((price * (1 - channel.tax / 100) - totalCost) / totalCost * 100);
+
+                document.getElementById(`${channel.name}Price`).textContent = `R$ ${price.toFixed(2)}`;
+                document.getElementById(`${channel.name}RealMargin`).textContent = `${realMargin.toFixed(1)}%`;
+            });
+
+            updatePricingTable(recipe, baseCost, operationalCostPerPizza, deliveryFee, margin);
+        }
+
+        function updatePricingTable(recipe, baseCost, operationalCost, deliveryFee, margin) {
+            const tbody = document.getElementById('pricingTable');
+            const channels = [
+                { name: 'Balcão', tax: 0, hasDelivery: false, icon: '🏪' },
+                { name: 'Delivery Direto', tax: 0, hasDelivery: true, icon: '🚚' },
+                { name: 'iFood', tax: 27, hasDelivery: true, icon: '🍔' },
+                { name: '99Food', tax: 12, hasDelivery: true, icon: '🥡' },
+                { name: 'Rappi', tax: 14, hasDelivery: true, icon: '🛵' },
+                { name: 'Uber Eats', tax: 15, hasDelivery: true, icon: '🚗' }
+            ];
+
+            const results = channels.map(channel => {
+                const totalCost = baseCost + operationalCost + (channel.hasDelivery ? deliveryFee : 0);
+                const price = totalCost * (1 + margin / 100) / (1 - channel.tax / 100);
+                const netPrice = price * (1 - channel.tax / 100);
+                const profit = netPrice - totalCost;
+                const realMargin = (profit / totalCost * 100);
+
+                return {
+                    ...channel,
+                    totalCost,
+                    price,
+                    profit,
+                    realMargin
+                };
+            });
+
+            // Ordenar por rentabilidade
+            results.sort((a, b) => b.realMargin - a.realMargin);
+
+            tbody.innerHTML = results.map((result, index) => {
+                const rankBadge = index === 0 ? 'success' : index === 1 ? 'info' : index === 2 ? 'warning' : 'danger';
+                const rankText = index === 0 ? '🥇 Melhor' : index === 1 ? '🥈 2º' : index === 2 ? '🥉 3º' : `${index + 1}º`;
+
+                return `
+                    <tr>
+                        <td>${result.icon} ${result.name}</td>
+                        <td>R$ ${result.totalCost.toFixed(2)}</td>
+                        <td>${result.tax}%</td>
+                        <td>${margin}%</td>
+                        <td><strong>R$ ${result.price.toFixed(2)}</strong></td>
+                        <td>R$ ${result.profit.toFixed(2)}</td>
+                        <td>${result.realMargin.toFixed(1)}%</td>
+                        <td><span class="badge ${rankBadge}">${rankText}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Simulador
+        function runSimulation() {
+            const sales = parseInt(document.getElementById('simSales').value) || 1000;
+            const ticket = parseFloat(document.getElementById('simTicket').value) || 35;
+            const cost = parseFloat(document.getElementById('simCost').value) || 15;
+            const fixedCosts = parseFloat(document.getElementById('simFixedCosts').value) || 10000;
+
+            const revenue = sales * ticket;
+            const variableCosts = sales * cost;
+            const totalCosts = variableCosts + fixedCosts;
+            const profit = revenue - totalCosts;
+            const margin = (profit / revenue * 100);
+            const breakeven = Math.ceil(fixedCosts / (ticket - cost));
+
+            document.getElementById('simRevenue').textContent = `R$ ${revenue.toLocaleString('pt-BR')}`;
+            document.getElementById('simProfit').textContent = `R$ ${profit.toLocaleString('pt-BR')}`;
+            document.getElementById('simMargin').textContent = `${margin.toFixed(1)}%`;
+            document.getElementById('simBreakeven').textContent = `${breakeven} pizzas`;
+        }
+
+        // Atualizar estatísticas
+        function updateStats() {
+            document.getElementById('totalIngredients').textContent = ingredients.length;
+            document.getElementById('totalRecipes').textContent = recipes.length;
+            
+            const lowStockCount = ingredients.filter(i => i.currentStock <= i.minStock).length;
+            document.getElementById('stockAlerts').textContent = lowStockCount;
+            
+            const avgCost = recipes.length > 0 ? 
+                recipes.reduce((sum, r) => sum + r.totalCost, 0) / recipes.length : 0;
+            document.getElementById('avgCost').textContent = `R$ ${avgCost.toFixed(2)}`;
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Adicionar interatividade aos formulários
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.style.borderColor = '#667eea';
+                    this.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.style.borderColor = '#e2e8f0';
+                    this.style.boxShadow = 'none';
+                });
+            });
+
+            // Atualizar estatísticas iniciais
+            updateStats();
+        });
+
+        // Funções auxiliares (placeholders)
+        function editIngredient(id) { alert('Função de edição em desenvolvimento'); }
+        function updatePrice(id) { alert('Função de atualização de preço em desenvolvimento'); }
+        function adjustStock(id) { alert('Função de ajuste de estoque em desenvolvimento'); }
+        function editRecipe(id) { alert('Função de edição de receita em desenvolvimento'); }
+        function priceRecipe(id) { alert('Função de precificação em desenvolvimento'); }
+        function updatePrices() { alert('Função de atualização de preços em desenvolvimento'); }
+        function generateStockReport() { alert('Função de relatório de estoque em desenvolvimento'); }
+        function calculateRecipeCosts() { alert('Função de cálculo de custos em desenvolvimento'); }
+        function exportPricing() { alert('Função de exportação em desenvolvimento'); }
+    </script>
+</body>
+</html>
