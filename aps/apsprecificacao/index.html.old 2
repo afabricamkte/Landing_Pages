@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APS - Sistema de Precificação</title>
+    <title>Pizzaria Pro - Sistema de Precificação</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * {
@@ -14,13 +14,13 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: #333;
         }
 
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 1rem 2rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -82,8 +82,8 @@
         .tab {
             padding: 0.75rem 1.5rem;
             border: none;
-            background: #ecf0f1;
-            color: #2c3e50;
+            background: #f8f9fa;
+            color: #666;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 500;
@@ -92,14 +92,14 @@
         }
 
         .tab:hover {
-            background: #d5dbdb;
+            background: #e9ecef;
             transform: translateY(-2px);
         }
 
         .tab.active {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-color: #2c3e50;
+            border-color: #5a67d8;
         }
 
         .tab-content {
@@ -113,7 +113,7 @@
         .section-title {
             font-size: 1.5rem;
             margin-bottom: 1rem;
-            color: #2c3e50;
+            color: #333;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -134,13 +134,13 @@
         .form-group label {
             margin-bottom: 0.5rem;
             font-weight: 500;
-            color: #2c3e50;
+            color: #555;
         }
 
         .form-group input,
         .form-group select {
             padding: 0.75rem;
-            border: 2px solid #bdc3c7;
+            border: 2px solid #e1e5e9;
             border-radius: 6px;
             font-size: 1rem;
             transition: border-color 0.3s ease;
@@ -149,7 +149,7 @@
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #2c3e50;
+            border-color: #667eea;
         }
 
         .btn {
@@ -166,37 +166,37 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.4);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
         .btn-secondary {
-            background: #95a5a6;
+            background: #6c757d;
             color: white;
         }
 
         .btn-success {
-            background: #27ae60;
+            background: #28a745;
             color: white;
         }
 
         .btn-warning {
-            background: #f39c12;
-            color: white;
+            background: #ffc107;
+            color: #212529;
         }
 
         .btn-danger {
-            background: #e74c3c;
+            background: #dc3545;
             color: white;
         }
 
         .btn-info {
-            background: #3498db;
+            background: #17a2b8;
             color: white;
         }
 
@@ -214,13 +214,13 @@
         .table td {
             padding: 1rem;
             text-align: left;
-            border-bottom: 1px solid #ecf0f1;
+            border-bottom: 1px solid #e1e5e9;
         }
 
         .table th {
             background: #f8f9fa;
             font-weight: 600;
-            color: #2c3e50;
+            color: #555;
         }
 
         .table tr:hover {
@@ -232,7 +232,7 @@
             border-radius: 12px;
             padding: 1.5rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 1px solid #ecf0f1;
+            border: 1px solid #e1e5e9;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -256,20 +256,20 @@
         }
 
         .alert-warning {
-            background: #fef9e7;
-            border-color: #f39c12;
-            color: #8a6d3b;
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
         }
 
         .alert-success {
-            background: #d5f4e6;
-            border-color: #27ae60;
+            background: #d4edda;
+            border-color: #28a745;
             color: #155724;
         }
 
         .alert-info {
-            background: #d6eaf8;
-            border-color: #3498db;
+            background: #d1ecf1;
+            border-color: #17a2b8;
             color: #0c5460;
         }
 
@@ -281,22 +281,22 @@
         }
 
         .badge-success {
-            background: #27ae60;
+            background: #28a745;
             color: white;
         }
 
         .badge-warning {
-            background: #f39c12;
-            color: white;
+            background: #ffc107;
+            color: #212529;
         }
 
         .badge-danger {
-            background: #e74c3c;
+            background: #dc3545;
             color: white;
         }
 
         .badge-info {
-            background: #3498db;
+            background: #17a2b8;
             color: white;
         }
 
@@ -312,12 +312,12 @@
             border-radius: 12px;
             padding: 1.5rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 2px solid #ecf0f1;
+            border: 2px solid #e1e5e9;
         }
 
         .pricing-card h3 {
             margin-bottom: 1rem;
-            color: #2c3e50;
+            color: #333;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -326,17 +326,17 @@
         .price-display {
             font-size: 2rem;
             font-weight: bold;
-            color: #2c3e50;
+            color: #667eea;
             margin: 1rem 0;
         }
 
         .margin-info {
             font-size: 0.9rem;
-            color: #7f8c8d;
+            color: #666;
         }
 
         .simulator-section {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 2rem;
             border-radius: 12px;
@@ -383,19 +383,19 @@
         }
 
         .analysis-card.orange {
-            border-left-color: #e67e22;
+            border-left-color: #ff6b35;
         }
 
         .analysis-card.blue {
-            border-left-color: #3498db;
+            border-left-color: #4dabf7;
         }
 
         .analysis-card.green {
-            border-left-color: #27ae60;
+            border-left-color: #51cf66;
         }
 
         .analysis-card.purple {
-            border-left-color: #8e44ad;
+            border-left-color: #9775fa;
         }
 
         .import-export-section {
@@ -420,7 +420,7 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.75rem 1.5rem;
-            background: #95a5a6;
+            background: #6c757d;
             color: white;
             border-radius: 6px;
             cursor: pointer;
@@ -428,14 +428,14 @@
         }
 
         .file-label:hover {
-            background: #7f8c8d;
+            background: #5a6268;
             transform: translateY(-2px);
         }
 
         .footer {
             text-align: center;
             padding: 2rem;
-            color: #7f8c8d;
+            color: #666;
             font-size: 0.9rem;
         }
 
@@ -467,10 +467,10 @@
     <header class="header">
         <div class="header-content">
             <div class="logo">
-                <span style="font-size: 1.5rem;">📊</span>
+                <span style="font-size: 1.5rem;">🍕</span>
                 <div>
-                    <h1>APS - Sistema de Precificação</h1>
-                    <p style="font-size: 0.9rem; opacity: 0.9;">Sistema Profissional de Gestão de Custos</p>
+                    <h1>Pizzaria Pro</h1>
+                    <p style="font-size: 0.9rem; opacity: 0.9;">Sistema Completo de Precificação</p>
                 </div>
             </div>
             <div class="stats">
@@ -520,31 +520,31 @@
             <div class="cards-grid">
                 <div class="card">
                     <h3>📊 Dashboard Inteligente</h3>
-                    <p>Visão geral do sistema com KPIs essenciais, alertas automáticos para configurações pendentes e estatísticas em tempo real.</p>
+                    <p>Visão geral com KPIs avançados, alertas automáticos e sugestões inteligentes para otimização.</p>
                 </div>
                 <div class="card">
                     <h3>🥘 Gestão de Ingredientes</h3>
-                    <p>CRUD completo com histórico de preços, categorização por tipo e controle de fornecedores e unidades de medida.</p>
+                    <p>CRUD completo com histórico de preços, fornecedores, unidades de medida e quantidade padrão por pizza.</p>
                 </div>
                 <div class="card">
                     <h3>📝 Gestão de Receitas</h3>
-                    <p>Criação de receitas por tamanho com composição detalhada e cálculo automático de custos por receita.</p>
+                    <p>Criação de receitas por tamanho com composição detalhada, cálculo automático de custos e análise de rentabilidade.</p>
                 </div>
                 <div class="card">
                     <h3>💰 Custos Operacionais</h3>
-                    <p>Controle completo de custos fixos mensais, embalagens, sachês e delivery com rateio automático por volume de vendas.</p>
+                    <p>Controle completo de custos fixos, impostos, meta de lucro e rateio automático por volume de vendas.</p>
                 </div>
                 <div class="card">
-                    <h3>💲 Precificação Multi-Canal</h3>
-                    <p>Sistema inteligente para 6 canais de venda com cálculo detalhado, margem real, lucro líquido e comparação automática.</p>
+                    <h3>💲 Precificação Avançada</h3>
+                    <p>Sistema inteligente para 6 canais com cálculo detalhado, margem real, lucro líquido e comparação automática.</p>
                 </div>
                 <div class="card">
                     <h3>🧮 Simulador de Cenários</h3>
-                    <p>Análise de sensibilidade com diferentes cenários, ponto de equilíbrio e simulação de vendas para otimização.</p>
+                    <p>Análise de sensibilidade com diferentes cenários, ponto de equilíbrio e simulação de vendas.</p>
                 </div>
                 <div class="card">
                     <h3>📈 Análises Profissionais</h3>
-                    <p>Relatórios executivos, histórico de preços, análise de rentabilidade e insights para otimização do negócio.</p>
+                    <p>Relatórios executivos, histórico de preços, análise de rentabilidade e insights para otimização.</p>
                 </div>
                 <div class="card">
                     <h3>📤 Import/Export</h3>
@@ -620,7 +620,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="9" style="text-align: center; color: #7f8c8d;">
+                        <td colspan="9" style="text-align: center; color: #666;">
                             Nenhum ingrediente cadastrado. Adicione ingredientes para começar.
                         </td>
                     </tr>
@@ -664,7 +664,7 @@
             </div>
 
             <div id="listaReceitas">
-                <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+                <div style="text-align: center; color: #666; padding: 2rem;">
                     Nenhuma receita cadastrada. Crie receitas para começar.
                 </div>
             </div>
@@ -885,7 +885,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="8" style="text-align: center; color: #7f8c8d;">
+                        <td colspan="8" style="text-align: center; color: #666;">
                             Selecione uma receita e calcule os preços para visualizar a comparação.
                         </td>
                     </tr>
@@ -1145,7 +1145,7 @@
                         </thead>
                         <tbody id="historicoBackups">
                             <tr>
-                                <td colspan="6" style="text-align: center; color: #7f8c8d;">
+                                <td colspan="6" style="text-align: center; color: #666;">
                                     Nenhum backup encontrado. Faça seu primeiro backup.
                                 </td>
                             </tr>
@@ -1172,7 +1172,7 @@
     </div>
 
     <footer class="footer">
-        <p>© 2024 APS - Sistema de Precificação v2.0</p>
+        <p>© 2024 Pizzaria Pro - Sistema Completo de Precificação v2.0</p>
         <p>Desenvolvido para pizzarias que buscam gestão profissional e precificação inteligente</p>
     </footer>
 
@@ -1245,7 +1245,7 @@
             const btn = event.target;
             const textoOriginal = btn.textContent;
             btn.textContent = 'Adicionado!';
-            btn.style.background = '#27ae60';
+            btn.style.background = '#28a745';
             setTimeout(() => {
                 btn.textContent = textoOriginal;
                 btn.style.background = '';
@@ -1265,7 +1265,7 @@
             if (ingredientes.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="9" style="text-align: center; color: #7f8c8d;">
+                        <td colspan="9" style="text-align: center; color: #666;">
                             Nenhum ingrediente cadastrado. Adicione ingredientes para começar.
                         </td>
                     </tr>
@@ -1376,7 +1376,7 @@
             
             if (receitas.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+                    <div style="text-align: center; color: #666; padding: 2rem;">
                         Nenhuma receita cadastrada. Crie receitas para começar.
                     </div>
                 `;
@@ -1599,7 +1599,7 @@
                 XLSX.utils.book_append_sheet(wb, wsCustos, "Custos");
             }
             
-            const nomeArquivo = `aps_backup_${new Date().toISOString().split('T')[0]}.xlsx`;
+            const nomeArquivo = `pizzaria_pro_backup_${new Date().toISOString().split('T')[0]}.xlsx`;
             XLSX.writeFile(wb, nomeArquivo);
             
             registrarBackup('Excel', nomeArquivo);
@@ -1630,7 +1630,7 @@
             
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
-            const nomeArquivo = `aps_backup_${new Date().toISOString().split('T')[0]}.csv`;
+            const nomeArquivo = `pizzaria_pro_backup_${new Date().toISOString().split('T')[0]}.csv`;
             
             link.href = URL.createObjectURL(blob);
             link.download = nomeArquivo;
@@ -1651,7 +1651,7 @@
             
             const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
             const link = document.createElement('a');
-            const nomeArquivo = `aps_backup_${new Date().toISOString().split('T')[0]}.json`;
+            const nomeArquivo = `pizzaria_pro_backup_${new Date().toISOString().split('T')[0]}.json`;
             
             link.href = URL.createObjectURL(blob);
             link.download = nomeArquivo;
@@ -1808,7 +1808,7 @@
             if (historicoBackups.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="6" style="text-align: center; color: #7f8c8d;">
+                        <td colspan="6" style="text-align: center; color: #666;">
                             Nenhum backup encontrado. Faça seu primeiro backup.
                         </td>
                     </tr>
