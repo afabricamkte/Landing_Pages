@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - APS Sistema</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Teste do Sistema APS</h1>
+    
+    <div class="test-section">
+        <h2>1. Teste de Carregamento de Scripts</h2>
+        <div id="script-tests"></div>
+        <button onclick="testScripts()">Testar Scripts</button>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Teste de Configuração</h2>
+        <div id="config-tests"></div>
+        <button onclick="testConfig()">Testar Configuração</button>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Teste de Utilitários</h2>
+        <div id="utils-tests"></div>
+        <button onclick="testUtils()">Testar Utilitários</button>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Teste de Cálculos</h2>
+        <div id="calc-tests"></div>
+        <button onclick="testCalculations()">Testar Cálculos</button>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Teste de Componentes</h2>
+        <div id="component-tests"></div>
+        <button onclick="testComponents()">Testar Componentes</button>
+    </div>
+
+    <div class="test-section">
+        <h2>6. Teste de Dados Demo</h2>
+        <div id="demo-tests"></div>
+        <button onclick="testDemoData()">Testar Dados Demo</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Executar Todos os Testes</h2>
+        <button onclick="runAllTests()" style="background: #28a745;">Executar Todos</button>
+        <button onclick="clearResults()" style="background: #6c757d;">Limpar Resultados</button>
+    </div>
+
+    <!-- Scripts do Sistema -->
+    <script src="src/config.js"></script>
+    <script src="src/utils.js"></script>
+    <script src="src/components.js"></script>
+
+    <script>
+        function addResult(containerId, message, type = 'success') {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = message;
+            container.appendChild(div);
+        }
+
+        function testScripts() {
+            const container = 'script-tests';
+            document.getElementById(container).innerHTML = '';
+
+            // Teste CONFIG
+            try {
+                if (typeof CONFIG !== 'undefined') {
+                    addResult(container, '✅ CONFIG carregado com sucesso');
+                    addResult(container, `📊 Versão: ${CONFIG.VERSION}`);
+                } else {
+                    addResult(container, '❌ CONFIG não encontrado', 'error');
+                }
+            } catch (e) {
+                addResult(container, `❌ Erro no CONFIG: ${e.message}`, 'error');
+            }
+
+            // Teste Utils
+            try {
+                if (typeof Utils !== 'undefined') {
+                    addResult(container, '✅ Utils carregado com sucesso');
+                } else {
+                    addResult(container, '❌ Utils não encontrado', 'error');
+                }
+            } catch (e) {
+                addResult(container, `❌ Erro no Utils: ${e.message}`, 'error');
+            }
+
+            // Teste Components
+            try {
+                if (typeof Components !== 'undefined') {
+                    addResult(container, '✅ Components carregado com sucesso');
+                } else {
+                    addResult(container, '❌ Components não encontrado', 'error');
+                }
+            } catch (e) {
+                addResult(container, `❌ Erro no Components: ${e.message}`, 'error');
+            }
+        }
+
+        function testConfig() {
+            const container = 'config-tests';
+            document.getElementById(container).innerHTML = '';
+
+            try {
+                // Teste de categorias
+                if (CONFIG.CATEGORIAS && CONFIG.CATEGORIAS.INGREDIENTES) {
+                    addResult(container, `✅ Categorias de ingredientes: ${CONFIG.CATEGORIAS.INGREDIENTES.length} itens`);
+                }
+
+                // Teste de unidades
+                if (CONFIG.UNIDADES && CONFIG.UNIDADES.length > 0) {
+                    addResult(container, `✅ Unidades de medida: ${CONFIG.UNIDADES.join(', ')}`);
+                }
+
+                // Teste de tamanhos
+                if (CONFIG.TAMANHOS && CONFIG.TAMANHOS.length > 0) {
+                    addResult(container, `✅ Tamanhos de pizza: ${CONFIG.TAMANHOS.join(', ')}`);
+                }
+
+                // Teste de dados exemplo
+                if (CONFIG.DADOS_EXEMPLO && CONFIG.DADOS_EXEMPLO.INGREDIENTES) {
+                    addResult(container, `✅ Dados de exemplo: ${CONFIG.DADOS_EXEMPLO.INGREDIENTES.length} ingredientes`);
+                }
+
+                // Teste de validação
+                const validation = validateConfig();
+                if (validation.valid) {
+                    addResult(container, '✅ Configuração válida');
+                } else {
+                    addResult(container, `⚠️ Configuração incompleta: ${validation.missing.join(', ')}`, 'warning');
+                }
+
+            } catch (e) {
+                addResult(container, `❌ Erro nos testes de configuração: ${e.message}`, 'error');
+            }
+        }
+
+        function testUtils() {
+            const container = 'utils-tests';
+            document.getElementById(container).innerHTML = '';
+
+            try {
+                // Teste formatação de moeda
+                const moeda = Utils.formatMoeda(1234.56);
+                if (moeda === 'R$ 1.234,56') {
+                    addResult(container, '✅ Formatação de moeda funcionando');
+                } else {
+                    addResult(container, `❌ Formatação de moeda incorreta: ${moeda}`, 'error');
+                }
+
+                // Teste formatação de percentual
+                const percentual = Utils.formatPercentual(35);
+                if (percentual.includes('35')) {
+                    addResult(container, '✅ Formatação de percentual funcionando');
+                } else {
+                    addResult(container, `❌ Formatação de percentual incorreta: ${percentual}`, 'error');
+                }
+
+                // Teste parsing de número
+                const numero = Utils.parseNumero('1.234,56');
+                if (numero === 1234.56) {
+                    addResult(container, '✅ Parse de número funcionando');
+                } else {
+                    addResult(container, `❌ Parse de número incorreto: ${numero}`, 'error');
+                }
+
+                // Teste geração de ID
+                const id = Utils.gerarIdIngrediente();
+                if (id.startsWith('ING') && id.length > 5) {
+                    addResult(container, `✅ Geração de ID funcionando: ${id}`);
+                } else {
+                    addResult(container, `❌ Geração de ID incorreta: ${id}`, 'error');
+                }
+
+                // Teste debounce
+                if (typeof Utils.debounce === 'function') {
+                    addResult(container, '✅ Função debounce disponível');
+                } else {
+                    addResult(container, '❌ Função debounce não encontrada', 'error');
+                }
+
+            } catch (e) {
+                addResult(container, `❌ Erro nos testes de utilitários: ${e.message}`, 'error');
+            }
+        }
+
+        function testCalculations() {
+            const container = 'calc-tests';
+            document.getElementById(container).innerHTML = '';
+
+            try {
+                // Teste cálculo de custo unitário
+                const custoUnitario = Utils.calcularCustoUnitario(45.00, 1, 95, 'kg');
+                const esperado = 45.00 / (1 * 1000 * 0.95); // ≈ 0.0474
+                
+                if (Math.abs(custoUnitario - esperado) < 0.001) {
+                    addResult(container, `✅ Cálculo de custo unitário: R$ ${custoUnitario.toFixed(4)}/g`);
+                } else {
+                    addResult(container, `❌ Cálculo de custo unitário incorreto: ${custoUnitario}`, 'error');
+                }
+
+                // Teste cálculo de preço de venda
+                const precoVenda = Utils.calcularPrecoVenda(21.20, 35, 10.5);
+                const esperadoPreco = 21.20 / (1 - 0.35 - 0.105); // ≈ 38.90
+                
+                if (Math.abs(precoVenda - esperadoPreco) < 0.1) {
+                    addResult(container, `✅ Cálculo de preço de venda: ${Utils.formatMoeda(precoVenda)}`);
+                } else {
+                    addResult(container, `❌ Cálculo de preço de venda incorreto: ${precoVenda}`, 'error');
+                }
+
+                // Teste cálculo de margem
+                const margem = Utils.calcularMargem(38.90, 21.20, 10.5);
+                
+                if (margem > 30 && margem < 40) {
+                    addResult(container, `✅ Cálculo de margem: ${Utils.formatPercentual(margem)}`);
+                } else {
+                    addResult(container, `❌ Cálculo de margem incorreto: ${margem}%`, 'error');
+                }
+
+                // Teste validação de dados
+                const validacao = Utils.validarFormulario(
+                    { nome: 'Mussarela', preco: 45.00, categoria: 'Queijos' },
+                    { 
+                        nome: { required: true, minLength: 2 },
+                        preco: { required: true, min: 0.01 },
+                        categoria: { required: true }
+                    }
+                );
+
+                if (validacao.valido) {
+                    addResult(container, '✅ Validação de formulário funcionando');
+                } else {
+                    addResult(container, `❌ Validação de formulário com erros: ${Object.keys(validacao.erros).join(', ')}`, 'error');
+                }
+
+            } catch (e) {
+                addResult(container, `❌ Erro nos testes de cálculo: ${e.message}`, 'error');
+            }
+        }
+
+        function testComponents() {
+            const container = 'component-tests';
+            document.getElementById(container).innerHTML = '';
+
+            try {
+                // Teste toast (sem mostrar)
+                if (typeof Components.showToast === 'function') {
+                    addResult(container, '✅ Função showToast disponível');
+                } else {
+                    addResult(container, '❌ Função showToast não encontrada', 'error');
+                }
+
+                // Teste modal
+                if (typeof Components.showModal === 'function') {
+                    addResult(container, '✅ Função showModal disponível');
+                } else {
+                    addResult(container, '❌ Função showModal não encontrada', 'error');
+                }
+
+                // Teste criação de tabela
+                if (typeof Components.createDataTable === 'function') {
+                    addResult(container, '✅ Função createDataTable disponível');
+                } else {
+                    addResult(container, '❌ Função createDataTable não encontrada', 'error');
+                }
+
+                // Teste validação de formulário
+                if (typeof Components.validateForm === 'function') {
+                    addResult(container, '✅ Função validateForm disponível');
+                } else {
+                    addResult(container, '❌ Função validateForm não encontrada', 'error');
+                }
+
+                // Teste formatação de valores
+                if (typeof Components.formatValue === 'function') {
+                    const formatted = Components.formatValue(1234.56, 'currency');
+                    addResult(container, `✅ Formatação de valores: ${formatted}`);
+                } else {
+                    addResult(container, '❌ Função formatValue não encontrada', 'error');
+                }
+
+            } catch (e) {
+                addResult(container, `❌ Erro nos testes de componentes: ${e.message}`, 'error');
+            }
+        }
+
+        function testDemoData() {
+            const container = 'demo-tests';
+            document.getElementById(container).innerHTML = '';
+
+            try {
+                // Teste dados de ingredientes
+                const ingredientes = CONFIG.DADOS_EXEMPLO.INGREDIENTES;
+                if (ingredientes && ingredientes.length > 0) {
+                    addResult(container, `✅ ${ingredientes.length} ingredientes de exemplo carregados`);
+                    
+                    // Teste estrutura do primeiro ingrediente
+                    const primeiro = ingredientes[0];
+                    const campos = ['id', 'nome', 'categoria', 'unidade', 'preco'];
+                    const camposPresentes = campos.filter(campo => primeiro.hasOwnProperty(campo));
+                    
+                    if (camposPresentes.length === campos.length) {
+                        addResult(container, '✅ Estrutura de ingredientes válida');
+                    } else {
+                        addResult(container, `❌ Campos faltando: ${campos.filter(c => !camposPresentes.includes(c)).join(', ')}`, 'error');
+                    }
+                } else {
+                    addResult(container, '❌ Dados de ingredientes não encontrados', 'error');
+                }
+
+                // Teste dados de custos fixos
+                const custosFixos = CONFIG.DADOS_EXEMPLO.CUSTOS_FIXOS;
+                if (custosFixos && custosFixos.length > 0) {
+                    addResult(container, `✅ ${custosFixos.length} custos fixos de exemplo`);
+                    
+                    const totalCustos = custosFixos.reduce((sum, custo) => sum + custo.valor, 0);
+                    addResult(container, `📊 Total custos fixos: ${Utils.formatMoeda(totalCustos)}`);
+                } else {
+                    addResult(container, '❌ Dados de custos fixos não encontrados', 'error');
+                }
+
+                // Teste dados de impostos
+                const impostos = CONFIG.DADOS_EXEMPLO.IMPOSTOS_TAXAS;
+                if (impostos && impostos.length > 0) {
+                    addResult(container, `✅ ${impostos.length} canais de venda configurados`);
+                    
+                    const canais = impostos.map(imp => imp.canal).join(', ');
+                    addResult(container, `📊 Canais: ${canais}`);
+                } else {
+                    addResult(container, '❌ Dados de impostos não encontrados', 'error');
+                }
+
+                // Teste parâmetros
+                const parametros = CONFIG.DADOS_EXEMPLO.PARAMETROS;
+                if (parametros && parametros.length > 0) {
+                    addResult(container, `✅ ${parametros.length} parâmetros configurados`);
+                    
+                    parametros.forEach(param => {
+                        addResult(container, `📊 ${param.parametro}: ${param.valor}`);
+                    });
+                } else {
+                    addResult(container, '❌ Parâmetros não encontrados', 'error');
+                }
+
+            } catch (e) {
+                addResult(container, `❌ Erro nos testes de dados demo: ${e.message}`, 'error');
+            }
+        }
+
+        function runAllTests() {
+            clearResults();
+            setTimeout(() => testScripts(), 100);
+            setTimeout(() => testConfig(), 200);
+            setTimeout(() => testUtils(), 300);
+            setTimeout(() => testCalculations(), 400);
+            setTimeout(() => testComponents(), 500);
+            setTimeout(() => testDemoData(), 600);
+        }
+
+        function clearResults() {
+            const containers = ['script-tests', 'config-tests', 'utils-tests', 'calc-tests', 'component-tests', 'demo-tests'];
+            containers.forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+        }
+
+        // Executa testes básicos ao carregar
+        window.addEventListener('load', () => {
+            setTimeout(testScripts, 500);
+        });
+    </script>
+</body>
+</html>
