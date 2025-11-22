@@ -132,7 +132,10 @@
 
             <!-- Tab Navigation -->
             <div class="flex space-x-2 mt-4 overflow-x-auto custom-scrollbar">
-                <button onclick="switchTab('ingredientes')" id="tab-ingredientes" class="tab-button active px-4 py-2 rounded-lg text-base font-medium whitespace-nowrap">
+                <button onclick="switchTab('fornecedores')" id="tab-fornecedores" class="tab-button px-4 py-2 rounded-lg text-base font-medium whitespace-nowrap">
+                    🏢 Fornecedores
+                </button>
+                <button onclick="switchTab('ingredientes')" id="tab-ingredientes" class="tab-button px-4 py-2 rounded-lg text-base font-medium whitespace-nowrap">
                     📦 Ingredientes
                 </button>
                 <button onclick="switchTab('preparacoes')" id="tab-preparacoes" class="tab-button px-4 py-2 rounded-lg text-base font-medium whitespace-nowrap">
@@ -148,13 +151,118 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+        <!-- Fornecedores Tab -->
+        <div id="content-fornecedores" class="tab-content">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🏢 Cadastro de Fornecedores</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Cadastre e gerencie seus fornecedores</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome do Fornecedor *</label>
+                        <input type="text" id="supplierName" placeholder="Ex: Distribuidora ABC" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">CNPJ</label>
+                        <input type="text" id="supplierCNPJ" placeholder="00.000.000/0000-00" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Telefone</label>
+                        <input type="text" id="supplierPhone" placeholder="(00) 0000-0000" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                        <input type="email" id="supplierEmail" placeholder="contato@fornecedor.com" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Pessoa de Contato</label>
+                        <input type="text" id="supplierContact" placeholder="Nome do contato" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Endereço</label>
+                        <input type="text" id="supplierAddress" placeholder="Rua, número" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cidade</label>
+                        <input type="text" id="supplierCity" placeholder="Cidade" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Estado</label>
+                        <input type="text" id="supplierState" placeholder="UF" maxlength="2" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">CEP</label>
+                        <input type="text" id="supplierCEP" placeholder="00000-000" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Dia do Pedido</label>
+                        <select id="supplierOrderDay" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                            <option value="">Selecione...</option>
+                            <option value="Segunda">Segunda-feira</option>
+                            <option value="Terça">Terça-feira</option>
+                            <option value="Quarta">Quarta-feira</option>
+                            <option value="Quinta">Quinta-feira</option>
+                            <option value="Sexta">Sexta-feira</option>
+                            <option value="Sábado">Sábado</option>
+                            <option value="Domingo">Domingo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Dia de Entrega</label>
+                        <select id="supplierDeliveryDay" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                            <option value="">Selecione...</option>
+                            <option value="Segunda">Segunda-feira</option>
+                            <option value="Terça">Terça-feira</option>
+                            <option value="Quarta">Quarta-feira</option>
+                            <option value="Quinta">Quinta-feira</option>
+                            <option value="Sexta">Sexta-feira</option>
+                            <option value="Sábado">Sábado</option>
+                            <option value="Domingo">Domingo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Data do Último Pedido</label>
+                        <input type="date" id="supplierLastOrderDate" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Imagem do Último Pedido</label>
+                        <input type="file" id="supplierLastOrderImage" accept="image/*" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Observações</label>
+                    <textarea id="supplierNotes" rows="3" placeholder="Informações adicionais sobre o fornecedor..." class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white resize-vertical"></textarea>
+                </div>
+
+                <button onclick="addSupplier()" class="w-full md:w-auto px-6 py-3 bg-primary text-white text-base rounded-lg font-medium hover:bg-purple-700 transition-colors">
+                    + Adicionar Fornecedor
+                </button>
+
+                <!-- Lista de Fornecedores -->
+                <div id="suppliersList" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+        </div>
+
         <!-- Ingredientes Tab -->
         <div id="content-ingredientes" class="tab-content">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">📦 Cadastro de Ingredientes Básicos</h2>
                 <p class="text-gray-600 dark:text-gray-400 mb-6">Cadastre aqui os ingredientes básicos (farinha, tomate, queijo, etc)</p>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome do Ingrediente</label>
                         <input type="text" id="ingredientName" placeholder="Ex: Mussarela" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
@@ -171,6 +279,12 @@
                             <option>L</option>
                             <option>ml</option>
                             <option>unidade</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Fornecedor</label>
+                        <select id="ingredientSupplier" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                            <option value="">Nenhum</option>
                         </select>
                     </div>
                 </div>
@@ -387,6 +501,12 @@
                         <option>unidade</option>
                     </select>
                 </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Fornecedor</label>
+                    <select id="editIngredientSupplier" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                        <option value="">Nenhum</option>
+                    </select>
+                </div>
             </div>
 
             <div class="flex justify-end space-x-3">
@@ -434,6 +554,112 @@
                     Cancelar
                 </button>
                 <button onclick="saveEditPreparation()" class="px-4 py-2 text-base bg-primary text-white hover:bg-purple-700 rounded-lg transition-colors">
+                    ✓ Salvar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Fornecedor -->
+    <div id="editSupplierModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-4xl w-full p-6 slide-in custom-scrollbar" style="max-height: 90vh; overflow-y: auto;">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">✏️ Editar Fornecedor</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome do Fornecedor *</label>
+                    <input type="text" id="editSupplierName" placeholder="Ex: Distribuidora ABC" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">CNPJ</label>
+                    <input type="text" id="editSupplierCNPJ" placeholder="00.000.000/0000-00" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Telefone</label>
+                    <input type="text" id="editSupplierPhone" placeholder="(00) 0000-0000" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                    <input type="email" id="editSupplierEmail" placeholder="contato@fornecedor.com" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Pessoa de Contato</label>
+                    <input type="text" id="editSupplierContact" placeholder="Nome do contato" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Endereço</label>
+                    <input type="text" id="editSupplierAddress" placeholder="Rua, número" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cidade</label>
+                    <input type="text" id="editSupplierCity" placeholder="Cidade" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Estado</label>
+                    <input type="text" id="editSupplierState" placeholder="UF" maxlength="2" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">CEP</label>
+                    <input type="text" id="editSupplierCEP" placeholder="00000-000" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Dia do Pedido</label>
+                    <select id="editSupplierOrderDay" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                        <option value="">Selecione...</option>
+                        <option value="Segunda">Segunda-feira</option>
+                        <option value="Terça">Terça-feira</option>
+                        <option value="Quarta">Quarta-feira</option>
+                        <option value="Quinta">Quinta-feira</option>
+                        <option value="Sexta">Sexta-feira</option>
+                        <option value="Sábado">Sábado</option>
+                        <option value="Domingo">Domingo</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Dia de Entrega</label>
+                    <select id="editSupplierDeliveryDay" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                        <option value="">Selecione...</option>
+                        <option value="Segunda">Segunda-feira</option>
+                        <option value="Terça">Terça-feira</option>
+                        <option value="Quarta">Quarta-feira</option>
+                        <option value="Quinta">Quinta-feira</option>
+                        <option value="Sexta">Sexta-feira</option>
+                        <option value="Sábado">Sábado</option>
+                        <option value="Domingo">Domingo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Data do Último Pedido</label>
+                    <input type="date" id="editSupplierLastOrderDate" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Atualizar Imagem do Último Pedido</label>
+                    <input type="file" id="editSupplierLastOrderImage" accept="image/*" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Observações</label>
+                <textarea id="editSupplierNotes" rows="3" placeholder="Informações adicionais sobre o fornecedor..." class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white resize-vertical"></textarea>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <button onclick="hideEditSupplierModal()" class="px-4 py-2 text-base text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                    Cancelar
+                </button>
+                <button onclick="saveEditSupplier()" class="px-4 py-2 text-base bg-primary text-white hover:bg-purple-700 rounded-lg transition-colors">
                     ✓ Salvar Alterações
                 </button>
             </div>
@@ -530,6 +756,7 @@
         });
 
         // Data storage
+        let suppliers = [];
         let ingredients = [];
         let preparations = [];
         let pizzas = [];
@@ -539,6 +766,7 @@
         let editingIngredientId = null;
         let editingPreparationId = null;
         let editingPizzaId = null;
+        let editingSupplierId = null;
         let editPreparationIngredientsCount = 0;
         let editPizzaPreparationsCount = 0;
         let editPizzaIngredientsCount = 0;
@@ -584,18 +812,271 @@
             document.getElementById(`tab-${tabName}`).classList.add('active');
 
             // Refresh data if needed
-            if (tabName === 'preparacoes') {
+            if (tabName === 'fornecedores') {
+                renderSuppliers();
+            } else if (tabName === 'preparacoes') {
                 renderPreparations();
             } else if (tabName === 'pizzas') {
                 renderPizzas();
             }
         }
 
+        // ==================== FORNECEDORES ====================
+        function addSupplier() {
+            const name = document.getElementById('supplierName').value.trim();
+            const cnpj = document.getElementById('supplierCNPJ').value.trim();
+            const phone = document.getElementById('supplierPhone').value.trim();
+            const email = document.getElementById('supplierEmail').value.trim();
+            const contact = document.getElementById('supplierContact').value.trim();
+            const address = document.getElementById('supplierAddress').value.trim();
+            const city = document.getElementById('supplierCity').value.trim();
+            const state = document.getElementById('supplierState').value.trim();
+            const cep = document.getElementById('supplierCEP').value.trim();
+            const orderDay = document.getElementById('supplierOrderDay').value;
+            const deliveryDay = document.getElementById('supplierDeliveryDay').value;
+            const lastOrderDate = document.getElementById('supplierLastOrderDate').value;
+            const notes = document.getElementById('supplierNotes').value.trim();
+
+            if (!name) {
+                showAlert('Por favor, insira o nome do fornecedor');
+                return;
+            }
+
+            // Handle image upload
+            const imageInput = document.getElementById('supplierLastOrderImage');
+            let imageData = null;
+
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageData = e.target.result;
+                    saveSupplier();
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                saveSupplier();
+            }
+
+            function saveSupplier() {
+                suppliers.push({
+                    id: Date.now(),
+                    name,
+                    cnpj,
+                    phone,
+                    email,
+                    contact,
+                    address,
+                    city,
+                    state,
+                    cep,
+                    orderDay,
+                    deliveryDay,
+                    lastOrderDate,
+                    lastOrderImage: imageData,
+                    notes
+                });
+
+                renderSuppliers();
+
+                // Clear form
+                document.getElementById('supplierName').value = '';
+                document.getElementById('supplierCNPJ').value = '';
+                document.getElementById('supplierPhone').value = '';
+                document.getElementById('supplierEmail').value = '';
+                document.getElementById('supplierContact').value = '';
+                document.getElementById('supplierAddress').value = '';
+                document.getElementById('supplierCity').value = '';
+                document.getElementById('supplierState').value = '';
+                document.getElementById('supplierCEP').value = '';
+                document.getElementById('supplierOrderDay').value = '';
+                document.getElementById('supplierDeliveryDay').value = '';
+                document.getElementById('supplierLastOrderDate').value = '';
+                document.getElementById('supplierLastOrderImage').value = '';
+                document.getElementById('supplierNotes').value = '';
+
+                showAlert('Fornecedor cadastrado com sucesso!');
+                setTimeout(() => {
+                    hideAlertModal();
+                }, 1500);
+            }
+        }
+
+        function editSupplier(id) {
+            const supplier = suppliers.find(s => s.id === id);
+            if (!supplier) return;
+
+            // Fill modal with supplier data
+            document.getElementById('editSupplierName').value = supplier.name;
+            document.getElementById('editSupplierCNPJ').value = supplier.cnpj || '';
+            document.getElementById('editSupplierPhone').value = supplier.phone || '';
+            document.getElementById('editSupplierEmail').value = supplier.email || '';
+            document.getElementById('editSupplierContact').value = supplier.contact || '';
+            document.getElementById('editSupplierAddress').value = supplier.address || '';
+            document.getElementById('editSupplierCity').value = supplier.city || '';
+            document.getElementById('editSupplierState').value = supplier.state || '';
+            document.getElementById('editSupplierCEP').value = supplier.cep || '';
+            document.getElementById('editSupplierOrderDay').value = supplier.orderDay || '';
+            document.getElementById('editSupplierDeliveryDay').value = supplier.deliveryDay || '';
+            document.getElementById('editSupplierLastOrderDate').value = supplier.lastOrderDate || '';
+            document.getElementById('editSupplierNotes').value = supplier.notes || '';
+
+            editingSupplierId = id;
+            document.getElementById('editSupplierModal').classList.remove('hidden');
+            document.getElementById('editSupplierName').focus();
+        }
+
+        function hideEditSupplierModal() {
+            document.getElementById('editSupplierModal').classList.add('hidden');
+            editingSupplierId = null;
+        }
+
+        function saveEditSupplier() {
+            const name = document.getElementById('editSupplierName').value.trim();
+            const cnpj = document.getElementById('editSupplierCNPJ').value.trim();
+            const phone = document.getElementById('editSupplierPhone').value.trim();
+            const email = document.getElementById('editSupplierEmail').value.trim();
+            const contact = document.getElementById('editSupplierContact').value.trim();
+            const address = document.getElementById('editSupplierAddress').value.trim();
+            const city = document.getElementById('editSupplierCity').value.trim();
+            const state = document.getElementById('editSupplierState').value.trim();
+            const cep = document.getElementById('editSupplierCEP').value.trim();
+            const orderDay = document.getElementById('editSupplierOrderDay').value;
+            const deliveryDay = document.getElementById('editSupplierDeliveryDay').value;
+            const lastOrderDate = document.getElementById('editSupplierLastOrderDate').value;
+            const notes = document.getElementById('editSupplierNotes').value.trim();
+
+            if (!name) {
+                showAlert('Por favor, insira o nome do fornecedor');
+                return;
+            }
+
+            const supplier = suppliers.find(s => s.id === editingSupplierId);
+            if (!supplier) return;
+
+            // Handle image upload if new image selected
+            const imageInput = document.getElementById('editSupplierLastOrderImage');
+
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    updateSupplier(e.target.result);
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                updateSupplier(supplier.lastOrderImage);
+            }
+
+            function updateSupplier(imageData) {
+                supplier.name = name;
+                supplier.cnpj = cnpj;
+                supplier.phone = phone;
+                supplier.email = email;
+                supplier.contact = contact;
+                supplier.address = address;
+                supplier.city = city;
+                supplier.state = state;
+                supplier.cep = cep;
+                supplier.orderDay = orderDay;
+                supplier.deliveryDay = deliveryDay;
+                supplier.lastOrderDate = lastOrderDate;
+                supplier.lastOrderImage = imageData;
+                supplier.notes = notes;
+
+                renderSuppliers();
+                hideEditSupplierModal();
+
+                showAlert('Fornecedor atualizado com sucesso!');
+                setTimeout(() => {
+                    hideAlertModal();
+                }, 1500);
+            }
+        }
+
+        function renderSuppliers() {
+            const list = document.getElementById('suppliersList');
+
+            if (suppliers.length === 0) {
+                list.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4 col-span-2">Nenhum fornecedor cadastrado ainda</p>';
+                return;
+            }
+
+            list.innerHTML = suppliers.map(supplier => `
+                <div class="bg-gradient-to-br from-purple-50 to-white dark:from-gray-700 dark:to-gray-800 rounded-lg shadow p-4 card-hover border border-purple-200 dark:border-purple-900">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-900 dark:text-white text-lg">${supplier.name}</h4>
+                            ${supplier.cnpj ? `<p class="text-sm text-gray-500 dark:text-gray-400">CNPJ: ${supplier.cnpj}</p>` : ''}
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <button onclick="editSupplier(${supplier.id})" class="text-blue-500 hover:text-blue-700 p-1" title="Editar">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="deleteSupplier(${supplier.id})" class="text-red-500 hover:text-red-700 p-1" title="Excluir">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-1 text-sm mb-3">
+                        ${supplier.phone ? `<p class="text-gray-600 dark:text-gray-400"><span class="font-medium">📞</span> ${supplier.phone}</p>` : ''}
+                        ${supplier.email ? `<p class="text-gray-600 dark:text-gray-400"><span class="font-medium">✉️</span> ${supplier.email}</p>` : ''}
+                        ${supplier.contact ? `<p class="text-gray-600 dark:text-gray-400"><span class="font-medium">👤</span> ${supplier.contact}</p>` : ''}
+                        ${supplier.address || supplier.city ? `<p class="text-gray-600 dark:text-gray-400"><span class="font-medium">📍</span> ${supplier.address ? supplier.address + (supplier.city ? ', ' : '') : ''}${supplier.city || ''}${supplier.state ? ' - ' + supplier.state : ''}</p>` : ''}
+                    </div>
+                    ${supplier.orderDay || supplier.deliveryDay ? `
+                        <div class="border-t border-purple-200 dark:border-purple-800 pt-2 space-y-1 mb-3">
+                            ${supplier.orderDay ? `<p class="text-sm text-gray-600 dark:text-gray-400"><span class="font-medium">📅 Pedido:</span> ${supplier.orderDay}</p>` : ''}
+                            ${supplier.deliveryDay ? `<p class="text-sm text-gray-600 dark:text-gray-400"><span class="font-medium">🚚 Entrega:</span> ${supplier.deliveryDay}</p>` : ''}
+                            ${supplier.lastOrderDate ? `<p class="text-sm text-gray-600 dark:text-gray-400"><span class="font-medium">🗓️ Último pedido:</span> ${new Date(supplier.lastOrderDate).toLocaleDateString('pt-BR')}</p>` : ''}
+                        </div>
+                    ` : ''}
+                    ${supplier.lastOrderImage ? `
+                        <details class="text-sm mb-2">
+                            <summary class="cursor-pointer text-purple-600 dark:text-purple-400 font-medium hover:text-purple-800 dark:hover:text-purple-300">📸 Ver Imagem do Último Pedido</summary>
+                            <div class="mt-2">
+                                <img src="${supplier.lastOrderImage}" alt="Último pedido" class="w-full h-auto rounded-lg border border-purple-200 dark:border-purple-800">
+                            </div>
+                        </details>
+                    ` : ''}
+                    ${supplier.notes ? `
+                        <details class="text-sm">
+                            <summary class="cursor-pointer text-purple-600 dark:text-purple-400 font-medium hover:text-purple-800 dark:hover:text-purple-300">📝 Ver Observações</summary>
+                            <div class="mt-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-purple-100 dark:border-purple-800">
+                                <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">${supplier.notes}</p>
+                            </div>
+                        </details>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function deleteSupplier(id) {
+            showConfirmDialog('Deseja realmente excluir este fornecedor?', () => {
+                suppliers = suppliers.filter(s => s.id !== id);
+                renderSuppliers();
+            });
+        }
+
         // ==================== INGREDIENTES ====================
+        function populateSupplierOptions() {
+            const ingredientSupplier = document.getElementById('ingredientSupplier');
+            const editIngredientSupplier = document.getElementById('editIngredientSupplier');
+
+            const options = '<option value="">Nenhum</option>' +
+                suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+
+            if (ingredientSupplier) ingredientSupplier.innerHTML = options;
+            if (editIngredientSupplier) editIngredientSupplier.innerHTML = options;
+        }
+
         function addIngredient() {
             const name = document.getElementById('ingredientName').value.trim();
             const cost = parseFloat(document.getElementById('ingredientCost').value);
             const unit = document.getElementById('ingredientUnit').value;
+            const supplierId = document.getElementById('ingredientSupplier').value;
 
             if (!name) {
                 showAlert('Por favor, insira o nome do ingrediente');
@@ -607,11 +1088,15 @@
                 return;
             }
 
+            const supplier = supplierId ? suppliers.find(s => s.id === parseInt(supplierId)) : null;
+
             ingredients.push({
                 id: Date.now(),
                 name,
                 cost,
-                unit
+                unit,
+                supplierId: supplierId || null,
+                supplierName: supplier ? supplier.name : null
             });
 
             renderIngredients();
@@ -619,16 +1104,21 @@
             // Clear form
             document.getElementById('ingredientName').value = '';
             document.getElementById('ingredientCost').value = '';
+            document.getElementById('ingredientSupplier').value = '';
         }
 
         function editIngredient(id) {
             const ingredient = ingredients.find(ing => ing.id === id);
             if (!ingredient) return;
 
+            // Populate supplier options
+            populateSupplierOptions();
+
             // Fill modal with ingredient data
             document.getElementById('editIngredientName').value = ingredient.name;
             document.getElementById('editIngredientCost').value = ingredient.cost;
             document.getElementById('editIngredientUnit').value = ingredient.unit;
+            document.getElementById('editIngredientSupplier').value = ingredient.supplierId || '';
 
             // Set editing mode
             editingIngredientId = id;
@@ -647,6 +1137,7 @@
             const name = document.getElementById('editIngredientName').value.trim();
             const cost = parseFloat(document.getElementById('editIngredientCost').value);
             const unit = document.getElementById('editIngredientUnit').value;
+            const supplierId = document.getElementById('editIngredientSupplier').value;
 
             if (!name) {
                 showAlert('Por favor, insira o nome do ingrediente');
@@ -658,11 +1149,15 @@
                 return;
             }
 
+            const supplier = supplierId ? suppliers.find(s => s.id === parseInt(supplierId)) : null;
+
             const ingredient = ingredients.find(ing => ing.id === editingIngredientId);
             if (ingredient) {
                 ingredient.name = name;
                 ingredient.cost = cost;
                 ingredient.unit = unit;
+                ingredient.supplierId = supplierId || null;
+                ingredient.supplierName = supplier ? supplier.name : null;
             }
 
             renderIngredients();
@@ -677,6 +1172,9 @@
         function renderIngredients() {
             const list = document.getElementById('ingredientsList');
 
+            // Populate supplier options when rendering
+            populateSupplierOptions();
+
             if (ingredients.length === 0) {
                 list.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">Nenhum ingrediente cadastrado ainda</p>';
                 return;
@@ -685,8 +1183,11 @@
             list.innerHTML = ingredients.map(ing => `
                 <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <div class="flex-1">
-                        <span class="font-medium text-gray-900 dark:text-white">${ing.name}</span>
-                        <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">R$ ${ing.cost.toFixed(2)}/${ing.unit}</span>
+                        <div>
+                            <span class="font-medium text-gray-900 dark:text-white">${ing.name}</span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">R$ ${ing.cost.toFixed(2)}/${ing.unit}</span>
+                        </div>
+                        ${ing.supplierName ? `<div class="text-xs text-gray-500 dark:text-gray-400 mt-1">🏢 ${ing.supplierName}</div>` : ''}
                     </div>
                     <div class="flex items-center space-x-2">
                         <button onclick="editIngredient(${ing.id})" class="text-blue-500 hover:text-blue-700 p-2" title="Editar">
@@ -1631,15 +2132,16 @@
 
         // ==================== IMPORT/EXPORT ====================
         function exportProject() {
-            if (ingredients.length === 0 && preparations.length === 0 && pizzas.length === 0) {
-                showAlert('Não há dados para exportar! Adicione ingredientes, preparações ou pizzas primeiro.');
+            if (suppliers.length === 0 && ingredients.length === 0 && preparations.length === 0 && pizzas.length === 0) {
+                showAlert('Não há dados para exportar! Adicione fornecedores, ingredientes, preparações ou pizzas primeiro.');
                 return;
             }
 
             const projectData = {
-                version: '1.0',
+                version: '2.0',
                 exportDate: new Date().toISOString(),
                 data: {
+                    suppliers,
                     ingredients,
                     preparations,
                     pizzas
@@ -1685,7 +2187,10 @@
                     }
 
                     // Validate arrays
-                    const { ingredients: impIngredients, preparations: impPreparations, pizzas: impPizzas } = projectData.data;
+                    const { suppliers: impSuppliers, ingredients: impIngredients, preparations: impPreparations, pizzas: impPizzas } = projectData.data;
+
+                    // Support for older versions without suppliers
+                    const suppliersArray = impSuppliers || [];
 
                     if (!Array.isArray(impIngredients) || !Array.isArray(impPreparations) || !Array.isArray(impPizzas)) {
                         showAlert('Arquivo inválido! Estrutura de dados incorreta.');
@@ -1693,16 +2198,18 @@
                     }
 
                     // Show confirmation dialog
-                    const totalItems = impIngredients.length + impPreparations.length + impPizzas.length;
+                    const totalItems = suppliersArray.length + impIngredients.length + impPreparations.length + impPizzas.length;
 
                     showConfirmDialog(
                         `Deseja importar este projeto?\n\n` +
+                        `${suppliersArray.length} fornecedor(es)\n` +
                         `${impIngredients.length} ingrediente(s)\n` +
                         `${impPreparations.length} preparação(ões)\n` +
                         `${impPizzas.length} pizza(s)\n\n` +
                         `ATENÇÃO: Isso substituirá todos os dados atuais!`,
                         () => {
                             // Import data
+                            suppliers = suppliersArray;
                             ingredients = impIngredients;
                             preparations = impPreparations;
                             pizzas = impPizzas;
@@ -1713,6 +2220,7 @@
                             pizzaIngredientsCount = 0;
 
                             // Render all
+                            renderSuppliers();
                             renderIngredients();
                             renderPreparations();
                             renderPizzas();
@@ -1745,9 +2253,13 @@
         }
 
         // Initialize
+        renderSuppliers();
         renderIngredients();
         renderPreparations();
         renderPizzas();
+
+        // Set initial tab to fornecedores
+        switchTab('fornecedores');
     </script>
 </body>
 </html>
