@@ -666,6 +666,31 @@
         </div>
     </div>
 
+    <!-- Modal de Visualização de Imagem -->
+    <div id="imageViewModal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4" onclick="hideImageViewModal()">
+        <div class="relative max-w-6xl w-full max-h-screen" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-semibold text-white">Imagem do Último Pedido</h3>
+                <div class="flex items-center space-x-3">
+                    <button onclick="downloadCurrentImage()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        <span>Download</span>
+                    </button>
+                    <button onclick="hideImageViewModal()" class="text-white hover:text-gray-300 p-2">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg p-2 overflow-auto custom-scrollbar" style="max-height: 85vh;">
+                <img id="imageViewContent" src="" alt="Imagem do pedido" class="w-full h-auto">
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de Edição de Pizza -->
     <div id="editPizzaModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-3xl w-full p-6 slide-in custom-scrollbar" style="max-height: 90vh; overflow-y: auto;">
@@ -793,6 +818,33 @@
 
         function hideAlertModal() {
             document.getElementById('alertModal').classList.add('hidden');
+        }
+
+        // Image view modal functions
+        let currentImageData = null;
+        let currentImageFilename = 'pedido.jpg';
+
+        function showImageViewModal(imageData, filename) {
+            currentImageData = imageData;
+            currentImageFilename = filename || 'pedido.jpg';
+            document.getElementById('imageViewContent').src = imageData;
+            document.getElementById('imageViewModal').classList.remove('hidden');
+        }
+
+        function hideImageViewModal() {
+            document.getElementById('imageViewModal').classList.add('hidden');
+            currentImageData = null;
+        }
+
+        function downloadCurrentImage() {
+            if (!currentImageData) return;
+
+            const link = document.createElement('a');
+            link.href = currentImageData;
+            link.download = currentImageFilename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         // Tab management
@@ -1036,8 +1088,15 @@
                     ${supplier.lastOrderImage ? `
                         <details class="text-sm mb-2">
                             <summary class="cursor-pointer text-purple-600 dark:text-purple-400 font-medium hover:text-purple-800 dark:hover:text-purple-300">📸 Ver Imagem do Último Pedido</summary>
-                            <div class="mt-2">
-                                <img src="${supplier.lastOrderImage}" alt="Último pedido" class="w-full h-auto rounded-lg border border-purple-200 dark:border-purple-800">
+                            <div class="mt-2 relative group">
+                                <img src="${supplier.lastOrderImage}" alt="Último pedido" onclick="showImageViewModal('${supplier.lastOrderImage}', '${supplier.name.replace(/'/g, "\\'")}_pedido_${supplier.lastOrderDate || 'sem_data'}.jpg')" class="w-full h-auto rounded-lg border border-purple-200 dark:border-purple-800 cursor-pointer hover:opacity-90 transition-opacity">
+                                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                    <div class="bg-black bg-opacity-50 rounded-full p-3">
+                                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                         </details>
                     ` : ''}
@@ -1055,8 +1114,25 @@
 
         function deleteSupplier(id) {
             showConfirmDialog('Deseja realmente excluir este fornecedor?', () => {
+                // Remove supplier link from all ingredients
+                ingredients.forEach(ingredient => {
+                    if (ingredient.supplierId === id || ingredient.supplierId === String(id)) {
+                        ingredient.supplierId = null;
+                        ingredient.supplierName = null;
+                    }
+                });
+
+                // Remove supplier
                 suppliers = suppliers.filter(s => s.id !== id);
+
+                // Re-render both suppliers and ingredients
                 renderSuppliers();
+                renderIngredients();
+
+                showAlert('Fornecedor excluído e vínculos com ingredientes removidos!');
+                setTimeout(() => {
+                    hideAlertModal();
+                }, 2000);
             });
         }
 
