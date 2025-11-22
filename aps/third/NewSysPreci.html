@@ -226,7 +226,7 @@
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🍕 Nova Pizza</h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome da Pizza</label>
                         <input type="text" id="pizzaName" placeholder="Ex: Margherita" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
@@ -238,6 +238,13 @@
                             <option>Média</option>
                             <option>Grande</option>
                             <option>Gigante</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tipo</label>
+                        <select id="pizzaType" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                            <option value="salgada">Salgada</option>
+                            <option value="doce">Doce</option>
                         </select>
                     </div>
                 </div>
@@ -428,7 +435,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-3xl w-full p-6 slide-in custom-scrollbar" style="max-height: 90vh; overflow-y: auto;">
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">✏️ Editar Pizza</h3>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome da Pizza</label>
                     <input type="text" id="editPizzaName" placeholder="Ex: Margherita" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
@@ -440,6 +447,13 @@
                         <option>Média</option>
                         <option>Grande</option>
                         <option>Gigante</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tipo</label>
+                    <select id="editPizzaType" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                        <option value="salgada">Salgada</option>
+                        <option value="doce">Doce</option>
                     </select>
                 </div>
             </div>
@@ -1076,6 +1090,7 @@
         function addPizza() {
             const name = document.getElementById('pizzaName').value.trim();
             const size = document.getElementById('pizzaSize').value;
+            const type = document.getElementById('pizzaType').value;
             const additionalCost = parseFloat(document.getElementById('additionalCost').value) || 0;
             const profitMargin = parseFloat(document.getElementById('profitMargin').value) || 0;
             const wastePercentage = parseFloat(document.getElementById('wastePercentage').value) || 0;
@@ -1168,6 +1183,7 @@
                 id: Date.now(),
                 name,
                 size,
+                type,
                 preparations: pizzaPreparations,
                 ingredients: pizzaIngredients,
                 preparationsCost,
@@ -1250,7 +1266,10 @@
                 <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-md p-6 card-hover border border-gray-200 dark:border-gray-600">
                     <div class="flex items-start justify-between mb-4">
                         <div>
-                            <h3 class="text-xl font-bold text-gray-900 dark:text-white">${pizza.name}</h3>
+                            <div class="flex items-center gap-2 mb-1">
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">${pizza.name}</h3>
+                                <span class="px-2 py-1 text-xs font-medium rounded-full ${pizza.type === 'doce' ? 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'}">${pizza.type === 'doce' ? '🍫 Doce' : '🧂 Salgada'}</span>
+                            </div>
                             <p class="text-sm text-gray-500 dark:text-gray-400">${pizza.size}</p>
                         </div>
                         <div class="flex items-center space-x-2">
@@ -1348,6 +1367,7 @@
             // Fill modal with pizza data
             document.getElementById('editPizzaName').value = pizza.name;
             document.getElementById('editPizzaSize').value = pizza.size;
+            document.getElementById('editPizzaType').value = pizza.type || 'salgada';
             document.getElementById('editAdditionalCost').value = pizza.additionalCost;
             document.getElementById('editProfitMargin').value = pizza.profitMargin;
             document.getElementById('editWastePercentage').value = pizza.wastePercentage;
@@ -1468,6 +1488,7 @@
         function saveEditPizza() {
             const name = document.getElementById('editPizzaName').value.trim();
             const size = document.getElementById('editPizzaSize').value;
+            const type = document.getElementById('editPizzaType').value;
             const additionalCost = parseFloat(document.getElementById('editAdditionalCost').value) || 0;
             const profitMargin = parseFloat(document.getElementById('editProfitMargin').value) || 0;
             const wastePercentage = parseFloat(document.getElementById('editWastePercentage').value) || 0;
@@ -1561,6 +1582,7 @@
             if (pizza) {
                 pizza.name = name;
                 pizza.size = size;
+                pizza.type = type;
                 pizza.preparations = pizzaPreparations;
                 pizza.ingredients = pizzaIngredients;
                 pizza.preparationsCost = preparationsCost;
