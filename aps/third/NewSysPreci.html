@@ -286,10 +286,23 @@
 
             <!-- Lista de Pizzas -->
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                <div class="flex items-center justify-between mb-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">📊 Suas Pizzas</h2>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                        Total: <span id="totalPizzas" class="font-semibold text-primary">0</span> pizzas
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Ordenar por:</label>
+                            <select id="pizzaSortSelect" onchange="changePizzaSort()" class="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white w-full sm:w-auto">
+                                <option value="name-asc">Nome (A-Z)</option>
+                                <option value="name-desc">Nome (Z-A)</option>
+                                <option value="price-asc">Preço (Menor)</option>
+                                <option value="price-desc">Preço (Maior)</option>
+                                <option value="profit-asc">Lucro (Menor)</option>
+                                <option value="profit-desc">Lucro (Maior)</option>
+                            </select>
+                        </div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                            Total: <span id="totalPizzas" class="font-semibold text-primary">0</span> pizzas
+                        </div>
                     </div>
                 </div>
 
@@ -505,6 +518,7 @@
         let editPreparationIngredientsCount = 0;
         let editPizzaPreparationsCount = 0;
         let editPizzaIngredientsCount = 0;
+        let pizzaSortCriteria = 'name-asc'; // default sort
 
         // Modal functions
         function showConfirmDialog(message, onConfirm) {
@@ -1182,6 +1196,38 @@
             }, 1500);
         }
 
+        function changePizzaSort() {
+            pizzaSortCriteria = document.getElementById('pizzaSortSelect').value;
+            renderPizzas();
+        }
+
+        function sortPizzas(pizzasArray) {
+            const sorted = [...pizzasArray];
+
+            switch(pizzaSortCriteria) {
+                case 'name-asc':
+                    sorted.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+                    break;
+                case 'name-desc':
+                    sorted.sort((a, b) => b.name.localeCompare(a.name, 'pt-BR'));
+                    break;
+                case 'price-asc':
+                    sorted.sort((a, b) => a.salePrice - b.salePrice);
+                    break;
+                case 'price-desc':
+                    sorted.sort((a, b) => b.salePrice - a.salePrice);
+                    break;
+                case 'profit-asc':
+                    sorted.sort((a, b) => a.profit - b.profit);
+                    break;
+                case 'profit-desc':
+                    sorted.sort((a, b) => b.profit - a.profit);
+                    break;
+            }
+
+            return sorted;
+        }
+
         function renderPizzas() {
             const list = document.getElementById('pizzasList');
             const emptyState = document.getElementById('emptyState');
@@ -1197,7 +1243,10 @@
 
             emptyState.classList.add('hidden');
 
-            list.innerHTML = pizzas.map(pizza => `
+            // Apply sorting
+            const sortedPizzas = sortPizzas(pizzas);
+
+            list.innerHTML = sortedPizzas.map(pizza => `
                 <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-md p-6 card-hover border border-gray-200 dark:border-gray-600">
                     <div class="flex items-start justify-between mb-4">
                         <div>
