@@ -209,6 +209,11 @@
                     </button>
                 </div>
 
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Modo de Preparo (opcional)</label>
+                    <textarea id="preparationInstructions" rows="4" placeholder="Ex: Misture todos os ingredientes, deixe descansar por 30 minutos, amasse até ficar homogêneo..." class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white resize-vertical"></textarea>
+                </div>
+
                 <button onclick="addPreparation()" class="w-full px-6 py-3 bg-green-600 text-white text-base rounded-lg font-medium hover:bg-green-700 transition-colors">
                     ✓ Criar Preparação
                 </button>
@@ -417,6 +422,11 @@
                 <button onclick="addEditPreparationIngredient()" class="mt-3 px-4 py-2 text-base border-2 border-dashed border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 rounded-lg hover:border-primary hover:text-primary transition-colors w-full">
                     + Adicionar Ingrediente
                 </button>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Modo de Preparo (opcional)</label>
+                <textarea id="editPreparationInstructions" rows="4" placeholder="Ex: Misture todos os ingredientes, deixe descansar por 30 minutos, amasse até ficar homogêneo..." class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white resize-vertical"></textarea>
             </div>
 
             <div class="flex justify-end space-x-3">
@@ -743,6 +753,7 @@
         function addPreparation() {
             const name = document.getElementById('preparationName').value.trim();
             const yield_qty = parseFloat(document.getElementById('preparationYield').value) || 1;
+            const instructions = document.getElementById('preparationInstructions').value.trim();
 
             if (!name) {
                 showAlert('Por favor, insira o nome da preparação');
@@ -796,7 +807,8 @@
                 yield: yield_qty,
                 ingredients: prepIngredients,
                 totalCost,
-                unitCost
+                unitCost,
+                instructions
             });
 
             renderPreparations();
@@ -804,6 +816,7 @@
             // Clear form
             document.getElementById('preparationName').value = '';
             document.getElementById('preparationYield').value = '1';
+            document.getElementById('preparationInstructions').value = '';
             document.getElementById('preparationIngredients').innerHTML = '';
             preparationIngredientsCount = 0;
 
@@ -820,6 +833,7 @@
             // Fill modal with preparation data
             document.getElementById('editPreparationName').value = preparation.name;
             document.getElementById('editPreparationYield').value = preparation.yield;
+            document.getElementById('editPreparationInstructions').value = preparation.instructions || '';
 
             // Clear existing ingredients
             document.getElementById('editPreparationIngredients').innerHTML = '';
@@ -888,6 +902,7 @@
         function saveEditPreparation() {
             const name = document.getElementById('editPreparationName').value.trim();
             const yield_qty = parseFloat(document.getElementById('editPreparationYield').value) || 1;
+            const instructions = document.getElementById('editPreparationInstructions').value.trim();
 
             if (!name) {
                 showAlert('Por favor, insira o nome da preparação');
@@ -942,6 +957,7 @@
                 preparation.ingredients = prepIngredients;
                 preparation.totalCost = totalCost;
                 preparation.unitCost = unitCost;
+                preparation.instructions = instructions;
             }
 
             renderPreparations();
@@ -989,7 +1005,7 @@
                             </div>
                         `).join('')}
                     </div>
-                    <div class="border-t border-blue-200 dark:border-blue-800 pt-2 space-y-1">
+                    <div class="border-t border-blue-200 dark:border-blue-800 pt-2 space-y-1 mb-3">
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-600 dark:text-gray-400">Custo total:</span>
                             <span class="font-medium text-gray-900 dark:text-white">R$ ${prep.totalCost.toFixed(2)}</span>
@@ -999,6 +1015,14 @@
                             <span class="font-bold text-blue-600 dark:text-blue-400">R$ ${prep.unitCost.toFixed(2)}</span>
                         </div>
                     </div>
+                    ${prep.instructions ? `
+                        <details class="text-sm">
+                            <summary class="cursor-pointer text-blue-600 dark:text-blue-400 font-medium hover:text-blue-800 dark:hover:text-blue-300">📝 Ver Modo de Preparo</summary>
+                            <div class="mt-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-blue-100 dark:border-blue-800">
+                                <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">${prep.instructions}</p>
+                            </div>
+                        </details>
+                    ` : ''}
                 </div>
             `).join('');
         }
