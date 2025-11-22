@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precificação de Pizzas - Sistema Completo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .card-hover:hover {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            opacity: 1;
+        }
+
+        .tab-button {
+            transition: all 0.2s ease;
+        }
+
+        .tab-button.active {
+            background-color: #5D5CDE;
+            color: white;
+        }
+
+        .tab-button:not(.active) {
+            background-color: transparent;
+            color: #6b7280;
+        }
+
+        .dark .tab-button:not(.active) {
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">Precificação de Pizzas</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Sistema Completo</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="exportProject()" class="px-4 py-2 bg-green-600 text-white text-base rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        <span class="hidden sm:inline">Exportar</span>
+                    </button>
+                    <button onclick="triggerImport()" class="px-4 py-2 bg-blue-600 text-white text-base rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        </svg>
+                        <span class="hidden sm:inline">Importar</span>
+                    </button>
+                    <input type="file" id="importFileInput" accept=".json" class="hidden" onchange="importProject(event)">
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="flex space-x-2 mt-4 overflow-x-auto custom-scrollbar">
+                <button onclick="switchTab('ingredientes')" id="tab-ingredientes" class="tab-button active px-4 py-2 rounded-lg text-base font-medium whitespace-nowrap">
+                    📦 Ingredientes
+                </button>
+                <button onclick="switchTab('preparacoes')" id="tab-preparacoes" class="tab-button px-4 py-2 rounded-lg text-base font-medium whitespace-nowrap">
+                    🍴 Preparações
+                </button>
+                <button onclick="switchTab('pizzas')" id="tab-pizzas" class="tab-button px-4 py-2 rounded-lg text-base font-medium whitespace-nowrap">
+                    🍕 Pizzas
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Ingredientes Tab -->
+        <div id="content-ingredientes" class="tab-content">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">📦 Cadastro de Ingredientes Básicos</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Cadastre aqui os ingredientes básicos (farinha, tomate, queijo, etc)</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome do Ingrediente</label>
+                        <input type="text" id="ingredientName" placeholder="Ex: Mussarela" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Custo (R$)</label>
+                        <input type="number" id="ingredientCost" placeholder="0.00" step="0.01" min="0" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unidade</label>
+                        <select id="ingredientUnit" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                            <option>kg</option>
+                            <option>g</option>
+                            <option>L</option>
+                            <option>ml</option>
+                            <option>unidade</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="addIngredient()" class="w-full md:w-auto px-6 py-3 bg-primary text-white text-base rounded-lg font-medium hover:bg-purple-700 transition-colors">
+                    + Adicionar Ingrediente
+                </button>
+
+                <!-- Lista de Ingredientes -->
+                <div id="ingredientsList" class="mt-6 space-y-2"></div>
+            </div>
+        </div>
+
+        <!-- Preparações Tab -->
+        <div id="content-preparacoes" class="tab-content hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🍴 Cadastro de Preparações</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Crie preparações que serão usadas nas pizzas (massa, molho, borda recheada, etc)</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome da Preparação</label>
+                        <input type="text" id="preparationName" placeholder="Ex: Massa de Pizza" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Rendimento (quantas unidades)</label>
+                        <input type="number" id="preparationYield" placeholder="1" step="1" min="1" value="1" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Ingredientes da Preparação</h3>
+                    <div id="preparationIngredients" class="space-y-3"></div>
+                    <button onclick="addPreparationIngredient()" class="mt-3 px-4 py-2 text-base border-2 border-dashed border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 rounded-lg hover:border-primary hover:text-primary transition-colors w-full">
+                        + Adicionar Ingrediente à Preparação
+                    </button>
+                </div>
+
+                <button onclick="addPreparation()" class="w-full px-6 py-3 bg-green-600 text-white text-base rounded-lg font-medium hover:bg-green-700 transition-colors">
+                    ✓ Criar Preparação
+                </button>
+            </div>
+
+            <!-- Lista de Preparações -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Suas Preparações</h3>
+                <div id="preparationsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+        </div>
+
+        <!-- Pizzas Tab -->
+        <div id="content-pizzas" class="tab-content hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🍕 Nova Pizza</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome da Pizza</label>
+                        <input type="text" id="pizzaName" placeholder="Ex: Margherita" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tamanho</label>
+                        <select id="pizzaSize" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                            <option>Pequena</option>
+                            <option>Média</option>
+                            <option>Grande</option>
+                            <option>Gigante</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Componentes da Pizza</h3>
+
+                    <!-- Preparações -->
+                    <div class="mb-4">
+                        <h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-3">Preparações</h4>
+                        <div id="pizzaPreparations" class="space-y-3"></div>
+                        <button onclick="addPizzaPreparation()" class="mt-3 px-4 py-2 text-base border-2 border-dashed border-blue-300 dark:border-blue-600 text-blue-600 dark:text-blue-400 rounded-lg hover:border-blue-500 hover:text-blue-700 transition-colors w-full">
+                            + Adicionar Preparação
+                        </button>
+                    </div>
+
+                    <!-- Ingredientes Diretos -->
+                    <div>
+                        <h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-3">Ingredientes Diretos</h4>
+                        <div id="pizzaIngredients" class="space-y-3"></div>
+                        <button onclick="addPizzaIngredient()" class="mt-3 px-4 py-2 text-base border-2 border-dashed border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 rounded-lg hover:border-primary hover:text-primary transition-colors w-full">
+                            + Adicionar Ingrediente
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Custo Adicional (R$)</label>
+                        <input type="number" id="additionalCost" placeholder="Gás, luz, embalagem..." step="0.01" min="0" value="0" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Margem de Lucro (%)</label>
+                        <input type="number" id="profitMargin" placeholder="60" step="1" min="0" value="60" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Desperdício (%)</label>
+                        <input type="number" id="wastePercentage" placeholder="10" step="1" min="0" value="10" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                </div>
+
+                <button onclick="addPizza()" class="w-full px-6 py-3 bg-green-600 text-white text-base rounded-lg font-medium hover:bg-green-700 transition-colors">
+                    ✓ Criar Pizza
+                </button>
+            </div>
+
+            <!-- Lista de Pizzas -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">📊 Suas Pizzas</h2>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        Total: <span id="totalPizzas" class="font-semibold text-primary">0</span> pizzas
+                    </div>
+                </div>
+
+                <div id="pizzasList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+                <div id="emptyState" class="text-center py-12">
+                    <div class="w-24 h-24 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Nenhuma pizza cadastrada</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-4">Comece adicionando ingredientes, preparações e criando sua primeira pizza!</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal de Confirmação -->
+    <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 slide-in">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3" id="confirmTitle">Confirmar ação</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6" id="confirmMessage"></p>
+            <div class="flex justify-end space-x-3">
+                <button onclick="hideConfirmModal()" class="px-4 py-2 text-base text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                    Cancelar
+                </button>
+                <button id="confirmButton" class="px-4 py-2 text-base bg-red-500 text-white hover:bg-red-600 rounded-lg transition-colors">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Alerta -->
+    <div id="alertModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 slide-in">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3" id="alertTitle">Atenção</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6" id="alertMessage"></p>
+            <div class="flex justify-end">
+                <button onclick="hideAlertModal()" class="px-4 py-2 text-base bg-primary text-white hover:bg-purple-700 rounded-lg transition-colors">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode setup
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // Data storage
+        let ingredients = [];
+        let preparations = [];
+        let pizzas = [];
+        let preparationIngredientsCount = 0;
+        let pizzaPreparationsCount = 0;
+        let pizzaIngredientsCount = 0;
+
+        // Modal functions
+        function showConfirmDialog(message, onConfirm) {
+            document.getElementById('confirmMessage').textContent = message;
+            document.getElementById('confirmModal').classList.remove('hidden');
+            document.getElementById('confirmButton').onclick = () => {
+                hideConfirmModal();
+                onConfirm();
+            };
+        }
+
+        function hideConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+
+        function showAlert(message) {
+            document.getElementById('alertMessage').textContent = message;
+            document.getElementById('alertModal').classList.remove('hidden');
+        }
+
+        function hideAlertModal() {
+            document.getElementById('alertModal').classList.add('hidden');
+        }
+
+        // Tab management
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+
+            // Refresh data if needed
+            if (tabName === 'preparacoes') {
+                renderPreparations();
+            } else if (tabName === 'pizzas') {
+                renderPizzas();
+            }
+        }
+
+        // ==================== INGREDIENTES ====================
+        function addIngredient() {
+            const name = document.getElementById('ingredientName').value.trim();
+            const cost = parseFloat(document.getElementById('ingredientCost').value);
+            const unit = document.getElementById('ingredientUnit').value;
+
+            if (!name) {
+                showAlert('Por favor, insira o nome do ingrediente');
+                return;
+            }
+
+            if (isNaN(cost) || cost < 0) {
+                showAlert('Por favor, insira um custo válido');
+                return;
+            }
+
+            ingredients.push({
+                id: Date.now(),
+                name,
+                cost,
+                unit
+            });
+
+            renderIngredients();
+
+            // Clear form
+            document.getElementById('ingredientName').value = '';
+            document.getElementById('ingredientCost').value = '';
+        }
+
+        function renderIngredients() {
+            const list = document.getElementById('ingredientsList');
+
+            if (ingredients.length === 0) {
+                list.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">Nenhum ingrediente cadastrado ainda</p>';
+                return;
+            }
+
+            list.innerHTML = ingredients.map(ing => `
+                <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="flex-1">
+                        <span class="font-medium text-gray-900 dark:text-white">${ing.name}</span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">R$ ${ing.cost.toFixed(2)}/${ing.unit}</span>
+                    </div>
+                    <button onclick="deleteIngredient(${ing.id})" class="text-red-500 hover:text-red-700 p-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function deleteIngredient(id) {
+            showConfirmDialog('Deseja realmente excluir este ingrediente?', () => {
+                ingredients = ingredients.filter(ing => ing.id !== id);
+                renderIngredients();
+            });
+        }
+
+        // ==================== PREPARAÇÕES ====================
+        function addPreparationIngredient() {
+            if (ingredients.length === 0) {
+                showAlert('Adicione ingredientes básicos primeiro!');
+                return;
+            }
+
+            const container = document.getElementById('preparationIngredients');
+            const id = preparationIngredientsCount++;
+
+            const div = document.createElement('div');
+            div.id = `prepIng_${id}`;
+            div.className = 'grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg slide-in';
+            div.innerHTML = `
+                <div>
+                    <select id="prepIngSelect_${id}" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+                        ${ingredients.map(ing => `<option value="${ing.id}">${ing.name} (${ing.unit})</option>`).join('')}
+                    </select>
+                </div>
+                <div>
+                    <input type="number" id="prepIngQty_${id}" placeholder="Quantidade" step="0.01" min="0" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+                </div>
+                <div>
+                    <button onclick="removePreparationIngredient(${id})" class="w-full px-3 py-2 text-base bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                        Remover
+                    </button>
+                </div>
+            `;
+
+            container.appendChild(div);
+        }
+
+        function removePreparationIngredient(id) {
+            const element = document.getElementById(`prepIng_${id}`);
+            if (element) {
+                element.remove();
+            }
+        }
+
+        function addPreparation() {
+            const name = document.getElementById('preparationName').value.trim();
+            const yield_qty = parseFloat(document.getElementById('preparationYield').value) || 1;
+
+            if (!name) {
+                showAlert('Por favor, insira o nome da preparação');
+                return;
+            }
+
+            // Get preparation ingredients
+            const prepIngredients = [];
+            let totalCost = 0;
+
+            for (let i = 0; i < preparationIngredientsCount; i++) {
+                const selectElement = document.getElementById(`prepIngSelect_${i}`);
+                const qtyElement = document.getElementById(`prepIngQty_${i}`);
+
+                if (selectElement && qtyElement) {
+                    const ingredientId = parseInt(selectElement.value);
+                    const quantity = parseFloat(qtyElement.value);
+
+                    if (isNaN(quantity) || quantity <= 0) {
+                        showAlert('Por favor, insira quantidades válidas para todos os ingredientes');
+                        return;
+                    }
+
+                    const ingredient = ingredients.find(ing => ing.id === ingredientId);
+                    if (ingredient) {
+                        const cost = ingredient.cost * quantity;
+                        totalCost += cost;
+
+                        prepIngredients.push({
+                            ingredientId,
+                            name: ingredient.name,
+                            quantity,
+                            unit: ingredient.unit,
+                            unitCost: ingredient.cost,
+                            totalCost: cost
+                        });
+                    }
+                }
+            }
+
+            if (prepIngredients.length === 0) {
+                showAlert('Adicione pelo menos um ingrediente à preparação');
+                return;
+            }
+
+            const unitCost = totalCost / yield_qty;
+
+            preparations.push({
+                id: Date.now(),
+                name,
+                yield: yield_qty,
+                ingredients: prepIngredients,
+                totalCost,
+                unitCost
+            });
+
+            renderPreparations();
+
+            // Clear form
+            document.getElementById('preparationName').value = '';
+            document.getElementById('preparationYield').value = '1';
+            document.getElementById('preparationIngredients').innerHTML = '';
+            preparationIngredientsCount = 0;
+
+            showAlert('Preparação criada com sucesso!');
+            setTimeout(() => {
+                hideAlertModal();
+            }, 1500);
+        }
+
+        function renderPreparations() {
+            const list = document.getElementById('preparationsList');
+
+            if (preparations.length === 0) {
+                list.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">Nenhuma preparação cadastrada ainda</p>';
+                return;
+            }
+
+            list.innerHTML = preparations.map(prep => `
+                <div class="bg-gradient-to-br from-blue-50 to-white dark:from-gray-700 dark:to-gray-800 rounded-lg shadow p-4 card-hover border border-blue-200 dark:border-blue-900">
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <h4 class="font-bold text-gray-900 dark:text-white">${prep.name}</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Rendimento: ${prep.yield} unidade(s)</p>
+                        </div>
+                        <button onclick="deletePreparation(${prep.id})" class="text-red-500 hover:text-red-700 p-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="space-y-1 mb-3 text-sm">
+                        ${prep.ingredients.map(ing => `
+                            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                <span>${ing.name}</span>
+                                <span>${ing.quantity} ${ing.unit}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="border-t border-blue-200 dark:border-blue-800 pt-2 space-y-1">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Custo total:</span>
+                            <span class="font-medium text-gray-900 dark:text-white">R$ ${prep.totalCost.toFixed(2)}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Custo unitário:</span>
+                            <span class="font-bold text-blue-600 dark:text-blue-400">R$ ${prep.unitCost.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deletePreparation(id) {
+            showConfirmDialog('Deseja realmente excluir esta preparação?', () => {
+                preparations = preparations.filter(prep => prep.id !== id);
+                renderPreparations();
+            });
+        }
+
+        // ==================== PIZZAS ====================
+        function addPizzaPreparation() {
+            if (preparations.length === 0) {
+                showAlert('Cadastre preparações primeiro!');
+                return;
+            }
+
+            const container = document.getElementById('pizzaPreparations');
+            const id = pizzaPreparationsCount++;
+
+            const div = document.createElement('div');
+            div.id = `pizzaPrep_${id}`;
+            div.className = 'grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg slide-in border border-blue-200 dark:border-blue-800';
+            div.innerHTML = `
+                <div>
+                    <select id="pizzaPrepSelect_${id}" class="w-full px-3 py-2 text-base border border-blue-300 dark:border-blue-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+                        ${preparations.map(prep => `<option value="${prep.id}">${prep.name}</option>`).join('')}
+                    </select>
+                </div>
+                <div>
+                    <input type="number" id="pizzaPrepQty_${id}" placeholder="Quantidade" step="0.01" min="0" class="w-full px-3 py-2 text-base border border-blue-300 dark:border-blue-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+                </div>
+                <div>
+                    <button onclick="removePizzaPreparation(${id})" class="w-full px-3 py-2 text-base bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                        Remover
+                    </button>
+                </div>
+            `;
+
+            container.appendChild(div);
+        }
+
+        function removePizzaPreparation(id) {
+            const element = document.getElementById(`pizzaPrep_${id}`);
+            if (element) {
+                element.remove();
+            }
+        }
+
+        function addPizzaIngredient() {
+            if (ingredients.length === 0) {
+                showAlert('Adicione ingredientes básicos primeiro!');
+                return;
+            }
+
+            const container = document.getElementById('pizzaIngredients');
+            const id = pizzaIngredientsCount++;
+
+            const div = document.createElement('div');
+            div.id = `pizzaIng_${id}`;
+            div.className = 'grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg slide-in';
+            div.innerHTML = `
+                <div>
+                    <select id="pizzaIngSelect_${id}" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+                        ${ingredients.map(ing => `<option value="${ing.id}">${ing.name} (${ing.unit})</option>`).join('')}
+                    </select>
+                </div>
+                <div>
+                    <input type="number" id="pizzaIngQty_${id}" placeholder="Quantidade" step="0.01" min="0" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+                </div>
+                <div>
+                    <button onclick="removePizzaIngredient(${id})" class="w-full px-3 py-2 text-base bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                        Remover
+                    </button>
+                </div>
+            `;
+
+            container.appendChild(div);
+        }
+
+        function removePizzaIngredient(id) {
+            const element = document.getElementById(`pizzaIng_${id}`);
+            if (element) {
+                element.remove();
+            }
+        }
+
+        function addPizza() {
+            const name = document.getElementById('pizzaName').value.trim();
+            const size = document.getElementById('pizzaSize').value;
+            const additionalCost = parseFloat(document.getElementById('additionalCost').value) || 0;
+            const profitMargin = parseFloat(document.getElementById('profitMargin').value) || 0;
+            const wastePercentage = parseFloat(document.getElementById('wastePercentage').value) || 0;
+
+            if (!name) {
+                showAlert('Por favor, insira o nome da pizza');
+                return;
+            }
+
+            // Get preparations
+            const pizzaPreparations = [];
+            let preparationsCost = 0;
+
+            for (let i = 0; i < pizzaPreparationsCount; i++) {
+                const selectElement = document.getElementById(`pizzaPrepSelect_${i}`);
+                const qtyElement = document.getElementById(`pizzaPrepQty_${i}`);
+
+                if (selectElement && qtyElement) {
+                    const preparationId = parseInt(selectElement.value);
+                    const quantity = parseFloat(qtyElement.value);
+
+                    if (isNaN(quantity) || quantity <= 0) {
+                        showAlert('Por favor, insira quantidades válidas para todas as preparações');
+                        return;
+                    }
+
+                    const preparation = preparations.find(prep => prep.id === preparationId);
+                    if (preparation) {
+                        const cost = preparation.unitCost * quantity;
+                        preparationsCost += cost;
+
+                        pizzaPreparations.push({
+                            preparationId,
+                            name: preparation.name,
+                            quantity,
+                            unitCost: preparation.unitCost,
+                            totalCost: cost
+                        });
+                    }
+                }
+            }
+
+            // Get ingredients
+            const pizzaIngredients = [];
+            let ingredientsCost = 0;
+
+            for (let i = 0; i < pizzaIngredientsCount; i++) {
+                const selectElement = document.getElementById(`pizzaIngSelect_${i}`);
+                const qtyElement = document.getElementById(`pizzaIngQty_${i}`);
+
+                if (selectElement && qtyElement) {
+                    const ingredientId = parseInt(selectElement.value);
+                    const quantity = parseFloat(qtyElement.value);
+
+                    if (isNaN(quantity) || quantity <= 0) {
+                        showAlert('Por favor, insira quantidades válidas para todos os ingredientes');
+                        return;
+                    }
+
+                    const ingredient = ingredients.find(ing => ing.id === ingredientId);
+                    if (ingredient) {
+                        const cost = ingredient.cost * quantity;
+                        ingredientsCost += cost;
+
+                        pizzaIngredients.push({
+                            ingredientId,
+                            name: ingredient.name,
+                            quantity,
+                            unit: ingredient.unit,
+                            unitCost: ingredient.cost,
+                            totalCost: cost
+                        });
+                    }
+                }
+            }
+
+            if (pizzaPreparations.length === 0 && pizzaIngredients.length === 0) {
+                showAlert('Adicione pelo menos uma preparação ou ingrediente à pizza');
+                return;
+            }
+
+            // Calculate pricing
+            const baseCost = preparationsCost + ingredientsCost;
+            const wasteMultiplier = 1 + (wastePercentage / 100);
+            const totalCost = (baseCost * wasteMultiplier) + additionalCost;
+            const salePrice = totalCost * (1 + profitMargin / 100);
+            const profit = salePrice - totalCost;
+
+            pizzas.push({
+                id: Date.now(),
+                name,
+                size,
+                preparations: pizzaPreparations,
+                ingredients: pizzaIngredients,
+                preparationsCost,
+                ingredientsCost,
+                baseCost,
+                additionalCost,
+                wastePercentage,
+                totalCost,
+                profitMargin,
+                salePrice,
+                profit
+            });
+
+            renderPizzas();
+
+            // Clear form
+            document.getElementById('pizzaName').value = '';
+            document.getElementById('pizzaPreparations').innerHTML = '';
+            document.getElementById('pizzaIngredients').innerHTML = '';
+            pizzaPreparationsCount = 0;
+            pizzaIngredientsCount = 0;
+
+            showAlert('Pizza criada com sucesso!');
+            setTimeout(() => {
+                hideAlertModal();
+            }, 1500);
+        }
+
+        function renderPizzas() {
+            const list = document.getElementById('pizzasList');
+            const emptyState = document.getElementById('emptyState');
+            const totalPizzas = document.getElementById('totalPizzas');
+
+            totalPizzas.textContent = pizzas.length;
+
+            if (pizzas.length === 0) {
+                list.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            list.innerHTML = pizzas.map(pizza => `
+                <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-md p-6 card-hover border border-gray-200 dark:border-gray-600">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white">${pizza.name}</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">${pizza.size}</p>
+                        </div>
+                        <button onclick="deletePizza(${pizza.id})" class="text-red-500 hover:text-red-700 p-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="space-y-2 mb-4 text-sm">
+                        ${pizza.preparations.length > 0 ? `
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Custo preparações:</span>
+                                <span class="font-medium text-gray-900 dark:text-white">R$ ${pizza.preparationsCost.toFixed(2)}</span>
+                            </div>
+                        ` : ''}
+                        ${pizza.ingredients.length > 0 ? `
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Custo ingredientes:</span>
+                                <span class="font-medium text-gray-900 dark:text-white">R$ ${pizza.ingredientsCost.toFixed(2)}</span>
+                            </div>
+                        ` : ''}
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">Desperdício (${pizza.wastePercentage}%):</span>
+                            <span class="font-medium text-gray-900 dark:text-white">R$ ${(pizza.baseCost * pizza.wastePercentage / 100).toFixed(2)}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">Custos adicionais:</span>
+                            <span class="font-medium text-gray-900 dark:text-white">R$ ${pizza.additionalCost.toFixed(2)}</span>
+                        </div>
+                        <div class="border-t border-gray-200 dark:border-gray-600 pt-2 flex justify-between">
+                            <span class="font-medium text-gray-900 dark:text-white">Custo Total:</span>
+                            <span class="font-bold text-red-600 dark:text-red-400">R$ ${pizza.totalCost.toFixed(2)}</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Margem: ${pizza.profitMargin}%</span>
+                            <span class="text-sm text-green-600 dark:text-green-400 font-medium">Lucro: R$ ${pizza.profit.toFixed(2)}</span>
+                        </div>
+                        <div class="text-2xl font-bold text-green-600 dark:text-green-400">R$ ${pizza.salePrice.toFixed(2)}</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">Preço de Venda</div>
+                    </div>
+
+                    <details class="text-sm">
+                        <summary class="cursor-pointer text-primary font-medium hover:text-purple-700">Ver Composição</summary>
+                        <div class="mt-3 space-y-2">
+                            ${pizza.preparations.length > 0 ? `
+                                <div class="pl-2">
+                                    <p class="font-semibold text-blue-600 dark:text-blue-400 mb-1">Preparações:</p>
+                                    ${pizza.preparations.map(prep => `
+                                        <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                            <span>${prep.name}</span>
+                                            <span>${prep.quantity}x (R$ ${prep.totalCost.toFixed(2)})</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            ${pizza.ingredients.length > 0 ? `
+                                <div class="pl-2">
+                                    <p class="font-semibold text-gray-700 dark:text-gray-300 mb-1">Ingredientes Diretos:</p>
+                                    ${pizza.ingredients.map(ing => `
+                                        <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                            <span>${ing.name}</span>
+                                            <span>${ing.quantity} ${ing.unit} (R$ ${ing.totalCost.toFixed(2)})</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </details>
+                </div>
+            `).join('');
+        }
+
+        function deletePizza(id) {
+            showConfirmDialog('Deseja realmente excluir esta pizza?', () => {
+                pizzas = pizzas.filter(pizza => pizza.id !== id);
+                renderPizzas();
+            });
+        }
+
+        // ==================== IMPORT/EXPORT ====================
+        function exportProject() {
+            if (ingredients.length === 0 && preparations.length === 0 && pizzas.length === 0) {
+                showAlert('Não há dados para exportar! Adicione ingredientes, preparações ou pizzas primeiro.');
+                return;
+            }
+
+            const projectData = {
+                version: '1.0',
+                exportDate: new Date().toISOString(),
+                data: {
+                    ingredients,
+                    preparations,
+                    pizzas
+                }
+            };
+
+            const jsonString = JSON.stringify(projectData, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            const timestamp = new Date().toISOString().split('T')[0];
+            link.download = `precificacao-pizzas-${timestamp}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showAlert('Projeto exportado com sucesso!');
+            setTimeout(() => {
+                hideAlertModal();
+            }, 1500);
+        }
+
+        function triggerImport() {
+            document.getElementById('importFileInput').click();
+        }
+
+        function importProject(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const projectData = JSON.parse(e.target.result);
+
+                    // Validate data structure
+                    if (!projectData.data || !projectData.version) {
+                        showAlert('Arquivo inválido! O formato do arquivo não é reconhecido.');
+                        return;
+                    }
+
+                    // Validate arrays
+                    const { ingredients: impIngredients, preparations: impPreparations, pizzas: impPizzas } = projectData.data;
+
+                    if (!Array.isArray(impIngredients) || !Array.isArray(impPreparations) || !Array.isArray(impPizzas)) {
+                        showAlert('Arquivo inválido! Estrutura de dados incorreta.');
+                        return;
+                    }
+
+                    // Show confirmation dialog
+                    const totalItems = impIngredients.length + impPreparations.length + impPizzas.length;
+
+                    showConfirmDialog(
+                        `Deseja importar este projeto?\n\n` +
+                        `${impIngredients.length} ingrediente(s)\n` +
+                        `${impPreparations.length} preparação(ões)\n` +
+                        `${impPizzas.length} pizza(s)\n\n` +
+                        `ATENÇÃO: Isso substituirá todos os dados atuais!`,
+                        () => {
+                            // Import data
+                            ingredients = impIngredients;
+                            preparations = impPreparations;
+                            pizzas = impPizzas;
+
+                            // Reset counters
+                            preparationIngredientsCount = 0;
+                            pizzaPreparationsCount = 0;
+                            pizzaIngredientsCount = 0;
+
+                            // Render all
+                            renderIngredients();
+                            renderPreparations();
+                            renderPizzas();
+
+                            // Clear forms
+                            document.getElementById('preparationIngredients').innerHTML = '';
+                            document.getElementById('pizzaPreparations').innerHTML = '';
+                            document.getElementById('pizzaIngredients').innerHTML = '';
+
+                            showAlert(`Projeto importado com sucesso!\n\n${totalItems} itens carregados.`);
+                            setTimeout(() => {
+                                hideAlertModal();
+                            }, 2000);
+                        }
+                    );
+
+                } catch (error) {
+                    showAlert('Erro ao importar arquivo! Verifique se o arquivo é válido.');
+                }
+            };
+
+            reader.onerror = function() {
+                showAlert('Erro ao ler o arquivo!');
+            };
+
+            reader.readAsText(file);
+
+            // Reset file input
+            event.target.value = '';
+        }
+
+        // Initialize
+        renderIngredients();
+        renderPreparations();
+        renderPizzas();
+    </script>
+</body>
+</html>
