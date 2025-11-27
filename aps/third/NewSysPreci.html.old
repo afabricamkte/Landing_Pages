@@ -1,9 +1,11 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Precificação de Pizzas - Sistema Completo</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -93,7 +95,7 @@
             color: #9ca3af;
         }
     </style>
-<script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.3f7572448765332f3047.js"></script></head>
+</head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
 
     <!-- Header -->
@@ -3269,29 +3271,45 @@
 
             // Create print content
             const printContent = pizzas.map(pizza => {
-                // Build preparations list (simplified - unitário)
-                const preparationsList = pizza.preparations.map(prep => {
+                // Get all ingredients including those from preparations
+                const allIngredients = [];
+
+                // Add ingredients from preparations
+                pizza.preparations.forEach(prep => {
                     const preparation = preparations.find(p => p.id === prep.preparationId);
                     if (preparation) {
-                        const unitCost = preparation.unitCost * prep.quantity;
-                        return {
-                            name: preparation.name,
-                            quantity: prep.quantity,
-                            cost: unitCost
-                        };
+                        preparation.ingredients.forEach(ing => {
+                            const ingredient = ingredients.find(i => i.id === ing.ingredientId);
+                            if (ingredient) {
+                                allIngredients.push({
+                                    name: `${ing.name} (via ${preparation.name})`,
+                                    quantity: ing.quantity * prep.quantity,
+                                    unit: ing.unit,
+                                    cost: ing.totalCost * prep.quantity
+                                });
+                            }
+                        });
                     }
-                    return null;
-                }).filter(p => p !== null);
+                });
 
-                // Build direct ingredients list
-                const directIngredients = pizza.ingredients.map(ing => {
-                    return {
+                // Add direct ingredients
+                pizza.ingredients.forEach(ing => {
+                    allIngredients.push({
                         name: ing.name,
                         quantity: ing.quantity,
                         unit: ing.unit,
                         cost: ing.totalCost
-                    };
+                    });
                 });
+
+                // Get preparation instructions
+                const instructions = pizza.preparations.map(prep => {
+                    const preparation = preparations.find(p => p.id === prep.preparationId);
+                    if (preparation && preparation.instructions) {
+                        return `<div class="mb-2"><strong>${preparation.name}:</strong><br/>${preparation.instructions.replace(/\n/g, '<br/>')}</div>`;
+                    }
+                    return '';
+                }).filter(i => i).join('');
 
                 return `
                     <div class="technical-sheet">
@@ -3308,51 +3326,32 @@
                             </div>
                         </div>
 
-                        ${preparationsList.length > 0 ? `
-                            <div class="sheet-section">
-                                <h2>🍴 Preparações</h2>
-                                <table class="ingredients-table">
-                                    <thead>
+                        <div class="sheet-section">
+                            <h2>📋 Ingredientes</h2>
+                            <table class="ingredients-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ingrediente</th>
+                                        <th>Quantidade</th>
+                                        <th>Custo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${allIngredients.map(ing => `
                                         <tr>
-                                            <th>Preparação</th>
-                                            <th>Quantidade</th>
-                                            <th>Custo</th>
+                                            <td>${ing.name}</td>
+                                            <td>${ing.quantity.toFixed(2)} ${ing.unit}</td>
+                                            <td>R$ ${ing.cost.toFixed(2)}</td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${preparationsList.map(prep => `
-                                            <tr>
-                                                <td>${prep.name}</td>
-                                                <td>${prep.quantity}x</td>
-                                                <td>R$ ${prep.cost.toFixed(2)}</td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                        ` : ''}
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
 
-                        ${directIngredients.length > 0 ? `
+                        ${instructions ? `
                             <div class="sheet-section">
-                                <h2>📋 Ingredientes Diretos</h2>
-                                <table class="ingredients-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Ingrediente</th>
-                                            <th>Quantidade</th>
-                                            <th>Custo</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${directIngredients.map(ing => `
-                                            <tr>
-                                                <td>${ing.name}</td>
-                                                <td>${ing.quantity.toFixed(2)} ${ing.unit}</td>
-                                                <td>R$ ${ing.cost.toFixed(2)}</td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
+                                <h2>👨‍🍳 Modo de Preparo</h2>
+                                ${instructions}
                             </div>
                         ` : ''}
 
@@ -3460,7 +3459,5 @@
         // Set initial tab to dashboard
         switchTab('dashboard');
     </script>
-
-
-
-</body></html>
+</body>
+</html>
