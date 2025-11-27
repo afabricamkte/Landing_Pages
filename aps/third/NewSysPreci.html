@@ -458,7 +458,7 @@
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🍕 Nova Pizza</h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome da Pizza</label>
                         <input type="text" id="pizzaName" placeholder="Ex: Margherita" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
@@ -479,6 +479,11 @@
                             <option value="doce">Doce</option>
                         </select>
                     </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">📸 Foto da Pizza (opcional)</label>
+                    <input type="file" id="pizzaImage" accept="image/*" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
                 </div>
 
                 <div class="mb-6">
@@ -528,6 +533,12 @@
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">📊 Suas Pizzas</h2>
                     <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+                        <button onclick="printTechnicalSheets()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2 text-sm font-medium whitespace-nowrap">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                            </svg>
+                            <span>Imprimir Fichas</span>
+                        </button>
                         <div class="flex items-center gap-2 w-full sm:w-auto">
                             <label class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Ordenar por:</label>
                             <select id="pizzaSortSelect" onchange="changePizzaSort()" class="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white w-full sm:w-auto">
@@ -867,7 +878,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-3xl w-full p-6 slide-in custom-scrollbar" style="max-height: 90vh; overflow-y: auto;">
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">✏️ Editar Pizza</h3>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome da Pizza</label>
                     <input type="text" id="editPizzaName" placeholder="Ex: Margherita" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
@@ -888,6 +899,11 @@
                         <option value="doce">Doce</option>
                     </select>
                 </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">📸 Atualizar Foto da Pizza (opcional)</label>
+                <input type="file" id="editPizzaImage" accept="image/*" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
             </div>
 
             <div class="mb-6">
@@ -2327,38 +2343,57 @@
             const salePrice = totalCost * (1 + profitMargin / 100);
             const profit = salePrice - totalCost;
 
-            pizzas.push({
-                id: Date.now(),
-                name,
-                size,
-                type,
-                preparations: pizzaPreparations,
-                ingredients: pizzaIngredients,
-                preparationsCost,
-                ingredientsCost,
-                baseCost,
-                additionalCost,
-                wastePercentage,
-                totalCost,
-                profitMargin,
-                salePrice,
-                profit
-            });
+            // Handle image upload
+            const imageInput = document.getElementById('pizzaImage');
+            let imageData = null;
 
-            renderPizzas();
-            renderDashboard();
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageData = e.target.result;
+                    savePizza();
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                savePizza();
+            }
 
-            // Clear form
-            document.getElementById('pizzaName').value = '';
-            document.getElementById('pizzaPreparations').innerHTML = '';
-            document.getElementById('pizzaIngredients').innerHTML = '';
-            pizzaPreparationsCount = 0;
-            pizzaIngredientsCount = 0;
+            function savePizza() {
+                pizzas.push({
+                    id: Date.now(),
+                    name,
+                    size,
+                    type,
+                    image: imageData,
+                    preparations: pizzaPreparations,
+                    ingredients: pizzaIngredients,
+                    preparationsCost,
+                    ingredientsCost,
+                    baseCost,
+                    additionalCost,
+                    wastePercentage,
+                    totalCost,
+                    profitMargin,
+                    salePrice,
+                    profit
+                });
 
-            showAlert('Pizza criada com sucesso!');
-            setTimeout(() => {
-                hideAlertModal();
-            }, 1500);
+                renderPizzas();
+                renderDashboard();
+
+                // Clear form
+                document.getElementById('pizzaName').value = '';
+                document.getElementById('pizzaImage').value = '';
+                document.getElementById('pizzaPreparations').innerHTML = '';
+                document.getElementById('pizzaIngredients').innerHTML = '';
+                pizzaPreparationsCount = 0;
+                pizzaIngredientsCount = 0;
+
+                showAlert('Pizza criada com sucesso!');
+                setTimeout(() => {
+                    hideAlertModal();
+                }, 1500);
+            }
         }
 
         function changePizzaSort() {
@@ -2412,28 +2447,39 @@
             const sortedPizzas = sortPizzas(pizzas);
 
             list.innerHTML = sortedPizzas.map(pizza => `
-                <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-md p-6 card-hover border border-gray-200 dark:border-gray-600">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
-                            <div class="flex items-center gap-2 mb-1">
-                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">${pizza.name}</h3>
-                                <span class="px-2 py-1 text-xs font-medium rounded-full ${pizza.type === 'doce' ? 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'}">${pizza.type === 'doce' ? '🍫 Doce' : '🧂 Salgada'}</span>
+                <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-md overflow-hidden card-hover border border-gray-200 dark:border-gray-600">
+                    ${pizza.image ? `
+                        <div class="relative h-48 overflow-hidden bg-gray-100 dark:bg-gray-700">
+                            <img src="${pizza.image}" alt="${pizza.name}" class="w-full h-full object-cover">
+                            <div class="absolute top-2 right-2 bg-black bg-opacity-50 rounded-full p-1">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
                             </div>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">${pizza.size}</p>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="editPizza(${pizza.id})" class="text-blue-500 hover:text-blue-700 p-2" title="Editar">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                </svg>
-                            </button>
-                            <button onclick="deletePizza(${pizza.id})" class="text-red-500 hover:text-red-700 p-2" title="Excluir">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                </svg>
-                            </button>
+                    ` : ''}
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">${pizza.name}</h3>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full ${pizza.type === 'doce' ? 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'}">${pizza.type === 'doce' ? '🍫 Doce' : '🧂 Salgada'}</span>
+                                </div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">${pizza.size}</p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="editPizza(${pizza.id})" class="text-blue-500 hover:text-blue-700 p-2" title="Editar">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </button>
+                                <button onclick="deletePizza(${pizza.id})" class="text-red-500 hover:text-red-700 p-2" title="Excluir">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
                     <div class="space-y-2 mb-4 text-sm">
                         ${pizza.preparations.length > 0 ? `
@@ -2498,6 +2544,7 @@
                             ` : ''}
                         </div>
                     </details>
+                    </div>
                 </div>
             `).join('');
         }
@@ -2727,33 +2774,51 @@
             const salePrice = totalCost * (1 + profitMargin / 100);
             const profit = salePrice - totalCost;
 
-            // Update pizza
-            const pizza = pizzas.find(p => p.id === editingPizzaId);
-            if (pizza) {
-                pizza.name = name;
-                pizza.size = size;
-                pizza.type = type;
-                pizza.preparations = pizzaPreparations;
-                pizza.ingredients = pizzaIngredients;
-                pizza.preparationsCost = preparationsCost;
-                pizza.ingredientsCost = ingredientsCost;
-                pizza.baseCost = baseCost;
-                pizza.additionalCost = additionalCost;
-                pizza.wastePercentage = wastePercentage;
-                pizza.totalCost = totalCost;
-                pizza.profitMargin = profitMargin;
-                pizza.salePrice = salePrice;
-                pizza.profit = profit;
+            // Handle image upload
+            const imageInput = document.getElementById('editPizzaImage');
+
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    updatePizza(e.target.result);
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                updatePizza(null);
             }
 
-            renderPizzas();
-            renderDashboard();
-            hideEditPizzaModal();
+            function updatePizza(newImageData) {
+                // Update pizza
+                const pizza = pizzas.find(p => p.id === editingPizzaId);
+                if (pizza) {
+                    pizza.name = name;
+                    pizza.size = size;
+                    pizza.type = type;
+                    if (newImageData) {
+                        pizza.image = newImageData;
+                    }
+                    pizza.preparations = pizzaPreparations;
+                    pizza.ingredients = pizzaIngredients;
+                    pizza.preparationsCost = preparationsCost;
+                    pizza.ingredientsCost = ingredientsCost;
+                    pizza.baseCost = baseCost;
+                    pizza.additionalCost = additionalCost;
+                    pizza.wastePercentage = wastePercentage;
+                    pizza.totalCost = totalCost;
+                    pizza.profitMargin = profitMargin;
+                    pizza.salePrice = salePrice;
+                    pizza.profit = profit;
+                }
 
-            showAlert('Pizza atualizada com sucesso!');
-            setTimeout(() => {
-                hideAlertModal();
-            }, 1500);
+                renderPizzas();
+                renderDashboard();
+                hideEditPizzaModal();
+
+                showAlert('Pizza atualizada com sucesso!');
+                setTimeout(() => {
+                    hideAlertModal();
+                }, 1500);
+            }
         }
 
         // ==================== PLATAFORMAS ====================
@@ -3195,6 +3260,193 @@
 
             // Reset file input
             event.target.value = '';
+        }
+
+        // ==================== FICHAS TÉCNICAS ====================
+        function printTechnicalSheets() {
+            if (pizzas.length === 0) {
+                showAlert('Nenhuma pizza cadastrada para gerar fichas técnicas!');
+                return;
+            }
+
+            // Create print content
+            const printContent = pizzas.map(pizza => {
+                // Get all ingredients including those from preparations
+                const allIngredients = [];
+
+                // Add ingredients from preparations
+                pizza.preparations.forEach(prep => {
+                    const preparation = preparations.find(p => p.id === prep.preparationId);
+                    if (preparation) {
+                        preparation.ingredients.forEach(ing => {
+                            const ingredient = ingredients.find(i => i.id === ing.ingredientId);
+                            if (ingredient) {
+                                allIngredients.push({
+                                    name: `${ing.name} (via ${preparation.name})`,
+                                    quantity: ing.quantity * prep.quantity,
+                                    unit: ing.unit,
+                                    cost: ing.totalCost * prep.quantity
+                                });
+                            }
+                        });
+                    }
+                });
+
+                // Add direct ingredients
+                pizza.ingredients.forEach(ing => {
+                    allIngredients.push({
+                        name: ing.name,
+                        quantity: ing.quantity,
+                        unit: ing.unit,
+                        cost: ing.totalCost
+                    });
+                });
+
+                // Get preparation instructions
+                const instructions = pizza.preparations.map(prep => {
+                    const preparation = preparations.find(p => p.id === prep.preparationId);
+                    if (preparation && preparation.instructions) {
+                        return `<div class="mb-2"><strong>${preparation.name}:</strong><br/>${preparation.instructions.replace(/\n/g, '<br/>')}</div>`;
+                    }
+                    return '';
+                }).filter(i => i).join('');
+
+                return `
+                    <div class="technical-sheet">
+                        ${pizza.image ? `
+                            <div class="pizza-image-container">
+                                <img src="${pizza.image}" alt="${pizza.name}" class="pizza-image" />
+                            </div>
+                        ` : ''}
+                        <div class="sheet-header">
+                            <h1>${pizza.name}</h1>
+                            <div class="pizza-info">
+                                <span class="badge">${pizza.size}</span>
+                                <span class="badge badge-type">${pizza.type === 'doce' ? '🍫 Doce' : '🧂 Salgada'}</span>
+                            </div>
+                        </div>
+
+                        <div class="sheet-section">
+                            <h2>📋 Ingredientes</h2>
+                            <table class="ingredients-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ingrediente</th>
+                                        <th>Quantidade</th>
+                                        <th>Custo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${allIngredients.map(ing => `
+                                        <tr>
+                                            <td>${ing.name}</td>
+                                            <td>${ing.quantity.toFixed(2)} ${ing.unit}</td>
+                                            <td>R$ ${ing.cost.toFixed(2)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        ${instructions ? `
+                            <div class="sheet-section">
+                                <h2>👨‍🍳 Modo de Preparo</h2>
+                                ${instructions}
+                            </div>
+                        ` : ''}
+
+                        <div class="sheet-section">
+                            <h2>💰 Informações de Custo</h2>
+                            <div class="cost-grid">
+                                <div class="cost-item">
+                                    <span class="cost-label">CMV (Custo Ingredientes):</span>
+                                    <span class="cost-value">R$ ${pizza.baseCost.toFixed(2)}</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-label">Desperdício (${pizza.wastePercentage}%):</span>
+                                    <span class="cost-value">R$ ${(pizza.baseCost * pizza.wastePercentage / 100).toFixed(2)}</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-label">Custos Adicionais:</span>
+                                    <span class="cost-value">R$ ${pizza.additionalCost.toFixed(2)}</span>
+                                </div>
+                                <div class="cost-item total">
+                                    <span class="cost-label">Custo Total:</span>
+                                    <span class="cost-value">R$ ${pizza.totalCost.toFixed(2)}</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-label">Margem de Lucro:</span>
+                                    <span class="cost-value">${pizza.profitMargin}%</span>
+                                </div>
+                                <div class="cost-item highlight">
+                                    <span class="cost-label">Preço de Venda:</span>
+                                    <span class="cost-value">R$ ${pizza.salePrice.toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sheet-footer">
+                            <p>Ficha Técnica gerada em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Create a new window for printing
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="pt-BR">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Fichas Técnicas - Pizzas</title>
+                    <style>
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
+                        .technical-sheet { background: white; padding: 30px; margin: 20px auto; max-width: 800px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); page-break-after: always; }
+                        .technical-sheet:last-child { page-break-after: auto; }
+                        .pizza-image-container { text-align: center; margin-bottom: 20px; }
+                        .pizza-image { max-width: 400px; max-height: 300px; width: 100%; height: auto; border-radius: 8px; object-fit: cover; }
+                        .sheet-header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #6b46c1; padding-bottom: 15px; }
+                        .sheet-header h1 { font-size: 32px; color: #6b46c1; margin-bottom: 10px; }
+                        .pizza-info { display: flex; justify-content: center; gap: 10px; }
+                        .badge { display: inline-block; padding: 5px 15px; background: #e5e7eb; border-radius: 20px; font-size: 14px; font-weight: 600; }
+                        .badge-type { background: #fbbf24; color: #78350f; }
+                        .sheet-section { margin-bottom: 25px; }
+                        .sheet-section h2 { font-size: 18px; color: #6b46c1; margin-bottom: 15px; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; }
+                        .ingredients-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                        .ingredients-table th, .ingredients-table td { padding: 10px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+                        .ingredients-table th { background: #f3f4f6; font-weight: 600; color: #6b46c1; }
+                        .ingredients-table tr:hover { background: #f9fafb; }
+                        .cost-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+                        .cost-item { display: flex; justify-content: space-between; padding: 12px; background: #f9fafb; border-radius: 6px; }
+                        .cost-item.total { background: #fee2e2; border-left: 4px solid #ef4444; }
+                        .cost-item.highlight { background: #d1fae5; border-left: 4px solid #10b981; font-weight: bold; }
+                        .cost-label { font-weight: 600; color: #4b5563; }
+                        .cost-value { color: #1f2937; font-weight: 600; }
+                        .sheet-footer { text-align: center; margin-top: 30px; padding-top: 15px; border-top: 2px solid #e5e7eb; color: #6b7280; font-size: 12px; }
+
+                        @media print {
+                            body { background: white; }
+                            .technical-sheet { box-shadow: none; margin: 0; padding: 20px; page-break-after: always; }
+                            .technical-sheet:last-child { page-break-after: auto; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${printContent}
+                </body>
+                </html>
+            `);
+
+            printWindow.document.close();
+            printWindow.focus();
+
+            // Wait for images to load before printing
+            setTimeout(() => {
+                printWindow.print();
+            }, 500);
         }
 
         // Initialize
