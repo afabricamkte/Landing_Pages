@@ -221,16 +221,30 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="dash-financial-analysis"></div>
             </div>
 
-            <!-- Alertas e Avisos -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">⚠️ Alertas e Avisos</h3>
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm text-gray-600 dark:text-gray-400">Margem mínima:</label>
-                        <input type="number" id="minProfitMargin" value="40" min="0" max="100" step="5" class="w-20 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white" onchange="renderDashboard()">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">%</span>
+            <!-- Configurações de Alertas -->
+            <div class="bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-900/20 dark:to-gray-800 rounded-xl shadow-lg p-6 mb-6 border border-indigo-200 dark:border-indigo-900">
+                <div class="flex items-start space-x-3">
+                    <div class="flex-shrink-0">
+                        <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">⚙️ Configurações de Monitoramento</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Defina os parâmetros para alertas do sistema</p>
+                        <div class="flex items-center space-x-3 bg-white dark:bg-gray-800 rounded-lg p-3 border border-indigo-200 dark:border-indigo-800">
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Margem mínima de lucro aceitável:</label>
+                            <input type="number" id="minProfitMargin" value="40" min="0" max="100" step="5" class="w-24 px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white font-semibold" onchange="renderDashboard()">
+                            <span class="text-base font-medium text-gray-700 dark:text-gray-300">%</span>
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Alertas e Avisos -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚠️ Status do Sistema</h3>
                 <div id="dash-alerts" class="space-y-3"></div>
             </div>
 
@@ -1188,34 +1202,79 @@
                 }
             }
 
-            // Alerts
+            // Alerts - Always show all 3 categories
             const alertsContainer = document.getElementById('dash-alerts');
             const minMargin = parseFloat(document.getElementById('minProfitMargin').value) || 40;
-            const alerts = [];
 
-            // Low margin pizzas
+            // Category 1: Low margin pizzas
             const lowMarginPizzas = pizzas.filter(p => p.profitMargin < minMargin);
-            if (lowMarginPizzas.length > 0) {
-                alerts.push({
-                    type: 'warning',
-                    icon: '⚠️',
-                    title: `Pizzas com margem abaixo de ${minMargin}%`,
-                    items: lowMarginPizzas.map(p => `${p.name} (${p.profitMargin.toFixed(1)}%)`)
-                });
-            }
+            const alert1HTML = lowMarginPizzas.length > 0 ? `
+                <div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">⚠️ Pizzas com margem abaixo de ${minMargin}%</h4>
+                            <ul class="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                                ${lowMarginPizzas.map(p => `<li>${p.name} <span class="font-medium text-yellow-700 dark:text-yellow-400">(${p.profitMargin.toFixed(1)}%)</span></li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            ` : `
+                <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-1">✅ Margens de Lucro</h4>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">${pizzas.length > 0 ? `Todas as pizzas estão com margem acima de ${minMargin}%` : 'Nenhuma pizza cadastrada ainda'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
 
-            // Ingredients without supplier
+            // Category 2: Ingredients without supplier
             const ingredientsWithoutSupplier = ingredients.filter(i => !i.supplierId);
-            if (ingredientsWithoutSupplier.length > 0) {
-                alerts.push({
-                    type: 'info',
-                    icon: '🔔',
-                    title: 'Ingredientes sem fornecedor',
-                    items: ingredientsWithoutSupplier.map(i => i.name)
-                });
-            }
+            const alert2HTML = ingredientsWithoutSupplier.length > 0 ? `
+                <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">🔔 Ingredientes sem fornecedor</h4>
+                            <ul class="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                                ${ingredientsWithoutSupplier.map(i => `<li>${i.name}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            ` : `
+                <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-1">✅ Fornecedores</h4>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">${ingredients.length > 0 ? 'Todos os ingredientes possuem fornecedor definido' : 'Nenhum ingrediente cadastrado ainda'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
 
-            // Unused preparations
+            // Category 3: Unused preparations
             const usedPrepIds = new Set();
             pizzas.forEach(pizza => {
                 pizza.preparations.forEach(prep => {
@@ -1223,27 +1282,39 @@
                 });
             });
             const unusedPreparations = preparations.filter(p => !usedPrepIds.has(p.id));
-            if (unusedPreparations.length > 0) {
-                alerts.push({
-                    type: 'info',
-                    icon: '📋',
-                    title: 'Preparações não utilizadas',
-                    items: unusedPreparations.map(p => p.name)
-                });
-            }
-
-            if (alerts.length === 0) {
-                alertsContainer.innerHTML = '<p class="text-green-600 dark:text-green-400 flex items-center"><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Tudo certo! Nenhum alerta no momento.</p>';
-            } else {
-                alertsContainer.innerHTML = alerts.map(alert => `
-                    <div class="p-4 ${alert.type === 'warning' ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800' : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'} rounded-lg border">
-                        <p class="font-medium text-gray-900 dark:text-white mb-2">${alert.icon} ${alert.title}</p>
-                        <ul class="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                            ${alert.items.map(item => `<li>${item}</li>`).join('')}
-                        </ul>
+            const alert3HTML = unusedPreparations.length > 0 ? `
+                <div class="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="w-6 h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">📋 Preparações não utilizadas</h4>
+                            <ul class="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                                ${unusedPreparations.map(p => `<li>${p.name}</li>`).join('')}
+                            </ul>
+                        </div>
                     </div>
-                `).join('');
-            }
+                </div>
+            ` : `
+                <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-1">✅ Preparações</h4>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">${preparations.length > 0 ? 'Todas as preparações estão sendo utilizadas em pizzas' : 'Nenhuma preparação cadastrada ainda'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            alertsContainer.innerHTML = alert1HTML + alert2HTML + alert3HTML;
 
             // Pizza Distribution
             const distributionContainer = document.getElementById('dash-pizza-distribution');
