@@ -147,6 +147,9 @@
                 <button onclick="switchTab('pizzas')" id="tab-pizzas" class="tab-button px-4 py-2 rounded-lg text-base font-medium whitespace-nowrap">
                     🍕 Pizzas
                 </button>
+                <button onclick="switchTab('plataformas')" id="tab-plataformas" class="tab-button px-4 py-2 rounded-lg text-base font-medium whitespace-nowrap">
+                    📱 Plataformas
+                </button>
             </div>
         </div>
     </header>
@@ -542,6 +545,64 @@
             </div>
         </div>
 
+        <!-- Plataformas Tab -->
+        <div id="content-plataformas" class="tab-content hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">📱 Cadastro de Plataformas</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Gerencie as plataformas de delivery e calcule preços com taxas</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome da Plataforma *</label>
+                        <input type="text" id="platformName" placeholder="Ex: iFood, Uber Eats" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Taxa Padrão (%)</label>
+                        <input type="number" id="platformDefaultTax" placeholder="Ex: 27" step="0.01" min="0" max="100" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Modo de Taxa</label>
+                        <select id="platformTaxMode" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                            <option value="unique">Taxa Única (para todas as pizzas)</option>
+                            <option value="variable">Taxa Variável (por pizza/categoria)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cor da Plataforma</label>
+                    <select id="platformColor" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                        <option value="red">🔴 Vermelho (iFood)</option>
+                        <option value="green">🟢 Verde (Uber Eats)</option>
+                        <option value="yellow">🟡 Amarelo (Rappi)</option>
+                        <option value="blue">🔵 Azul</option>
+                        <option value="purple">🟣 Roxo</option>
+                        <option value="orange">🟠 Laranja</option>
+                        <option value="pink">🩷 Rosa</option>
+                        <option value="gray">⚫ Cinza</option>
+                    </select>
+                </div>
+
+                <button onclick="addPlatform()" class="w-full bg-primary text-white px-6 py-3 text-base rounded-lg font-medium hover:bg-purple-700 transition-colors">
+                    ➕ Adicionar Plataforma
+                </button>
+            </div>
+
+            <!-- Lista de Plataformas -->
+            <div id="platformsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+            <!-- Empty State -->
+            <div id="emptyPlatformsState" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
+                <div class="flex justify-center mb-4">
+                    <svg class="w-24 h-24 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Nenhuma plataforma cadastrada</h3>
+                <p class="text-gray-500 dark:text-gray-400 mb-4">Comece adicionando suas plataformas de delivery!</p>
+            </div>
+        </div>
+
     </main>
 
     <!-- Modal de Confirmação -->
@@ -863,6 +924,72 @@
         </div>
     </div>
 
+    <!-- Modal de Configuração de Taxas Variáveis -->
+    <div id="variableTaxModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-3xl w-full p-6 slide-in custom-scrollbar" style="max-height: 90vh; overflow-y: auto;">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">🔄 Configurar Taxas Variáveis</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Configure taxas personalizadas para cada pizza. Deixe vazio para usar a taxa padrão.</p>
+
+            <div id="variableTaxList" class="space-y-3"></div>
+
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="hideVariableTaxModal()" class="px-4 py-2 text-base text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                    Fechar
+                </button>
+                <button onclick="saveVariableTaxes()" class="px-4 py-2 text-base bg-primary text-white hover:bg-purple-700 rounded-lg transition-colors">
+                    ✓ Salvar Taxas
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Plataforma -->
+    <div id="editPlatformModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full p-6 slide-in">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">✏️ Editar Plataforma</h3>
+
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome da Plataforma</label>
+                    <input type="text" id="editPlatformName" placeholder="Ex: iFood" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Taxa Padrão (%)</label>
+                    <input type="number" id="editPlatformDefaultTax" placeholder="Ex: 27" step="0.01" min="0" max="100" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Modo de Taxa</label>
+                    <select id="editPlatformTaxMode" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                        <option value="unique">Taxa Única (para todas as pizzas)</option>
+                        <option value="variable">Taxa Variável (por pizza/categoria)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cor da Plataforma</label>
+                    <select id="editPlatformColor" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                        <option value="red">🔴 Vermelho (iFood)</option>
+                        <option value="green">🟢 Verde (Uber Eats)</option>
+                        <option value="yellow">🟡 Amarelo (Rappi)</option>
+                        <option value="blue">🔵 Azul</option>
+                        <option value="purple">🟣 Roxo</option>
+                        <option value="orange">🟠 Laranja</option>
+                        <option value="pink">🩷 Rosa</option>
+                        <option value="gray">⚫ Cinza</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <button onclick="hideEditPlatformModal()" class="px-4 py-2 text-base text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                    Cancelar
+                </button>
+                <button onclick="saveEditPlatform()" class="px-4 py-2 text-base bg-primary text-white hover:bg-purple-700 rounded-lg transition-colors">
+                    ✓ Salvar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Dark mode setup
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -881,6 +1008,7 @@
         let ingredients = [];
         let preparations = [];
         let pizzas = [];
+        let platforms = [];
         let preparationIngredientsCount = 0;
         let pizzaPreparationsCount = 0;
         let pizzaIngredientsCount = 0;
@@ -888,6 +1016,8 @@
         let editingPreparationId = null;
         let editingPizzaId = null;
         let editingSupplierId = null;
+        let editingPlatformId = null;
+        let configuringTaxesPlatformId = null;
         let editPreparationIngredientsCount = 0;
         let editPizzaPreparationsCount = 0;
         let editPizzaIngredientsCount = 0;
@@ -968,6 +1098,8 @@
                 renderPreparations();
             } else if (tabName === 'pizzas') {
                 renderPizzas();
+            } else if (tabName === 'plataformas') {
+                renderPlatforms();
             }
         }
 
@@ -2553,21 +2685,335 @@
             }, 1500);
         }
 
+        // ==================== PLATAFORMAS ====================
+        function getPlatformColorClasses(color) {
+            const colors = {
+                red: { bg: 'bg-red-50 dark:bg-red-900/20', border: 'border-red-200 dark:border-red-800', text: 'text-red-600 dark:text-red-400', badge: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-400' },
+                green: { bg: 'bg-green-50 dark:bg-green-900/20', border: 'border-green-200 dark:border-green-800', text: 'text-green-600 dark:text-green-400', badge: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400' },
+                yellow: { bg: 'bg-yellow-50 dark:bg-yellow-900/20', border: 'border-yellow-200 dark:border-yellow-800', text: 'text-yellow-600 dark:text-yellow-400', badge: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-400' },
+                blue: { bg: 'bg-blue-50 dark:bg-blue-900/20', border: 'border-blue-200 dark:border-blue-800', text: 'text-blue-600 dark:text-blue-400', badge: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400' },
+                purple: { bg: 'bg-purple-50 dark:bg-purple-900/20', border: 'border-purple-200 dark:border-purple-800', text: 'text-purple-600 dark:text-purple-400', badge: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-400' },
+                orange: { bg: 'bg-orange-50 dark:bg-orange-900/20', border: 'border-orange-200 dark:border-orange-800', text: 'text-orange-600 dark:text-orange-400', badge: 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-400' },
+                pink: { bg: 'bg-pink-50 dark:bg-pink-900/20', border: 'border-pink-200 dark:border-pink-800', text: 'text-pink-600 dark:text-pink-400', badge: 'bg-pink-100 text-pink-700 dark:bg-pink-900/50 dark:text-pink-400' },
+                gray: { bg: 'bg-gray-50 dark:bg-gray-900/20', border: 'border-gray-200 dark:border-gray-800', text: 'text-gray-600 dark:text-gray-400', badge: 'bg-gray-100 text-gray-700 dark:bg-gray-900/50 dark:text-gray-400' }
+            };
+            return colors[color] || colors.blue;
+        }
+
+        function calculatePlatformPrice(basePrice, taxPercent) {
+            if (taxPercent >= 100) return 0;
+            return basePrice / (1 - (taxPercent / 100));
+        }
+
+        function addPlatform() {
+            const name = document.getElementById('platformName').value.trim();
+            const defaultTax = parseFloat(document.getElementById('platformDefaultTax').value);
+            const taxMode = document.getElementById('platformTaxMode').value;
+            const color = document.getElementById('platformColor').value;
+
+            if (!name) {
+                showAlert('Por favor, insira o nome da plataforma');
+                return;
+            }
+
+            if (isNaN(defaultTax) || defaultTax < 0 || defaultTax >= 100) {
+                showAlert('Por favor, insira uma taxa válida entre 0 e 99.99%');
+                return;
+            }
+
+            platforms.push({
+                id: Date.now(),
+                name,
+                defaultTax,
+                taxMode,
+                color,
+                pizzaTaxes: {} // For variable tax mode: { pizzaId: taxRate }
+            });
+
+            renderPlatforms();
+            renderDashboard();
+
+            // Clear form
+            document.getElementById('platformName').value = '';
+            document.getElementById('platformDefaultTax').value = '';
+            document.getElementById('platformTaxMode').value = 'unique';
+            document.getElementById('platformColor').value = 'red';
+
+            showAlert('Plataforma cadastrada com sucesso!');
+            setTimeout(() => {
+                hideAlertModal();
+            }, 1500);
+        }
+
+        function editPlatform(id) {
+            const platform = platforms.find(p => p.id === id);
+            if (!platform) return;
+
+            document.getElementById('editPlatformName').value = platform.name;
+            document.getElementById('editPlatformDefaultTax').value = platform.defaultTax;
+            document.getElementById('editPlatformTaxMode').value = platform.taxMode;
+            document.getElementById('editPlatformColor').value = platform.color;
+
+            editingPlatformId = id;
+            document.getElementById('editPlatformModal').classList.remove('hidden');
+            document.getElementById('editPlatformName').focus();
+        }
+
+        function hideEditPlatformModal() {
+            document.getElementById('editPlatformModal').classList.add('hidden');
+            editingPlatformId = null;
+        }
+
+        function saveEditPlatform() {
+            const name = document.getElementById('editPlatformName').value.trim();
+            const defaultTax = parseFloat(document.getElementById('editPlatformDefaultTax').value);
+            const taxMode = document.getElementById('editPlatformTaxMode').value;
+            const color = document.getElementById('editPlatformColor').value;
+
+            if (!name) {
+                showAlert('Por favor, insira o nome da plataforma');
+                return;
+            }
+
+            if (isNaN(defaultTax) || defaultTax < 0 || defaultTax >= 100) {
+                showAlert('Por favor, insira uma taxa válida entre 0 e 99.99%');
+                return;
+            }
+
+            const platform = platforms.find(p => p.id === editingPlatformId);
+            if (platform) {
+                platform.name = name;
+                platform.defaultTax = defaultTax;
+                platform.taxMode = taxMode;
+                platform.color = color;
+            }
+
+            renderPlatforms();
+            renderDashboard();
+            hideEditPlatformModal();
+
+            showAlert('Plataforma atualizada com sucesso!');
+            setTimeout(() => {
+                hideAlertModal();
+            }, 1500);
+        }
+
+        function deletePlatform(id) {
+            showConfirmDialog('Deseja realmente excluir esta plataforma?', () => {
+                platforms = platforms.filter(p => p.id !== id);
+                renderPlatforms();
+                renderDashboard();
+            });
+        }
+
+        function configureVariableTaxes(platformId) {
+            const platform = platforms.find(p => p.id === platformId);
+            if (!platform) return;
+
+            if (pizzas.length === 0) {
+                showAlert('Nenhuma pizza cadastrada ainda. Cadastre pizzas primeiro.');
+                return;
+            }
+
+            configuringTaxesPlatformId = platformId;
+
+            // Build the list of pizzas with input fields
+            const variableTaxList = document.getElementById('variableTaxList');
+            variableTaxList.innerHTML = pizzas.map(pizza => {
+                const currentTax = platform.pizzaTaxes[pizza.id] !== undefined ? platform.pizzaTaxes[pizza.id] : '';
+                const effectiveTax = platform.pizzaTaxes[pizza.id] || platform.defaultTax;
+                const platformPrice = calculatePlatformPrice(pizza.salePrice, effectiveTax);
+
+                return `
+                    <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-900 dark:text-white">${pizza.name}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Preço Base: R$ ${pizza.salePrice.toFixed(2)}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Preço na Plataforma:</p>
+                                <p class="font-bold text-primary text-lg" id="preview_${pizza.id}">R$ ${platformPrice.toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="flex-1">
+                                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Taxa Personalizada (%) - Padrão: ${platform.defaultTax.toFixed(2)}%</label>
+                                <input type="number" id="tax_${pizza.id}" data-pizza-id="${pizza.id}" data-base-price="${pizza.salePrice}" value="${currentTax}" placeholder="${platform.defaultTax.toFixed(2)}" step="0.01" min="0" max="99.99" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white" oninput="updateTaxPreview(${pizza.id}, ${pizza.salePrice}, ${platform.defaultTax})">
+                            </div>
+                            <button onclick="clearPizzaTax(${pizza.id}, ${pizza.salePrice}, ${platform.defaultTax})" class="mt-5 px-3 py-2 text-sm bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors" title="Usar taxa padrão">
+                                Limpar
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('variableTaxModal').classList.remove('hidden');
+        }
+
+        function updateTaxPreview(pizzaId, basePrice, defaultTax) {
+            const taxInput = document.getElementById(`tax_${pizzaId}`);
+            const preview = document.getElementById(`preview_${pizzaId}`);
+
+            const taxValue = parseFloat(taxInput.value);
+            const effectiveTax = isNaN(taxValue) || taxInput.value.trim() === '' ? defaultTax : taxValue;
+            const platformPrice = calculatePlatformPrice(basePrice, effectiveTax);
+
+            preview.textContent = `R$ ${platformPrice.toFixed(2)}`;
+        }
+
+        function clearPizzaTax(pizzaId, basePrice, defaultTax) {
+            const taxInput = document.getElementById(`tax_${pizzaId}`);
+            taxInput.value = '';
+            updateTaxPreview(pizzaId, basePrice, defaultTax);
+        }
+
+        function hideVariableTaxModal() {
+            document.getElementById('variableTaxModal').classList.add('hidden');
+            configuringTaxesPlatformId = null;
+        }
+
+        function saveVariableTaxes() {
+            const platform = platforms.find(p => p.id === configuringTaxesPlatformId);
+            if (!platform) return;
+
+            // Update pizza taxes
+            platform.pizzaTaxes = {};
+            pizzas.forEach(pizza => {
+                const taxInput = document.getElementById(`tax_${pizza.id}`);
+                const taxValue = parseFloat(taxInput.value);
+
+                // Only save if a custom value was entered
+                if (!isNaN(taxValue) && taxInput.value.trim() !== '') {
+                    platform.pizzaTaxes[pizza.id] = taxValue;
+                }
+            });
+
+            renderPlatforms();
+            hideVariableTaxModal();
+
+            showAlert('Taxas variáveis salvas com sucesso!');
+            setTimeout(() => {
+                hideAlertModal();
+            }, 1500);
+        }
+
+        function renderPlatforms() {
+            const list = document.getElementById('platformsList');
+            const emptyState = document.getElementById('emptyPlatformsState');
+
+            if (platforms.length === 0) {
+                list.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            list.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            list.innerHTML = platforms.map(platform => {
+                const colorClasses = getPlatformColorClasses(platform.color);
+
+                // Calculate example price with a sample base price of R$50
+                const exampleBasePrice = 50;
+                const examplePlatformPrice = calculatePlatformPrice(exampleBasePrice, platform.defaultTax);
+
+                return `
+                    <div class="bg-gradient-to-br ${colorClasses.bg} rounded-lg shadow p-5 card-hover border ${colorClasses.border}">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-900 dark:text-white text-lg mb-1">${platform.name}</h4>
+                                <span class="px-2 py-1 text-xs font-medium rounded-full ${colorClasses.badge}">
+                                    ${platform.taxMode === 'unique' ? '📍 Taxa Única' : '🔄 Taxa Variável'}
+                                </span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <button onclick="editPlatform(${platform.id})" class="text-blue-500 hover:text-blue-700 p-1" title="Editar">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </button>
+                                <button onclick="deletePlatform(${platform.id})" class="text-red-500 hover:text-red-700 p-1" title="Excluir">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg">
+                                <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Taxa ${platform.taxMode === 'unique' ? 'Única' : 'Padrão'}:</span>
+                                <span class="text-lg font-bold ${colorClasses.text}">${platform.defaultTax.toFixed(2)}%</span>
+                            </div>
+                            ${platform.taxMode === 'variable' ? `
+                                <button onclick="configureVariableTaxes(${platform.id})" class="w-full p-3 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border-2 border-dashed border-gray-300 dark:border-gray-600">
+                                    <div class="flex items-center justify-center space-x-2 ${colorClasses.text}">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                        <span class="font-medium">Configurar Taxas por Pizza</span>
+                                    </div>
+                                    ${Object.keys(platform.pizzaTaxes).length > 0 ? `<p class="text-xs mt-1">${Object.keys(platform.pizzaTaxes).length} pizza(s) com taxa personalizada</p>` : ''}
+                                </button>
+                            ` : `
+                                <div class="p-3 bg-white dark:bg-gray-800 rounded-lg">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Exemplo de cálculo:</p>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-600 dark:text-gray-400">Preço Base: R$ ${exampleBasePrice.toFixed(2)}</span>
+                                        <span class="text-gray-400">→</span>
+                                        <span class="font-bold ${colorClasses.text}">Plataforma: R$ ${examplePlatformPrice.toFixed(2)}</span>
+                                    </div>
+                                </div>
+                            `}
+                        </div>
+
+                        ${pizzas.length > 0 ? `
+                            <details class="text-sm">
+                                <summary class="cursor-pointer ${colorClasses.text} font-medium hover:opacity-80">📱 Ver Preços das Pizzas (${pizzas.length})</summary>
+                                <div class="mt-3 space-y-2 max-h-64 overflow-y-auto custom-scrollbar">
+                                    ${pizzas.map(pizza => {
+                                        const tax = platform.pizzaTaxes[pizza.id] || platform.defaultTax;
+                                        const platformPrice = calculatePlatformPrice(pizza.salePrice, tax);
+                                        return `
+                                            <div class="p-2 bg-white dark:bg-gray-800 rounded flex items-center justify-between">
+                                                <div class="flex-1">
+                                                    <p class="font-medium text-gray-900 dark:text-white text-xs">${pizza.name}</p>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">Base: R$ ${pizza.salePrice.toFixed(2)}</p>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="font-bold ${colorClasses.text} text-sm">R$ ${platformPrice.toFixed(2)}</p>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">Taxa: ${tax.toFixed(1)}%</p>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </details>
+                        ` : '<p class="text-xs text-gray-500 dark:text-gray-400 italic">Nenhuma pizza cadastrada ainda</p>'}
+                    </div>
+                `;
+            }).join('');
+        }
+
         // ==================== IMPORT/EXPORT ====================
         function exportProject() {
-            if (suppliers.length === 0 && ingredients.length === 0 && preparations.length === 0 && pizzas.length === 0) {
-                showAlert('Não há dados para exportar! Adicione fornecedores, ingredientes, preparações ou pizzas primeiro.');
+            if (suppliers.length === 0 && ingredients.length === 0 && preparations.length === 0 && pizzas.length === 0 && platforms.length === 0) {
+                showAlert('Não há dados para exportar! Adicione fornecedores, ingredientes, preparações, pizzas ou plataformas primeiro.');
                 return;
             }
 
             const projectData = {
-                version: '2.0',
+                version: '3.0',
                 exportDate: new Date().toISOString(),
                 data: {
                     suppliers,
                     ingredients,
                     preparations,
-                    pizzas
+                    pizzas,
+                    platforms
                 }
             };
 
@@ -2610,10 +3056,11 @@
                     }
 
                     // Validate arrays
-                    const { suppliers: impSuppliers, ingredients: impIngredients, preparations: impPreparations, pizzas: impPizzas } = projectData.data;
+                    const { suppliers: impSuppliers, ingredients: impIngredients, preparations: impPreparations, pizzas: impPizzas, platforms: impPlatforms } = projectData.data;
 
-                    // Support for older versions without suppliers
+                    // Support for older versions without suppliers or platforms
                     const suppliersArray = impSuppliers || [];
+                    const platformsArray = impPlatforms || [];
 
                     if (!Array.isArray(impIngredients) || !Array.isArray(impPreparations) || !Array.isArray(impPizzas)) {
                         showAlert('Arquivo inválido! Estrutura de dados incorreta.');
@@ -2621,14 +3068,15 @@
                     }
 
                     // Show confirmation dialog
-                    const totalItems = suppliersArray.length + impIngredients.length + impPreparations.length + impPizzas.length;
+                    const totalItems = suppliersArray.length + impIngredients.length + impPreparations.length + impPizzas.length + platformsArray.length;
 
                     showConfirmDialog(
                         `Deseja importar este projeto?\n\n` +
                         `${suppliersArray.length} fornecedor(es)\n` +
                         `${impIngredients.length} ingrediente(s)\n` +
                         `${impPreparations.length} preparação(ões)\n` +
-                        `${impPizzas.length} pizza(s)\n\n` +
+                        `${impPizzas.length} pizza(s)\n` +
+                        `${platformsArray.length} plataforma(s)\n\n` +
                         `ATENÇÃO: Isso substituirá todos os dados atuais!`,
                         () => {
                             // Import data
@@ -2636,6 +3084,7 @@
                             ingredients = impIngredients;
                             preparations = impPreparations;
                             pizzas = impPizzas;
+                            platforms = platformsArray;
 
                             // Reset counters
                             preparationIngredientsCount = 0;
@@ -2647,6 +3096,7 @@
                             renderIngredients();
                             renderPreparations();
                             renderPizzas();
+                            renderPlatforms();
                             renderDashboard();
 
                             // Clear forms
@@ -2681,6 +3131,7 @@
         renderIngredients();
         renderPreparations();
         renderPizzas();
+        renderPlatforms();
 
         // Set initial tab to dashboard
         switchTab('dashboard');
