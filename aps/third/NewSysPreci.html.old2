@@ -148,9 +148,6 @@
                 <button onclick="switchTab('plataformas')" id="tab-plataformas" class="tab-button px-4 py-2 rounded-lg text-base font-medium whitespace-nowrap">
                     📱 Plataformas
                 </button>
-                <button onclick="switchTab('custos')" id="tab-custos" class="tab-button px-4 py-2 rounded-lg text-base font-medium whitespace-nowrap">
-                    💼 Custos Operacionais
-                </button>
             </div>
         </div>
     </header>
@@ -629,140 +626,6 @@
             </div>
         </div>
 
-        <!-- Custos Operacionais Tab -->
-        <div id="content-custos" class="tab-content hidden">
-            <div class="mb-6">
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">💼 Custos Operacionais</h2>
-                <p class="text-gray-600 dark:text-gray-400">Configure os custos fixos mensais da sua pizzaria e escolha o método de rateio</p>
-            </div>
-
-            <!-- Método de Rateio -->
-            <div class="bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-900/20 dark:to-gray-800 rounded-xl shadow-lg p-6 mb-6 border border-indigo-200 dark:border-indigo-900">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚙️ Método de Rateio</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Escolha como os custos operacionais serão distribuídos nas pizzas</p>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <label class="relative flex items-start p-4 bg-white dark:bg-gray-700 rounded-lg border-2 border-gray-200 dark:border-gray-600 cursor-pointer hover:border-indigo-500 dark:hover:border-indigo-400 transition-colors">
-                        <input type="radio" name="costMethod" value="fixed" id="costMethodFixed" class="mt-1 mr-3" onchange="updateCostMethod()">
-                        <div>
-                            <div class="font-semibold text-gray-900 dark:text-white mb-1">💰 Custo Fixo por Pizza</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Divide o custo total mensal pelo número estimado de pizzas produzidas</div>
-                            <div class="mt-2 text-xs font-medium text-indigo-600 dark:text-indigo-400">Exemplo: R$ 10.000 ÷ 500 pizzas = R$ 20,00/pizza</div>
-                        </div>
-                    </label>
-
-                    <label class="relative flex items-start p-4 bg-white dark:bg-gray-700 rounded-lg border-2 border-gray-200 dark:border-gray-600 cursor-pointer hover:border-indigo-500 dark:hover:border-indigo-400 transition-colors">
-                        <input type="radio" name="costMethod" value="percentage" id="costMethodPercentage" class="mt-1 mr-3" onchange="updateCostMethod()">
-                        <div>
-                            <div class="font-semibold text-gray-900 dark:text-white mb-1">📊 Percentual sobre CMV</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Aplica um percentual sobre o custo de produção de cada pizza</div>
-                            <div class="mt-2 text-xs font-medium text-indigo-600 dark:text-indigo-400">Exemplo: CMV R$ 10,00 × 30% = R$ 3,00/pizza</div>
-                        </div>
-                    </label>
-                </div>
-
-                <!-- Configuração do Método Fixo -->
-                <div id="fixedMethodConfig" class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 hidden">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Produção Mensal Estimada (quantidade de pizzas)</label>
-                    <input type="number" id="estimatedMonthlyProduction" placeholder="Ex: 500" min="1" step="1" value="500" class="w-full md:w-64 px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white" onchange="calculateOperationalCosts()">
-                </div>
-
-                <!-- Configuração do Método Percentual -->
-                <div id="percentageMethodConfig" class="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800 hidden">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Percentual sobre o CMV (%)</label>
-                    <input type="number" id="operationalCostPercentage" placeholder="Ex: 30" min="0" max="100" step="0.1" value="30" class="w-full md:w-64 px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white" onchange="calculateOperationalCosts()">
-                </div>
-            </div>
-
-            <!-- Cadastro de Custos -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6">📋 Custos Mensais</h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">🏢 Aluguel (R$)</label>
-                        <input type="number" id="costRent" placeholder="0.00" step="0.01" min="0" value="0" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white" onchange="calculateOperationalCosts()">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">⚡ Energia Elétrica (R$)</label>
-                        <input type="number" id="costElectricity" placeholder="0.00" step="0.01" min="0" value="0" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white" onchange="calculateOperationalCosts()">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">💧 Água (R$)</label>
-                        <input type="number" id="costWater" placeholder="0.00" step="0.01" min="0" value="0" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white" onchange="calculateOperationalCosts()">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">🔥 Gás (R$)</label>
-                        <input type="number" id="costGas" placeholder="0.00" step="0.01" min="0" value="0" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white" onchange="calculateOperationalCosts()">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">👥 Salários e Encargos (R$)</label>
-                        <input type="number" id="costSalaries" placeholder="0.00" step="0.01" min="0" value="0" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white" onchange="calculateOperationalCosts()">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">📱 Internet/Telefone (R$)</label>
-                        <input type="number" id="costInternet" placeholder="0.00" step="0.01" min="0" value="0" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white" onchange="calculateOperationalCosts()">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">🧹 Limpeza e Manutenção (R$)</label>
-                        <input type="number" id="costCleaning" placeholder="0.00" step="0.01" min="0" value="0" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white" onchange="calculateOperationalCosts()">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">📢 Marketing (R$)</label>
-                        <input type="number" id="costMarketing" placeholder="0.00" step="0.01" min="0" value="0" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white" onchange="calculateOperationalCosts()">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">💳 Taxas Bancárias (R$)</label>
-                        <input type="number" id="costBankFees" placeholder="0.00" step="0.01" min="0" value="0" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white" onchange="calculateOperationalCosts()">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">📄 Impostos Fixos (R$)</label>
-                        <input type="number" id="costTaxes" placeholder="0.00" step="0.01" min="0" value="0" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white" onchange="calculateOperationalCosts()">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">🛠️ Outros Custos (R$)</label>
-                        <input type="number" id="costOthers" placeholder="0.00" step="0.01" min="0" value="0" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white" onchange="calculateOperationalCosts()">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Resumo dos Custos -->
-            <div class="bg-gradient-to-br from-purple-50 to-white dark:from-purple-900/20 dark:to-gray-800 rounded-xl shadow-lg p-6 border border-purple-200 dark:border-purple-900">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6">📊 Resumo dos Custos Operacionais</h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="p-4 bg-white dark:bg-gray-700 rounded-lg">
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">💰 Custo Total Mensal</p>
-                        <p id="totalMonthlyCost" class="text-2xl font-bold text-purple-600 dark:text-purple-400">R$ 0,00</p>
-                    </div>
-                    <div class="p-4 bg-white dark:bg-gray-700 rounded-lg">
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">🍕 Custo por Pizza</p>
-                        <p id="costPerPizza" class="text-2xl font-bold text-blue-600 dark:text-blue-400">R$ 0,00</p>
-                    </div>
-                    <div class="p-4 bg-white dark:bg-gray-700 rounded-lg">
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">📈 Método Atual</p>
-                        <p id="currentMethod" class="text-lg font-bold text-gray-700 dark:text-gray-300">Nenhum</p>
-                    </div>
-                    <div class="p-4 bg-white dark:bg-gray-700 rounded-lg">
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">🎯 Status</p>
-                        <p id="costStatus" class="text-lg font-bold text-green-600 dark:text-green-400">Configurado</p>
-                    </div>
-                </div>
-
-                <div class="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                    <div class="flex items-start">
-                        <svg class="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <p class="text-sm text-gray-700 dark:text-gray-300">
-                            <strong>Importante:</strong> Os custos operacionais serão automaticamente incluídos no cálculo de todas as pizzas.
-                            Você pode alternar entre os métodos de rateio a qualquer momento.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </main>
 
     <!-- Modal de Confirmação -->
@@ -1188,24 +1051,6 @@
         let editPizzaIngredientsCount = 0;
         let pizzaSortCriteria = 'name-asc'; // default sort
 
-        // Operational Costs data
-        let operationalCosts = {
-            method: null, // 'fixed' or 'percentage'
-            estimatedMonthlyProduction: 500,
-            percentage: 30,
-            rent: 0,
-            electricity: 0,
-            water: 0,
-            gas: 0,
-            salaries: 0,
-            internet: 0,
-            cleaning: 0,
-            marketing: 0,
-            bankFees: 0,
-            taxes: 0,
-            others: 0
-        };
-
         // Modal functions
         function showConfirmDialog(message, onConfirm) {
             document.getElementById('confirmMessage').textContent = message;
@@ -1283,8 +1128,6 @@
                 renderPizzas();
             } else if (tabName === 'plataformas') {
                 renderPlatforms();
-            } else if (tabName === 'custos') {
-                renderOperationalCosts();
             }
         }
 
@@ -1489,8 +1332,7 @@
 
             // Pizza Distribution
             const distributionContainer = document.getElementById('dash-pizza-distribution');
-            // Se type não está definido, considera como salgada (padrão)
-            const salgadas = pizzas.filter(p => !p.type || p.type === 'salgada').length;
+            const salgadas = pizzas.filter(p => p.type === 'salgada').length;
             const doces = pizzas.filter(p => p.type === 'doce').length;
 
             if (pizzas.length === 0) {
@@ -2495,8 +2337,7 @@
             // Calculate pricing
             const baseCost = preparationsCost + ingredientsCost;
             const wasteMultiplier = 1 + (wastePercentage / 100);
-            const operationalCost = getOperationalCostForPizza(baseCost);
-            const totalCost = (baseCost * wasteMultiplier) + additionalCost + operationalCost;
+            const totalCost = (baseCost * wasteMultiplier) + additionalCost;
             const salePrice = totalCost * (1 + profitMargin / 100);
             const profit = salePrice - totalCost;
 
@@ -2528,7 +2369,6 @@
                     ingredientsCost,
                     baseCost,
                     additionalCost,
-                    operationalCost,
                     wastePercentage,
                     totalCost,
                     profitMargin,
@@ -2660,12 +2500,6 @@
                             <span class="text-gray-600 dark:text-gray-400">Custos adicionais:</span>
                             <span class="font-medium text-gray-900 dark:text-white">R$ ${pizza.additionalCost.toFixed(2)}</span>
                         </div>
-                        ${(pizza.operationalCost && pizza.operationalCost > 0) ? `
-                            <div class="flex justify-between">
-                                <span class="text-gray-600 dark:text-gray-400">Custos operacionais:</span>
-                                <span class="font-medium text-gray-900 dark:text-white">R$ ${pizza.operationalCost.toFixed(2)}</span>
-                            </div>
-                        ` : ''}
                         <div class="border-t border-gray-200 dark:border-gray-600 pt-2 flex justify-between">
                             <span class="font-medium text-gray-900 dark:text-white">Custo Total:</span>
                             <span class="font-bold text-red-600 dark:text-red-400">R$ ${pizza.totalCost.toFixed(2)}</span>
@@ -2934,8 +2768,7 @@
             // Calculate pricing
             const baseCost = preparationsCost + ingredientsCost;
             const wasteMultiplier = 1 + (wastePercentage / 100);
-            const operationalCost = getOperationalCostForPizza(baseCost);
-            const totalCost = (baseCost * wasteMultiplier) + additionalCost + operationalCost;
+            const totalCost = (baseCost * wasteMultiplier) + additionalCost;
             const salePrice = totalCost * (1 + profitMargin / 100);
             const profit = salePrice - totalCost;
 
@@ -2968,7 +2801,6 @@
                     pizza.ingredientsCost = ingredientsCost;
                     pizza.baseCost = baseCost;
                     pizza.additionalCost = additionalCost;
-                    pizza.operationalCost = operationalCost;
                     pizza.wastePercentage = wastePercentage;
                     pizza.totalCost = totalCost;
                     pizza.profitMargin = profitMargin;
@@ -3385,15 +3217,7 @@
                             suppliers = suppliersArray;
                             ingredients = impIngredients;
                             preparations = impPreparations;
-
-                            // Normalizar pizzas: se não tem type definido, assume 'salgada' como padrão
-                            pizzas = impPizzas.map(pizza => {
-                                if (!pizza.type) {
-                                    pizza.type = 'salgada';
-                                }
-                                return pizza;
-                            });
-
+                            pizzas = impPizzas;
                             platforms = platformsArray;
 
                             // Reset counters
@@ -3434,138 +3258,6 @@
 
             // Reset file input
             event.target.value = '';
-        }
-
-        // ==================== CUSTOS OPERACIONAIS ====================
-        function updateCostMethod() {
-            const fixedRadio = document.getElementById('costMethodFixed');
-            const percentageRadio = document.getElementById('costMethodPercentage');
-            const fixedConfig = document.getElementById('fixedMethodConfig');
-            const percentageConfig = document.getElementById('percentageMethodConfig');
-
-            if (fixedRadio.checked) {
-                operationalCosts.method = 'fixed';
-                fixedConfig.classList.remove('hidden');
-                percentageConfig.classList.add('hidden');
-            } else if (percentageRadio.checked) {
-                operationalCosts.method = 'percentage';
-                fixedConfig.classList.add('hidden');
-                percentageConfig.classList.remove('hidden');
-            }
-
-            calculateOperationalCosts();
-            renderPizzas(); // Recalculate all pizzas
-        }
-
-        function calculateOperationalCosts() {
-            // Get all cost values
-            operationalCosts.rent = parseFloat(document.getElementById('costRent')?.value || 0);
-            operationalCosts.electricity = parseFloat(document.getElementById('costElectricity')?.value || 0);
-            operationalCosts.water = parseFloat(document.getElementById('costWater')?.value || 0);
-            operationalCosts.gas = parseFloat(document.getElementById('costGas')?.value || 0);
-            operationalCosts.salaries = parseFloat(document.getElementById('costSalaries')?.value || 0);
-            operationalCosts.internet = parseFloat(document.getElementById('costInternet')?.value || 0);
-            operationalCosts.cleaning = parseFloat(document.getElementById('costCleaning')?.value || 0);
-            operationalCosts.marketing = parseFloat(document.getElementById('costMarketing')?.value || 0);
-            operationalCosts.bankFees = parseFloat(document.getElementById('costBankFees')?.value || 0);
-            operationalCosts.taxes = parseFloat(document.getElementById('costTaxes')?.value || 0);
-            operationalCosts.others = parseFloat(document.getElementById('costOthers')?.value || 0);
-
-            // Get method-specific values
-            operationalCosts.estimatedMonthlyProduction = parseInt(document.getElementById('estimatedMonthlyProduction')?.value || 500);
-            operationalCosts.percentage = parseFloat(document.getElementById('operationalCostPercentage')?.value || 30);
-
-            // Calculate total monthly cost
-            const totalMonthlyCost = operationalCosts.rent + operationalCosts.electricity +
-                operationalCosts.water + operationalCosts.gas + operationalCosts.salaries +
-                operationalCosts.internet + operationalCosts.cleaning + operationalCosts.marketing +
-                operationalCosts.bankFees + operationalCosts.taxes + operationalCosts.others;
-
-            // Update display
-            if (document.getElementById('totalMonthlyCost')) {
-                document.getElementById('totalMonthlyCost').textContent = `R$ ${totalMonthlyCost.toFixed(2).replace('.', ',')}`;
-            }
-
-            // Calculate cost per pizza based on method
-            let costPerPizza = 0;
-            let methodText = 'Nenhum';
-
-            if (operationalCosts.method === 'fixed' && operationalCosts.estimatedMonthlyProduction > 0) {
-                costPerPizza = totalMonthlyCost / operationalCosts.estimatedMonthlyProduction;
-                methodText = 'Fixo por Pizza';
-                if (document.getElementById('costPerPizza')) {
-                    document.getElementById('costPerPizza').textContent = `R$ ${costPerPizza.toFixed(2).replace('.', ',')}`;
-                }
-            } else if (operationalCosts.method === 'percentage') {
-                methodText = `${operationalCosts.percentage}% sobre CMV`;
-                if (document.getElementById('costPerPizza')) {
-                    document.getElementById('costPerPizza').textContent = `${operationalCosts.percentage}%`;
-                }
-            } else {
-                if (document.getElementById('costPerPizza')) {
-                    document.getElementById('costPerPizza').textContent = 'R$ 0,00';
-                }
-            }
-
-            if (document.getElementById('currentMethod')) {
-                document.getElementById('currentMethod').textContent = methodText;
-            }
-
-            // Update pizzas with new costs
-            renderPizzas();
-        }
-
-        function getOperationalCostForPizza(baseCost) {
-            if (!operationalCosts.method) return 0;
-
-            if (operationalCosts.method === 'fixed') {
-                const totalMonthlyCost = operationalCosts.rent + operationalCosts.electricity +
-                    operationalCosts.water + operationalCosts.gas + operationalCosts.salaries +
-                    operationalCosts.internet + operationalCosts.cleaning + operationalCosts.marketing +
-                    operationalCosts.bankFees + operationalCosts.taxes + operationalCosts.others;
-
-                if (operationalCosts.estimatedMonthlyProduction > 0) {
-                    return totalMonthlyCost / operationalCosts.estimatedMonthlyProduction;
-                }
-                return 0;
-            } else if (operationalCosts.method === 'percentage') {
-                return baseCost * (operationalCosts.percentage / 100);
-            }
-
-            return 0;
-        }
-
-        function renderOperationalCosts() {
-            // Set radio buttons
-            if (operationalCosts.method === 'fixed') {
-                document.getElementById('costMethodFixed').checked = true;
-                document.getElementById('fixedMethodConfig').classList.remove('hidden');
-                document.getElementById('percentageMethodConfig').classList.add('hidden');
-            } else if (operationalCosts.method === 'percentage') {
-                document.getElementById('costMethodPercentage').checked = true;
-                document.getElementById('fixedMethodConfig').classList.add('hidden');
-                document.getElementById('percentageMethodConfig').classList.remove('hidden');
-            } else {
-                document.getElementById('fixedMethodConfig').classList.add('hidden');
-                document.getElementById('percentageMethodConfig').classList.add('hidden');
-            }
-
-            // Set cost values
-            document.getElementById('costRent').value = operationalCosts.rent;
-            document.getElementById('costElectricity').value = operationalCosts.electricity;
-            document.getElementById('costWater').value = operationalCosts.water;
-            document.getElementById('costGas').value = operationalCosts.gas;
-            document.getElementById('costSalaries').value = operationalCosts.salaries;
-            document.getElementById('costInternet').value = operationalCosts.internet;
-            document.getElementById('costCleaning').value = operationalCosts.cleaning;
-            document.getElementById('costMarketing').value = operationalCosts.marketing;
-            document.getElementById('costBankFees').value = operationalCosts.bankFees;
-            document.getElementById('costTaxes').value = operationalCosts.taxes;
-            document.getElementById('costOthers').value = operationalCosts.others;
-            document.getElementById('estimatedMonthlyProduction').value = operationalCosts.estimatedMonthlyProduction;
-            document.getElementById('operationalCostPercentage').value = operationalCosts.percentage;
-
-            calculateOperationalCosts();
         }
 
         // ==================== FICHAS TÉCNICAS ====================
@@ -3678,10 +3370,6 @@
                                 <div class="cost-item">
                                     <span class="cost-label">Custos Adicionais:</span>
                                     <span class="cost-value">R$ ${pizza.additionalCost.toFixed(2)}</span>
-                                </div>
-                                <div class="cost-item">
-                                    <span class="cost-label">Custos Operacionais:</span>
-                                    <span class="cost-value">R$ ${(pizza.operationalCost || 0).toFixed(2)}</span>
                                 </div>
                                 <div class="cost-item total">
                                     <span class="cost-label">Custo Total:</span>
