@@ -3315,8 +3315,7 @@
                     ingredients,
                     preparations,
                     pizzas,
-                    platforms,
-                    operationalCosts
+                    platforms
                 }
             };
 
@@ -3359,27 +3358,11 @@
                     }
 
                     // Validate arrays
-                    const { suppliers: impSuppliers, ingredients: impIngredients, preparations: impPreparations, pizzas: impPizzas, platforms: impPlatforms, operationalCosts: impOperationalCosts } = projectData.data;
+                    const { suppliers: impSuppliers, ingredients: impIngredients, preparations: impPreparations, pizzas: impPizzas, platforms: impPlatforms } = projectData.data;
 
-                    // Support for older versions without suppliers, platforms or operationalCosts
+                    // Support for older versions without suppliers or platforms
                     const suppliersArray = impSuppliers || [];
                     const platformsArray = impPlatforms || [];
-                    const operationalCostsData = impOperationalCosts || {
-                        method: null,
-                        estimatedMonthlyProduction: 500,
-                        percentage: 30,
-                        rent: 0,
-                        electricity: 0,
-                        water: 0,
-                        gas: 0,
-                        salaries: 0,
-                        internet: 0,
-                        cleaning: 0,
-                        marketing: 0,
-                        bankFees: 0,
-                        taxes: 0,
-                        others: 0
-                    };
 
                     if (!Array.isArray(impIngredients) || !Array.isArray(impPreparations) || !Array.isArray(impPizzas)) {
                         showAlert('Arquivo inválido! Estrutura de dados incorreta.');
@@ -3413,12 +3396,6 @@
 
                             platforms = platformsArray;
 
-                            // Import operational costs
-                            operationalCosts = operationalCostsData;
-
-                            // Recalcular todas as pizzas com os custos operacionais importados
-                            recalculateAllPizzas();
-
                             // Reset counters
                             preparationIngredientsCount = 0;
                             pizzaPreparationsCount = 0;
@@ -3429,7 +3406,6 @@
                             renderIngredients();
                             renderPreparations();
                             renderPizzas();
-                            renderOperationalCosts();
                             renderPlatforms();
                             renderDashboard();
 
@@ -3536,27 +3512,7 @@
             }
 
             // Update pizzas with new costs
-            recalculateAllPizzas();
             renderPizzas();
-            renderDashboard();
-        }
-
-        function recalculateAllPizzas() {
-            // Recalcular todas as pizzas existentes com os novos custos operacionais
-            pizzas.forEach(pizza => {
-                const baseCost = pizza.baseCost;
-                const wasteMultiplier = 1 + (pizza.wastePercentage / 100);
-                const operationalCost = getOperationalCostForPizza(baseCost);
-                const totalCost = (baseCost * wasteMultiplier) + pizza.additionalCost + operationalCost;
-                const salePrice = totalCost * (1 + pizza.profitMargin / 100);
-                const profit = salePrice - totalCost;
-
-                // Atualizar os valores na pizza
-                pizza.operationalCost = operationalCost;
-                pizza.totalCost = totalCost;
-                pizza.salePrice = salePrice;
-                pizza.profit = profit;
-            });
         }
 
         function getOperationalCostForPizza(baseCost) {
