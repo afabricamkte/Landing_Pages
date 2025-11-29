@@ -1,6 +1,0 @@
-{
-    "name": "Event Management System",
-    "forwardPorts": [8080],
-    "postCreateCommand": "npm install -g http-server",
-    "postStartCommand": "http-server -p 8080 --cors"
-  }

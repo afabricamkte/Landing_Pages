@@ -1,0 +1,2676 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Eventos - A Fábrica</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #2563EB;
+            --primary-dark: #1D4ED8;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --bg: #F9FAFB;
+            --bg-card: #FFFFFF;
+            --text: #111827;
+            --text-secondary: #6B7280;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark {
+            --primary: #3B82F6;
+            --primary-dark: #2563EB;
+            --secondary: #34D399;
+            --accent: #FBBF24;
+            --bg: #0F172A;
+            --bg-card: #1E293B;
+            --text: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --border: #334155;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Header - Mais Clean */
+        header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1.25rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-brand h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        /* Buttons - Mais Clean */
+        .btn {
+            padding: 0.625rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.8125rem;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Event Selector - Mais Clean */
+        .event-bar {
+            background: var(--bg-card);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--shadow);
+            flex-wrap: wrap;
+        }
+
+        .event-bar label {
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .event-bar select {
+            flex: 1;
+            min-width: 250px;
+            padding: 0.625rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        /* Tabs - Mais Clean */
+        .tabs {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 0.75rem 1.25rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab:hover {
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card - Mais Clean */
+        .card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+            border-left: 3px solid var(--primary);
+        }
+
+        .metric-card.success {
+            border-left-color: var(--success);
+        }
+
+        .metric-card.warning {
+            border-left-color: var(--warning);
+        }
+
+        .metric-card.danger {
+            border-left-color: var(--danger);
+        }
+
+        .metric-label {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .metric-change {
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        /* Charts */
+        .chart-container {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Form - Mais Clean */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.625rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            background: var(--bg);
+            color: var(--text);
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Progress Bar - Vertical Grid */
+        .progress-container {
+            margin-bottom: 1rem;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+        }
+
+        .progress-percentage {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .progress-steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .progress-step-card {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .progress-step-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .progress-step-card.done {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .progress-step-card.in-progress {
+            border-color: var(--warning);
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .progress-step-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .progress-step-card.done .progress-step-icon {
+            background: var(--success);
+            color: white;
+        }
+
+        .progress-step-card.in-progress .progress-step-icon {
+            background: var(--warning);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .progress-step-info {
+            flex: 1;
+        }
+
+        .progress-step-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .progress-step-status {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-step-card.done .progress-step-status {
+            color: var(--success);
+        }
+
+        .progress-step-card.in-progress .progress-step-status {
+            color: var(--warning);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Image Gallery */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .image-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-item-delete {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.25rem;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .image-upload-area:hover {
+            border-color: var(--primary);
+            background: var(--bg);
+        }
+
+        .image-upload-area input {
+            display: none;
+        }
+
+        /* PDF Preview */
+        .pdf-preview {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+        }
+
+        .pdf-preview-header {
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #E5E7EB;
+            margin-bottom: 2rem;
+        }
+
+        .pdf-preview-logo {
+            max-width: 150px;
+            margin-bottom: 1rem;
+        }
+
+        .local-chosen {
+            border: 3px solid var(--success) !important;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .chosen-badge {
+            background: var(--success);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        /* Table - Mais Clean */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        th {
+            background: var(--bg);
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td input,
+        td select,
+        td textarea {
+            width: 100%;
+            padding: 0.375rem 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.8125rem;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        /* Category Section - Mais Clean */
+        .category-section {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            border-left: 3px solid var(--primary);
+        }
+
+        .category-header {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+
+        .supplier-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .supplier-info input {
+            padding: 0.625rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background: var(--bg-card);
+            color: var(--text);
+        }
+
+        /* Modal - Mais Clean */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            display: none;
+            z-index: 2000;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .toast.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        .toast.warning {
+            background: var(--warning);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Alert List */
+        .alert-list {
+            margin-top: 1rem;
+        }
+
+        .alert-item {
+            background: var(--bg);
+            padding: 0.875rem;
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+            border-left: 3px solid var(--warning);
+            font-size: 0.875rem;
+        }
+
+        .alert-item.danger {
+            border-left-color: var(--danger);
+        }
+
+        /* Comparison Grid */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .comparison-card {
+            background: var(--bg);
+            padding: 1.25rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .comparison-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        /* Utility Classes */
+        .flex { display: flex; }
+        .gap-2 { gap: 1rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .text-sm { font-size: 0.875rem; }
+        .text-center { text-align: center; }
+
+        /* File Input */
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .header-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .chart-wrapper {
+                height: 250px;
+            }
+        }
+
+        /* Dark mode */
+        @media (prefers-color-scheme: dark) {
+            .dark {
+                color-scheme: dark;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-brand">
+                <h1>📋 Gestão de Eventos</h1>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline" onclick="app.openCompanySettings()">⚙️ Configurar Empresa</button>
+                <button class="btn btn-primary" onclick="app.newEvent()">➕ Novo</button>
+                <div class="file-input-wrapper">
+                    <button class="btn btn-outline" onclick="document.getElementById('importFileInput').click()">📥 Importar</button>
+                    <input type="file" id="importFileInput" accept=".json" onchange="app.importEvent(event)">
+                </div>
+                <button class="btn btn-outline" onclick="app.exportEvent()">📤 Exportar</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Event Selector -->
+        <div class="event-bar">
+            <label>Evento:</label>
+            <select id="eventSelector" onchange="app.loadEvent(this.value)">
+                <option value="">Selecione um evento</option>
+            </select>
+            <button class="btn btn-danger btn-sm" onclick="app.deleteCurrentEvent()">🗑️ Excluir</button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="dashboard">💰 Dashboard Financeiro</button>
+            <button class="tab" data-tab="detalhada">📋 Detalhamento do Projeto</button>
+            <button class="tab" data-tab="pagamentos">💳 Pagamentos</button>
+            <button class="tab" data-tab="comparativo">🏢 Comparativo</button>
+        </div>
+
+        <!-- Tab: Dashboard Financeiro -->
+        <div class="tab-content active" data-content="dashboard">
+            <!-- KPI Cards -->
+            <div class="dashboard-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Total do Evento</div>
+                    <div class="metric-value">R$ <span id="totalEvento">0,00</span></div>
+                </div>
+                <div class="metric-card success">
+                    <div class="metric-label">Total Pago</div>
+                    <div class="metric-value">R$ <span id="totalPago">0,00</span></div>
+                </div>
+                <div class="metric-card warning">
+                    <div class="metric-label">Saldo Pendente</div>
+                    <div class="metric-value">R$ <span id="saldoPendente">0,00</span></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Fornecedores</div>
+                    <div class="metric-value"><span id="totalFornecedores">0</span></div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+                <div class="chart-container">
+                    <h3 class="card-title">Distribuição de Custos</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3 class="card-title">Custos por Categoria</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts -->
+            <div class="card">
+                <h3 class="card-title">⚠️ Próximos Vencimentos</h3>
+                <div class="alert-list" id="alertList">
+                    <p class="text-sm text-center" style="color: var(--text-secondary);">Nenhum pagamento pendente</p>
+                </div>
+            </div>
+
+            <!-- Summary Table -->
+            <div class="card">
+                <h3 class="card-title">Resumo por Categoria</h3>
+                <div class="table-wrapper">
+                    <table id="summaryTable">
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Valor</th>
+                                <th>% do Total</th>
+                                <th>Fornecedor</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Detalhamento do Projeto -->
+        <div class="tab-content" data-content="detalhada">
+            <!-- Progress Bar -->
+            <div class="card">
+                <h3 class="card-title">Progresso do Projeto</h3>
+                <div id="progressBar"></div>
+            </div>
+
+            <!-- Informações do Evento -->
+            <div class="card">
+                <h3 class="card-title">Informações do Evento</h3>
+                <div class="flex gap-2">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Nome do Cliente</label>
+                        <input type="text" id="clientName" placeholder="Digite o nome do cliente">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Local do Evento</label>
+                        <input type="text" id="eventLocation" placeholder="Local">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div class="form-group">
+                        <label>Início da Montagem</label>
+                        <input type="date" id="montagemInicio">
+                    </div>
+                    <div class="form-group">
+                        <label>Fim da Montagem</label>
+                        <input type="date" id="montagemFim">
+                    </div>
+                    <div class="form-group">
+                        <label>Início do Evento</label>
+                        <input type="date" id="eventDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Fim do Evento</label>
+                        <input type="date" id="eventoFim">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Observações Gerais</label>
+                    <textarea id="timelineObs" rows="3" placeholder="Observações sobre o projeto..."></textarea>
+                </div>
+            </div>
+
+            <!-- Categorias Financeiras -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 class="card-title" style="margin: 0;">Categorias Financeiras</h3>
+                    <button class="btn btn-primary btn-sm" onclick="app.addNewCategory()">➕ Adicionar Categoria</button>
+                </div>
+                <div id="categoriesContainer"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Pagamentos -->
+        <div class="tab-content" data-content="pagamentos">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 class="card-title" style="margin: 0;">Controle de Pagamentos</h3>
+                    <button class="btn btn-primary btn-sm" onclick="app.addPayment()">➕ Adicionar</button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="pagamentosTable">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Vencimento</th>
+                                <th>Fornecedor</th>
+                                <th>Serviço</th>
+                                <th>Valor</th>
+                                <th>Parcela</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Comparativo -->
+        <div class="tab-content" data-content="comparativo">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 class="card-title" style="margin: 0;">Comparativo de Locais</h3>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button class="btn btn-primary" onclick="app.generateComparativoPDF()">📄 Gerar Comparativo em PDF</button>
+                        <button class="btn btn-outline" onclick="app.generateRelatorioGeralPDF()">📋 Relatório Geral do Evento</button>
+                    </div>
+                </div>
+                <div class="comparison-grid" id="comparativoGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="newEventModal">
+        <div class="modal-content">
+            <div class="modal-header">Criar Novo Evento</div>
+            <div class="form-group">
+                <label>Nome do Evento</label>
+                <input type="text" id="newEventName" placeholder="Ex: Conferência 2024">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="app.closeModal('newEventModal')">Cancelar</button>
+                <button class="btn btn-primary" onclick="app.createNewEvent()">Criar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">Confirmar Exclusão</div>
+            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Tem certeza que deseja excluir este evento?</p>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="app.closeModal('deleteModal')">Cancelar</button>
+                <button class="btn btn-danger" onclick="app.confirmDelete()">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-header">Adicionar Nova Categoria</div>
+            <div class="form-group">
+                <label>Nome da Categoria</label>
+                <input type="text" id="newCategoryName" placeholder="Ex: Decoração, Segurança, Transporte">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="app.closeModal('categoryModal')">Cancelar</button>
+                <button class="btn btn-primary" onclick="app.createNewCategory()">Adicionar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteCategoryModal">
+        <div class="modal-content">
+            <div class="modal-header">Confirmar Exclusão da Categoria</div>
+            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Tem certeza que deseja excluir a categoria "<strong id="deleteCategoryName"></strong>"? Todos os dados desta categoria serão perdidos.</p>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="app.closeModal('deleteCategoryModal')">Cancelar</button>
+                <button class="btn btn-danger" onclick="app.confirmDeleteCategory()">Excluir Categoria</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Modal for Progress Steps (Centralizado) -->
+    <div class="modal" id="statusModal">
+        <div class="modal-content">
+            <div class="modal-header">Alterar Status</div>
+            <p style="margin-bottom: 1.5rem; font-weight: 600;" id="statusStepName"></p>
+            <div style="display: flex; gap: 0.75rem; flex-direction: column;">
+                <button class="btn btn-outline" onclick="app.updateStepStatus('pending')" id="statusPending">Pendente</button>
+                <button class="btn btn-outline" onclick="app.updateStepStatus('in-progress')" id="statusProgress">Em Andamento</button>
+                <button class="btn btn-primary" onclick="app.updateStepStatus('done')" id="statusDone">Feito</button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="app.closeStatusModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Company Settings Modal -->
+    <div class="modal" id="companySettingsModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">⚙️ Configurações da Empresa</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Logo da Empresa</label>
+                    <div class="image-upload-area" onclick="document.getElementById('companyLogoInput').click()">
+                        <input type="file" id="companyLogoInput" accept="image/*" onchange="app.uploadCompanyLogo(event)">
+                        <div id="companyLogoPreview">
+                            <p style="color: var(--text-secondary); font-size: 0.875rem;">📸 Clique para fazer upload da logo</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Nome da Empresa</label>
+                    <input type="text" id="companyName" placeholder="Ex: A Fábrica Marketing e Eventos">
+                </div>
+                <div class="form-group">
+                    <label>Instagram</label>
+                    <input type="text" id="companyInstagram" placeholder="@suaempresa">
+                </div>
+                <div class="form-group">
+                    <label>Responsável pelo Projeto</label>
+                    <input type="text" id="companyResponsavel" placeholder="Nome do responsável">
+                </div>
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" id="companyEmail" placeholder="contato@empresa.com">
+                </div>
+                <div class="form-group">
+                    <label>Telefone</label>
+                    <input type="tel" id="companyPhone" placeholder="(00) 0000-0000">
+                </div>
+                <div class="form-group">
+                    <label>Website</label>
+                    <input type="url" id="companyWebsite" placeholder="https://suaempresa.com">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="app.closeModal('companySettingsModal')">Cancelar</button>
+                <button class="btn btn-primary" onclick="app.saveCompanySettings()">Salvar Configurações</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Preview Modal -->
+    <div class="modal" id="pdfPreviewModal">
+        <div class="modal-content" style="max-width: 95%; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">Prévia do PDF</div>
+            <div id="pdfPreviewContent"></div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="app.closeModal('pdfPreviewModal')">Cancelar</button>
+                <button class="btn btn-primary" onclick="app.downloadPDF()">💾 Baixar PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        // Dark mode
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            document.documentElement.classList.toggle('dark', event.matches);
+            app.updateCharts();
+        });
+
+        const app = {
+            currentEventId: null,
+            events: {},
+            charts: {},
+            currentStepIndex: null,
+
+            timelineSteps: [
+                "Contratação",
+                "Reunião de Alinhamento",
+                "Definição de Local",
+                "Busca de Fornecedores",
+                "Apresentar Orçamentos",
+                "Escolha e Contratação",
+                "Visita Técnica",
+                "Produção de Materiais",
+                "Montagem",
+                "Execução do Evento",
+                "Desmontagem",
+                "Debriefing"
+            ],
+
+            defaultCategories: [
+                { id: 'local', name: 'Local' },
+                { id: 'alimentacao', name: 'Alimentação' },
+                { id: 'hospedagem', name: 'Hospedagem' },
+                { id: 'internet', name: 'Internet' },
+                { id: 'gerador', name: 'Gerador' },
+                { id: 'equipamentos', name: 'Equipamentos' },
+                { id: 'filmagem', name: 'Filmagem e Fotografia' },
+                { id: 'brindes', name: 'Brindes / Kits' },
+                { id: 'cenografia', name: 'Cenografia' },
+                { id: 'visita', name: 'Visita Técnica' },
+                { id: 'outros', name: 'Outros' },
+                { id: 'producao', name: 'Produção' }
+            ],
+
+            init() {
+                this.loadEventsFromStorage();
+                this.setupTabs();
+                this.updateEventSelector();
+                this.renderAll();
+            },
+
+            setupTabs() {
+                const tabs = document.querySelectorAll('.tab');
+                const contents = document.querySelectorAll('.tab-content');
+
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const targetTab = tab.dataset.tab;
+
+                        tabs.forEach(t => t.classList.remove('active'));
+                        contents.forEach(c => c.classList.remove('active'));
+
+                        tab.classList.add('active');
+                        document.querySelector(`[data-content="${targetTab}"]`).classList.add('active');
+
+                        if (targetTab === 'dashboard') {
+                            this.renderDashboard();
+                        }
+                    });
+                });
+            },
+
+            renderAll() {
+                this.renderProgressBar();
+                this.renderCategories();
+                this.renderPagamentos();
+                this.renderComparativo();
+                this.renderDashboard();
+            },
+
+            renderProgressBar() {
+                const container = document.getElementById('progressBar');
+                if (!container) return;
+
+                const eventData = this.getCurrentEventData();
+                const timeline = eventData?.timeline || [];
+
+                let completed = 0;
+                this.timelineSteps.forEach((step, index) => {
+                    const status = timeline[index]?.status || 'pending';
+                    if (status === 'done') completed++;
+                });
+
+                const percentage = Math.round((completed / this.timelineSteps.length) * 100);
+
+                const statusText = {
+                    'pending': 'Pendente',
+                    'in-progress': 'Em Andamento',
+                    'done': 'Concluído'
+                };
+
+                container.innerHTML = `
+                    <div class="progress-stats">
+                        <div>
+                            <div class="progress-percentage">${percentage}%</div>
+                            <div style="color: var(--text-secondary); font-size: 0.875rem;">Progresso geral</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: 600; font-size: 1.125rem;">${completed} / ${this.timelineSteps.length}</div>
+                            <div style="color: var(--text-secondary); font-size: 0.875rem;">Etapas concluídas</div>
+                        </div>
+                    </div>
+                    <div class="progress-steps-grid">
+                        ${this.timelineSteps.map((step, index) => {
+                            const status = timeline[index]?.status || 'pending';
+                            const icon = status === 'done' ? '✓' : status === 'in-progress' ? '●' : (index + 1);
+                            return `
+                                <div class="progress-step-card ${status}" onclick="app.openStepStatus(${index})">
+                                    <div class="progress-step-icon">${icon}</div>
+                                    <div class="progress-step-info">
+                                        <div class="progress-step-title">${step}</div>
+                                        <div class="progress-step-status">${statusText[status]}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            },
+
+            openStepStatus(index) {
+                if (!this.currentEventId) return;
+
+                this.currentStepIndex = index;
+                const stepName = document.getElementById('statusStepName');
+                stepName.textContent = `${index + 1}. ${this.timelineSteps[index]}`;
+
+                this.openModal('statusModal');
+            },
+
+            updateStepStatus(status) {
+                if (!this.currentEventId || this.currentStepIndex === null) return;
+
+                if (!this.events[this.currentEventId].timeline) {
+                    this.events[this.currentEventId].timeline = [];
+                }
+
+                this.events[this.currentEventId].timeline[this.currentStepIndex] = { status };
+                this.renderProgressBar();
+                this.closeStatusModal();
+            },
+
+            closeStatusModal() {
+                this.closeModal('statusModal');
+                this.currentStepIndex = null;
+            },
+
+            renderDashboard() {
+                const eventData = this.getCurrentEventData();
+                if (!eventData) {
+                    document.getElementById('totalEvento').textContent = '0,00';
+                    document.getElementById('totalPago').textContent = '0,00';
+                    document.getElementById('saldoPendente').textContent = '0,00';
+                    document.getElementById('totalFornecedores').textContent = '0';
+                    return;
+                }
+
+                // Calculate totals
+                let totalEvento = 0;
+                let totalPago = 0;
+                const categoryTotals = [];
+                const categoryNames = [];
+                const fornecedores = new Set();
+
+                const categories = this.getEventCategories();
+                categories.forEach(cat => {
+                    const categoryData = eventData.detalhada?.[cat.id];
+                    const total = (categoryData?.items || []).reduce((sum, item) =>
+                        sum + (parseFloat(item.totalValue) || 0), 0);
+
+                    if (total > 0) {
+                        categoryTotals.push(total);
+                        categoryNames.push(cat.name);
+                        totalEvento += total;
+
+                        if (categoryData?.supplier?.name) {
+                            fornecedores.add(categoryData.supplier.name);
+                        }
+                    }
+                });
+
+                // Calculate paid total
+                (eventData.pagamentos || []).forEach(pag => {
+                    if (pag.status === 'Pago') {
+                        totalPago += parseFloat(pag.valor) || 0;
+                    }
+                });
+
+                const saldoPendente = totalEvento - totalPago;
+
+                // Update KPIs
+                document.getElementById('totalEvento').textContent = this.formatMoney(totalEvento);
+                document.getElementById('totalPago').textContent = this.formatMoney(totalPago);
+                document.getElementById('saldoPendente').textContent = this.formatMoney(saldoPendente);
+                document.getElementById('totalFornecedores').textContent = fornecedores.size;
+
+                // Update charts
+                this.updateCharts(categoryNames, categoryTotals);
+
+                // Update alerts
+                this.renderAlerts(eventData.pagamentos || []);
+
+                // Update summary table
+                this.renderSummaryTable(totalEvento);
+            },
+
+            getEventCategories() {
+                const eventData = this.getCurrentEventData();
+                if (!eventData || !eventData.categories) {
+                    return this.defaultCategories;
+                }
+                return eventData.categories;
+            },
+
+            updateCharts(names, values) {
+                const isDark = document.documentElement.classList.contains('dark');
+                const textColor = isDark ? '#94A3B8' : '#6B7280';
+                const gridColor = isDark ? '#334155' : '#E5E7EB';
+
+                const colors = [
+                    '#3B82F6', '#10B981', '#F59E0B', '#EF4444',
+                    '#8B5CF6', '#EC4899', '#14B8A6', '#F97316',
+                    '#6366F1', '#84CC16', '#06B6D4', '#A855F7'
+                ];
+
+                // Pie Chart
+                const pieCtx = document.getElementById('pieChart');
+                if (this.charts.pie) this.charts.pie.destroy();
+
+                this.charts.pie = new Chart(pieCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: names,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: colors,
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: textColor, padding: 15, font: { size: 11 } }
+                            }
+                        }
+                    }
+                });
+
+                // Bar Chart
+                const barCtx = document.getElementById('barChart');
+                if (this.charts.bar) this.charts.bar.destroy();
+
+                this.charts.bar = new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: names,
+                        datasets: [{
+                            label: 'Valor (R$)',
+                            data: values,
+                            backgroundColor: '#3B82F6',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: textColor },
+                                grid: { color: gridColor }
+                            },
+                            x: {
+                                ticks: { color: textColor },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            },
+
+            renderAlerts(payments) {
+                const container = document.getElementById('alertList');
+                container.innerHTML = '';
+
+                const today = new Date();
+                const pendingPayments = payments
+                    .filter(p => p.status === 'Pendente' && p.vencimento)
+                    .map(p => ({
+                        ...p,
+                        vencDate: new Date(p.vencimento)
+                    }))
+                    .sort((a, b) => a.vencDate - b.vencDate)
+                    .slice(0, 5);
+
+                if (pendingPayments.length === 0) {
+                    container.innerHTML = '<p class="text-sm text-center" style="color: var(--text-secondary);">Nenhum pagamento pendente</p>';
+                    return;
+                }
+
+                pendingPayments.forEach(p => {
+                    const daysUntil = Math.ceil((p.vencDate - today) / (1000 * 60 * 60 * 24));
+                    const isDanger = daysUntil < 0;
+                    const isWarning = daysUntil >= 0 && daysUntil <= 7;
+
+                    const alert = document.createElement('div');
+                    alert.className = `alert-item ${isDanger ? 'danger' : ''}`;
+                    alert.innerHTML = `
+                        <strong>${p.fornecedor || 'Fornecedor não informado'}</strong> -
+                        ${p.servico || 'Serviço'} -
+                        R$ ${this.formatMoney(p.valor)} -
+                        Vence em: ${p.vencDate.toLocaleDateString('pt-BR')}
+                        ${isDanger ? ' (Atrasado!)' : isWarning ? ' (Próximo)' : ''}
+                    `;
+                    container.appendChild(alert);
+                });
+            },
+
+            renderSummaryTable(totalEvento) {
+                const tbody = document.querySelector('#summaryTable tbody');
+                tbody.innerHTML = '';
+
+                const eventData = this.getCurrentEventData();
+                if (!eventData) return;
+
+                const categories = this.getEventCategories();
+                categories.forEach(cat => {
+                    const categoryData = eventData.detalhada?.[cat.id];
+                    const total = (categoryData?.items || []).reduce((sum, item) =>
+                        sum + (parseFloat(item.totalValue) || 0), 0);
+
+                    if (total > 0) {
+                        const percent = totalEvento > 0 ? (total / totalEvento * 100).toFixed(1) : 0;
+                        const supplier = categoryData?.supplier?.name || '-';
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><strong>${cat.name}</strong></td>
+                            <td class="mono">R$ ${this.formatMoney(total)}</td>
+                            <td>${percent}%</td>
+                            <td>${supplier}</td>
+                        `;
+                        tbody.appendChild(row);
+                    }
+                });
+            },
+
+            renderCategories() {
+                const container = document.getElementById('categoriesContainer');
+                container.innerHTML = '';
+
+                const categories = this.getEventCategories();
+
+                if (categories.length === 0) {
+                    container.innerHTML = '<p class="text-center text-sm" style="color: var(--text-secondary);">Nenhuma categoria adicionada. Clique em "Adicionar Categoria" para começar.</p>';
+                    return;
+                }
+
+                categories.forEach(category => {
+                    const categoryData = this.getCurrentEventData()?.detalhada?.[category.id] || {
+                        supplier: { name: '', contact: '', phone: '', email: '' },
+                        items: []
+                    };
+
+                    const section = document.createElement('div');
+                    section.className = 'category-section';
+                    section.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <div class="category-header" style="margin: 0;">${category.name}</div>
+                            <button class="btn btn-danger btn-sm" onclick="app.deleteCategory('${category.id}')">🗑️ Excluir Categoria</button>
+                        </div>
+                        <div class="supplier-info">
+                            <input type="text" placeholder="Fornecedor" value="${categoryData.supplier.name || ''}"
+                                   onchange="app.updateSupplier('${category.id}', 'name', this.value)">
+                            <input type="text" placeholder="Contato" value="${categoryData.supplier.contact || ''}"
+                                   onchange="app.updateSupplier('${category.id}', 'contact', this.value)">
+                            <input type="text" placeholder="Telefone" value="${categoryData.supplier.phone || ''}"
+                                   onchange="app.updateSupplier('${category.id}', 'phone', this.value)">
+                            <input type="email" placeholder="E-mail" value="${categoryData.supplier.email || ''}"
+                                   onchange="app.updateSupplier('${category.id}', 'email', this.value)">
+                        </div>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Qtd</th>
+                                        <th>Diárias</th>
+                                        <th>Valor Unit.</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="category-${category.id}">
+                                    ${this.renderCategoryItems(category.id, categoryData.items)}
+                                </tbody>
+                            </table>
+                        </div>
+                        <button class="btn btn-outline btn-sm mt-2" onclick="app.addCategoryItem('${category.id}')">➕ Adicionar Item</button>
+                        <div class="mt-2 text-sm">
+                            <strong>Total: R$ <span id="total-${category.id}" class="mono">0,00</span></strong>
+                        </div>
+                    `;
+
+                    container.appendChild(section);
+                    this.updateCategoryTotal(category.id);
+                });
+            },
+
+            addNewCategory() {
+                if (!this.currentEventId) {
+                    this.showToast('Selecione um evento primeiro', 'warning');
+                    return;
+                }
+
+                document.getElementById('newCategoryName').value = '';
+                this.openModal('categoryModal');
+            },
+
+            createNewCategory() {
+                const name = document.getElementById('newCategoryName').value.trim();
+
+                if (!name) {
+                    this.showToast('Digite um nome para a categoria', 'warning');
+                    return;
+                }
+
+                if (!this.currentEventId) return;
+
+                // Initialize categories array if it doesn't exist
+                if (!this.events[this.currentEventId].categories) {
+                    this.events[this.currentEventId].categories = [...this.defaultCategories];
+                }
+
+                // Create unique ID
+                const id = 'cat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
+                // Add new category
+                this.events[this.currentEventId].categories.push({
+                    id: id,
+                    name: name
+                });
+
+                this.closeModal('categoryModal');
+                this.renderCategories();
+                this.showToast('Categoria adicionada!', 'success');
+            },
+
+            deleteCategory(categoryId) {
+                if (!this.currentEventId) return;
+
+                if (!this.events[this.currentEventId].categories) {
+                    this.events[this.currentEventId].categories = [...this.defaultCategories];
+                }
+
+                // Find category name
+                const category = this.events[this.currentEventId].categories.find(c => c.id === categoryId);
+                if (!category) return;
+
+                // Store categoryId for confirmation
+                this.deleteCategoryId = categoryId;
+
+                // Show modal
+                document.getElementById('deleteCategoryName').textContent = category.name;
+                this.openModal('deleteCategoryModal');
+            },
+
+            confirmDeleteCategory() {
+                if (!this.currentEventId || !this.deleteCategoryId) return;
+
+                const categoryId = this.deleteCategoryId;
+
+                // Remove category
+                this.events[this.currentEventId].categories = this.events[this.currentEventId].categories.filter(c => c.id !== categoryId);
+
+                // Remove category data
+                if (this.events[this.currentEventId].detalhada && this.events[this.currentEventId].detalhada[categoryId]) {
+                    delete this.events[this.currentEventId].detalhada[categoryId];
+                }
+
+                this.closeModal('deleteCategoryModal');
+                this.deleteCategoryId = null;
+                this.renderCategories();
+                this.renderDashboard();
+                this.showToast('Categoria excluída', 'success');
+            },
+
+            renderCategoryItems(categoryId, items) {
+                if (!items || items.length === 0) {
+                    return '<tr><td colspan="7" class="text-center text-sm" style="color: var(--text-secondary);">Nenhum item</td></tr>';
+                }
+
+                return items.map((item, index) => `
+                    <tr>
+                        <td><input type="text" value="${item.name || ''}" onchange="app.updateCategoryItem('${categoryId}', ${index}, 'name', this.value)"></td>
+                        <td><input type="number" value="${item.quantity || 0}" onchange="app.updateCategoryItem('${categoryId}', ${index}, 'quantity', this.value)" style="width: 80px;"></td>
+                        <td><input type="number" value="${item.diarias || 0}" onchange="app.updateCategoryItem('${categoryId}', ${index}, 'diarias', this.value)" style="width: 80px;"></td>
+                        <td><input type="number" step="0.01" value="${item.unitValue || 0}" onchange="app.updateCategoryItem('${categoryId}', ${index}, 'unitValue', this.value)" style="width: 100px;"></td>
+                        <td class="mono">R$ ${this.formatMoney(item.totalValue || 0)}</td>
+                        <td>
+                            <select onchange="app.updateCategoryItem('${categoryId}', ${index}, 'status', this.value)">
+                                <option value="Pendente" ${item.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
+                                <option value="Em andamento" ${item.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
+                                <option value="Concluída" ${item.status === 'Concluída' ? 'selected' : ''}>Concluída</option>
+                            </select>
+                        </td>
+                        <td><button class="btn btn-danger btn-sm" onclick="app.deleteCategoryItem('${categoryId}', ${index})">🗑️</button></td>
+                    </tr>
+                `).join('');
+            },
+
+            addCategoryItem(categoryId) {
+                if (!this.currentEventId) return;
+
+                if (!this.events[this.currentEventId].detalhada) {
+                    this.events[this.currentEventId].detalhada = {};
+                }
+
+                if (!this.events[this.currentEventId].detalhada[categoryId]) {
+                    this.events[this.currentEventId].detalhada[categoryId] = {
+                        supplier: { name: '', contact: '', phone: '', email: '' },
+                        items: []
+                    };
+                }
+
+                this.events[this.currentEventId].detalhada[categoryId].items.push({
+                    name: '',
+                    quantity: 0,
+                    diarias: 1,
+                    unitValue: 0,
+                    totalValue: 0,
+                    status: 'Pendente'
+                });
+
+                this.renderCategories();
+            },
+
+            deleteCategoryItem(categoryId, index) {
+                if (!this.currentEventId) return;
+
+                this.events[this.currentEventId].detalhada[categoryId].items.splice(index, 1);
+                this.renderCategories();
+                this.renderDashboard();
+            },
+
+            updateCategoryItem(categoryId, index, field, value) {
+                if (!this.currentEventId) return;
+
+                const item = this.events[this.currentEventId].detalhada[categoryId].items[index];
+                item[field] = value;
+
+                if (field === 'quantity' || field === 'diarias' || field === 'unitValue') {
+                    const qty = parseFloat(item.quantity) || 0;
+                    const diarias = parseFloat(item.diarias) || 1;
+                    const unit = parseFloat(item.unitValue) || 0;
+                    item.totalValue = qty * diarias * unit;
+                }
+
+                this.renderCategories();
+                this.renderDashboard();
+            },
+
+            updateSupplier(categoryId, field, value) {
+                if (!this.currentEventId) return;
+
+                if (!this.events[this.currentEventId].detalhada) {
+                    this.events[this.currentEventId].detalhada = {};
+                }
+
+                if (!this.events[this.currentEventId].detalhada[categoryId]) {
+                    this.events[this.currentEventId].detalhada[categoryId] = {
+                        supplier: {},
+                        items: []
+                    };
+                }
+
+                this.events[this.currentEventId].detalhada[categoryId].supplier[field] = value;
+                this.renderDashboard();
+            },
+
+            updateCategoryTotal(categoryId) {
+                const categoryData = this.getCurrentEventData()?.detalhada?.[categoryId];
+                if (!categoryData) return;
+
+                const total = (categoryData.items || []).reduce((sum, item) => sum + (parseFloat(item.totalValue) || 0), 0);
+                const el = document.getElementById(`total-${categoryId}`);
+                if (el) {
+                    el.textContent = this.formatMoney(total);
+                }
+            },
+
+            renderPagamentos() {
+                const tbody = document.querySelector('#pagamentosTable tbody');
+                tbody.innerHTML = '';
+
+                const payments = this.getCurrentEventData()?.pagamentos || [];
+
+                if (payments.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-sm" style="color: var(--text-secondary);">Nenhum pagamento cadastrado</td></tr>';
+                    return;
+                }
+
+                payments.forEach((payment, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <select onchange="app.updatePayment(${index}, 'status', this.value)">
+                                <option value="Pendente" ${payment.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
+                                <option value="Pago" ${payment.status === 'Pago' ? 'selected' : ''}>Pago</option>
+                                <option value="Atrasado" ${payment.status === 'Atrasado' ? 'selected' : ''}>Atrasado</option>
+                            </select>
+                        </td>
+                        <td><input type="date" value="${payment.vencimento || ''}" onchange="app.updatePayment(${index}, 'vencimento', this.value)"></td>
+                        <td><input type="text" value="${payment.fornecedor || ''}" onchange="app.updatePayment(${index}, 'fornecedor', this.value)"></td>
+                        <td><input type="text" value="${payment.servico || ''}" onchange="app.updatePayment(${index}, 'servico', this.value)"></td>
+                        <td><input type="number" step="0.01" value="${payment.valor || 0}" onchange="app.updatePayment(${index}, 'valor', this.value)" style="width: 120px;"></td>
+                        <td><input type="text" value="${payment.parcela || ''}" onchange="app.updatePayment(${index}, 'parcela', this.value)" placeholder="1/3" style="width: 60px;"></td>
+                        <td><button class="btn btn-danger btn-sm" onclick="app.deletePayment(${index})">🗑️</button></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            },
+
+            addPayment() {
+                if (!this.currentEventId) {
+                    this.showToast('Selecione um evento primeiro', 'warning');
+                    return;
+                }
+
+                if (!this.events[this.currentEventId].pagamentos) {
+                    this.events[this.currentEventId].pagamentos = [];
+                }
+
+                this.events[this.currentEventId].pagamentos.push({
+                    status: 'Pendente',
+                    vencimento: '',
+                    fornecedor: '',
+                    servico: '',
+                    valor: 0,
+                    parcela: ''
+                });
+
+                this.renderPagamentos();
+            },
+
+            updatePayment(index, field, value) {
+                if (!this.currentEventId) return;
+
+                this.events[this.currentEventId].pagamentos[index][field] = value;
+                this.renderDashboard();
+            },
+
+            deletePayment(index) {
+                if (!this.currentEventId) return;
+
+                this.events[this.currentEventId].pagamentos.splice(index, 1);
+                this.renderPagamentos();
+                this.renderDashboard();
+            },
+
+            renderComparativo() {
+                const container = document.getElementById('comparativoGrid');
+                container.innerHTML = '';
+
+                const comparativo = this.getCurrentEventData()?.comparativo || [];
+
+                for (let i = 0; i < 3; i++) {
+                    const local = comparativo[i] || {
+                        nome: '',
+                        endereco: '',
+                        capacidade: '',
+                        datas: [
+                            { montagem: '', inicio: '', fim: '' },
+                            { montagem: '', inicio: '', fim: '' },
+                            { montagem: '', inicio: '', fim: '' }
+                        ],
+                        images: [],
+                        proposta: '',
+                        pontosFortes: '',
+                        pontosFracos: '',
+                        escolhido: false,
+                        items: []
+                    };
+
+                    // Ensure datas array exists with at least 3 slots
+                    if (!local.datas || local.datas.length === 0) {
+                        local.datas = [
+                            { montagem: '', inicio: '', fim: '' },
+                            { montagem: '', inicio: '', fim: '' },
+                            { montagem: '', inicio: '', fim: '' }
+                        ];
+                    }
+
+                    const total = (local.items || []).reduce((sum, item) => sum + (parseFloat(item.total) || 0), 0);
+                    const isChosen = local.escolhido || false;
+
+                    const card = document.createElement('div');
+                    card.className = `comparison-card ${isChosen ? 'local-chosen' : ''}`;
+                    card.innerHTML = `
+                        <h3>Local ${i + 1} ${isChosen ? '<span class="chosen-badge">✓ ESCOLHIDO</span>' : ''}</h3>
+
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" ${isChosen ? 'checked' : ''} onchange="app.toggleLocalEscolhido(${i}, this.checked)" style="width: auto;">
+                                <span style="font-weight: 500;">Escolher Local</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nome do Local</label>
+                            <input type="text" value="${local.nome || ''}" onchange="app.updateComparativo(${i}, 'nome', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>Endereço</label>
+                            <input type="text" value="${local.endereco || ''}" onchange="app.updateComparativo(${i}, 'endereco', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>Capacidade</label>
+                            <input type="text" value="${local.capacidade || ''}" onchange="app.updateComparativo(${i}, 'capacidade', this.value)" placeholder="Ex: 200 pessoas">
+                        </div>
+
+                        <div class="form-group">
+                            <label style="font-weight: 600; margin-bottom: 0.75rem;">Datas Disponíveis</label>
+                            ${local.datas.map((data, dataIdx) => `
+                                <div style="background: var(--bg-card); padding: 0.75rem; border-radius: 6px; margin-bottom: 0.75rem; border: 1px solid var(--border);">
+                                    <div style="font-size: 0.8125rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">Período ${dataIdx + 1}</div>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem;">
+                                        <div>
+                                            <label style="font-size: 0.75rem; color: var(--text-secondary);">Montagem</label>
+                                            <input type="date" value="${data.montagem || ''}" onchange="app.updateComparativoData(${i}, ${dataIdx}, 'montagem', this.value)" style="font-size: 0.8125rem;">
+                                        </div>
+                                        <div>
+                                            <label style="font-size: 0.75rem; color: var(--text-secondary);">Início Evento</label>
+                                            <input type="date" value="${data.inicio || ''}" onchange="app.updateComparativoData(${i}, ${dataIdx}, 'inicio', this.value)" style="font-size: 0.8125rem;">
+                                        </div>
+                                        <div>
+                                            <label style="font-size: 0.75rem; color: var(--text-secondary);">Fim Evento</label>
+                                            <input type="date" value="${data.fim || ''}" onchange="app.updateComparativoData(${i}, ${dataIdx}, 'fim', this.value)" style="font-size: 0.8125rem;">
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="form-group">
+                            <label>Imagens (máx. 5)</label>
+                            <div class="image-upload-area" onclick="document.getElementById('imageUpload${i}').click()" style="${(local.images || []).length >= 5 ? 'display:none;' : ''}">
+                                <input type="file" id="imageUpload${i}" accept="image/*" multiple onchange="app.uploadImages(${i}, event)">
+                                <p style="color: var(--text-secondary); font-size: 0.875rem; margin: 0;">📸 Upload de imagens</p>
+                            </div>
+                            <div class="form-group" style="margin-top: 0.5rem;">
+                                <input type="url" placeholder="Ou cole a URL da imagem" onchange="app.addImageURL(${i}, this.value); this.value='';" style="${(local.images || []).length >= 5 ? 'display:none;' : ''}">
+                            </div>
+                            <div class="image-gallery" id="imageGallery${i}">
+                                ${this.renderImageGallery(i, local.images || [])}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Proposta Comercial</label>
+                            <textarea rows="4" placeholder="Descreva a proposta..." onchange="app.updateComparativo(${i}, 'proposta', this.value)">${local.proposta || ''}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>✅ Pontos Fortes</label>
+                            <textarea rows="3" placeholder="Liste os pontos positivos..." onchange="app.updateComparativo(${i}, 'pontosFortes', this.value)">${local.pontosFortes || ''}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>❌ Pontos Fracos</label>
+                            <textarea rows="3" placeholder="Liste os pontos negativos..." onchange="app.updateComparativo(${i}, 'pontosFracos', this.value)">${local.pontosFracos || ''}</textarea>
+                        </div>
+
+                        <div class="mt-2">
+                            <strong class="text-sm">Investimento Total: R$ ${this.formatMoney(total)}</strong>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                }
+            },
+
+            renderImageGallery(localIndex, images) {
+                if (!images || images.length === 0) return '';
+
+                return images.map((img, imgIndex) => `
+                    <div class="image-item">
+                        <img src="${img}" alt="Imagem ${imgIndex + 1}">
+                        <button class="image-item-delete" onclick="app.deleteImage(${localIndex}, ${imgIndex})">×</button>
+                    </div>
+                `).join('');
+            },
+
+            uploadImages(localIndex, event) {
+                const files = event.target.files;
+                if (!files || files.length === 0) return;
+
+                const comparativo = this.getCurrentEventData()?.comparativo || [];
+                while (comparativo.length <= localIndex) {
+                    comparativo.push({
+                        nome: '',
+                        endereco: '',
+                        capacidade: '',
+                        datas: [
+                            { montagem: '', inicio: '', fim: '' },
+                            { montagem: '', inicio: '', fim: '' },
+                            { montagem: '', inicio: '', fim: '' }
+                        ],
+                        images: [],
+                        items: []
+                    });
+                }
+
+                if (!comparativo[localIndex].images) {
+                    comparativo[localIndex].images = [];
+                }
+
+                const remainingSlots = 5 - comparativo[localIndex].images.length;
+                const filesToProcess = Math.min(files.length, remainingSlots);
+
+                for (let i = 0; i < filesToProcess; i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        comparativo[localIndex].images.push(e.target.result);
+                        if (!this.events[this.currentEventId].comparativo) {
+                            this.events[this.currentEventId].comparativo = [];
+                        }
+                        this.events[this.currentEventId].comparativo = comparativo;
+                        this.renderComparativo();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            },
+
+            addImageURL(localIndex, url) {
+                if (!url || url.trim() === '') return;
+
+                const comparativo = this.getCurrentEventData()?.comparativo || [];
+                while (comparativo.length <= localIndex) {
+                    comparativo.push({
+                        nome: '',
+                        endereco: '',
+                        capacidade: '',
+                        datas: [
+                            { montagem: '', inicio: '', fim: '' },
+                            { montagem: '', inicio: '', fim: '' },
+                            { montagem: '', inicio: '', fim: '' }
+                        ],
+                        images: [],
+                        items: []
+                    });
+                }
+
+                if (!comparativo[localIndex].images) {
+                    comparativo[localIndex].images = [];
+                }
+
+                if (comparativo[localIndex].images.length >= 5) {
+                    this.showToast('Máximo de 5 imagens atingido', 'warning');
+                    return;
+                }
+
+                comparativo[localIndex].images.push(url.trim());
+                if (!this.events[this.currentEventId].comparativo) {
+                    this.events[this.currentEventId].comparativo = [];
+                }
+                this.events[this.currentEventId].comparativo = comparativo;
+                this.renderComparativo();
+            },
+
+            deleteImage(localIndex, imageIndex) {
+                if (!this.currentEventId) return;
+
+                const comparativo = this.getCurrentEventData()?.comparativo || [];
+                if (comparativo[localIndex] && comparativo[localIndex].images) {
+                    comparativo[localIndex].images.splice(imageIndex, 1);
+                    this.events[this.currentEventId].comparativo = comparativo;
+                    this.renderComparativo();
+                }
+            },
+
+            toggleLocalEscolhido(localIndex, checked) {
+                if (!this.currentEventId) return;
+
+                const comparativo = this.getCurrentEventData()?.comparativo || [];
+
+                // Initialize if needed
+                while (comparativo.length <= localIndex) {
+                    comparativo.push({
+                        nome: '',
+                        endereco: '',
+                        capacidade: '',
+                        datas: [
+                            { montagem: '', inicio: '', fim: '' },
+                            { montagem: '', inicio: '', fim: '' },
+                            { montagem: '', inicio: '', fim: '' }
+                        ],
+                        images: [],
+                        items: [],
+                        escolhido: false
+                    });
+                }
+
+                comparativo[localIndex].escolhido = checked;
+
+                this.events[this.currentEventId].comparativo = comparativo;
+                this.renderComparativo();
+            },
+
+            updateComparativoData(localIndex, dataIndex, field, value) {
+                if (!this.currentEventId) return;
+
+                const comparativo = this.getCurrentEventData()?.comparativo || [];
+
+                while (comparativo.length <= localIndex) {
+                    comparativo.push({
+                        nome: '',
+                        endereco: '',
+                        capacidade: '',
+                        datas: [
+                            { montagem: '', inicio: '', fim: '' },
+                            { montagem: '', inicio: '', fim: '' },
+                            { montagem: '', inicio: '', fim: '' }
+                        ],
+                        images: [],
+                        items: []
+                    });
+                }
+
+                if (!comparativo[localIndex].datas) {
+                    comparativo[localIndex].datas = [
+                        { montagem: '', inicio: '', fim: '' },
+                        { montagem: '', inicio: '', fim: '' },
+                        { montagem: '', inicio: '', fim: '' }
+                    ];
+                }
+
+                while (comparativo[localIndex].datas.length <= dataIndex) {
+                    comparativo[localIndex].datas.push({ montagem: '', inicio: '', fim: '' });
+                }
+
+                comparativo[localIndex].datas[dataIndex][field] = value;
+                this.events[this.currentEventId].comparativo = comparativo;
+            },
+
+            updateComparativo(localIndex, field, value) {
+                if (!this.currentEventId) return;
+
+                if (!this.events[this.currentEventId].comparativo) {
+                    this.events[this.currentEventId].comparativo = [];
+                }
+
+                while (this.events[this.currentEventId].comparativo.length <= localIndex) {
+                    this.events[this.currentEventId].comparativo.push({
+                        nome: '', endereco: '', dataDisponivel: '', capacidade: '', items: []
+                    });
+                }
+
+                this.events[this.currentEventId].comparativo[localIndex][field] = value;
+            },
+
+            // Company Settings
+            openCompanySettings() {
+                const settings = this.getCurrentEventData()?.companySettings || {};
+
+                document.getElementById('companyName').value = settings.name || '';
+                document.getElementById('companyInstagram').value = settings.instagram || '';
+                document.getElementById('companyResponsavel').value = settings.responsavel || '';
+                document.getElementById('companyEmail').value = settings.email || '';
+                document.getElementById('companyPhone').value = settings.phone || '';
+                document.getElementById('companyWebsite').value = settings.website || '';
+
+                const logoPreview = document.getElementById('companyLogoPreview');
+                if (settings.logo) {
+                    logoPreview.innerHTML = `<img src="${settings.logo}" style="max-width: 200px; border-radius: 8px;">`;
+                } else {
+                    logoPreview.innerHTML = '<p style="color: var(--text-secondary); font-size: 0.875rem;">📸 Clique para fazer upload da logo</p>';
+                }
+
+                this.openModal('companySettingsModal');
+            },
+
+            uploadCompanyLogo(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const logoPreview = document.getElementById('companyLogoPreview');
+                    logoPreview.innerHTML = `<img src="${e.target.result}" style="max-width: 200px; border-radius: 8px;">`;
+                    this.tempCompanyLogo = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            },
+
+            saveCompanySettings() {
+                if (!this.currentEventId) {
+                    this.showToast('Selecione um evento primeiro', 'warning');
+                    return;
+                }
+
+                const settings = {
+                    logo: this.tempCompanyLogo || this.getCurrentEventData()?.companySettings?.logo || '',
+                    name: document.getElementById('companyName').value,
+                    instagram: document.getElementById('companyInstagram').value,
+                    responsavel: document.getElementById('companyResponsavel').value,
+                    email: document.getElementById('companyEmail').value,
+                    phone: document.getElementById('companyPhone').value,
+                    website: document.getElementById('companyWebsite').value
+                };
+
+                this.events[this.currentEventId].companySettings = settings;
+                this.tempCompanyLogo = null;
+                this.closeModal('companySettingsModal');
+                this.showToast('Configurações salvas!', 'success');
+            },
+
+            // PDF Generation
+            async extractColorsFromLogo(logoSrc) {
+                if (!logoSrc) return { primary: '#2563EB', secondary: '#10B981' };
+
+                try {
+                    const img = new Image();
+                    img.crossOrigin = 'Anonymous';
+                    await new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = reject;
+                        img.src = logoSrc;
+                    });
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                    const colorMap = {};
+
+                    for (let i = 0; i < imageData.length; i += 4) {
+                        const r = imageData[i];
+                        const g = imageData[i + 1];
+                        const b = imageData[i + 2];
+                        const a = imageData[i + 3];
+
+                        if (a < 128) continue; // Skip transparent
+                        if (r > 240 && g > 240 && b > 240) continue; // Skip near-white
+
+                        const rgb = `${Math.floor(r/30)*30},${Math.floor(g/30)*30},${Math.floor(b/30)*30}`;
+                        colorMap[rgb] = (colorMap[rgb] || 0) + 1;
+                    }
+
+                    const sortedColors = Object.entries(colorMap)
+                        .sort((a, b) => b[1] - a[1])
+                        .map(([color]) => {
+                            const [r, g, b] = color.split(',').map(Number);
+                            return `rgb(${r}, ${g}, ${b})`;
+                        });
+
+                    return {
+                        primary: sortedColors[0] || '#2563EB',
+                        secondary: sortedColors[1] || '#10B981'
+                    };
+                } catch (error) {
+                    return { primary: '#2563EB', secondary: '#10B981' };
+                }
+            },
+
+            async generateComparativoPDF() {
+                if (!this.currentEventId) {
+                    this.showToast('Selecione um evento primeiro', 'warning');
+                    return;
+                }
+
+                const eventData = this.getCurrentEventData();
+                const comparativo = eventData?.comparativo || [];
+                const settings = eventData?.companySettings || {};
+
+                // Extract colors from logo
+                const colors = await this.extractColorsFromLogo(settings.logo);
+
+                // Generate preview HTML - SIDE BY SIDE
+                let html = `
+                    <div class="pdf-preview" style="font-family: Inter, sans-serif; color: #111827;">
+                        <div class="pdf-preview-header" style="border-bottom-color: ${colors.primary};">
+                            ${settings.logo ? `<img src="${settings.logo}" class="pdf-preview-logo" style="max-width: 150px; margin-bottom: 1rem;">` : ''}
+                            <h1 style="font-size: 1.75rem; font-weight: 700; margin: 0.5rem 0; color: ${colors.primary};">${settings.name || 'Comparativo de Locais'}</h1>
+                            <p style="color: #6B7280; margin: 0.25rem 0;">${settings.instagram || ''} | Responsável: ${settings.responsavel || ''}</p>
+                        </div>
+
+                        <h2 style="text-align: center; font-size: 1.5rem; margin: 2rem 0 1.5rem; color: ${colors.primary};">Comparativo de Locais para o Evento</h2>
+                        <p style="text-align: center; color: #6B7280; margin-bottom: 2rem;"><strong>Cliente:</strong> ${eventData?.clientName || 'Não informado'}</p>
+
+                        <div style="display: flex; gap: 1.5rem; justify-content: space-between;">
+                `;
+
+                comparativo.forEach((local, i) => {
+                    const isChosen = local.escolhido || false;
+                    const total = (local.items || []).reduce((sum, item) => sum + (parseFloat(item.total) || 0), 0);
+
+                    html += `
+                        <div style="border: ${isChosen ? `3px solid ${colors.secondary}` : '2px solid #E5E7EB'}; border-radius: 12px; padding: 1.5rem; background: ${isChosen ? `rgba(16, 185, 129, 0.05)` : '#fff'}; flex: 1; min-width: 250px;">
+                            <h3 style="font-size: 1.25rem; margin: 0 0 0.5rem; color: ${colors.primary};">Local ${i + 1}</h3>
+                            ${isChosen ? `<div style="background: ${colors.secondary}; color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; display: inline-block; margin-bottom: 0.75rem;">✓ ESCOLHIDO</div>` : ''}
+
+                            ${local.images && local.images.length > 0 ? `
+                                <div style="margin: 1rem 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 0.5rem;">
+                                    ${local.images.slice(0, 5).map(img => `<img src="${img}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px;">`).join('')}
+                                </div>
+                            ` : ''}
+
+                            <p style="margin: 0.5rem 0; font-size: 0.875rem;"><strong>Nome:</strong> ${local.nome || '-'}</p>
+                            <p style="margin: 0.5rem 0; font-size: 0.875rem;"><strong>Endereço:</strong> ${local.endereco || '-'}</p>
+                            <p style="margin: 0.5rem 0; font-size: 0.875rem;"><strong>Capacidade:</strong> ${local.capacidade || '-'}</p>
+
+                            ${local.datas && local.datas.length > 0 ? `
+                                <div style="margin: 1rem 0; padding: 0.75rem; background: #F9FAFB; border-radius: 6px;">
+                                    <strong style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem;">📅 Datas Disponíveis:</strong>
+                                    ${local.datas.filter(d => d.montagem || d.inicio || d.fim).map((data, idx) => `
+                                        <div style="margin: 0.5rem 0; font-size: 0.8125rem; padding: 0.5rem; background: white; border-radius: 4px;">
+                                            <strong>Período ${idx + 1}:</strong><br>
+                                            ${data.montagem ? `Montagem: ${new Date(data.montagem).toLocaleDateString('pt-BR')}<br>` : ''}
+                                            ${data.inicio ? `Início: ${new Date(data.inicio).toLocaleDateString('pt-BR')}` : ''}
+                                            ${data.fim ? ` até ${new Date(data.fim).toLocaleDateString('pt-BR')}` : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+
+                            <p style="margin: 0.75rem 0; font-weight: 600; font-size: 1rem; color: ${colors.primary};">Investimento: R$ ${this.formatMoney(total)}</p>
+
+                            ${local.proposta ? `
+                                <div style="margin-top: 1rem; padding: 0.75rem; background: #F9FAFB; border-radius: 6px;">
+                                    <strong style="display: block; margin-bottom: 0.5rem; font-size: 0.8125rem;">📄 Proposta:</strong>
+                                    <p style="margin: 0; white-space: pre-wrap; font-size: 0.8125rem;">${local.proposta}</p>
+                                </div>
+                            ` : ''}
+
+                            ${local.pontosFortes ? `
+                                <div style="margin-top: 0.75rem;">
+                                    <strong style="display: block; margin-bottom: 0.5rem; color: ${colors.secondary}; font-size: 0.8125rem;">✅ Pontos Fortes:</strong>
+                                    <p style="margin: 0; white-space: pre-wrap; font-size: 0.8125rem;">${local.pontosFortes}</p>
+                                </div>
+                            ` : ''}
+
+                            ${local.pontosFracos ? `
+                                <div style="margin-top: 0.75rem;">
+                                    <strong style="display: block; margin-bottom: 0.5rem; color: #EF4444; font-size: 0.8125rem;">❌ Pontos Fracos:</strong>
+                                    <p style="margin: 0; white-space: pre-wrap; font-size: 0.8125rem;">${local.pontosFracos}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+
+                        <div style="margin-top: 3rem; padding-top: 1.5rem; border-top: 2px solid #E5E7EB; text-align: center; color: #6B7280; font-size: 0.875rem;">
+                            <p style="margin: 0.25rem 0;"><strong>${settings.name || ''}</strong></p>
+                            <p style="margin: 0.25rem 0;">${settings.instagram || ''} | ${settings.email || ''} | ${settings.phone || ''}</p>
+                            <p style="margin: 0.25rem 0;">${settings.website || ''}</p>
+                        </div>
+                    </div>
+                `;
+
+                // Show preview
+                document.getElementById('pdfPreviewContent').innerHTML = html;
+                this.currentPDFType = 'comparativo';
+                this.openModal('pdfPreviewModal');
+            },
+
+            async generateRelatorioGeralPDF() {
+                if (!this.currentEventId) {
+                    this.showToast('Selecione um evento primeiro', 'warning');
+                    return;
+                }
+
+                const eventData = this.getCurrentEventData();
+                const settings = eventData?.companySettings || {};
+
+                // Extract colors from logo
+                const colors = await this.extractColorsFromLogo(settings.logo);
+
+                // Calculate totals
+                let totalEvento = 0;
+                const categories = this.getEventCategories();
+                categories.forEach(cat => {
+                    const categoryData = eventData.detalhada?.[cat.id];
+                    const total = (categoryData?.items || []).reduce((sum, item) =>
+                        sum + (parseFloat(item.totalValue) || 0), 0);
+                    totalEvento += total;
+                });
+
+                let html = `
+                    <div class="pdf-preview" style="font-family: Inter, sans-serif; color: #111827;">
+                        <div class="pdf-preview-header" style="border-bottom-color: ${colors.primary};">
+                            ${settings.logo ? `<img src="${settings.logo}" class="pdf-preview-logo" style="max-width: 150px; margin-bottom: 1rem;">` : ''}
+                            <h1 style="font-size: 1.75rem; font-weight: 700; margin: 0.5rem 0; color: ${colors.primary};">${settings.name || 'Relatório do Evento'}</h1>
+                            <p style="color: #6B7280; margin: 0.25rem 0;">${settings.instagram || ''} | Responsável: ${settings.responsavel || ''}</p>
+                        </div>
+
+                        <h2 style="text-align: center; font-size: 1.5rem; margin: 2rem 0 1rem; color: ${colors.primary};">Relatório Geral do Evento</h2>
+
+                        <div style="background: #F9FAFB; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; border-left: 4px solid ${colors.primary};">
+                            <h3 style="margin: 0 0 1rem; font-size: 1.125rem; color: ${colors.primary};">Informações do Evento</h3>
+                            <p style="margin: 0.5rem 0;"><strong>Nome do Evento:</strong> ${eventData?.name || '-'}</p>
+                            <p style="margin: 0.5rem 0;"><strong>Cliente:</strong> ${eventData?.clientName || '-'}</p>
+                            <p style="margin: 0.5rem 0;"><strong>Local:</strong> ${eventData?.eventLocation || '-'}</p>
+                            <p style="margin: 0.5rem 0;"><strong>Montagem:</strong> ${eventData?.montagemInicio ? new Date(eventData.montagemInicio).toLocaleDateString('pt-BR') : '-'} até ${eventData?.montagemFim ? new Date(eventData.montagemFim).toLocaleDateString('pt-BR') : '-'}</p>
+                            <p style="margin: 0.5rem 0;"><strong>Evento:</strong> ${eventData?.eventDate ? new Date(eventData.eventDate).toLocaleDateString('pt-BR') : '-'} até ${eventData?.eventoFim ? new Date(eventData.eventoFim).toLocaleDateString('pt-BR') : '-'}</p>
+                        </div>
+
+                        <div style="background: ${colors.primary}; color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; text-align: center;">
+                            <h3 style="margin: 0 0 0.5rem; font-size: 1rem; font-weight: 500;">Investimento Total</h3>
+                            <p style="margin: 0; font-size: 2rem; font-weight: 700;">R$ ${this.formatMoney(totalEvento)}</p>
+                        </div>
+
+                        <h3 style="font-size: 1.25rem; margin: 2rem 0 1rem; color: ${colors.primary};">Detalhamento por Categoria</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem;">
+                            <thead>
+                                <tr style="background: ${colors.primary}; color: white;">
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid ${colors.primary};">Categoria</th>
+                                    <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid ${colors.primary};">Fornecedor</th>
+                                    <th style="padding: 0.75rem; text-align: right; border-bottom: 2px solid ${colors.primary};">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                categories.forEach(cat => {
+                    const categoryData = eventData.detalhada?.[cat.id];
+                    const total = (categoryData?.items || []).reduce((sum, item) =>
+                        sum + (parseFloat(item.totalValue) || 0), 0);
+
+                    if (total > 0) {
+                        const supplier = categoryData?.supplier?.name || '-';
+                        html += `
+                            <tr>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #E5E7EB;"><strong>${cat.name}</strong></td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #E5E7EB;">${supplier}</td>
+                                <td style="padding: 0.75rem; text-align: right; border-bottom: 1px solid #E5E7EB; font-family: monospace;">R$ ${this.formatMoney(total)}</td>
+                            </tr>
+                        `;
+                    }
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+
+                        ${eventData?.timelineObs ? `
+                            <div style="margin-top: 2rem; padding: 1.5rem; background: #F9FAFB; border-radius: 12px;">
+                                <h3 style="margin: 0 0 1rem; font-size: 1.125rem;">Observações</h3>
+                                <p style="margin: 0; white-space: pre-wrap;">${eventData.timelineObs}</p>
+                            </div>
+                        ` : ''}
+
+                        <div style="margin-top: 3rem; padding-top: 1.5rem; border-top: 2px solid #E5E7EB; text-align: center; color: #6B7280; font-size: 0.875rem;">
+                            <p style="margin: 0.25rem 0;"><strong>${settings.name || ''}</strong></p>
+                            <p style="margin: 0.25rem 0;">${settings.instagram || ''} | ${settings.email || ''} | ${settings.phone || ''}</p>
+                            <p style="margin: 0.25rem 0;">${settings.website || ''}</p>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('pdfPreviewContent').innerHTML = html;
+                this.currentPDFType = 'relatorio';
+                this.openModal('pdfPreviewModal');
+            },
+
+            async downloadPDF() {
+                const element = document.getElementById('pdfPreviewContent');
+                const eventName = this.getCurrentEventData()?.name || 'evento';
+                const filename = this.currentPDFType === 'comparativo'
+                    ? `comparativo_${eventName.replace(/[^a-z0-9]/gi, '_')}.pdf`
+                    : `relatorio_${eventName.replace(/[^a-z0-9]/gi, '_')}.pdf`;
+
+                try {
+                    const canvas = await html2canvas(element, {
+                        scale: 2,
+                        useCORS: true,
+                        logging: false
+                    });
+
+                    const imgData = canvas.toDataURL('image/png');
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF({
+                        orientation: 'portrait',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+
+                    const imgWidth = 210;
+                    const pageHeight = 297;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    let heightLeft = imgHeight;
+                    let position = 0;
+
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+
+                    while (heightLeft >= 0) {
+                        position = heightLeft - imgHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+                    }
+
+                    pdf.save(filename);
+                    this.closeModal('pdfPreviewModal');
+                    this.showToast('PDF gerado com sucesso!', 'success');
+                } catch (error) {
+                    console.error('Error generating PDF:', error);
+                    this.showToast('Erro ao gerar PDF', 'error');
+                }
+            },
+
+            newEvent() {
+                document.getElementById('newEventName').value = '';
+                this.openModal('newEventModal');
+            },
+
+            createNewEvent() {
+                const name = document.getElementById('newEventName').value.trim();
+
+                if (!name) {
+                    this.showToast('Digite um nome para o evento', 'warning');
+                    return;
+                }
+
+                const id = 'event_' + Date.now();
+                this.events[id] = {
+                    id, name,
+                    created: new Date().toISOString(),
+                    clientName: '',
+                    eventDate: '',
+                    timeline: [],
+                    detalhada: {},
+                    pagamentos: [],
+                    comparativo: []
+                };
+
+                this.currentEventId = id;
+                this.updateEventSelector();
+                this.loadEvent(id);
+                this.closeModal('newEventModal');
+                this.showToast('Evento criado!', 'success');
+            },
+
+            loadEvent(eventId) {
+                if (!eventId || !this.events[eventId]) return;
+
+                this.currentEventId = eventId;
+                const event = this.events[eventId];
+
+                document.getElementById('clientName').value = event.clientName || '';
+                document.getElementById('eventLocation').value = event.eventLocation || '';
+                document.getElementById('eventDate').value = event.eventDate || '';
+                document.getElementById('eventoFim').value = event.eventoFim || '';
+                document.getElementById('montagemInicio').value = event.montagemInicio || '';
+                document.getElementById('montagemFim').value = event.montagemFim || '';
+                document.getElementById('timelineObs').value = event.timelineObs || '';
+
+                document.getElementById('eventSelector').value = eventId;
+
+                this.renderAll();
+                this.showToast('Evento carregado', 'success');
+            },
+
+            getCurrentEventData() {
+                return this.events[this.currentEventId] || null;
+            },
+
+            deleteCurrentEvent() {
+                if (!this.currentEventId) {
+                    this.showToast('Nenhum evento selecionado', 'warning');
+                    return;
+                }
+
+                this.openModal('deleteModal');
+            },
+
+            confirmDelete() {
+                if (!this.currentEventId) return;
+
+                const eventName = this.events[this.currentEventId].name;
+                delete this.events[this.currentEventId];
+                this.currentEventId = null;
+
+                this.updateEventSelector();
+                this.closeModal('deleteModal');
+                this.showToast('Evento excluído', 'success');
+
+                document.getElementById('clientName').value = '';
+                document.getElementById('eventDate').value = '';
+                this.renderAll();
+            },
+
+            updateEventSelector() {
+                const selector = document.getElementById('eventSelector');
+                selector.innerHTML = '<option value="">Selecione um evento</option>';
+
+                Object.values(this.events).forEach(event => {
+                    const option = document.createElement('option');
+                    option.value = event.id;
+                    option.textContent = event.name;
+                    selector.appendChild(option);
+                });
+
+                if (this.currentEventId) {
+                    selector.value = this.currentEventId;
+                }
+            },
+
+            exportEvent() {
+                // Check if there are any events to export
+                if (Object.keys(this.events).length === 0) {
+                    this.showToast('Nenhum evento para exportar', 'warning');
+                    return;
+                }
+
+                // Save current event values if one is selected
+                if (this.currentEventId && this.events[this.currentEventId]) {
+                    const event = this.events[this.currentEventId];
+                    event.clientName = document.getElementById('clientName').value;
+                    event.eventLocation = document.getElementById('eventLocation').value;
+                    event.eventDate = document.getElementById('eventDate').value;
+                    event.eventoFim = document.getElementById('eventoFim').value;
+                    event.montagemInicio = document.getElementById('montagemInicio').value;
+                    event.montagemFim = document.getElementById('montagemFim').value;
+                    event.timelineObs = document.getElementById('timelineObs').value;
+                }
+
+                // Export ALL events
+                const dataStr = JSON.stringify(this.events, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+
+                // Generate filename with date
+                const today = new Date().toISOString().split('T')[0];
+                const eventCount = Object.keys(this.events).length;
+                a.download = `eventos_backup_${today}_${eventCount}_eventos.json`;
+                a.click();
+
+                URL.revokeObjectURL(url);
+                this.showToast(`${eventCount} evento(s) exportado(s)!`, 'success');
+            },
+
+            importEvent(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+
+                        if (data.id && data.name) {
+                            // Single event import
+                            const newId = 'event_' + Date.now();
+                            this.events[newId] = { ...data, id: newId };
+                            this.currentEventId = newId;
+                            this.updateEventSelector();
+                            this.loadEvent(this.currentEventId);
+                            this.showToast('Evento importado!', 'success');
+                        } else if (typeof data === 'object') {
+                            // Multiple events import
+                            const eventIds = Object.keys(data);
+                            let firstId = null;
+                            eventIds.forEach((key, index) => {
+                                const evt = data[key];
+                                if (evt && typeof evt === 'object' && evt.name) {
+                                    const newId = 'event_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                                    this.events[newId] = { ...evt, id: newId };
+                                    if (index === 0) firstId = newId;
+                                }
+                            });
+                            this.updateEventSelector();
+                            if (firstId) {
+                                this.currentEventId = firstId;
+                                this.loadEvent(firstId);
+                            }
+                            this.showToast('Eventos importados!', 'success');
+                        }
+                    } catch (error) {
+                        console.error('Import error:', error);
+                        this.showToast('Erro ao importar: ' + error.message, 'error');
+                    }
+                };
+                reader.readAsText(file);
+
+                event.target.value = '';
+            },
+
+            loadEventsFromStorage() {
+                this.events = {};
+            },
+
+            openModal(modalId) {
+                document.getElementById(modalId).classList.add('active');
+            },
+
+            closeModal(modalId) {
+                document.getElementById(modalId).classList.remove('active');
+            },
+
+            showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toastMessage');
+
+                toast.className = 'toast';
+                if (type === 'error') toast.classList.add('error');
+                if (type === 'warning') toast.classList.add('warning');
+
+                toastMessage.textContent = message;
+                toast.classList.add('active');
+
+                setTimeout(() => {
+                    toast.classList.remove('active');
+                }, 3000);
+            },
+
+            formatMoney(value) {
+                return parseFloat(value || 0).toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+    </script>
+</body>
+</html>
